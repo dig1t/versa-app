@@ -1,0 +1,13 @@
+main .content > section.landing {
+	overflow: hidden;
+}
+
+.landing {
+	// heading for each section
+	section > h2 {
+		color: color(red, 500);
+		margin-bottom: 62px;
+		font-weight: 800;
+		text-align: center;
+	}
+}
