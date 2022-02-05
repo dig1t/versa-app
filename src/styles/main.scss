@@ -1,0 +1,331 @@
+@import 'firebit';
+
+// import page styles
+@import 'pages/landing';
+
+::selection {
+	background-color: transparentize($red, 0);
+}
+
+body {
+	color: $black;
+	background-color: color('white');
+	font-family: 'Open Sans', Helvetica, sans-serif;
+	font-feature-settings: 'lnum';
+	font-variant-numeric: lining-nums;
+}
+
+button, a.btn {
+	// Base properties for buttons
+	color: $white;
+	background-color: color('black');
+	padding: 12px 18px;
+	font-size: type-scale(0);
+	font-weight: bold;
+	
+	&.btn{
+		&-round {
+			border-radius: 99px;
+		}
+		
+		&-primary {
+			background-color: $primary;
+			
+			&:hover {
+				background-color: darken($primary, 5%);
+			}
+			
+			&:active {
+				background-color: darken($primary, 10%);
+			}
+		}
+		
+		&-secondary {
+			color: color('gray');
+			background-color: #fff;
+			border: 1px solid color('gray');
+		}
+	}
+}
+
+main {
+	.content {
+		position: relative;
+	}
+}
+
+.input {
+	/* The label acts as a button
+	** The input is displayed as none since it
+	** triggers a click to the checkbox/radio input */
+	&-selectButtons {
+		display: flex;
+		
+		label {
+			color: $gray;
+			background-color: #f1f2f3;
+			border-radius: $border-radius;
+			flex-grow: 1;
+			cursor: pointer;
+			
+			&:not(:last-child) {
+				margin-right: 15px;
+			}
+			
+			&.selected {
+				color: #fff;
+				background-color: $blue;
+			}
+			
+			> span {
+				color: inherit;
+				padding: 12px 18px;
+				font-size: type-scale(0);
+				font-weight: 700;
+				text-align: center;
+			}
+		}
+		
+		input {
+			// removes the custom input sprite, leaving a white background
+			display: none !important;
+		}
+	}
+}
+
+nav {
+	&.sticky {
+		width: 100%;
+		
+		&::before {
+			content: '';
+			height: $nav-height;
+			display: block;
+		}
+	}
+	
+	.logo {
+		width: calc(205px / 2);
+		height: calc(65px / 2);
+	}
+	
+	//temp
+	
+	.box {
+		width: 100%;
+		height: $nav-height;
+		background-color: #fff;
+		border-bottom: 1px solid transparentize($light-gray, .8);
+		line-height: $nav-height;
+		position: relative;
+	}
+	
+	&.sticky .box {
+		position: fixed;
+		top: 0;
+		z-index: 999;
+	}
+	
+	ul li {
+		line-height: 1;
+		display: inline-block;
+		
+		&:not(:last-child) {
+			margin-right: 15px;
+		}
+		
+		&.logo {
+			margin-right: 30px;
+		}
+		
+		&.nav-btn {
+			a {
+				color: color(black);
+				padding: 8px 4px;
+				font-size: 1.4em;
+				font-weight: 700;
+				letter-spacing: .06em;
+			}
+			
+			&.active a {
+				cursor: default;
+			}
+			
+			&:hover:not(.active) a, &.active a {
+				color: color('black');
+				border-bottom: 2px solid $red;
+			}
+		}
+		
+		a {
+			transition-duration: .1s;
+		}
+	}
+	
+	&.dark .box {
+		color: #fff;
+		background-color: transparent;
+		box-shadow: 0 0 1px rgba(255, 255, 255, .2);
+	}
+}
+
+footer {
+	&, a {
+		color: $light-gray;
+	}
+	
+	.icon-logo--gray {
+		background-position-y: -52px;
+		margin-bottom: 34px;
+	}
+	
+	.links {
+		column-count: 2;
+		
+		a {
+			line-height: 2em;
+			font-size: 1.8em;
+			font-weight: 300;
+		}
+	}
+	
+	.social-media {
+		$btn-size: 50px;
+		
+		margin-bottom: 34px;
+		display: flex;
+		justify-content: space-evenly;
+		
+		a {
+			width: $btn-size;
+			height: $btn-size;
+			color: $dark-gray;
+			background-color: #fff;
+			border-radius: 100%;
+			font-size: 2.4em;
+			text-align: center;
+			line-height: $btn-size;
+			transition-duration: .2s;
+			
+			&:hover {
+				color: #fff;
+				background-color: $primary;
+				box-shadow: 0 0 12px 2px transparentize($primary, .8);
+			}
+		}
+	}
+	
+	.newsletter {
+		&-head {
+			margin-bottom: 18px;
+			font-size: 1.8em;
+			font-weight: 600;
+		}
+		
+		&-form {
+			display: flex;
+			
+			input {
+				color: $dark-gray;
+				border: 0;
+				padding: 18px;
+				
+				&::placeholder {
+					color: $gray;
+				}
+			}
+			
+			button {
+				background-color: $primary;
+				padding: 18px 14px;
+				font-size: 1.8em;
+				white-space: nowrap;
+				transition-duration: .1s;
+				
+				&:hover {
+					background-color: darken($primary, 10%);
+				}
+			}
+		}
+	}
+	
+	.info {
+		margin-top: 18px;
+		
+		p {
+			font-weight: 300;
+			
+			&:not(:last-child) {
+				margin-bottom: 4px;
+			}
+			
+			i {
+				margin-right: 4px;
+				font-size: 1.2em;
+				vertical-align: middle;
+			}
+		}
+	}
+	
+	.copyright {
+		letter-spacing: .04em;
+	}
+}
+
+.error-page {
+	height: calc(90vh - #{$nav-height});
+	flex-direction: column;
+	justify-content: center;
+	
+	.text {
+		background-image: radial-gradient(at 50% 80%, #47c2eb 0, #3df58a 100%);
+		font-size: 30em;
+		font-weight: 800;
+		line-height: 1em;
+		letter-spacing: -.04em;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+}
+
+// spritesheet
+.icon {
+	display: inline-block;
+	line-height: 1; // fixes size issues for .icon object
+	
+	&:before {
+		content: ' ';
+		background-image: url(/assets/i/spritesheet.svg);
+		display: inline-block;
+		//vertical-align: baseline;
+	}
+	
+	&-logo:before, &-logo--white:before, &-logo--gray:before {
+		width: 205px;
+		height: 26px;
+	}
+	
+	&-logo:before {
+		background-position-y: 0;
+	}
+	
+	&-logo--white:before {
+		background-position-y: -26px;
+	}
+	
+	&-logo--gray:before {
+		background-position-y: -52px;
+	}
+	
+	&-quotes:before {
+		background-position-y: -78px;
+		width: 14px;
+		height: 9px;
+	}
+	
+	&-lock:before {
+		background-position: -14px -78px;
+		width: 9px;
+		height: 12px;
+	}
+}
