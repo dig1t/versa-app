@@ -7,7 +7,7 @@ yarn-error.log*
 
 # Config
 package-lock.json
-config.js
+server/config.js
 
 # Dependency directories
 node_modules/

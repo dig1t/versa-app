@@ -1,0 +1,1 @@
+export default (times, callback) => [...Array(times).keys()].map(index => callback(index))
