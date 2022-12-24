@@ -1,0 +1,460 @@
+@import 'firebit';
+
+// import page styles
+@import 'pages/landing';
+
+body {
+	color: $black;
+	background-color: color(white);
+	font-family: 'Open Sans', Helvetica, sans-serif;
+	font-feature-settings: 'lnum';
+	font-variant-numeric: lining-nums;
+}
+
+button, a.btn {
+	// Base properties for buttons
+	color: $white;
+	background-color: color(black);
+	border-radius: $border-radius;
+	padding: .8rem 1.2rem;
+	font-size: type-scale(0);
+	font-weight: 800;
+	transition-duration: .2s;
+	
+	&.btn{
+		&-full-width {
+			width: 100%;
+		}
+		
+		&-round {
+			border-radius: 9rem;
+		}
+		
+		&-primary {
+			background-color: color(blue);
+			
+			&:hover {
+				background-color: color(blue, 700);
+				text-decoration: none;
+			}
+			
+			&:active {
+				background-color: color(blue, 800);
+			}
+		}
+		
+		&-secondary {
+			color: color(blue-gray, 300);
+			background-color: #fff;
+			border: 1px solid color(blue-gray, 300);
+			
+			&:hover {
+				color: color(blue-gray, 600);
+				border-color: color(blue-gray, 600);
+				text-decoration: none;
+			}
+			
+			&:active {
+				color: color(blue-gray, 800);
+				border-color: color(blue-gray, 800);
+			}
+		}
+	}
+	
+	&[disabled],
+	&.btn-primary[disabled],
+	&.btn-primary[disabled]:hover,
+	&.btn-primary[disabled]:active {
+		color: color(light-gray, 200);
+		background-color: color(light-gray);
+		cursor: default;
+	}
+}
+
+main {
+	.content {
+		position: relative;
+	}
+}
+
+.input {
+	// Text input config
+	$labelFontSize: .8rem;
+	$fontSize: 1rem;
+	$paddingY: .4rem;
+	$paddingX: .6rem;
+	$focusColor: color(blue);
+	$inputErrorColor: color(red);
+	$inputValidColor: color(green, 600);
+	
+	input {
+		padding: $paddingY $paddingX;
+		font-size: $fontSize;
+		line-height: $fontSize;
+	}
+	
+	div, input, &.inline-label {
+		border-radius: .2rem;
+	}
+	
+	label {
+		cursor: text;
+		
+		span {
+			font-size: $labelFontSize;
+			line-height: $labelFontSize;
+			margin-bottom: $paddingY;
+		}
+	}
+	
+	.error-text {
+		color: color(red);
+		margin-top: .4rem;
+		font-size: .8rem;
+	}
+	
+	&.input-focused span {
+		color: $focusColor;
+	}
+	
+	.input-text:focus, &.inline-label.input-focused label {
+		border: 1px solid $focusColor;
+	}
+	
+	@if variable-exists(inputErrorColor) {
+		&.error span {
+			color: $inputErrorColor;
+		}
+		
+		&.error .input-text, &.inline-label.error label {
+			border: 1px solid $inputErrorColor;
+		}
+	}
+	
+	@if variable-exists(inputValidColor) {
+		&.input-ok span {
+			color: $inputValidColor;
+		}
+		
+		&.input-ok .input-text, &.inline-label.input-ok label {
+			border: 1px solid $inputValidColor;
+		}
+	}
+	
+	
+	&.inline-label {
+		$labelSize: $labelFontSize + ($paddingY * 2);
+		
+		&.input-focused {
+			span {
+				padding-top: calc(($labelSize / 2) - ($labelFontSize / 2));
+				font-size: $labelFontSize;
+				line-height: $labelFontSize;
+			}
+		}
+		
+		label {
+			border: 1px solid color(blue-gray, 300);
+			border-radius: $border-radius;
+			padding: $paddingY $paddingX;
+			padding-top: $labelSize;
+			position: relative;
+			
+			span {
+				margin: 0;
+				padding-top: calc((
+					// Line up the top of the span
+					// with the center of the wrap
+					($paddingY + $labelSize + $fontSize + ($fontSize / 2)) / 2
+				) - (
+					// Offsets it by half its font size
+					// so it's visually centered
+					$fontSize / 2
+				));
+				font-size: $fontSize;
+				line-height: $fontSize;
+				position: absolute;
+				top: 0;
+				transition-duration: .1s;
+			}
+			
+			input {
+				border: 0;
+				padding: 0;
+			}
+		}
+	}
+	
+	&.error input {
+		border-color: color(red);
+	}
+	
+	&-selectButtons {
+		display: flex;
+		
+		label {
+			color: $gray;
+			background-color: #f1f2f3;
+			border-radius: $border-radius;
+			flex-grow: 1;
+			cursor: pointer;
+			
+			&:not(:last-child) {
+				margin-right: 15px;
+			}
+			
+			&.selected {
+				color: #fff;
+				background-color: $blue;
+			}
+			
+			> span {
+				color: inherit;
+				padding: 12px 18px;
+				font-size: type-scale(0);
+				font-weight: 700;
+				text-align: center;
+			}
+		}
+		
+		/* The label acts as a button
+		** The input is displayed as none since it
+		** triggers a click to the checkbox/radio input */
+		input {
+			// removes the custom input sprite, leaving a white background
+			display: none !important;
+		}
+	}
+}
+
+nav {
+	&.sticky {
+		width: 100%;
+		
+		&::before {
+			content: '';
+			height: $nav-height;
+			display: block;
+		}
+	}
+	
+	//temp
+	
+	.box {
+		width: 100%;
+		height: $nav-height;
+		background-color: #fff;
+		border-bottom: 1px solid transparentize($light-gray, .8);
+		line-height: $nav-height;
+		position: relative;
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	&.sticky .box {
+		position: fixed;
+		top: 0;
+		z-index: 999;
+	}
+	
+	ul li {
+		line-height: 1;
+		display: inline-block;
+		
+		&:not(:last-child) {
+			margin-right: 15px;
+		}
+		
+		&.logo {
+			height: 100%;
+			padding: 1rem 0;
+			margin-right: 30px;
+		}
+		
+		&.nav-btn {
+			a {
+				color: color(black);
+				padding: 8px 4px;
+				font-size: .8em;
+				letter-spacing: .06em;
+			}
+			
+			&.active a {
+				cursor: default;
+			}
+			
+			&:hover:not(.active) a, &.active a {
+				color: color(black);
+				border-bottom: 2px solid $red;
+			}
+		}
+		
+		a {
+			transition-duration: .1s;
+		}
+		
+		.btn {
+			font-size: .8rem;
+		}
+		
+		.btn.btn-secondary {
+			background-color: transparent;
+			border: 0;
+		}
+	}
+	
+	&.dark .box {
+		color: #fff;
+		background-color: transparent;
+		box-shadow: 0 0 1px rgba(255, 255, 255, .2);
+	}
+}
+
+footer {
+	&, a {
+		color: $light-gray;
+	}
+	
+	.icon-logo--gray {
+		background-position-y: -52px;
+		margin-bottom: 34px;
+	}
+	
+	.links {
+		column-count: 2;
+		
+		a {
+			line-height: 2em;
+			font-size: 1.8em;
+			font-weight: 300;
+		}
+	}
+	
+	.social-media {
+		$btn-size: 50px;
+		
+		margin-bottom: 34px;
+		display: flex;
+		justify-content: space-evenly;
+		
+		a {
+			width: $btn-size;
+			height: $btn-size;
+			color: $dark-gray;
+			background-color: #fff;
+			border-radius: 100%;
+			font-size: 2.4em;
+			text-align: center;
+			line-height: $btn-size;
+			transition-duration: .2s;
+			
+			&:hover {
+				color: #fff;
+				background-color: $primary;
+				box-shadow: 0 0 12px 2px transparentize($primary, .8);
+			}
+		}
+	}
+	
+	.newsletter {
+		&-head {
+			margin-bottom: 18px;
+			font-size: 1.8em;
+			font-weight: 600;
+		}
+		
+		&-form {
+			display: flex;
+			
+			input {
+				color: $dark-gray;
+				border: 0;
+				padding: 18px;
+				
+				&::placeholder {
+					color: $gray;
+				}
+			}
+			
+			button {
+				background-color: $primary;
+				padding: 18px 14px;
+				font-size: 1.8em;
+				white-space: nowrap;
+				transition-duration: .1s;
+				
+				&:hover {
+					background-color: darken($primary, 10%);
+				}
+			}
+		}
+	}
+	
+	.info {
+		margin-top: 18px;
+		
+		p {
+			font-weight: 300;
+			
+			&:not(:last-child) {
+				margin-bottom: 4px;
+			}
+			
+			i {
+				margin-right: 4px;
+				font-size: 1.2em;
+				vertical-align: middle;
+			}
+		}
+	}
+	
+	.copyright {
+		letter-spacing: .04em;
+	}
+}
+
+.error-page {
+	height: calc(90vh - #{$nav-height});
+	flex-direction: column;
+	justify-content: center;
+	
+	.text {
+		background-image: radial-gradient(at 50% 80%, #47c2eb 0, #3df58a 100%);
+		font-size: 30em;
+		font-weight: 800;
+		line-height: 1em;
+		letter-spacing: -.04em;
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+}
+
+// spritesheet
+.icon {
+	//line-height: 1; // fixes size issues for .icon object
+	background-repeat: no-repeat;
+	background-size: contain;
+	vertical-align: baseline;
+	display: inline-block;
+	
+	&-full-width {
+		width: 100%;
+	}
+	
+	&-full-height {
+		height: 100%;
+	}
+	
+	&-logo {
+		background-image: url(/assets/i/logo-black.svg);
+		
+		&, &--white {
+			aspect-ratio: 165 / 50;
+		}
+		
+		&--white {
+			background-image: url(/assets/i/logo-white.svg);
+		}
+	}
+}
