@@ -3,6 +3,8 @@ import compression from 'compression'
 import helmet from 'helmet'
 import mongoose from 'mongoose'
 
+import { rateLimiterMiddleware } from './util'
+
 import config from '../config'
 
 import routes from './containers/routes'
@@ -13,7 +15,7 @@ const app = express()
 /* Setup mongoose */
 const db = mongoose.connection
 
-mongoose.connect(config.db, { useNewUrlParser: true })
+mongoose.set('strictQuery', false)
 mongoose.Promise = global.Promise
 
 db.on('error', console.error.bind(console, 'MongoDB Error:'))
@@ -27,12 +29,33 @@ app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 
+if (app.get('env') == 'development') {
+	app.use((req, res, next) => {
+		res.header('Access-Control-Allow-Origin', '*')
+		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+		next()
+	})
+}
+
 if (app.get('env') === 'production') {
+	app.use(rateLimiterMiddleware)
+	
+	/* Setup helmet */
+	app.use(helmet.contentSecurityPolicy({
+		directives: {
+			defaultSrc: ["'self'"],
+			styleSrc: ["'self'", 'https://versa.dig1t.io'],
+			scriptSrc: ["'self'", 'https://versa.dig1t.io']
+		}
+	}))
+	app.use(helmet.referrerPolicy({ policy: 'no-referrer' }))
+	app.use(helmet.frameguard({ action: 'deny' }))
 	app.use(helmet({ noCache: app.get('env') === 'development' }))
+	
 	app.set('trust proxy', 1) // trust first proxy
 }
 
-app.use((_, res, next) => {
+app.use((req, res, next) => {
 	res.apiResult = (status, data) => res.status(status || 200).send({
 		success: status === 200,
 		...data || {},
@@ -42,11 +65,22 @@ app.use((_, res, next) => {
 		) || statusMessage[status] // if no message, give a status message
 	})
 	
-	res.checkForFields = (query, respondToClient) => {
+	res.getFields = (query, respondToClient) => {
+		const data = req.body && req.body.data || req.query
+		
+		if (!data) return respondToClient && res.status(400).send({
+			message: 'Missing fields'
+		}) && false
+		
+		req.fields = {}
+		
 		for (let field in query) {
-			if (query[field] === null) return respondToClient && res.status(400).send({
-				message: 'Missing fields'
-			}) && false
+			if (data[query[field]] === undefined)
+				return respondToClient && res.status(400).send({
+					message: `Missing field: ${query[field]}`
+				}) && false
+			
+			req.fields[query[field]] = data[query[field]]
 		}
 		
 		return true
@@ -57,14 +91,12 @@ app.use((_, res, next) => {
 
 app.use('/v1', routes)
 
-app.on('error', err => {
-	if (err) console.error(err)
-	
-	console.log(`Server started on port ${config.port}`)
-})
 
 app.get('*', (_, res) => res.apiResult(404))
 
-app.listen(81, () => {
-	console.log('API Server Started')
+app.listen(config.apiPort, () => {
+	console.log(`API Server started on port ${config.apiPort}`)
+	mongoose.connect(config.db, { useNewUrlParser: true })
 })
+
+app.on('error', err => console.error(err))

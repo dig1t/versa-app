@@ -1,6 +1,6 @@
-import mongoose, { mongo } from 'mongoose'
 import sanitize from 'mongo-sanitize'
 import crypto from 'crypto'
+import mongoose from 'mongoose'
 
 import { validateText } from '../util'
 
@@ -9,15 +9,17 @@ import UserSession from '../models/UserSession'
 import Profile from '../models/Profile'
 
 const getUserIdFromSession = sessionId => new Promise(async (resolve, reject) => {
-	UserSession.findOne({ sessionId })
-		.then(result => {
-			const userId = result && result.userId.toHexString()
+	UserSession.findOne({ sessionId: sanitize(sessionId) })
+		.then(user => {
+			const userId = user && user.userId.toHexString()
 			
 			if (userId) {
-				(!result.isDeleted) ? resolve(userId) : reject('Session is invalid')
+				(!user.isDeleted) ? resolve(userId) : reject('Session is invalid')
+			} else {
+				reject('Session not found')
 			}
 		})
-		.catch(e => reject(e))
+		.catch(() => reject('Could not find session'))
 })
 
 const emailExists = async email => {
@@ -27,19 +29,31 @@ const emailExists = async email => {
 }
 
 const userIdExists = async userId => {
-	const count = await User.countDocuments({ userId })
+	const count = await User.countDocuments({ _id: userId })
 	
 	return count > 0 ? true : false
 }
 
+const getUserFromUserId = userId => new Promise(async (resolve, reject) => {
+	User.findOne({ _id: sanitize(userId) })
+		.then(user => {
+			user ? resolve({
+				userId: user.userId.toHexString(),
+				isAdmin: user.isAdmin,
+				isMod: user.isMod,
+				createdAt: user.createdAt
+			}) : reject('User ID is invalid')
+		})
+		.catch(e => reject(e))
+})
+
 const createSession = (req, userId) => new Promise(async (resolve, reject) => {
 	if (await userIdExists(userId)) {
-		const sessionId = crypto.randomBytes(12).toString('hex')
-		console.log(req.ip,req.headers['user-agent'])
+		const sessionId = new mongoose.Types.ObjectId()
 		const session = UserSession({
-			_id: sessionId,
+			sessionId,
 			userId,
-			//agent: req.headers['user-agent'],
+			agent: req.headers['user-agent'],
 			ip: req.ip
 		})
 		
@@ -52,18 +66,19 @@ const createSession = (req, userId) => new Promise(async (resolve, reject) => {
 })
 
 const authenticate = req => new Promise(async (resolve, reject) => {
-	const { email, password } = req.query
+	const { email, password } = req.fields
 	
-	User.findOne({email: sanitize(email)})
+	User.findOne({ email: sanitize(email) })
 		.then(async user => {
-			if (!user || !await user.validPassword(password)) {
+			if (!user || !await user.validPassword(password))
 				return reject('Please try another email or password')
-			}
 			
-			createSession(req, user.userId)
+			const userId = user.userId.toHexString()
+			
+			createSession(req, userId)
 				.then(sessionId => resolve({
 					user: {
-						userId: user.userId,
+						userId: userId,
 						isAdmin: user.isAdmin,
 						isMod: user.isMod,
 						createdAt: user.createdAt
@@ -75,10 +90,20 @@ const authenticate = req => new Promise(async (resolve, reject) => {
 		.catch(e => reject(e))
 })
 
+const authenticateSession = sessionId => new Promise(async (resolve, reject) => {
+	getUserIdFromSession(sessionId)
+		.then(async userId => {
+			getUserFromUserId(userId)
+				.then(user => resolve(user))
+				.catch(() => reject('Could not get user data'))
+		})
+		.catch(e => reject(e))
+})
+
 const createAccount = req => new Promise(async (resolve, reject) => {
-	const { name, email, password } = req.query
+	const { name, email, password } = req.fields
 	
-	if (name.length > 30 || !validateText(name, 'name')) {
+	if (name.length > 20 || !validateText(name, 'name')) {
 		reject('Name is invalid')
 	} else if (email.length > 320 || !validateText(email, 'email')) {
 		reject('Email is invalid')
@@ -126,5 +151,7 @@ const createAccount = req => new Promise(async (resolve, reject) => {
 export {
 	emailExists,
 	getUserIdFromSession,
-	authenticate, createAccount
+	getUserFromUserId,
+	authenticate, authenticateSession,
+	createAccount
 }

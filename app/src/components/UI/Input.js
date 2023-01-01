@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -96,7 +96,7 @@ const Input = props => {
 		maxLength: props.maxLength,
 		autoFocus: props.autoFocus,
 		disabled: props.disabled,
-		'aria-required': (props.optional && true) || false,
+		'aria-required': (props.optional && true) || false
 	}
 	
 	const getElement = () => {
@@ -126,10 +126,11 @@ const Input = props => {
 					{props.options.map(option => {
 						return <label className={classNames(value === option[1] && 'selected')} key={option[1]}>
 							<input {...attributes}
-							type="radio"
-							value={option[1]}
-							onChange={event => setValue(event.value)}
-							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue} />
+								type="radio"
+								value={option[1]}
+								onChange={event => setValue(event.value)}
+								defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+							/>
 							<span>{option[0]}</span>
 						</label>
 					})}

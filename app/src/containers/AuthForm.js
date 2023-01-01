@@ -34,9 +34,12 @@ const AuthForm = props => {
 			}
 		}
 		
-		console.log('validity change')
 		setCanSubmit(allInputsValid)
 	}, [validInputs])
+	
+	useEffect(() => {
+		console.log(formData)
+	}, [formData])
 	
 	useEffect(() => {
 		props.inputProps.map(input => {
@@ -55,11 +58,7 @@ const AuthForm = props => {
 		event.preventDefault()
 		
 		// Only post if all inputs are valid
-		if (canSubmit) axios.post({
-			url: props.apiUrl,
-			data: formData,
-			headers: { 'Content-Type': 'application/json' }
-		})
+		if (canSubmit) axios.post(props.apiUrl, formData)
 			.then(response => {
 				if (mounted) {
 					if (props.callback) props.callback(response.data.success)
@@ -88,13 +87,15 @@ const AuthForm = props => {
 		
 		{props.inputProps.map(input => <Input {...input}
 			key={'auth-form-' + input.name}
-			inlineLabel={input.type === 'email'}
+			inlineLabel={true}
 			value={formData[input.name]}
-			handleValueChange={value => setFormData({
-				...formData,
-				// Update form data as the user is making changes
-				[input.name]: value
-			})}
+			handleValueChange={value => {
+				setFormData(prev => ({
+					...prev,
+					// Update form data as the user is making changes
+					[input.name]: value
+				}))
+			}}
 			handleValidity={value => setValidInputs({
 				...validInputs,
 				[input.name]: value
