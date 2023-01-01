@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 
-const userSessionSchema = new mongoose.Schema({
+const userSessionSchema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
 		alias: 'sessionId'
@@ -21,9 +21,5 @@ const userSessionSchema = new mongoose.Schema({
 		default: false
 	}
 }, { _id: false })
-
-userSessionSchema.methods.method = (a, b) => {
-	return true
-}
 
 export default mongoose.model('UserSession', userSessionSchema)

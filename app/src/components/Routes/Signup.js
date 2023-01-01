@@ -15,6 +15,15 @@ const inputs = [
 		maxLength: 320
 	},
 	{
+		type: 'text',
+		name: 'name',
+		label: 'Name',
+		placeholder: 'John Doe',
+		autoFocus: true,
+		validateFor: 'text',
+		maxLength: 20
+	},
+	{
 		type: 'password',
 		name: 'password',
 		label: 'Password',
@@ -30,15 +39,16 @@ const Login = () => <Layout page="landing" disableFooter={true}>
 		<div className="box center-wrap">
 			<div className="form-wrap">
 				<Link to="/" className="btn-back" />
-				<h3 className="heading">Sign In</h3>
+				<h3 className="heading">Sign Up</h3>
 				<AuthForm
 					inputProps={inputs}
-					apiUrl='/auth/login'
+					apiUrl='http://localhost:81/v1/user/new'
 					redirect={true}
-					redirectUrl='/home'
+					redirectUrl='/'
+					buttonText='REGISTER'
 				/>
 				<div className="secondary-auth">
-					don't have an account? <Link to="/signup">sign up</Link>
+					already have an account? <Link to="/login">sign in</Link>
 				</div>
 			</div>
 		</div>

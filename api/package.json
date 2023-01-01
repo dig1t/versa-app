@@ -20,16 +20,19 @@
   },
   "homepage": "https://github.com/dig1t/versa-app#readme",
   "devDependencies": {
-    "@babel/node": "^7.18.10",
+    "@babel/node": "^7.20.7",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/preset-env": "^7.18.10",
-    "babel-watch": "^7.7.0",
-    "bcrypt": "^5.0.1",
+    "@babel/preset-env": "^7.20.2",
+    "babel-plugin-inline-dotenv": "^1.7.0",
+    "babel-watch": "^7.7.2",
+    "bcrypt": "^5.1.0",
+    "bottleneck": "^2.19.5",
     "compression": "^1.7.4",
     "connect-mongo": "^4.6.0",
-    "express": "^4.18.1",
-    "helmet": "^5.1.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "helmet": "^6.0.1",
     "mongo-sanitize": "^1.1.0",
-    "mongoose": "^6.5.1"
+    "mongoose": "^6.8.1"
   }
 }

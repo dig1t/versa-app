@@ -2,18 +2,19 @@ const webpack = require('webpack')
 const path = require('path')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
+const dotenv = require('dotenv').config({ path: '../.env' })
 const dev = process.env.NODE_ENV === 'development'
 
 module.exports = {
 	mode: dev ? 'development' : 'production',
 	
-	//devtool: 'source-map',
+	devtool: 'inline-source-map',
 	
 	entry: {
 		main: [
 			'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true',
 			path.resolve(__dirname, 'src', 'client.js')
-		]
+		].filter(Boolean)
 	},
 	
 	output: {
@@ -31,7 +32,7 @@ module.exports = {
 					loader: 'babel-loader',
 					options: {
 						plugins: [
-							require.resolve('react-refresh/babel')
+							dev && require.resolve('react-refresh/babel')
 						].filter(Boolean)
 					}
 				}]
@@ -40,8 +41,11 @@ module.exports = {
 	},
 	
 	plugins: [
-		new webpack.HotModuleReplacementPlugin(),
-		new ReactRefreshPlugin({
+		new webpack.DefinePlugin({
+			'process.env': JSON.stringify(dotenv.parsed)
+		}),
+		dev && new webpack.HotModuleReplacementPlugin(),
+		dev && new ReactRefreshPlugin({
 			overlay: {
 				sockIntegration: 'whm'
 			}

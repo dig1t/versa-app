@@ -1,8 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import SocialLinks from './SocialLinks'
-
 const links = [
 	['/', 'Home'],
 	['/hello', 'Hello'],
@@ -26,7 +24,6 @@ const Footer = () => <footer className="p-y-2">
 			</div>
 		</div>
 		<div className="col-4">
-			<SocialLinks />
 			<div className="info text-center">
 				<p className="m-y-1">
 					<i className="fas fa-envelope"></i> admin@javierm.net

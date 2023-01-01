@@ -17,7 +17,7 @@ export const fetchUserData = () => {
 	return dispatch => {
 		dispatch({ type: USER_FETCH_REQUEST })
 		
-		axios.get('/api/user')
+		axios.get('http://localhost:81/v1/user')
 			.then(response => dispatch({
 				type: USER_FETCH_SUCCESS,
 				payload: response.data
@@ -35,7 +35,7 @@ export const fetchProfileData = userId => {
 		
 		dispatch({ type: USER_FETCH_REQUEST })
 		
-		axios.get('/api/user/profile', { userId: userId || user.id })
+		axios.get('http://localhost:81/v1/user/profile', { userId: userId || user.id })
 			.then(response => dispatch({
 				type: USER_FETCH_SUCCESS,
 				payload: response.data
