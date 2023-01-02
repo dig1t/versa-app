@@ -58,7 +58,7 @@ if (app.get('env') === 'production') {
 app.use((req, res, next) => {
 	res.apiResult = (status, data) => res.status(status || 200).send({
 		success: status === 200,
-		...data || {},
+		data,
 		message: data && data.message !== undefined && (
 			// if resulting message is a thrown error, convert it to a string
 			(typeof(data.message) === 'string') ? data.message : data.message.toString()
@@ -66,8 +66,8 @@ app.use((req, res, next) => {
 	})
 	
 	res.getFields = (query, respondToClient) => {
-		const data = req.body && req.body.data || req.query
-		
+		const data = (typeof req.body.data !== 'undefined' && req.body.data.data || req.body.data) || req.query
+		console.log(req.body)
 		if (!data) return respondToClient && res.status(400).send({
 			message: 'Missing fields'
 		}) && false
@@ -90,7 +90,6 @@ app.use((req, res, next) => {
 })
 
 app.use('/v1', routes)
-
 
 app.get('*', (_, res) => res.apiResult(404))
 

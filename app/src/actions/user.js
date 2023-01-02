@@ -1,10 +1,14 @@
-import axios from 'axios'
 import {
 	USER_FETCH_REQUEST,
 	USER_FETCH_SUCCESS,
 	USER_FETCH_FAILURE,
+	USER_AUTH_FETCH_REQUEST,
+	USER_AUTH_FETCH_SUCCESS,
+	USER_AUTH_FETCH_FAILURE,
 	USER_LOGGED_IN
 } from '../constants/actionTypes.js'
+
+import { apiGet, apiCall } from '../util/api.js'
 
 export const setAuthStatus = status => {
 	return dispatch => dispatch({
@@ -13,14 +17,38 @@ export const setAuthStatus = status => {
 	})
 }
 
+export const setAuthenticatedUser = data => {
+	return dispatch => dispatch({
+		type: USER_AUTH_FETCH_SUCCESS,
+		payload: data
+	})
+}
+
+// REMOVE?
+export const fetchUserAuth = () => {
+	return dispatch => {
+		dispatch({ type: USER_AUTH_FETCH_REQUEST })
+		
+		apiCall({ url: '/auth/get_user' })
+			.then(data => dispatch({
+				type: USER_AUTH_FETCH_SUCCESS,
+				payload: data
+			}))
+			.catch(error => dispatch({
+				type: USER_AUTH_FETCH_FAILURE,
+				payload: error
+			}))
+	}
+}
+
 export const fetchUserData = () => {
 	return dispatch => {
 		dispatch({ type: USER_FETCH_REQUEST })
 		
-		axios.get('http://localhost:81/v1/user')
-			.then(response => dispatch({
+		apiGet('/user')
+			.then(data => dispatch({
 				type: USER_FETCH_SUCCESS,
-				payload: response.data
+				payload: data
 			}))
 			.catch(error => dispatch({
 				type: USER_FETCH_FAILURE,
@@ -35,10 +63,10 @@ export const fetchProfileData = userId => {
 		
 		dispatch({ type: USER_FETCH_REQUEST })
 		
-		axios.get('http://localhost:81/v1/user/profile', { userId: userId || user.id })
-			.then(response => dispatch({
+		apiGet('/user/profile', { userId: userId || user.id })
+			.then(data => dispatch({
 				type: USER_FETCH_SUCCESS,
-				payload: response.data
+				payload: data
 			}))
 			.catch(error => dispatch({
 				type: USER_FETCH_FAILURE,

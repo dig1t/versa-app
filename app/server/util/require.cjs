@@ -2,13 +2,13 @@
 
 const path = require('path')
 
-const ServerSideRender = '../src/server'
+const ServerSideRender = '../../src/server'
 
 async function render(req, res) {
 	try {
 		if (process.env.NODE_ENV === 'development') {
 			for (const modulePath in require.cache) {
-				if (modulePath.startsWith(path.join(__dirname, '/../src/'))) delete require.cache[modulePath]
+				if (modulePath.startsWith(path.join(__dirname, '/../../src/'))) delete require.cache[modulePath]
 			}
 		}
 		

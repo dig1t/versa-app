@@ -1,14 +1,31 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
+
+import useMounted from '../util/useMounted'
 import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
 
 const PrivateRoute = props => {
 	const loggedIn = useSelector((state) => state.user.loggedIn)
 	
 	const { redirectTo, requireAuth, requireNoAuth } = props
-	const canRender = (requireAuth && loggedIn) || (requireNoAuth && !loggedIn)
 	
-	return canRender ? props.children : <Navigate to={redirectTo} />
+	const canRenderCheck = () => loggedIn === null || (
+		(requireAuth && loggedIn) || (requireNoAuth && !loggedIn)
+	)
+	
+	const [canRender, setCanRender] = useState(canRenderCheck())
+	
+	const navigate = useNavigate()
+	const mounted = useMounted()
+	
+	// Only redirect on the client
+	useEffect(() => {
+		mounted.current && !canRender && navigate(redirectTo)
+		
+		setCanRender(canRenderCheck())
+	}, [loggedIn])
+	
+	return canRenderCheck() ? props.children : <Navigate to={redirectTo} replace={true} />
 }
 
 export default PrivateRoute

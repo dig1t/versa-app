@@ -6,7 +6,7 @@ import reducer from './reducers'
 
 export const createStore = preloadedState => configureStore({
 	reducer,
-	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk, logger),
-	devTools: process.env.NODE_ENV !== 'production',
+	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk),
+	devTools: true,
 	preloadedState
 })
