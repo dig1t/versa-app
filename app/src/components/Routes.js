@@ -20,25 +20,25 @@ const AppRoutes = () => <Routes>
 		</PrivateRoute>
 	} />
 	
+	<Route path="/home" element={
+		<PrivateRoute requireAuth={true} redirectTo="/login">
+			<Home />
+		</PrivateRoute>
+	} />
+	
 	<Route path="/logout" element={
-		<PrivateRoute requireAuth={true} redirectTo="/" />
+		<PrivateRoute requireAuth={true} redirectTo="/login" />
 	} />
 	
 	<Route path="/login" element={
-		<PrivateRoute requireNoAuth={true} redirectTo="/">
+		<PrivateRoute requireNoAuth={true} redirectTo="/home">
 			<Login />
 		</PrivateRoute>
 	} />
 	
 	<Route path="/signup" element={
-		<PrivateRoute requireNoAuth={true} redirectTo="/">
+		<PrivateRoute requireNoAuth={true} redirectTo="/home">
 			<Signup />
-		</PrivateRoute>
-	} />
-	
-	<Route path="/home" element={
-		<PrivateRoute requireAuth={true} redirectTo="/login">
-			<Home />
 		</PrivateRoute>
 	} />
 	

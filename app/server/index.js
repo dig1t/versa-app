@@ -1,8 +1,10 @@
-import express from 'express'
 import session from 'express-session'
+import express from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
 import { webpack } from 'webpack'
+import cookieParser from 'cookie-parser'
+import passport from 'passport'
 
 import { rateLimiterMiddleware, asyncMiddleware } from './util'
 import webpackServerConfig from '../webpack.client.config'
@@ -26,6 +28,7 @@ if (app.get('env') === 'development') {
 	}))
 }
 
+app.use(cookieParser())
 app.use(express.json())
 app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
@@ -70,10 +73,11 @@ db.instance.once('open', () => {
 		saveUninitialized: true,
 		store: db.getStore()
 	}))
-
-	auth.session() // Setup session for authentication
 	
-	app.use('/', auth.router)
+	app.use(passport.initialize())
+	app.use(passport.session())
+	
+	app.use('/', auth)
 	
 	/* PWA manifest file */
 	app.get('/manifest.json', (_, res) => res.send({
@@ -88,7 +92,7 @@ db.instance.once('open', () => {
 	}))
 	
 	/* Route all other traffic to React Renderer */
-	app.get('*', asyncMiddleware(async (req, res) => await useRequire(req, res)))
+	app.get(/^\/(?!auth).*/, asyncMiddleware(async (req, res) => await useRequire(req, res)))
 	
 	app.emit('ready')
 })

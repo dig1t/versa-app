@@ -1,8 +1,10 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import AuthForm from '../../containers/AuthForm'
 import Layout from '../Layout'
+import { setAuthStatus, fetchUserData, setAuthenticatedUser } from '../../actions/user'
 
 const inputs = [
 	{
@@ -25,24 +27,39 @@ const inputs = [
 	}
 ]
 
-const Login = () => <Layout page="landing" disableFooter={true}>
-	<section className="auth">
-		<div className="box center-wrap">
-			<div className="form-wrap">
-				<Link to="/" className="btn-back" />
-				<h3 className="heading">Sign In</h3>
-				<AuthForm
-					inputProps={inputs}
-					apiUrl='/auth/login'
-					redirect={true}
-					redirectUrl='/home'
-				/>
-				<div className="secondary-auth">
-					don't have an account? <Link to="/signup">sign up</Link>
+const Login = () => {
+	const dispatch = useDispatch()
+	
+	const handleResult = (success, data) => {
+		console.log('login success?', success)
+		if (success) {
+			console.log('DATA FROM LOGIN SUCCESS', data)
+			dispatch(setAuthenticatedUser(data))
+		} else {
+			dispatch(setAuthStatus(false))
+		}
+	}
+	
+	return <Layout page="landing" disableFooter={true}>
+		<section className="auth">
+			<div className="box center-wrap">
+				<div className="form-wrap">
+					<Link to="/" className="btn-back" />
+					<h3 className="heading">Sign In</h3>
+					<AuthForm
+						inputProps={inputs}
+						apiUrl='/auth/login'
+						redirect={true}
+						redirectUrl='/home'
+						handleResult={handleResult}
+					/>
+					<div className="secondary-auth">
+						don't have an account? <Link to="/signup">sign up</Link>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
-</Layout>
+		</section>
+	</Layout>
+}
 
 export default Login

@@ -8,9 +8,7 @@ import { createPost } from './posts'
 
 const router = Router()
 
-router.get('/ping', (_req, res) => {
-	res.json({ pong: true })
-})
+router.get('/ping', (_req, res) => res.json({ pong: true }))
 
 router.get('/user', asyncMiddleware(async (req, res) => {
 	if (!res.getFields([ 'userId' ], true)) return

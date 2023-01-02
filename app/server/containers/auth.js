@@ -1,11 +1,16 @@
-import axios from 'axios'
 import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
+import { apiGet, apiPost } from '../../src/util/api'
+
 const router = Router()
 
-const BASE_URL = 'http://localhost:81/v1'
+const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(() => {
+	req.loggedUserOut = true
+	
+	next()
+}) : next()
 
 // Extract the userId from the auth strategy
 passport.serializeUser((data, done) => done(null, {
@@ -16,12 +21,13 @@ passport.serializeUser((data, done) => done(null, {
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
 	try {
-		axios.get(BASE_URL + '/user',
-			{ data: { data: { userId: user.userId } } }
-		)
-			.then(response => {
-				done(null, response.data)
-			})
+		apiGet('/user', { userId: user.userId })
+			.then(data => done(null, {
+				userId: user.userId,
+				isAdmin: data.isAdmin,
+				isMod: data.isMod,
+				sessionId: user.sessionId
+			}))
 			.catch(e => done(e, {}))
 	} catch(e) {
 		done(e, {})
@@ -32,43 +38,51 @@ passport.deserializeUser((user, done) => {
 passport.use('local', new LocalStrategy(
 	{ usernameField: 'email' }, (email, password, done) => {
 		try {
-			axios.post(BASE_URL + '/user/authenticate', {
-				data: { email, password }
-			})
-				.then(response => {
-					response.success ? done(null, response.data) : done(response.data.message, null)
-				})
-				.catch(e => done(e))
+			apiPost('/user/authenticate', { email, password })
+				.then(data => done(null, data))
+				.catch(error => done(null, false, { message: error }))
 		} catch(e) {
-			done(e)
+			done(null, false, { message: 'Server error!!!111' })
 		}
 	}
 ))
 
 /* Define Routes */
-router.get('/auth/get_user', (req, res) => res.send(req.user && {
-	userId: req.user.userId,
-	isAdmin: req.user.isAdmin
-}))
-
 router.post('/auth/logout', (req, res) => {
-	req.logout(err => {
-		if (err) return next(err)
-		
+	req.logout(() => {
 		req.session.destroy()
-		res.redirect(307, '/')
+		res.send({
+			success: true
+		})
 	})
 })
 
 router.post(
 	'/auth/login',
-	passport.authenticate('local'), (req, _) => res.send(req.user)
+	logoutMiddleware,
+	(req, res) => passport.authenticate('local', (_, user) => {
+		user ? req.login(user, () => res.send({
+			success: true,
+			data: {
+				userId: req.user.userId,
+				isAdmin: req.user.isAdmin
+			}
+		})) : res.send({
+			success: false,
+			message: 'Not logged in'
+		})
+	})(req, res)
 )
 
-export default {
-	router,
-	session: () => {
-		router.use(passport.initialize())
-		router.use(passport.session()) // must be run after express-session
+router.get('/auth/get_user', (req, res) => res.send(req.isAuthenticated() ? {
+	success: true,
+	data: {
+		userId: req.user.userId,
+		isAdmin: req.user.isAdmin
 	}
-}
+} : {
+	success: false,
+	message: 'Not logged in'
+}))
+
+export default router

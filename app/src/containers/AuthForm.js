@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import axios from 'axios'
 
 import useMounted from '../util/useMounted'
 import { Input } from '../components/UI'
-
-import { setAuthStatus, fetchUserData } from '../actions/user'
+import { apiCall } from '../util/api'
 
 const AuthForm = props => {
-	const dispatch = useDispatch()
-	
 	const [formData, setFormData] = useState({})
 	// All required inputs must be valid to enable submit button
 	const [validInputs, setValidInputs] = useState({})
@@ -38,10 +33,6 @@ const AuthForm = props => {
 	}, [validInputs])
 	
 	useEffect(() => {
-		console.log(formData)
-	}, [formData])
-	
-	useEffect(() => {
 		props.inputProps.map(input => {
 			setFormData({
 				...formData,
@@ -58,29 +49,34 @@ const AuthForm = props => {
 		event.preventDefault()
 		
 		// Only post if all inputs are valid
-		if (canSubmit) axios.post(props.apiUrl, formData)
-			.then(response => {
+		if (canSubmit) apiCall({
+			method: 'post',
+			url: props.apiUrl,
+			_data: formData
+		})
+			.then(data => {
 				if (mounted) {
-					if (props.callback) props.callback(response.data.success)
+					if (props.handleResult) props.handleResult(true, data)
 					
-					setRedirect(response.data.success)
-				}
-				
-				if (response.data.success) {
-					// setAuthStatus will re-render the Routes component and PrivateRoute will redirect
-					dispatch(setAuthStatus(true))
-					dispatch(fetchUserData())
-				} else {
-					setAuthMessage(response.data.message)
-					setCanSubmit(false)
-					
-					if (formData.password !== 'undefined') setFormData({
-						...formData,
-						password: ''
-					})
+					setRedirect(true)
 				}
 			})
-			.catch(error => console.error(error))
+			.catch(error => {
+				if (mounted) {
+					if (props.handleResult) props.handleResult(false)
+					
+					setRedirect(false)
+				}
+				
+				setAuthMessage(error)
+				setCanSubmit(false)
+				
+				// Clear the password field
+				if (formData.password) setFormData({
+					...formData,
+					password: ''
+				})
+			})
 	}}>
 		{redirect && props.redirect ? <Navigate to={props.redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>

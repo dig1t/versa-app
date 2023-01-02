@@ -10,7 +10,7 @@ const assets = {
 }
 
 const ServerSideRender = (req, res) => {
-	req.app.get('env') === 'development' && res.setHeader('Cache-Control', 'no-cache')
+	process.env.NODE_ENV === 'development' && res.setHeader('Cache-Control', 'no-cache')
 	res.setHeader('Content-Type', 'text/html; charset=utf-8')
 	
 	let didError = false
