@@ -1,31 +1,23 @@
-import React, { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
 
-import useMounted from '../util/useMounted'
-import { useSelector } from 'react-redux'
+import { isHydrated } from '../context/Hydration'
+import { isAuthenticated } from '../context/Auth'
 
 const PrivateRoute = props => {
-	const loggedIn = useSelector((state) => state.user.loggedIn)
+	const hydrated = isHydrated()
+	const { loggedIn } = isAuthenticated()
 	
 	const { redirectTo, requireAuth, requireNoAuth } = props
 	
-	const canRenderCheck = () => loggedIn === null || (
-		(requireAuth && loggedIn) || (requireNoAuth && !loggedIn)
+	const canRenderCheck = () => (
+		(requireAuth && loggedIn) || (requireNoAuth && !loggedIn) || !hydrated
 	)
 	
-	const [canRender, setCanRender] = useState(canRenderCheck())
+	useEffect(() => console.log('route rendered'), [])
 	
-	const navigate = useNavigate()
-	const mounted = useMounted()
-	
-	// Only redirect on the client
-	useEffect(() => {
-		mounted.current && !canRender && navigate(redirectTo)
-		
-		setCanRender(canRenderCheck())
-	}, [loggedIn])
-	
-	return canRenderCheck() ? props.children : <Navigate to={redirectTo} replace={true} />
+	//return renderedComponent
+	return canRenderCheck() ? <Outlet /> : <Navigate to={redirectTo} />
 }
 
 export default PrivateRoute

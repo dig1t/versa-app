@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 
 const links = [
 	['/', 'Home'],
-	['/friends', 'Friends'],
-	['/inbox', 'Messages'],
-	['/servers', 'Servers'],
-	['/legal', 'Legal'],
-	['/privacy', 'Privacy']
+	['/hello', 'Hello'],
+	//['/faq', 'FAQ'],
+	//['/contact', 'Contact'],
+	//['/legal', 'Legal'],
+	//['/privacy', 'Privacy']
 ]
 
 const LinksContainer = () => <div className="grid text-center">
@@ -26,11 +26,14 @@ const Footer = () => <footer className="p-y-2">
 		<div className="col-4">
 			<div className="info text-center">
 				<p className="m-y-1">
-					<i className="fas fa-envelope"></i> admin@javierm.net
+					<i className="fas fa-envelope"></i> info@versa.dig1t.io
+				</p>
+				<p className="m-y-1">
+					<i className="fas fa-phone fa-flip-horizontal"></i> +1-800-777-3333
 				</p>
 			</div>
 		</div>
-		<div className="col-10 offset-1 copyright text-center font-size-10 p-1">©{(new Date()).getFullYear()} Versa</div>
+		<div className="col-10 offset-1 ight text-center font-size-10 p-1">©{(new Date()).getFullYear()} Versa</div>
 	</div>
 </footer>
 

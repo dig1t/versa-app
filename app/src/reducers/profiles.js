@@ -7,7 +7,11 @@ export default (state = {
 }, action) => {
 	switch(action.type) {
 		case PROFILE_FETCH_SUCCESS: {
-			return {
+			const profileExists = state.data.find(
+				profile => profile.userId === action.payload.userId
+			)
+			
+			return profileExists ? state : {
 				...state,
 				// using concat on the data object makes adding profiles quicker
 				data: state.data.concat(action.payload)

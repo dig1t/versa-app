@@ -15,10 +15,7 @@ const userSchema = new Schema({
 		required: true,
 		unique: true
 	},
-	password: {
-		type: String,
-		required: true
-	},
+	password: String,
 	passwordEnabled: { // if user signed up using SSO, this will be disabled
 		type: Boolean,
 		default: true

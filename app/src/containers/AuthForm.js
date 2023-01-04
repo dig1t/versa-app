@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-import useMounted from '../util/useMounted'
 import { Input } from '../components/UI'
 import { apiCall } from '../util/api'
+import { isHydrated } from '../context/Hydration'
 
 const AuthForm = props => {
+	const hydrated = isHydrated()
+	
 	const [formData, setFormData] = useState({})
 	// All required inputs must be valid to enable submit button
 	const [validInputs, setValidInputs] = useState({})
@@ -16,8 +18,6 @@ const AuthForm = props => {
 	const [redirect, setRedirect] = useState(false)
 	const [canSubmit, setCanSubmit] = useState(false)
 	const [authMessage, setAuthMessage] = useState('')
-	
-	const mounted = useMounted()
 	
 	useEffect(() => {
 		let allInputsValid = true
@@ -47,22 +47,22 @@ const AuthForm = props => {
 	
 	return <form onSubmit={event => {
 		event.preventDefault()
-		
+		console.log('form data', formData)
 		// Only post if all inputs are valid
 		if (canSubmit) apiCall({
 			method: 'post',
 			url: props.apiUrl,
-			_data: formData
+			_data: { data: formData }
 		})
 			.then(data => {
-				if (mounted) {
+				if (hydrated) {
 					if (props.handleResult) props.handleResult(true, data)
 					
 					setRedirect(true)
 				}
 			})
 			.catch(error => {
-				if (mounted) {
+				if (hydrated) {
 					if (props.handleResult) props.handleResult(false)
 					
 					setRedirect(false)

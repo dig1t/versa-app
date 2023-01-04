@@ -1,8 +1,9 @@
 import {
-	USER_FETCH_SUCCESS,
+	USER_LOGGED_IN,
 	USER_LOGOUT_SUCCESS,
-	USER_AUTH_FETCH_SUCCESS,
-	USER_LOGGED_IN
+	USER_FETCH_SUCCESS,
+	USER_FETCH_FAILURE,
+	USER_PROFILE_FETCH_SUCCESS
 } from '../constants/actionTypes.js'
 
 export default (state = {
@@ -21,20 +22,27 @@ export default (state = {
 		case USER_LOGOUT_SUCCESS: {
 			return {
 				...state,
-				loggedIn: null,
+				loggedIn: false,
 				userId: null,
 				profile: null
 			}
 		}
-		case USER_AUTH_FETCH_SUCCESS: {
+		case USER_FETCH_SUCCESS: {
 			return {
 				...state,
 				loggedIn: true,
 				userId: action.payload.userId,
-				isAdmin: action.payload.isAdmin
+				isAdmin: action.payload.isAdmin,
+				isMod: action.payload.isMod
 			}
 		}
-		case USER_FETCH_SUCCESS: {
+		case USER_FETCH_FAILURE: {
+			return {
+				...state,
+				loggedIn: false
+			}
+		}
+		case USER_PROFILE_FETCH_SUCCESS: {
 			return {
 				...state,
 				profile: action.payload

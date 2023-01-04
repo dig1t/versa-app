@@ -3,10 +3,19 @@ import axios from 'axios'
 const BASE_URL = 'http://localhost:81/v1'
 
 export const apiCall = config => new Promise(async (resolve, reject) => {
-	axios[config.method || 'get'](
-		config.url,
-		config._data || {
-			data: { data: config.data },
+	const method = config.method || 'get'
+	
+	axios(
+		{
+			method,
+			url: config.url,
+			[method === 'get' ? 'params' : 'body']: (
+				config._data || { data: config.data }
+			),
+			headers: {
+				'Content-Type' : 'application/json; charset=UTF-8',
+				      'Accept': 'Token'
+			}
 			// ,tokens, etc
 		}
 	)
