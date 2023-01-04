@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import AuthForm from '../../containers/AuthForm'
 import Layout from '../Layout'
-import { setAuthStatus, fetchUserData, setAuthenticatedUser } from '../../actions/user'
+import { setAuthStatus, setAuthenticatedUser } from '../../actions/user'
 
 const inputs = [
 	{
@@ -32,12 +32,9 @@ const Login = () => {
 	
 	const handleResult = (success, data) => {
 		console.log('login success?', success)
-		if (success) {
-			console.log('DATA FROM LOGIN SUCCESS', data)
-			dispatch(setAuthenticatedUser(data))
-		} else {
-			dispatch(setAuthStatus(false))
-		}
+		console.log('DATA FROM LOGIN', data)
+		
+		dispatch(success ? setAuthenticatedUser(data) : setAuthStatus(false))
 	}
 	
 	return <Layout page="landing" disableFooter={true}>

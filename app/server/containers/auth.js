@@ -12,6 +12,16 @@ const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(()
 	next()
 }) : next()
 
+const apiFieldMiddleware = (req, _, next) => {
+	const data = req.body?.data
+	
+	Object.entries(data).forEach(([key, value]) => {
+		req.body[key] = value
+	})
+	
+	next()
+}
+
 // Extract the userId from the auth strategy
 passport.serializeUser((data, done) => done(null, {
 	userId: data.user.userId,
@@ -20,18 +30,14 @@ passport.serializeUser((data, done) => done(null, {
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
-	try {
-		apiGet('/user', { userId: user.userId })
-			.then(data => done(null, {
-				userId: user.userId,
-				isAdmin: data.isAdmin,
-				isMod: data.isMod,
-				sessionId: user.sessionId
-			}))
-			.catch(e => done(e, {}))
-	} catch(e) {
-		done(e, {})
-	}
+	apiGet('/user', { userId: user.userId })
+		.then(data => done(null, {
+			userId: user.userId,
+			isAdmin: data.isAdmin,
+			isMod: data.isMod,
+			sessionId: user.sessionId
+		}))
+		.catch(e => done(e, {}))
 })
 
 /* Define Authentication Methods */
@@ -60,6 +66,7 @@ router.post('/auth/logout', (req, res) => {
 router.post(
 	'/auth/login',
 	logoutMiddleware,
+	apiFieldMiddleware,
 	(req, res) => passport.authenticate('local', (_, user) => {
 		user ? req.login(user, () => res.send({
 			success: true,
@@ -72,6 +79,46 @@ router.post(
 			message: 'Not logged in'
 		})
 	})(req, res)
+)
+
+router.post(
+	'/auth/signup',
+	apiFieldMiddleware,
+	(req, res) => {
+		if (req.isAuthenticated()) return res.send({
+			success: false,
+			message: 'Already logged in'
+		})
+		
+		apiPost('/user/new', req.body.data)
+			.then(data => done(null, {
+				userId: user.userId,
+				isAdmin: data.isAdmin,
+				isMod: data.isMod,
+				sessionId: user.sessionId
+			}))
+			.catch(e => done(e, {}))
+		
+		const data = req.body?.data
+		
+		if (data.email && data.password) {
+			req.body.email = data.email
+			req.body.password = data.password
+		}
+		
+		passport.authenticate('local', (_, user) => {
+			user ? req.login(user, () => res.send({
+				success: true,
+				data: {
+					userId: req.user.userId,
+					isAdmin: req.user.isAdmin
+				}
+			})) : res.send({
+				success: false,
+				message: 'Not logged in'
+			})
+		})(req, res)
+	}
 )
 
 router.get('/auth/get_user', (req, res) => res.send(req.isAuthenticated() ? {

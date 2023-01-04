@@ -14,7 +14,7 @@ async function render(req, res) {
 		
 		await require(ServerSideRender)?.default(req, res)
 	} catch (err) {
-		console.error(err);
+		console.error(err)
 		res.send('Internal Error')
 	}
 }

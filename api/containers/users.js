@@ -8,6 +8,24 @@ import User from '../models/User'
 import UserSession from '../models/UserSession'
 import Profile from '../models/Profile'
 
+const deserializeUser = user => ({
+	userId: user.userId.toHexString(),
+	isAdmin: user.isAdmin,
+	isMod: user.isMod,
+	createdAt: user.createdAt
+})
+
+const deserializeProfile = profile => ({
+	userId: profile.userId.toHexString(),
+	username: profile.username,
+	name: profile.name,
+	avatar: profile.avatar,
+	bannerPhoto: profile.bannerPhoto,
+	bio: profile.bio,
+	website: profile.website,
+	lastActive: profile.lastActive
+})
+
 const getUserIdFromSession = sessionId => new Promise(async (resolve, reject) => {
 	UserSession.findOne({ sessionId: sanitize(sessionId) })
 		.then(user => {
@@ -33,19 +51,6 @@ const userIdExists = async userId => {
 	
 	return count > 0 ? true : false
 }
-
-const getUserFromUserId = userId => new Promise(async (resolve, reject) => {
-	User.findOne({ _id: sanitize(userId) })
-		.then(user => {
-			user ? resolve({
-				userId: user.userId.toHexString(),
-				isAdmin: user.isAdmin,
-				isMod: user.isMod,
-				createdAt: user.createdAt
-			}) : reject('User ID is invalid')
-		})
-		.catch(e => reject(e))
-})
 
 const createSession = (req, userId) => new Promise(async (resolve, reject) => {
 	if (await userIdExists(userId)) {
@@ -77,12 +82,7 @@ const authenticate = req => new Promise(async (resolve, reject) => {
 			
 			createSession(req, userId)
 				.then(sessionId => resolve({
-					user: {
-						userId: userId,
-						isAdmin: user.isAdmin,
-						isMod: user.isMod,
-						createdAt: user.createdAt
-					},
+					user: deserializeUser(user),
 					sessionId
 				}))
 				.catch(e => reject(e))
@@ -128,17 +128,19 @@ const createAccount = req => new Promise(async (resolve, reject) => {
 				const userId = user.userId
 				
 				const profile = new Profile({
-					userId,
-					name,
-					user: user._id,
-					username: userId
+					_id: userId,
+					name
 				})
 				
 				profile.save()
 					.then(() => {
 						createSession(req, userId)
 							.then(sessionId => {
-								resolve({ userId, sessionId })
+								resolve({
+									user: deserializeProfile(user),
+									profile: deserializeProfile(profile),
+									sessionId
+								})
 							})
 							.catch(e => reject(e))
 					})
@@ -148,10 +150,27 @@ const createAccount = req => new Promise(async (resolve, reject) => {
 	}
 })
 
+const getUserFromUserId = userId => new Promise(async (resolve, reject) => {
+	User.findOne({ _id: sanitize(userId) })
+		.then(user => {
+			user ? resolve(deserializeUser(user)) : reject('User ID is invalid')
+		})
+		.catch(e => reject(e))
+})
+
+const getProfileFromUserId = userId => new Promise(async (resolve, reject) => {
+	Profile.findOne({ _id: sanitize(userId) })
+		.then(profile => {
+			profile ? resolve(deserializeProfile(profile)) : reject('User ID is invalid')
+		})
+		.catch(e => reject(e))
+})
+
 export {
 	emailExists,
 	getUserIdFromSession,
-	getUserFromUserId,
 	authenticate, authenticateSession,
-	createAccount
+	createAccount,
+	getUserFromUserId,
+	getProfileFromUserId
 }

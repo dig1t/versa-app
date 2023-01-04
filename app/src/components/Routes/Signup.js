@@ -1,8 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 
 import AuthForm from '../../containers/AuthForm'
 import Layout from '../Layout'
+import { setAuthStatus, setAuthenticatedUser, setUserProfile } from '../../actions/user'
+import { addUserProfile } from '../../actions/profile'
 
 const inputs = [
 	{
@@ -19,7 +22,6 @@ const inputs = [
 		name: 'name',
 		label: 'Name',
 		placeholder: 'John Doe',
-		autoFocus: true,
 		validateFor: 'text',
 		maxLength: 20
 	},
@@ -34,25 +36,43 @@ const inputs = [
 	}
 ]
 
-const Login = () => <Layout page="landing" disableFooter={true}>
-	<section className="auth">
-		<div className="box center-wrap">
-			<div className="form-wrap">
-				<Link to="/" className="btn-back" />
-				<h3 className="heading">Sign Up</h3>
-				<AuthForm
-					inputProps={inputs}
-					apiUrl='http://localhost:81/v1/user/new'
-					redirect={true}
-					redirectUrl='/'
-					buttonText='REGISTER'
-				/>
-				<div className="secondary-auth">
-					already have an account? <Link to="/login">sign in</Link>
+const Signup = () => {
+	const dispatch = useDispatch()
+	
+	const handleResult = (success, data) => {
+		console.log('signup success?', success)
+		
+		if (success) {
+			console.log('DATA FROM SIGNUP SUCCESS', data)
+			dispatch(setAuthenticatedUser(data.user))
+			dispatch(setUserProfile(data.profile)) // replace with bottom function
+			dispatch(addUserProfile(data.profile)) // add profile to cached profiles
+		} else {
+			dispatch(setAuthStatus(false))
+		}
+	}
+	
+	return <Layout page="landing" disableFooter={true}>
+		<section className="auth">
+			<div className="box center-wrap">
+				<div className="form-wrap">
+					<Link to="/" className="btn-back" />
+					<h3 className="heading">Sign Up</h3>
+					<AuthForm
+						inputProps={inputs}
+						apiUrl='http://localhost:81/v1/user/new'
+						redirect={true}
+						redirectUrl='/'
+						buttonText='REGISTER'
+						handleResult={handleResult}
+					/>
+					<div className="secondary-auth">
+						already have an account? <Link to="/login">sign in</Link>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
-</Layout>
+		</section>
+	</Layout>
+}
 
-export default Login
+export default Signup

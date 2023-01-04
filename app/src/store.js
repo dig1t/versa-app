@@ -6,7 +6,7 @@ import reducer from './reducers'
 
 export const createStore = preloadedState => configureStore({
 	reducer,
-	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk),
+	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk, logger),
 	devTools: true,
 	preloadedState
 })

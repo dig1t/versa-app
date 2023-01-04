@@ -3,7 +3,13 @@ import { Router } from 'express'
 
 import { asyncMiddleware } from '../util'
 
-import { authenticate, createAccount, getUserIdFromSession, getUserFromUserId } from './users'
+import {
+	authenticate,
+	createAccount,
+	getUserIdFromSession,
+	getUserFromUserId,
+	getProfileFromUserId
+} from './users'
 import { createPost } from './posts'
 
 const router = Router()
@@ -14,6 +20,16 @@ router.get('/user', asyncMiddleware(async (req, res) => {
 	if (!res.getFields([ 'userId' ], true)) return
 	
 	getUserFromUserId(req.fields.userId)
+		.then(result => res.apiResult(200, result))
+		.catch(err => res.apiResult(500, {
+			message: err
+		}))
+}))
+
+router.get('/user/profile', asyncMiddleware(async (req, res) => {
+	if (!res.getFields([ 'userId' ], true)) return
+	
+	getProfileFromUserId(req.fields.userId)
 		.then(result => res.apiResult(200, result))
 		.catch(err => res.apiResult(500, {
 			message: err
@@ -85,9 +101,6 @@ router.get('/user', (req, res) => {
 	
 })
 
-router.get('/profile', (req, res) => {
-	
-})
 */
 
 export default router
