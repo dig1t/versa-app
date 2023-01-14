@@ -3,18 +3,18 @@ import {
 } from '../constants/actionTypes.js'
 
 export default (state = {
-	data: []
+	profileList: []
 }, action) => {
 	switch(action.type) {
 		case PROFILE_FETCH_SUCCESS: {
-			const profileExists = state.data.find(
+			const profileExists = state.profileList.find(
 				profile => profile.userId === action.payload.userId
 			)
 			
 			return profileExists ? state : {
 				...state,
 				// using concat on the data object makes adding profiles quicker
-				data: state.data.concat(action.payload)
+				profileList: state.profileList.concat(action.payload)
 			}
 		}
 		default: {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { USER_LOGOUT_SUCCESS } from '../constants/actionTypes.js'
+import { userLogout } from '../actions/user.js'
 import { apiCall } from '../util/api'
 
 const Logout = () => {
@@ -16,9 +16,7 @@ const Logout = () => {
 			method: 'post',
 			url: '/auth/logout'
 		})
-			.then(() => dispatch({
-				type: USER_LOGOUT_SUCCESS
-			}))
+			.then(() => dispatch(userLogout()))
 		
 		setClicked(true)
 	}

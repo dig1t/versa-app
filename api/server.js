@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 	res.getFields = (query, respondToClient) => {
 		const data = (
 			typeof req.body.data !== 'undefined' && (req.body.data.data || req.body.data)
-		) || req.query.data
+		) || req.query.data || req.query
 		
 		if (!data) return respondToClient && res.status(400).send({
 			message: 'Missing fields'
@@ -84,8 +84,6 @@ app.use((req, res, next) => {
 			
 			req.fields[query[field]] = data[query[field]]
 		}
-		
-		console.log(req.originalUrl, req.fields)
 		
 		return true
 	}

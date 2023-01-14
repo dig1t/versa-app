@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
+import { useSelector } from 'react-redux'
 
-import Navigation from './Navigation'
+import { Navigation } from './Navigation'
 import Footer from './Footer'
 
 const Layout = props => {
-	const [theme, setTheme] = useState('light')
+	const appTheme = useSelector(state => state.settings.appTheme)
 	
-	useEffect(() => {
-		setTheme(props.theme)
-	}, [props.theme])
-	
-	return <main className={classNames(theme)} page={props.page}>
-		{!props.disableNav && <Navigation theme={theme} sticky={props.stickyNav} transparent={true} page={props.page} />}
-		<div className={classNames('content', props.page)}>{props.children}</div>
-		{!props.disableFooter && <Footer />}
+	return <main data-theme={appTheme} page={props.page}>
+		{!props.disableNav && <Navigation theme={appTheme} sticky={props.stickyNav} transparent={true} page={props.page} />}
+		<div className={classNames('content', props.page)}>
+			{props.children}
+			{props.showFooter && <Footer />}
+		</div>
 	</main>
 }
 

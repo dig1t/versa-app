@@ -108,7 +108,7 @@ const Input = props => {
 					onChange={handleChange}
 					onKeyUp={handleChange}
 					onBlur={() => validate()}
-				></textarea>
+				/>
 			case 'select':
 				return <select {...attributes} multiple={props.multiple}>
 					{props.options.map(option => {

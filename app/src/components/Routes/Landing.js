@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Layout from '../Layout'
 
-const Landing = () => <Layout page="landing" disableFooter={true} disableNav={true}>
+const Landing = () => <Layout page="landing" disableNav={true}>
 	<section className="hero">
 		<div className="box align-center-wrap">
 			<div>

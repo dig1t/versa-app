@@ -13,18 +13,13 @@ export default (state = {
 	profile: {}
 }, action) => {
 	switch(action.type) {
-		case USER_LOGGED_IN: {
-			return {
-				...state,
-				loggedIn: action.payload
-			}
-		}
 		case USER_LOGOUT_SUCCESS: {
 			return {
 				...state,
 				loggedIn: false,
 				userId: null,
-				profile: null
+				isAdmin: false,
+				profile: {}
 			}
 		}
 		case USER_FETCH_SUCCESS: {

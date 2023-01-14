@@ -1,13 +1,22 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+/*
+const links = [
+	['/search', 'Search'],
+	['/friends', 'Friends'],
+	['/inbox', 'Inbox'],
+	['/servers', 'Servers']
+]
+*/
+
 const links = [
 	['/', 'Home'],
 	['/friends', 'Friends'],
-	['/inbox', 'Messages'],
-	['/servers', 'Servers'],
-	['/legal', 'Legal'],
-	['/privacy', 'Privacy']
+	//['/faq', 'FAQ'],
+	//['/contact', 'Contact'],
+	//['/legal', 'Legal'],
+	//['/privacy', 'Privacy']
 ]
 
 const LinksContainer = () => <div className="grid text-center">

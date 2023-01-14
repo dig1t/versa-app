@@ -47,12 +47,12 @@ const AuthForm = props => {
 	
 	return <form onSubmit={event => {
 		event.preventDefault()
-		console.log('form data', formData)
+		
 		// Only post if all inputs are valid
 		if (canSubmit) apiCall({
 			method: 'post',
 			url: props.apiUrl,
-			_data: { data: formData }
+			data: formData
 		})
 			.then(data => {
 				if (hydrated) {
