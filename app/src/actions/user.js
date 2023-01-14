@@ -2,19 +2,18 @@ import {
 	USER_PROFILE_FETCH_REQUEST,
 	USER_PROFILE_FETCH_SUCCESS,
 	USER_PROFILE_FETCH_FAILURE,
+	USER_LOGOUT_SUCCESS,
 	USER_FETCH_REQUEST,
 	USER_FETCH_SUCCESS,
 	USER_FETCH_FAILURE,
-	USER_LOGGED_IN,
 	PROFILE_FETCH_SUCCESS
 } from '../constants/actionTypes.js'
 
 import { apiGet, apiCall } from '../util/api.js'
 import { suspenseWrap } from '../util/suspenseWrap.js'
 
-export const setAuthStatus = status => dispatch => dispatch({
-	type: USER_LOGGED_IN,
-	payload: status
+export const userLogout = status => dispatch => dispatch({
+	type: USER_LOGOUT_SUCCESS
 })
 
 export const setAuthenticatedUser = data => dispatch => dispatch({

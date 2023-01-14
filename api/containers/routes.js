@@ -74,6 +74,7 @@ router.post('/post/new', asyncMiddleware(async (req, res) => {
 	if (!res.getFields([ 'sessionId', 'text' ], true)) return
 	
 	try {
+		console.log(req.fields.sessionId)
 		const userId = await getUserIdFromSession(req.fields.sessionId)
 		
 		if (userId) createPost(userId, req.fields)

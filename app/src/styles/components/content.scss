@@ -1,0 +1,15 @@
+.post {
+	.container {
+		margin: 1rem;
+		display: flex;
+		
+		.post-avatar {
+			padding-right: 1rem;
+			flex-basis: 5rem;
+		}
+		
+		.main {
+			flex: 1
+		}
+	}
+}

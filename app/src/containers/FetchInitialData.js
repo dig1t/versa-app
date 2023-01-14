@@ -9,7 +9,7 @@ import Loading from '../components/Loading'
 const AsyncAuthFetch = ({ children }) => {
 	const dispatch = useDispatch()
 	
-	const { loggedIn } = isAuthenticated()
+	const { loggedIn, userId } = isAuthenticated()
 	
 	useEffect(() => {
 		dispatch(fetchUserAuth())

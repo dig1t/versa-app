@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 
 import AuthForm from '../../containers/AuthForm'
 import Layout from '../Layout'
-import { setAuthStatus, setAuthenticatedUser, setUserProfile } from '../../actions/user'
+import { setAuthenticatedUser, setUserProfile, userLogout } from '../../actions/user'
 import { addUserProfile } from '../../actions/profile'
 
 const inputs = [
@@ -40,19 +40,16 @@ const Signup = () => {
 	const dispatch = useDispatch()
 	
 	const handleResult = (success, data) => {
-		console.log('signup success?', success)
-		
 		if (success) {
-			console.log('DATA FROM SIGNUP SUCCESS', data)
 			dispatch(setAuthenticatedUser(data.user))
 			dispatch(setUserProfile(data.profile)) // replace with bottom function
 			dispatch(addUserProfile(data.profile)) // add profile to cached profiles
 		} else {
-			dispatch(setAuthStatus(false))
+			dispatch(userLogout())
 		}
 	}
 	
-	return <Layout page="landing" disableFooter={true}>
+	return <Layout page="landing">
 		<section className="auth">
 			<div className="box center-wrap">
 				<div className="form-wrap">
@@ -60,7 +57,7 @@ const Signup = () => {
 					<h3 className="heading">Sign Up</h3>
 					<AuthForm
 						inputProps={inputs}
-						apiUrl='http://localhost:81/v1/user/new'
+						apiUrl='/auth/signup'
 						redirect={true}
 						redirectUrl='/'
 						buttonText='REGISTER'

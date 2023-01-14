@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="avatar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #b2b9c0;
+      }
+
+      .cls-2 {
+        fill: #e3e5e8;
+      }
+    </style>
+  </defs>
+  <g id="avatar-2" data-name="avatar">
+    <rect class="cls-2" y="0" width="128" height="128"/>
+    <circle class="cls-1" cx="63.79" cy="65.66" r="30.5"/>
+    <path class="cls-1" d="M97.63,88.35c-2.49-2.12-6.18-1.81-8.39,.61-6.31,6.89-15.37,11.21-25.44,11.21s-18.99-4.25-25.29-11.04c-2.23-2.4-5.92-2.69-8.4-.56-11.09,9.54-18.11,23.66-18.11,39.43H116c0-15.89-7.14-30.12-18.37-39.65Z"/>
+  </g>
+</svg>

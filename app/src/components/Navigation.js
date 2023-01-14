@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux'
 
 import { isAuthenticated } from '../context/Auth'
 import { isHydrated } from '../context/Hydration'
+import { defaultAssets } from '../constants/assets'
+import Avatar from '../containers/Avatar'
 
 //import { BurgerMenu } from './UI'
 
@@ -13,20 +15,57 @@ const links = [
 	//['/', 'Home']
 ]
 
-const NavWrap = props => <nav
-	className={classNames(props.classNames, !props.loggedIn && 'no-auth')}
-	role="navigation"
->
-	<div className="placeholder"></div>
-	<div className="box p-x-3">
-		{ props.children }
-	</div>
-</nav>
+const Shortcut = props => <li className="shortcut">
+	<Link to={props.redirect}>
+		<div className="nav-button">
+			<div className="push" />
+			<div className="wrap">
+				<div className="center-wrap">
+						{props.icon && <i className={
+							classNames('fa', 'fa-lg', `fa-${props.icon}`)
+						} />}
+						{!props.icon && <div className="img" style={{
+							backgroundImage: 'url("/assets/i/sprites/avatar.svg")'
+						}} />}
+				</div>
+			</div>
+		</div>
+	</Link>
+</li>
+
+export const Navigation = props => {
+	const profile = useSelector(state => state.user.profile)
+	
+	return <nav>
+		<ul className="shortcuts">
+			<li className="logo">
+				<Link className={classNames(
+					'icon',
+					'icon-full-width',
+					'icon-logo' + (props.theme === 'dark' ? '--white' : '')
+				)} to="/" />
+			</li>
+			<Shortcut icon="home" redirect="/home" />
+			<Shortcut icon="inbox" redirect="/chat" />
+			<Shortcut />
+		</ul>
+		
+		<ul className="shortcuts user-shortcuts">
+			<li className="shortcut avatar">
+				{profile.username && <Avatar
+					status="online"
+					username={profile.username}
+					clickRedirect
+				/>}
+			</li>
+		</ul>
+	</nav>
+}
 
 const UserNav = props => {
 	const profile = useSelector(state => state.user.profile)
 	
-	return <NavWrap loggedIn { ...props }>
+	return <HeaderWrap loggedIn { ...props }>
 		<ul className="center-x-wrap">
 			<li className="logo">
 				<Link className={classNames(
@@ -35,14 +74,18 @@ const UserNav = props => {
 					'icon-logo' + (props.theme === 'dark' ? '--white' : '')
 				)} to="/" />
 			</li>
-			<li>
-				{profile.username && <Link to={'/@' + profile.username}>profile</Link>}
-			</li>
 		</ul>
-	</NavWrap>
+		<ul className="align-center-wrap">
+			<li>{profile.username && <Avatar
+				status="online"
+				username={profile.username}
+				clickRedirect
+			/>}</li>
+		</ul>
+	</HeaderWrap>
 }
 
-const GuestNav = props => <NavWrap { ...props }>
+const GuestNav = props => <HeaderWrap { ...props }>
 	<ul className="center-x-wrap">
 		<li className="logo">
 			<Link className={classNames(
@@ -69,21 +112,19 @@ const GuestNav = props => <NavWrap { ...props }>
 			<Link to="/signup" className="btn btn-roundbtn-primary">SIGN UP</Link>
 		</li>
 	</ul>
-</NavWrap>
+</HeaderWrap>
 
-const Navigation = props => {
+export const Header = props => {
 	const hydrated = isHydrated()
 	const { loggedIn } = isAuthenticated()
 	
 	return (loggedIn && hydrated) ? <UserNav { ...props } /> : <GuestNav { ...props } />
 }
 
-Navigation.propTypes = {
+Header.propTypes = {
 	theme: PropTypes.string.isRequired
 }
 
-Navigation.defaultProps = {
+Header.defaultProps = {
 	theme: 'light'
 }
-
-export default Navigation

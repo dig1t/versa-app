@@ -17,6 +17,11 @@ const profileSchema = new Schema({
 	},
 	avatar: String,
 	bannerPhoto: String,
+	verificationLevel: {
+		type: Number,
+		maxlength: 1,
+		default: 0
+	},
 	bio: {
 		type: String,
 		maxlength: 50

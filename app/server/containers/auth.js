@@ -15,7 +15,7 @@ const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(()
 const apiFieldMiddleware = (req, _, next) => {
 	const data = req.body?.data
 	
-	Object.entries(data).forEach(([key, value]) => {
+	data && Object.entries(data).forEach(([key, value]) => {
 		req.body[key] = value
 	})
 	
@@ -42,7 +42,8 @@ passport.deserializeUser((user, done) => {
 
 /* Define Authentication Methods */
 passport.use('local', new LocalStrategy(
-	{ usernameField: 'email' }, (email, password, done) => {
+	{ usernameField: 'email' },
+	(email, password, done) => {
 		try {
 			apiPost('/user/authenticate', { email, password })
 				.then(data => done(null, data))
@@ -63,17 +64,19 @@ router.post('/auth/logout', (req, res) => {
 	})
 })
 
+const deserializeAuthUser = user => ({
+	userId: user.userId,
+	isAdmin: user.isAdmin
+})
+
 router.post(
 	'/auth/login',
 	logoutMiddleware,
 	apiFieldMiddleware,
-	(req, res) => passport.authenticate('local', (_, user) => {
-		user ? req.login(user, () => res.send({
+	(req, res) => passport.authenticate('local', (_, data) => {
+		data ? req.login(data, () => res.send({
 			success: true,
-			data: {
-				userId: req.user.userId,
-				isAdmin: req.user.isAdmin
-			}
+			data: deserializeAuthUser(data.user)
 		})) : res.send({
 			success: false,
 			message: 'Not logged in'
@@ -83,7 +86,6 @@ router.post(
 
 router.post(
 	'/auth/signup',
-	apiFieldMiddleware,
 	(req, res) => {
 		if (req.isAuthenticated()) return res.send({
 			success: false,
@@ -91,42 +93,23 @@ router.post(
 		})
 		
 		apiPost('/user/new', req.body.data)
-			.then(data => done(null, {
-				userId: user.userId,
-				isAdmin: data.isAdmin,
-				isMod: data.isMod,
-				sessionId: user.sessionId
-			}))
-			.catch(e => done(e, {}))
-		
-		const data = req.body?.data
-		
-		if (data.email && data.password) {
-			req.body.email = data.email
-			req.body.password = data.password
-		}
-		
-		passport.authenticate('local', (_, user) => {
-			user ? req.login(user, () => res.send({
+			.then(data => req.login(data, () => res.send({
 				success: true,
 				data: {
-					userId: req.user.userId,
-					isAdmin: req.user.isAdmin
+					user: data.user,
+					profile: data.profile
 				}
-			})) : res.send({
+			})))
+			.catch(e => res.send({
 				success: false,
-				message: 'Not logged in'
-			})
-		})(req, res)
+				message: `Error while signing up ${e}`
+			}))
 	}
 )
 
 router.get('/auth/get_user', (req, res) => res.send(req.isAuthenticated() ? {
 	success: true,
-	data: {
-		userId: req.user.userId,
-		isAdmin: req.user.isAdmin
-	}
+	data: deserializeAuthUser(req.user)
 } : {
 	success: false,
 	message: 'Not logged in'

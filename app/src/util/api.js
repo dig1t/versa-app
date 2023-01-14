@@ -9,7 +9,7 @@ export const apiCall = config => new Promise(async (resolve, reject) => {
 		{
 			method,
 			url: config.url,
-			[method === 'get' ? 'params' : 'body']: (
+			[method === 'get' ? 'params' : 'data']: (
 				config._data || { data: config.data }
 			),
 			headers: {

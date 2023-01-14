@@ -19,6 +19,7 @@ const deserializeProfile = profile => ({
 	userId: profile.userId.toHexString(),
 	username: profile.username,
 	name: profile.name,
+	verificationLevel: profile.verificationLevel,
 	avatar: profile.avatar,
 	bannerPhoto: profile.bannerPhoto,
 	bio: profile.bio,
@@ -137,7 +138,7 @@ const createAccount = req => new Promise(async (resolve, reject) => {
 						createSession(req, userId)
 							.then(sessionId => {
 								resolve({
-									user: deserializeProfile(user),
+									user: deserializeUser(user),
 									profile: deserializeProfile(profile),
 									sessionId
 								})

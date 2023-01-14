@@ -3,12 +3,13 @@ import { Route, Routes } from 'react-router-dom'
 
 import PrivateRoute from './PrivateRoute'
 
-import Error from './Routes/Error'
-import Landing from './Routes/Landing'
-import Home from './Routes/Home'
-import Login from './Routes/Login'
-import Signup from './Routes/Signup'
-import Logout from './Routes/Logout'
+const Error = React.lazy(() => import('./Routes/Error'))
+const Landing = React.lazy(() => import('./Routes/Landing'))
+const Home = React.lazy(() => import('./Routes/Home'))
+const Login = React.lazy(() => import('./Routes/Login'))
+const Signup = React.lazy(() => import('./Routes/Signup'))
+const Logout = React.lazy(() => import('./Routes/Logout'))
+const Profile = React.lazy(() => import('./Routes/Profile'))
 
 //<PrivateRoute exact path="/my/settings" component={UserSettings} requireAuth={true} redirect="/login" />
 //<PrivateRoute exact path="/login" component={Login} requireNoAuth={true} redirect="/" />
@@ -26,7 +27,7 @@ const AppRoutes = () => <Routes>
 		<Route path="/logout" element={<Logout />} />
 	</Route>
 	
-	
+	<Route path="/:usernameParam" element={<Profile />} />
 	
 	<Route path="*" element={<Error />} />
 </Routes>
