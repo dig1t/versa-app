@@ -40,7 +40,7 @@ main .content > section.landing {
 		p {
 			padding-bottom: 2rem;
 			font-size: 2rem;
-			font-weight: 700;
+			font-weight: $font-bold;
 			text-align: right;
 			line-height: 2rem;
 			display: flex;
@@ -63,7 +63,7 @@ main .content > section.landing {
 				box-shadow: .2rem .2rem .8rem rgb(0 0 0 / .2);
 				padding: 1.4rem 3rem;
 				font-size: 1.4rem;
-				font-weight: 700;
+				font-weight: $font-bold;
 				text-align: center;
 				line-height: 1.4rem;
 				display: block;
@@ -80,7 +80,7 @@ main .content > section.landing {
 				color: inherit;
 				margin-bottom: 4rem;
 				font-size: 1rem;
-				font-weight: 300;
+				font-weight: $font-light;
 				text-align: center;
 				display: block;
 			}
@@ -89,7 +89,7 @@ main .content > section.landing {
 	
 	.auth {
 		color: color(blue-gray, 900);
-		height: calc(100vh - $nav-height);
+		height: 100vh;
 		
 		.auth-error {
 			color: color(red);
@@ -105,7 +105,7 @@ main .content > section.landing {
 			
 			.heading {
 				margin-bottom: 3rem;
-				font-weight: 900;
+				font-weight: $font-black;
 			}
 		}
 		

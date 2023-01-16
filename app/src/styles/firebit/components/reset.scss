@@ -242,7 +242,7 @@ td, th {
 ::selection,
 ::-moz-selection,
 ::-webkit-selection {
-	background-color: transparentize(color(blue), .4);
+	background-color: transparentize(color-hex(blue), .4);
 	color: #fff;
 }
 

@@ -1,17 +1,30 @@
 $baseColors: (
+	// Grayscale
 	black: #404050,
 	light-gray: #a9b9bf,
 	gray: #939393,
 	blue-gray: #737f8c,
 	dark-gray: #535353,
 	white: #fff,
+	
+	// Colors
 	red: #e74c3c,
 	orange: #f98311,
 	yellow: #e2d015,
 	green: #29cc4b,
 	blue: #4e85fb,
 	purple: #9e15cc,
-	pink: #cc157a
+	pink: #cc157a,
+	
+	// Neon Colors
+	neon-red: #ff1800,
+	neon-orange: #ffaf37,
+	neon-yellow: #eaff00,
+	neon-green: #00ff42,
+	neon-blue-green: #00ff84,
+	neon-blue: #0019ff,
+	neon-purple: #4400ff,
+	neon-pink: #ff0068
 );
 $colors: ();
 
@@ -36,8 +49,12 @@ $colors: ();
 	));
 }
 
+@function color-hex($name, $shade: 500) {
+	@return map-get($colors, "#{$name}-#{$shade}");
+}
+
 @function color($name, $shade: 500) {
-	@return map-get($colors, "#{$name}-#{$shade}")
+	@return var(--#{$name}-#{$shade});
 }
 
 @each $color, $value in $colors {
@@ -47,5 +64,11 @@ $colors: ();
 	
 	.text-#{$color} {
 		color: $value;
+	}
+}
+
+:root {
+	@each $color, $value in $colors {
+		--#{$color}: #{$value};
 	}
 }

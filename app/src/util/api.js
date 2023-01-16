@@ -14,7 +14,7 @@ export const apiCall = config => new Promise(async (resolve, reject) => {
 			),
 			headers: {
 				'Content-Type' : 'application/json; charset=UTF-8',
-				      'Accept': 'Token'
+				'Accept': 'Token'
 			}
 			// ,tokens, etc
 		}

@@ -14,10 +14,14 @@ const PostMedia = ({ type, source }) => {
 	
 	const renderMedia = useCallback(() => {
 		switch(type) {
+			case 'album':
+				return <div className="album-wrap">
+					<div className="img img-fill" style={{
+						backgroundImage: `url(${source})`
+					}} />
+				</div>
 			case 'image':
-				return <div style={{
-					backgroundImage: `url(${source})`
-				}} />
+				return <img src={source} />
 		}
 	}, [type])
 	

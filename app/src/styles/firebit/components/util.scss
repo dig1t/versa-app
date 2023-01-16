@@ -13,6 +13,10 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	display: block;
+	
+	&.img-fill {
+		background-size: cover;
+	}
 }
 
 .table {

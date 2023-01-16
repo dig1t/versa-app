@@ -164,7 +164,7 @@ header {
 			
 			> .header {
 				font-size: 3em;
-				font-weight: 100;
+				font-weight: $font-extralight;
 				letter-spacing: .02em;
 			}
 		}
@@ -225,7 +225,7 @@ header {
 		a {
 			color: inherit;
 			font-size: 15px;
-			font-weight: normal;
+			font-weight: $font-regular;
 			letter-spacing: normal;
 			
 			&:hover {
@@ -256,7 +256,7 @@ header {
 			position: absolute;
 			top: 20px;
 			left: 30px;
-			font-weight: 300;
+			font-weight: $font-light;
 		}
 		
 		.dark-overlay {
@@ -267,7 +267,7 @@ header {
 		
 		.website-name {
 			font-size: 4.2em;
-			font-weight: 300;
+			font-weight: $font-light;
 		}
 		
 		.social-media {
@@ -277,7 +277,7 @@ header {
 			
 			> * {
 				font-size: 2em;
-				font-weight: 200;
+				font-weight: $font-extralight;
 			}
 			
 			i {
@@ -390,7 +390,7 @@ header {
 			
 			.title {
 				font-size: 1.6em;
-				font-weight: 100;
+				font-weight: $font-extralight;
 			}
 			
 			.date {
