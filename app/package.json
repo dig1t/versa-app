@@ -61,6 +61,7 @@
     "@babel/register": "^7.18.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@reduxjs/toolkit": "^1.9.1",
+    "@svgr/webpack": "^6.5.1",
     "@types/cookie-parser": "^1.4.3",
     "autoprefixer": "^10.4.13",
     "axios": "^1.2.2",

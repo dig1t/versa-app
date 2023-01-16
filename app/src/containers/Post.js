@@ -1,23 +1,85 @@
-import React from 'react'
+import React, { useCallback } from 'react'
+import { formatDistance } from 'date-fns'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 import Avatar from './Avatar'
+import Icon from '../components/UI/Icon'
+
+const PostMedia = ({ type, source }) => {
+	// media: {
+	// 	type: 'image',
+	// 	source: 'https://via.placeholder.com/1500'
+	// }
+	
+	const renderMedia = useCallback(() => {
+		switch(type) {
+			case 'image':
+				return <div style={{
+					backgroundImage: `url(${source})`
+				}} />
+		}
+	}, [type])
+	
+	return <div className="media">
+		{renderMedia()}
+	</div>
+}
+
+PostMedia.propTypes = {
+	type: PropTypes.string.isRequired,
+	source: PropTypes.string.isRequired
+}
 
 const Post = ({ data }) => {
+	const timePosted = formatDistance(
+		new Date(data.created),
+		new Date(),
+		{ addSuffix: true, includeSeconds: true }
+	)
 	
-	return <div className="post">
+	return <div className="post" data-id={data.postId}>
 		<div className="container">
 			<div className="post-avatar">
 				<Avatar img={data.profile.avatar} />
 			</div>
 			<div className="main">
-				<div className="user">
-					<span className="name">{data.profile.name}</span>
-					<span className="username">{data.profile.username}</span>
-					&bull;
-					<span className="time">{data.created}</span>
+				<div className="details">
+					<span className="name align-center-wrap">
+						<Link
+							to={`/@${data.profile.username}`}
+							className="unstyled-link"
+						>
+							{data.profile.name}
+						</Link>
+						<Icon
+							svg
+							name="verified"
+							hidden={!data.profile.verificationLevel || data.profile.verificationLevel === 0}
+						/>
+					</span>
+					<span className="username">@{data.profile.username}</span>
+					<span>&bull;</span>
+					<span className="time">{timePosted}</span>
+					<div className="options"><Icon svg name="ellipsis" /></div>
 				</div>
 				<div className="content">
 					{data.text && <div className="text">{data.text}</div>}
+					{data.media && <PostMedia {...data.media} />}
+				</div>
+				<div className="actions">
+					<div className="action likes selected align-center-wrap">
+						<Icon svg name="heart" />
+						<span>{data.likes}</span>
+					</div>
+					<div className="action comments align-center-wrap">
+						<Icon svg name="comment" />
+						<span>{data.comments}</span>
+					</div>
+					<div className="action likes align-center-wrap">
+						<Icon svg name="repost" />
+						<span>{data.reposts}</span>
+					</div>
 				</div>
 			</div>
 		</div>

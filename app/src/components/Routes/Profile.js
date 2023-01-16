@@ -6,22 +6,46 @@ import Layout from '../Layout'
 import Loading from '../Loading'
 import Avatar from '../../containers/Avatar'
 import Post from '../../containers/Post'
+import Icon from '../UI/Icon'
 
 const posts = [
 	{
 		postId: '2313214r34r2',
 		contentId: 'rw4fe3re3wf4re43fu',
 		text: 't5grtg5r4e45rtgrfegt4etf',
+		media: {
+			type: 'image',
+			source: 'https://via.placeholder.com/1500'
+		},
 		profile: {
 			userId: 'r34tef4r3efr3fe',
 			username: 'dig1t',
-			name: 'digit'
+			name: 'digit',
+			verificationLevel: 1
 		},
 		reposts: 12,
 		likes: 123,
-		created: Date.now()
+		comments: 1,
+		created: '2023-01-08T03:48:30.011+00:00'
 	}
 ]
+
+const ProfileFeed = props => {
+	
+	
+	return <>
+		<div className="navigation">
+			<div className="option selected">Posts</div>
+			<div className="option">Media</div>
+			<div className="option">Likes</div>
+		</div>
+		<div className="list">
+			{posts.map(post => {
+				return <Post data={post} key={post.contentId} />
+			})}
+		</div>
+	</>
+}
 
 const Profile = () => {
 	const { profileList, username } = useSelector(state => ({
@@ -62,9 +86,13 @@ const Profile = () => {
 						<Avatar img={profileData.avatar} />
 					</div>
 					<div className="container">
-						<div className="name">
-							{profileData.name}
-							{profileData.verificationLevel && profileData.verificationLevel > 0 && <i className="fa fa-check-circle verified" aria-hidden="true" />}
+						<div className="name align-center-wrap">
+							<span>{profileData.name}</span>
+							<Icon
+								svg
+								name="verified"
+								hidden={!profileData.verificationLevel || profileData.verificationLevel === 0}
+							/>
 						</div>
 						<div className="username">@{profileData.username}</div>
 						{profileData.bio && <div className="bio">{profileData.bio}</div>}
@@ -87,12 +115,7 @@ const Profile = () => {
 				</div>
 			</div>
 			<div className="feed box col-12 col-desktop-8">
-				<div className="navigation" />
-				<div className="list">
-					{posts.map(post => {
-						return <Post data={post} key={post.contentId} />
-					})}
-				</div>
+				<ProfileFeed />
 			</div>
 		</div>}
 	</Layout>

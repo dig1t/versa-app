@@ -36,6 +36,16 @@ module.exports = {
 						].filter(Boolean)
 					}
 				}]
+			},
+			{
+				test: /\.svg$/i,
+				type: 'asset',
+				resourceQuery: /url/ // *.svg?url
+			},
+			{
+				test: /\.svg$/,
+				resourceQuery: { not: [/url/] },
+				use: ['@svgr/webpack']
 			}
 		]
 	},

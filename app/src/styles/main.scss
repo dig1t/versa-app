@@ -10,21 +10,25 @@ $box-corner: .4rem;
 
 :root {
 	--box-spacing: .6rem;
+	--primary-color: #{color(blue)};
 }
 
 main[data-theme="light"] {
-	--bg-color: #fff;
-	--text-color: color(black);
+	--bg-color: #{color(blue-gray, 50)};
+	--bg-color-darker: #{color(blue-gray, 100)};
+	--box-color: #fff;
+	--text-color: #{color(black, 800)};
+	--text-color-secondary: #{color(blue-gray, 400)};
+	--text-color-light: #{color(blue-gray, 200)};
 }
 
 main[data-theme="dark"] {
 	--bg-color: #000;
+	--box-color: #000;
 	--text-color: #fff;
 }
 
 body {
-	color: var(--text-color);
-	background-color: #f7f7f7;
 	font-family: 'Source Sans Pro', Helvetica, sans-serif;
 	font-feature-settings: 'lnum';
 	font-variant-numeric: lining-nums;
@@ -91,18 +95,33 @@ button, a.btn {
 }
 
 main {
+	color: var(--text-color);
+	background-color: var(--bg-color);
 	width: 100%;
 	height: 100%;
 	display: flex;
 	position: fixed;
+	overflow-y: scroll;
 	
 	nav {
 		width: 4.2rem;
 		height: 100%;
-		background-color: var(--bg-color);
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
+		background-color: var(--box-color);
+		position: relative;
+		
+		.shortcut {
+			width: inherit;
+			height: inherit;
+		}
+		
+		.container {
+			height: 100%;
+			width: inherit;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			position: fixed;
+		}
 		
 		.shortcuts {
 			display: flex;
@@ -172,6 +191,7 @@ main {
 		width: 100%;
 		padding: $box-spacing;
 		position: relative;
+		flex: 1;
 	}
 	
 	.box {
@@ -607,13 +627,31 @@ footer {
 	}
 }
 
-// spritesheet
+// SVG icons
+svg {
+	height: inherit;
+	fill: currentColor;
+	display: block;
+    overflow: hidden;
+}
+
 .icon {
+	height: 1rem;
 	//line-height: 1; // fixes size issues for .icon object
 	background-repeat: no-repeat;
 	background-size: contain;
-	vertical-align: baseline;
-	display: inline-block;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-content: center;
+	
+	// DEBUG
+	/*background-color: red;
+	opacity: .5;
+	
+	svg {
+		background-color: blue;
+		opacity: .5;
+	}*/
 	
 	&-full-width {
 		width: 100%;
@@ -624,14 +662,13 @@ footer {
 	}
 	
 	&-logo {
-		background-image: url(/assets/i/sprites/logo-gray.svg);
-		
-		&, &--white {
-			aspect-ratio: 165 / 50;
-		}
-		
-		&--white {
-			background-image: url(/assets/i/sprites/logo-white.svg);
-		}
+		color: #e6e6e6;
+		aspect-ratio: calc(165 / 50);
 	}
+}
+
+.icon-verified {
+	color: var(--primary-color);
+	margin-left: .2rem;
+	cursor: pointer;
 }

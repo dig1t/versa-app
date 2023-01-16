@@ -10,7 +10,7 @@ const Landing = () => <Layout page="landing" disableNav={true}>
 				<img src="/assets/i/landing/landing-mockup.png" />
 			</div>
 			<div>
-				<div className="icon icon-full-width icon-logo--white" />
+				<div className="icon icon-full-width icon-logo" />
 				<p>your new home</p>
 				<Link to="/signup" className="cta-primary">SIGN UP</Link>
 				<Link to="/login" className="cta-secondary">login to your account</Link>
