@@ -7,7 +7,7 @@
 	}
 	
 	.info {
-		background-color: var(--bg-color);
+		background-color: var(--box-color);
 		
 		.banner {
 			width: 100%;
@@ -36,25 +36,23 @@
 			.name {
 				margin-bottom: .3rem;
 				font-weight: 600;
-				font-size: 1.4rem;
+				font-size: 1.6rem;
 				line-height: 1.4rem;
+				
+				.icon-verified {
+					height: 1.6rem;
+				}
 			}
 			
 			.username {
-				color: color(blue-gray, 200);
+				color: var(--text-color-light);
 				margin-bottom: .6rem;
-				font-size: .9rem;
+				font-size: 1rem;
 				line-height: .9rem;
 			}
 			
-			.verified {
-				color: color(blue);
-				margin-left: .2rem;
-				cursor: pointer;
-			}
-			
 			.bio {
-				font-size: .9rem;
+				font-size: 1rem;
 				line-height: 1.2rem;
 				
 				&:not(:last-child) {
@@ -63,7 +61,7 @@
 			}
 			
 			.website {
-				font-size: .9rem;
+				font-size: 1rem;
 			}
 		}
 		
@@ -98,6 +96,55 @@
 	}
 	
 	.feed {
-		background-color: var(--bg-color);
+		background-color: var(--box-color);
+		
+		.navigation {
+			$selection-bar-height: .2rem;
+			
+			padding: .4rem;
+			padding-bottom: $selection-bar-height;
+			font-size: 1rem;
+			font-weight: 600;
+			display: flex;
+			flex-direction: row;
+			gap: .2rem;
+			
+			.option {
+				color: var(--text-color-secondary);
+				border-radius: $border-radius;
+				padding: .8rem .6rem;
+				text-align: center;
+				flex: 1;
+				cursor: pointer;
+				position: relative;
+				transition-duration: .2s;
+				
+				&:not(.selected):hover {
+					background-color: var(--bg-color-darker);
+				}
+				
+				&.selected {
+					color: var(--text-color);
+					font-weight: 700;
+					
+					&:after {
+						content: '';
+						width: 100%;
+						height: $selection-bar-height;
+						background-color: var(--primary-color);
+						border-radius: $selection-bar-height;
+						position: absolute;
+						bottom: 0; //-$selection-bar-height;
+						left: 0;
+					}
+				}
+			}
+		}
+		
+		.list {
+			display: flex;
+			flex-direction: column;
+			gap: .4rem;
+		}
 	}
 }

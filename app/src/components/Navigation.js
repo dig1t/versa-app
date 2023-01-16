@@ -8,6 +8,7 @@ import { isAuthenticated } from '../context/Auth'
 import { isHydrated } from '../context/Hydration'
 import { defaultAssets } from '../constants/assets'
 import Avatar from '../containers/Avatar'
+import Icon from './UI/Icon'
 
 //import { BurgerMenu } from './UI'
 
@@ -21,11 +22,9 @@ const Shortcut = props => <li className="shortcut">
 			<div className="push" />
 			<div className="wrap">
 				<div className="center-wrap">
-						{props.icon && <i className={
-							classNames('fa', 'fa-lg', `fa-${props.icon}`)
-						} />}
+						{props.icon && <Icon name={props.icon} scale="lg" />}
 						{!props.icon && <div className="img" style={{
-							backgroundImage: 'url("/assets/i/sprites/avatar.svg")'
+							backgroundImage: 'url("/assets/i/sprites/avatar.svg?url")'
 						}} />}
 				</div>
 			</div>
@@ -37,28 +36,32 @@ export const Navigation = props => {
 	const profile = useSelector(state => state.user.profile)
 	
 	return <nav>
-		<ul className="shortcuts">
-			<li className="logo">
-				<Link className={classNames(
-					'icon',
-					'icon-full-width',
-					'icon-logo' + (props.theme === 'dark' ? '--white' : '')
-				)} to="/" />
-			</li>
-			<Shortcut icon="home" redirect="/home" />
-			<Shortcut icon="inbox" redirect="/chat" />
-			<Shortcut />
-		</ul>
-		
-		<ul className="shortcuts user-shortcuts">
-			<li className="shortcut avatar">
-				{profile.username && <Avatar
-					status="online"
-					username={profile.username}
-					clickRedirect
-				/>}
-			</li>
-		</ul>
+		<div className="placeholder" />
+		<div className="container">
+			<ul className="shortcuts">
+				<li className="logo">
+					<Link className={classNames(
+						'icon',
+						'icon-full-height',
+					)} to="/">
+						<Icon svg name="logo" />
+					</Link>
+				</li>
+				<Shortcut icon="home" redirect="/home" />
+				<Shortcut icon="inbox" redirect="/chat" />
+				<Shortcut />
+			</ul>
+			
+			<ul className="shortcuts user-shortcuts">
+				<li className="shortcut avatar">
+					{profile.username && <Avatar
+						status="online"
+						username={profile.username}
+						clickRedirect
+					/>}
+				</li>
+			</ul>
+		</div>
 	</nav>
 }
 
@@ -71,8 +74,9 @@ const UserNav = props => {
 				<Link className={classNames(
 					'icon',
 					'icon-full-height',
-					'icon-logo' + (props.theme === 'dark' ? '--white' : '')
-				)} to="/" />
+				)} to="/">
+					<Icon svg name="logo" />
+				</Link>
 			</li>
 		</ul>
 		<ul className="align-center-wrap">
@@ -91,8 +95,9 @@ const GuestNav = props => <HeaderWrap { ...props }>
 			<Link className={classNames(
 				'icon',
 				'icon-full-height',
-				'icon-logo' + (props.theme === 'dark' ? '--white' : '')
-			)} to="/" />
+			)} to="/">
+				<Icon svg name="logo" />
+			</Link>
 		</li>
 		{links.map(link => {
 			const className = classNames('nav-btn', {
