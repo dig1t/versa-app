@@ -1,4 +1,27 @@
 .post {
+	&:hover .options {
+		display: block;
+		opacity: 1;
+	}
+	
+	.options {
+		position: absolute;
+		top: 0;
+		right: 0;
+		cursor: pointer;
+		display: none;
+		opacity: 0;
+		transition-duration: .2s;
+		
+		&:hover .icon {
+			color: var(--text-color-secondary);
+		}
+		
+		.icon {
+			height: 2.4rem;
+		}
+	}
+	
 	.container {
 		margin: 1rem;
 		display: flex;
@@ -24,27 +47,11 @@
 				.name {
 					color: var(--text-color);
 					font-size: 1.1rem;
-					font-weight: 700;
+					font-weight: $font-bold;
 				}
 				
 				> *:not(:last-child) {
 					margin-right: .3rem;
-				}
-				
-				.options {
-					position: absolute;
-					top: 0;
-					right: 0;
-					cursor: pointer;
-					transition-duration: .2s;
-					
-					&:hover .icon {
-						color: var(--text-color-secondary);
-					}
-					
-					.icon {
-						height: 2.4rem;
-					}
 				}
 			}
 			
@@ -58,12 +65,22 @@
 				
 				.media {
 					margin-top: 1rem;
-					border-radius: $border-radius;
 					overflow: hidden;
 					
-					img {
+					> * {
+						border-radius: $border-radius;
+					}
+					
+					> img {
 						max-width: 100%;
-						max-height: 28rem;
+						max-height: 24rem;
+						user-select: none;
+					}
+					
+					.album-wrap {
+						max-height: 24rem;
+						max-width: 100%;
+						aspect-ratio: .8;
 					}
 				}
 			}
@@ -85,7 +102,7 @@
 					
 					&.selected {
 						color: var(--primary-color);
-						font-weight: 600;
+						font-weight: $font-semibold;
 					}
 				}
 				

@@ -102,6 +102,7 @@ const Profile = () => {
 							</a>
 						</div>}
 					</div>
+					<button className="edit-profile btn-round btn-outline">Edit Profile</button>
 				</div>
 				<div className="community-stats grid">
 					<div className="stat col-6">

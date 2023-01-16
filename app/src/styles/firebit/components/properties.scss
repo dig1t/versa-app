@@ -107,11 +107,11 @@
 	}
 	
 	&-weight-normal {
-		font-weight: 400;
+		font-weight: $font-regular;
 	}
 	
 	&-weight-bold {
-		font-weight: 700;
+		font-weight: $font-bold;
 	}
 }
 

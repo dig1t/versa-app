@@ -1,22 +1,28 @@
 @import 'firebit';
 
+// global variables
+$box-spacing: .6rem;
+$box-corner: .4rem;
+$primary-color-name: 'blue';
+
 // import page styles
 @import 'components/landing';
 @import 'components/profile';
 @import 'components/content';
 
-$box-spacing: .6rem;
-$box-corner: .4rem;
-
 :root {
 	--box-spacing: .6rem;
 	--primary-color: #{color(blue)};
+	--primary-color-dark: #{color(blue)};
+	--primary-color-light: #{color(blue)};
 }
 
 main[data-theme="light"] {
 	--bg-color: #{color(blue-gray, 50)};
 	--bg-color-darker: #{color(blue-gray, 100)};
 	--box-color: #fff;
+	--box-color-dark: #{color(blue-gray, 50)};
+	--color-white: #fff;
 	--text-color: #{color(black, 800)};
 	--text-color-secondary: #{color(blue-gray, 400)};
 	--text-color-light: #{color(blue-gray, 200)};
@@ -25,6 +31,7 @@ main[data-theme="light"] {
 main[data-theme="dark"] {
 	--bg-color: #000;
 	--box-color: #000;
+	--color-white: #000;
 	--text-color: #fff;
 }
 
@@ -36,50 +43,74 @@ body {
 
 button, a.btn {
 	// Base properties for buttons
-	color: $white;
-	background-color: color(black);
+	color: var(--color-white);
+	background-color: $primary-color;
 	border-radius: $border-radius;
-	padding: .8rem 1.2rem;
+	padding: .6rem 1.2rem;
 	font-size: type-scale(0);
-	font-weight: 700;
+	font-weight: $font-bold;
 	transition-duration: .2s;
 	
-	&.btn{
+	&.btn {
+		$btn-primary: $primary-color;
+		$btn-primary-hover: color($primary-color-name, 700);
+		$btn-primary-active: color($primary-color-name, 800);
+		
+		$btn-secondary: color(blue-gray, 300);
+		$btn-secondary-hover: color(blue-gray, 600);
+		$btn-secondary-active: color(blue-gray, 800);
+		
 		&-full-width {
 			width: 100%;
 		}
 		
 		&-round {
-			border-radius: 9rem;
+			border-radius: 999rem;
+		}
+		
+		&-outline {
+			color: $primary-color;
+			border: .1rem solid $primary-color;
+			background-color: transparent;
+			
+			&:hover {
+				color: $btn-primary-hover;
+				border-color: $btn-primary-hover;
+			}
+			
+			&:active {
+				color: $btn-primary-active;
+				border-color: $btn-primary-active;
+			}
 		}
 		
 		&-primary {
-			background-color: color(blue);
+			background-color: $primary-color;
 			
 			&:hover {
-				background-color: color(blue, 700);
+				background-color: $btn-primary-hover;
 				text-decoration: none;
 			}
 			
 			&:active {
-				background-color: color(blue, 800);
+				background-color: $btn-primary-active;
 			}
 		}
 		
 		&-secondary {
-			color: color(blue-gray, 300);
+			color: $btn-secondary;
 			background-color: #fff;
-			border: 1px solid color(blue-gray, 300);
+			border: 1px solid $btn-secondary;
 			
 			&:hover {
-				color: color(blue-gray, 600);
-				border-color: color(blue-gray, 600);
+				color: $btn-secondary-hover;
+				border-color: $btn-secondary-hover;
 				text-decoration: none;
 			}
 			
 			&:active {
-				color: color(blue-gray, 800);
-				border-color: color(blue-gray, 800);
+				color: $btn-secondary-active;
+				border-color: $btn-secondary-active;
 			}
 		}
 	}
@@ -106,7 +137,6 @@ main {
 	nav {
 		width: 4.2rem;
 		height: 100%;
-		background-color: var(--box-color);
 		position: relative;
 		
 		.shortcut {
@@ -117,6 +147,7 @@ main {
 		.container {
 			height: 100%;
 			width: inherit;
+			background-color: var(--box-color);
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
@@ -335,7 +366,7 @@ main {
 				color: inherit;
 				padding: 12px 18px;
 				font-size: type-scale(0);
-				font-weight: 700;
+				font-weight: $font-bold;
 				text-align: center;
 			}
 		}
@@ -523,7 +554,7 @@ footer {
 		a {
 			line-height: 2em;
 			font-size: 1.8em;
-			font-weight: 300;
+			font-weight: $font-light;
 		}
 	}
 	
@@ -547,8 +578,8 @@ footer {
 			
 			&:hover {
 				color: #fff;
-				background-color: $primary;
-				box-shadow: 0 0 12px 2px transparentize($primary, .8);
+				background-color: $primary-color;
+				box-shadow: 0 0 12px 2px transparentize($primary-color, .8);
 			}
 		}
 	}
@@ -557,7 +588,7 @@ footer {
 		&-head {
 			margin-bottom: 18px;
 			font-size: 1.8em;
-			font-weight: 600;
+			font-weight: $font-semibold;
 		}
 		
 		&-form {
@@ -574,14 +605,14 @@ footer {
 			}
 			
 			button {
-				background-color: $primary;
+				background-color: $primary-color;
 				padding: 18px 14px;
 				font-size: 1.8em;
 				white-space: nowrap;
 				transition-duration: .1s;
 				
 				&:hover {
-					background-color: darken($primary, 10%);
+					background-color: darken($primary-color, 10%);
 				}
 			}
 		}
@@ -591,7 +622,7 @@ footer {
 		margin-top: 18px;
 		
 		p {
-			font-weight: 300;
+			font-weight: $font-light;
 			
 			&:not(:last-child) {
 				margin-bottom: 4px;
@@ -611,14 +642,14 @@ footer {
 }
 
 .error-page {
-	height: calc(90vh - #{$nav-height});
+	height: 90vh;
 	flex-direction: column;
 	justify-content: center;
 	
 	.text {
 		background-image: radial-gradient(at 50% 80%, #47c2eb 0, #3df58a 100%);
 		font-size: 30em;
-		font-weight: 900;
+		font-weight: $font-black;
 		line-height: 1em;
 		letter-spacing: -.04em;
 		background-clip: text;
@@ -632,7 +663,7 @@ svg {
 	height: inherit;
 	fill: currentColor;
 	display: block;
-    overflow: hidden;
+	overflow: hidden;
 }
 
 .icon {
@@ -640,9 +671,9 @@ svg {
 	//line-height: 1; // fixes size issues for .icon object
 	background-repeat: no-repeat;
 	background-size: contain;
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-content: center;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-content: center;
 	
 	// DEBUG
 	/*background-color: red;

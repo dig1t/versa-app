@@ -90,7 +90,7 @@ ui {
 		cursor: pointer;
 		
 		b {
-			font-weight: 600;
+			font-weight: $font-semibold;
 		}
 		
 		&.selected, &:hover {
@@ -221,7 +221,7 @@ $tooltip-padding: 5px;
 			border-bottom: 1px solid $gray;
 			padding: 14px 18px;
 			font-size: 2.4em;
-			font-weight: 600;
+			font-weight: $font-semibold;
 			text-shadow: 0 1px 0 $white;
 		}
 		
@@ -253,7 +253,7 @@ $tooltip-padding: 5px;
 			margin: 14px 18px;
 			
 			.heading {
-				color: $primary;
+				color: $primary-color;
 				margin-bottom: 2px;
 				font-size: type-scale(1);
 				letter-spacing: .04em;
@@ -406,8 +406,8 @@ $tooltip-padding: 5px;
 			}
 			
 			&:hover {
-				color: $primary;
-				border-color: $primary;
+				color: $primary-color;
+				border-color: $primary-color;
 			}
 		}
 	}
