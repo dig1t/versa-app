@@ -1,25 +1,20 @@
 import mongoose, { Schema } from 'mongoose'
 
-const postSchema = new Schema({
+const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
-		alias: 'postId'
+		alias: 'collabId'
 	},
 	contentId: {
 		type: Schema.Types.ObjectId,
-		ref: 'Content'
+		ref: 'Content',
+		required: true
 	},
 	userId: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true
-	},
-	created: {
-		type: Date,
-		maxlength: 27,
-		default: new Date().toISOString(),
-		required: true
 	}
 }, { _id: false })
 
-export default mongoose.model('Post', postSchema)
+export default mongoose.model('Collaborator', schema)

@@ -88,7 +88,16 @@ db.instance.once('open', () => {
 		display: 'standalone',
 		orientation: 'portrait',
 		theme_color: config.theme_color,
-		background_color: '#ffffff'
+		background_color: '#ffffff',
+		share_target: {
+			action: '/share',
+			method: 'GET',
+			params: {
+				title: 'title',
+				text: 'text',
+				url: 'url'
+			}
+		}
 	}))
 	
 	/* Route all other traffic to React Renderer */
@@ -98,7 +107,8 @@ db.instance.once('open', () => {
 })
 
 app.on('ready', () => app.listen(
-	config.port, () => console.log(`Server started on port ${config.port}`)
+	config.port,
+	() => console.log(`Server started on port ${config.port}`)
 ))
 
 app.on('error', err => console.error(err))

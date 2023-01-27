@@ -1,20 +1,20 @@
 @import 'firebit';
 
 // global variables
-$box-spacing: .6rem;
-$box-corner: .4rem;
 $primary-color-name: 'blue';
 
 // import page styles
+@import 'components/home';
+@import 'components/content';
 @import 'components/landing';
 @import 'components/profile';
-@import 'components/content';
 
 :root {
-	--box-spacing: .6rem;
 	--primary-color: #{color(blue)};
-	--primary-color-dark: #{color(blue)};
-	--primary-color-light: #{color(blue)};
+	
+	--box-spacing: .6rem;
+	--box-corner: .4rem;
+	--max-box-size: 40rem;
 }
 
 main[data-theme="light"] {
@@ -23,6 +23,7 @@ main[data-theme="light"] {
 	--box-color: #fff;
 	--box-color-dark: #{color(blue-gray, 50)};
 	--color-white: #fff;
+	--color-black: #000;
 	--text-color: #{color(black, 800)};
 	--text-color-secondary: #{color(blue-gray, 400)};
 	--text-color-light: #{color(blue-gray, 200)};
@@ -32,6 +33,7 @@ main[data-theme="dark"] {
 	--bg-color: #000;
 	--box-color: #000;
 	--color-white: #000;
+	--color-black: #fff;
 	--text-color: #fff;
 }
 
@@ -52,13 +54,13 @@ button, a.btn {
 	transition-duration: .2s;
 	
 	&.btn {
-		$btn-primary: $primary-color;
-		$btn-primary-hover: color($primary-color-name, 700);
-		$btn-primary-active: color($primary-color-name, 800);
+		$btn-primary: var(--primary-color);
+		$btn-primary-hover: var(#{'--' + $primary-color-name + '-700' });
+		$btn-primary-active: var(#{'--' + $primary-color-name + '-800'});
 		
-		$btn-secondary: color(blue-gray, 300);
-		$btn-secondary-hover: color(blue-gray, 600);
-		$btn-secondary-active: color(blue-gray, 800);
+		$btn-secondary: var(--blue-gray-300);
+		$btn-secondary-hover: var(--blue-gray-600);
+		$btn-secondary-active: var(--blue-gray-800);
 		
 		&-full-width {
 			width: 100%;
@@ -69,8 +71,8 @@ button, a.btn {
 		}
 		
 		&-outline {
-			color: $primary-color;
-			border: .1rem solid $primary-color;
+			color: var(--primary-color);
+			border: .1rem solid var(--primary-color);
 			background-color: transparent;
 			
 			&:hover {
@@ -85,7 +87,7 @@ button, a.btn {
 		}
 		
 		&-primary {
-			background-color: $primary-color;
+			background-color: var(--primary-color);
 			
 			&:hover {
 				background-color: $btn-primary-hover;
@@ -119,15 +121,15 @@ button, a.btn {
 	&.btn-primary[disabled],
 	&.btn-primary[disabled]:hover,
 	&.btn-primary[disabled]:active {
-		color: color(light-gray, 200);
-		background-color: color(light-gray);
+		color: var(--light-gray-200);
+		background-color: var(--light-gray);
 		cursor: default;
 	}
 }
 
 main {
 	color: var(--text-color);
-	background-color: var(--bg-color);
+	background-color: #f2f5f9;
 	width: 100%;
 	height: 100%;
 	display: flex;
@@ -139,94 +141,143 @@ main {
 		height: 100%;
 		position: relative;
 		
-		.shortcut {
-			width: inherit;
-			height: inherit;
+		.center-wrap a {
+			color: inherit;
+			display: inline-flex;
 		}
 		
 		.container {
 			height: 100%;
 			width: inherit;
 			background-color: var(--box-color);
+			padding: 1rem 0;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
 			position: fixed;
 		}
 		
-		.shortcuts {
+		ul {
 			display: flex;
 			flex-direction: column;
+			gap: 1rem;
 			
-			.shortcut {
-				width: 100%;
-				padding: .5rem;
-				padding-bottom: 0;
-				
-				.nav-button {
-					background-color: color(blue-gray, 50);
-					border-radius: .4rem;
-					position: relative;
-					cursor: pointer;
-					overflow: hidden;
-					
-					i {
-						color: color(blue-gray, 200);
-					}
-					
-					&:after {
-						content: '';
-						width: 100%;
-						height: 100%;
-						background-color: black;
-						position: absolute;
-						top: 0;
-						transition-duration: .2s;
-						opacity: 0;
-					}
-					
-					&:hover:after {
-						opacity: .2;
-					}
-				}
-				
-				.push {
+			li {
+				&.btn {
 					width: 100%;
-					padding-bottom: 100%;
+					height: inherit;
+					padding-bottom: 0;
+					
+					.btn-wrap {
+						position: relative;
+						
+						> .push {
+							width: 100%;
+							padding-bottom: 100%;
+						}
+						
+						> .wrap {
+							width: 100%;
+							height: 100%;
+							position: absolute;
+							top: 0;
+						}
+					}
 				}
 				
-				.wrap {
+				&.divider {
+					background-color: var(--box-color-dark);
+					width: 70%;
+					height: 1px;
+					margin: auto;
+				}
+				
+				&.app-link {
+					transition-duration: .1s;
+					
+					&:hover {
+						color: var(--primary-color);
+					}
+					
+					.icon {
+						height: 1.8rem;
+						
+						&.icon-logo-letter {
+							color: var(--color-black);
+							height: 2rem;
+						}
+					}
+				}
+				
+				.icon-new-post {
 					width: 100%;
 					height: 100%;
-					position: absolute;
-					top: 0;
 				}
 				
-				&.avatar {
-					padding: .6rem;
+				&.action, &.shortcut {
+					padding: 0 .5rem;
 				}
-			}
-			
-			&.user-shortcuts {
-				padding-bottom: 1rem;
-			}
-			
-			.logo {
-				padding: .4rem;
-				padding-top: 1rem;
+				
+				&.shortcut {
+					$shortcut-border-radius: 999rem;
+					
+					.shortcut-btn {
+						width: 100%;
+						height: 100%;
+						background-color: var(--blue-gray-50);
+						border-radius: $shortcut-border-radius;
+						cursor: pointer;
+						overflow: hidden;
+						
+						i {
+							color: var(--blue-gray-200);
+						}
+						
+						&:after {
+							content: '';
+							width: 100%;
+							height: 100%;
+							background-color: black;
+							border-radius: $shortcut-border-radius;
+							position: absolute;
+							top: 0;
+							left: 0;
+							transition-duration: .2s;
+							opacity: 0;
+						}
+						
+						&:hover:after {
+							opacity: .2;
+						}
+					}
+					
+					&.avatar {
+						padding: .6rem;
+					}
+				}
 			}
 		}
 	}
 	
 	> .content {
 		width: 100%;
-		padding: $box-spacing;
+		padding: var(--box-spacing);
 		position: relative;
+		display: flex;
+		justify-content: center;
 		flex: 1;
+		
+		> .wrap {
+			max-width: var(--max-box-size);
+			display: flex;
+			gap: var(--box-spacing);
+			align-content: flex-start;
+		}
 	}
 	
 	.box {
-		border-radius: $box-corner;
+		background-color: var(--box-color);
+		border-radius: var(--box-corner);
 		overflow: hidden;
 	}
 }
@@ -237,11 +288,12 @@ main {
 	$fontSize: 1rem;
 	$paddingY: .4rem;
 	$paddingX: .6rem;
-	$focusColor: color(blue);
-	$inputErrorColor: color(red);
-	$inputValidColor: color(green, 600);
+	$focusColor: var(--blue);
+	$inputErrorColor: var(--red);
+	$inputValidColor: var(--green-600);
 	
 	input {
+		border: 1px solid var(--blue-gray-600);
 		padding: $paddingY $paddingX;
 		font-size: $fontSize;
 		line-height: $fontSize;
@@ -262,7 +314,7 @@ main {
 	}
 	
 	.error-text {
-		color: color(red);
+		color: var(--red);
 		margin-top: .4rem;
 		font-size: .8rem;
 	}
@@ -272,7 +324,7 @@ main {
 	}
 	
 	.input-text:focus, &.inline-label.input-focused label {
-		border: 1px solid $focusColor;
+		border-color: $focusColor;
 	}
 	
 	@if variable-exists(inputErrorColor) {
@@ -281,7 +333,7 @@ main {
 		}
 		
 		&.error .input-text, &.inline-label.error label {
-			border: 1px solid $inputErrorColor;
+			border-color: $inputErrorColor;
 		}
 	}
 	
@@ -291,7 +343,7 @@ main {
 		}
 		
 		&.input-ok .input-text, &.inline-label.input-ok label {
-			border: 1px solid $inputValidColor;
+			border-color: $inputValidColor;
 		}
 	}
 	
@@ -308,7 +360,7 @@ main {
 		}
 		
 		label {
-			border: 1px solid color(blue-gray, 300);
+			border: 1px solid var(--blue-gray-300);
 			border-radius: $border-radius;
 			padding: $paddingY $paddingX;
 			padding-top: $labelSize;
@@ -340,7 +392,7 @@ main {
 	}
 	
 	&.error input {
-		border-color: color(red);
+		border-color: var(--red);
 	}
 	
 	&-selectButtons {
@@ -384,67 +436,6 @@ main {
 div.push {
 	width: 100%;
 	padding-bottom: 100%;
-}
-
-div.avatar {
-	position: relative;
-	
-	&-wrap {
-		width: 100%;
-		height: 100%;
-		border-radius: 100%;
-		position: absolute;
-		top: 0;
-	}
-	
-	.border {
-		width: inherit;
-		height: inherit;
-		background-color: #fff;
-		border-radius: 100%;
-		padding: .1rem;
-		position: relative;
-		
-		.img {
-			border-radius: 100%;
-		}
-		
-		.activity-status {
-			width: 30%;
-			height: 30%;
-			border: 1px solid #fff;
-			border-radius: 100%;
-			position: absolute;
-			right: -.5%;
-			bottom: -.5%;
-			z-index: 2;
-			
-			&.online {
-				background-color: color(green, 600);
-			}
-			
-			&.offline {
-				background-color: color(blue-gray, 300);
-			}
-			
-			&.away {
-				background-color: color(orange, 400);
-			}
-			
-			&.busy {
-				background-color: color(red, 600);
-			}
-		}
-		
-		svg {
-			width: 108%;
-			height: 108%;
-			position: absolute;
-			top: -4%;
-			left: -4%;
-			fill: color(blue);
-		}
-	}
 }
 
 header {
@@ -501,7 +492,7 @@ header {
 		
 		&.nav-btn {
 			a {
-				color: color(black);
+				color: var(--black);
 				padding: 8px 4px;
 				font-size: .8em;
 				letter-spacing: .06em;
@@ -512,7 +503,7 @@ header {
 			}
 			
 			&:hover:not(.active) a, &.active a {
-				color: color(black);
+				color: var(--black);
 				border-bottom: 2px solid $red;
 			}
 		}

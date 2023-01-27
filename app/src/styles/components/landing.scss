@@ -1,11 +1,17 @@
 $LOGO_WIDTH: 165px;
 $LOGO_HEIGHT: 50px;
 
+main[page="landing"] {
+	overflow-y: hidden;
+}
+
 main .content > section.landing {
 	overflow: hidden;
 }
 
 .landing {
+	padding: 0 !important;
+	
 	img {
 		width: 100%;
 	}
@@ -58,7 +64,7 @@ main .content > section.landing {
 		.cta {
 			&-primary {
 				color: inherit;
-				background-color: color(blue, 700);
+				background-color: var(--blue-700);
 				border-radius: 9rem;
 				box-shadow: .2rem .2rem .8rem rgb(0 0 0 / .2);
 				padding: 1.4rem 3rem;
@@ -70,7 +76,7 @@ main .content > section.landing {
 				transition-duration: .14s;
 				
 				&:hover {
-					background-color: color(blue, 900);
+					background-color: var(--blue-900);
 					box-shadow: 0 0 1rem rgb(0 0 0 / .6);
 					text-decoration: none;
 				}
@@ -88,11 +94,11 @@ main .content > section.landing {
 	}
 	
 	.auth {
-		color: color(blue-gray, 900);
+		color: var(--blue-gray-900);
 		height: 100vh;
 		
 		.auth-error {
-			color: color(red);
+			color: var(--red);
 			font-size: .8rem;
 		}
 		

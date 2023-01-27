@@ -85,6 +85,8 @@ app.use((req, res, next) => {
 			req.fields[query[field]] = data[query[field]]
 		}
 		
+		console.log(req.url, req.fields)
+		
 		return true
 	}
 	
