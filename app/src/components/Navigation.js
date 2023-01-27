@@ -1,55 +1,88 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
 import { isAuthenticated } from '../context/Auth'
 import { isHydrated } from '../context/Hydration'
 import { defaultAssets } from '../constants/assets'
 import Avatar from '../containers/Avatar'
-import Icon from './UI/Icon'
+import { Icon } from './UI'
+// import Logout from '../../containers/Logout'
 
 //import { BurgerMenu } from './UI'
 
-const links = [
-	//['/', 'Home']
+const appLinks = [
+	['/', 'Home', 'home'],
+	['/play', 'Play', 'turntable'],
+	['/chat', 'Chat', 'users']
 ]
 
-const Shortcut = props => <li className="shortcut">
-	<Link to={props.redirect}>
-		<div className="nav-button">
-			<div className="push" />
-			<div className="wrap">
-				<div className="center-wrap">
-						{props.icon && <Icon name={props.icon} scale="lg" />}
-						{!props.icon && <div className="img" style={{
-							backgroundImage: 'url("/assets/i/sprites/avatar.svg?url")'
-						}} />}
-				</div>
-			</div>
+const NavButton = ({ type, children }) => <li className={classNames(
+		'btn', type
+	)}>
+	<div className="btn-wrap">
+		<div className="push" />
+		<div className="wrap">
+			<div className="center-wrap">{ children }</div>
 		</div>
+	</div>
+</li>
+
+const AppLink = props => <li className="app-link center-wrap">
+	<Link to={props.redirect}>
+		{props.icon && <Icon name={props.icon} scale="lg" />}
 	</Link>
 </li>
 
-export const Navigation = props => {
+const Shortcut = props => <NavButton type="shortcut">
+	<div className="shortcut-btn">
+		<div className="center-wrap">
+			<Link to={props.redirect}>
+				<div className="img" style={{
+					backgroundImage: `url("${defaultAssets.avatar}")`
+				}} />
+			</Link>
+		</div>
+	</div>
+</NavButton>
+
+export const Navigation = () => {
+	const hydrated = isHydrated()
+	const { loggedIn } = isAuthenticated()
+	
 	const profile = useSelector(state => state.user.profile)
 	
-	return <nav>
+	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />
 		<div className="container">
-			<ul className="shortcuts">
-				<li className="logo">
+			<ul>
+				<li className="app-link center-wrap">
 					<Link className={classNames(
 						'icon',
 						'icon-full-height',
 					)} to="/">
-						<Icon svg name="logo" />
+						<Icon name="logo-letter" />
 					</Link>
 				</li>
+				
+				<li className="divider" />
+				
+				{appLinks.map(link => <AppLink
+					icon={link[2]}
+					redirect={link[0]}
+					key={`nav-app-link-${link[1]}`}
+				/>)}
+				
+				<li className="divider" />
+				
 				<Shortcut icon="home" redirect="/home" />
-				<Shortcut icon="inbox" redirect="/chat" />
+				<Shortcut icon="message" redirect="/chat" />
 				<Shortcut />
+				
+				<NavButton type="action">
+					<Icon name="new-post" />
+				</NavButton>
 			</ul>
 			
 			<ul className="shortcuts user-shortcuts">
@@ -62,74 +95,5 @@ export const Navigation = props => {
 				</li>
 			</ul>
 		</div>
-	</nav>
-}
-
-const UserNav = props => {
-	const profile = useSelector(state => state.user.profile)
-	
-	return <HeaderWrap loggedIn { ...props }>
-		<ul className="center-x-wrap">
-			<li className="logo">
-				<Link className={classNames(
-					'icon',
-					'icon-full-height',
-				)} to="/">
-					<Icon svg name="logo" />
-				</Link>
-			</li>
-		</ul>
-		<ul className="align-center-wrap">
-			<li>{profile.username && <Avatar
-				status="online"
-				username={profile.username}
-				clickRedirect
-			/>}</li>
-		</ul>
-	</HeaderWrap>
-}
-
-const GuestNav = props => <HeaderWrap { ...props }>
-	<ul className="center-x-wrap">
-		<li className="logo">
-			<Link className={classNames(
-				'icon',
-				'icon-full-height',
-			)} to="/">
-				<Icon svg name="logo" />
-			</Link>
-		</li>
-		{links.map(link => {
-			const className = classNames('nav-btn', {
-				active: props.page === link[0]
-			})
-			
-			return <li key={link[0]} className={className}>
-				<Link to={link[0]}>{link[1]}</Link>
-			</li>
-		})}
-	</ul>
-	<ul className="align-center-wrap">
-		<li>
-			<Link to="/login" className="btn btn-secondary">LOGIN</Link>
-		</li>
-		<li>
-			<Link to="/signup" className="btn btn-roundbtn-primary">SIGN UP</Link>
-		</li>
-	</ul>
-</HeaderWrap>
-
-export const Header = props => {
-	const hydrated = isHydrated()
-	const { loggedIn } = isAuthenticated()
-	
-	return (loggedIn && hydrated) ? <UserNav { ...props } /> : <GuestNav { ...props } />
-}
-
-Header.propTypes = {
-	theme: PropTypes.string.isRequired
-}
-
-Header.defaultProps = {
-	theme: 'light'
+	</nav> : <></>
 }

@@ -1,18 +1,4 @@
-$black: #141519;
-$super-light-gray: #d8dcdf;
-$light-gray: #d8dcdf;
-$gray: #636363;
-$blue-gray: #737f8c;
-$dark-gray: #2d2d2d;
-$white: #fff;
-$red: #e74c3c;
-$orange: #f98311;
-$yellow: #e2d015;
-$green: #29cc4b;
-$blue: #4e85fb;
-$purple: #9e15cc;
-
-$primary-color: $blue;
+$primary-color: #4e85fb;
 
 $font-extralight: 200;
 $font-light: 300;
@@ -22,7 +8,7 @@ $font-bold: 700;
 $font-black: 900;
 
 $letter-spacing: .08rem;
-$border-radius: 4px;
+$border-radius: .25rem;
 
 $breakpoints: (
 	phone-small: 320px, // 200px

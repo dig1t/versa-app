@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:81/v1'
+import config from '../constants/config'
+
+const BASE_URL = `http://${config.apiDomain}/v1`
 
 export const apiCall = config => new Promise(async (resolve, reject) => {
 	const method = config.method || 'get'

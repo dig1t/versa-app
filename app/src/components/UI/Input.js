@@ -1,10 +1,8 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 import { validateText } from '../../util'
-
-//import useMounted from '../util/useMounted'
 
 /* use Input for easy validation
 ** boolean optional - by default all inputs are required unless specified as optional
@@ -99,7 +97,7 @@ const Input = props => {
 		'aria-required': (props.optional && true) || false
 	}
 	
-	const getElement = () => {
+	const children = useMemo(() => {
 		switch(props.type) {
 			case 'textarea':
 				return <textarea {...attributes}
@@ -107,7 +105,11 @@ const Input = props => {
 					onInput={handleChange}
 					onChange={handleChange}
 					onKeyUp={handleChange}
-					onBlur={() => validate()}
+					onFocus={() => setFocused(true)}
+					onBlur={() => {
+						validate()
+						setFocused(false)
+					}}
 				/>
 			case 'select':
 				return <select {...attributes} multiple={props.multiple}>
@@ -150,9 +152,8 @@ const Input = props => {
 					}}
 				/>
 		}
-	}
+	})
 	
-	const children = getElement()
 	const wrapInput = props.type === 'selectButtons' ? true : (props.label || props.wrap)
 	
 	return <div className={classNames(
@@ -166,7 +167,10 @@ const Input = props => {
 			{props.label && <span>{props.label}</span>}
 			{children}
 		</label> : children}
-		{errorText && <div className="error-text">{errorText}</div>}
+		
+		{props.displayError && errorText && <div className="error-text">
+			{errorText}
+		</div>}
 	</div>
 }
 
@@ -177,18 +181,21 @@ Input.defaultProps = {
 	validateFor: 'text',
 	wrap: false,
 	value: '',
-	autoFocus: false
+	autoFocus: false,
+	displayError: true
 }
 
 Input.propTypes = {
 	handleValueChange: PropTypes.func.isRequired,
+	handleValidity: PropTypes.func,
 	type: PropTypes.string,
 	minLength: PropTypes.number,
 	maxLength: PropTypes.number,
 	optional: PropTypes.bool,
 	validateFor: PropTypes.string,
 	defaultValue: PropTypes.string,
-	wrap: PropTypes.bool
+	wrap: PropTypes.bool,
+	displayError: PropTypes.bool
 }
 
 export default Input

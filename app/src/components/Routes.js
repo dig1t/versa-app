@@ -29,6 +29,7 @@ const AppRoutes = () => <Routes>
 	
 	<Route path="/:usernameParam" element={<Profile />} />
 	
+	<Route path="/error" element={<Error />} />
 	<Route path="*" element={<Error />} />
 </Routes>
 

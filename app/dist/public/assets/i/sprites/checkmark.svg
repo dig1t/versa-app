@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 9.27px;
+      }
+    </style>
+  </defs>
+  <path id="Checkmark" class="cls-1" d="M12.55,30.14l11.73,11.73c1.37,1.37,3.58,1.37,4.95,0l22.22-22.22"/>
+</svg>

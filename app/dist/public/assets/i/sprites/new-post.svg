@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <path d="M46,30h-12v-12c0-1.1-.9-2-2-2s-2,.9-2,2v12h-12c-1.1,0-2,.9-2,2s.9,2,2,2h12v12c0,1.1,.9,2,2,2s2-.9,2-2v-12h12c1.1,0,2-.9,2-2s-.9-2-2-2Z"/>
+  <rect xmlns="http://www.w3.org/2000/svg" width="60" height="60" x="2" y="2" fill="none" rx="100" ry="100" stroke="black" stroke-width="2" stroke-dasharray="7, 10" stroke-dashoffset="0" stroke-linecap="square"/>
+</svg>

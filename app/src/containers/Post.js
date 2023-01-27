@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 import Avatar from './Avatar'
-import Icon from '../components/UI/Icon'
+import { Icon } from '../components/UI'
 
 const PostMedia = ({ type, source }) => {
 	// media: {
@@ -65,7 +65,7 @@ const Post = ({ data }) => {
 					<span className="username">@{data.profile.username}</span>
 					<span>&bull;</span>
 					<span className="time">{timePosted}</span>
-					<div className="options"><Icon svg name="ellipsis" /></div>
+					<div className="options"><Icon name="ellipsis" /></div>
 				</div>
 				<div className="content">
 					{data.text && <div className="text">{data.text}</div>}
@@ -73,15 +73,15 @@ const Post = ({ data }) => {
 				</div>
 				<div className="actions">
 					<div className="action likes selected align-center-wrap">
-						<Icon svg name="heart" />
+						<Icon name="heart" />
 						<span>{data.likes}</span>
 					</div>
 					<div className="action comments align-center-wrap">
-						<Icon svg name="comment" />
+						<Icon name="comment" />
 						<span>{data.comments}</span>
 					</div>
 					<div className="action likes align-center-wrap">
-						<Icon svg name="repost" />
+						<Icon name="repost" />
 						<span>{data.reposts}</span>
 					</div>
 				</div>
