@@ -1,4 +1,4 @@
 export const defaultAssets = {
-	avatar: '/assets/i/sprites/avatar.svg?url',
+	avatar: '/assets/i/avatar.png',
 	banner: '/assets/i/banner.jpg'
 }

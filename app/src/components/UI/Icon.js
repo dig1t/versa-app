@@ -11,8 +11,9 @@ const Icon = props => {
 	const iconName = iconAlias[name] || name
 	
 	const renderIcon = useCallback(() => {
-		const SVGImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
+		//const SVGImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
 		
+		// <SVGImport />
 		return <i
 			className={classNames(
 				'icon',
@@ -21,7 +22,7 @@ const Icon = props => {
 			)}
 			aria-hidden="true"
 		>
-			<SVGImport />
+			a
 		</i>
 	}, [])
 	

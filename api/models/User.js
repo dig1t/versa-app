@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcrypt'
 
-const userSchema = new Schema({
+const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
 		alias: 'userId'
@@ -30,7 +30,7 @@ const userSchema = new Schema({
 	}
 }, { _id: false })
 
-userSchema.methods.hashString = async password => {
+schema.methods.hashString = async password => {
 	try {
 		const salt = await bcrypt.genSalt(8)
 		return bcrypt.hashSync(password, salt, null)
@@ -39,7 +39,7 @@ userSchema.methods.hashString = async password => {
 	}
 }
 
-userSchema.methods.validPassword = async function(password) {
+schema.methods.validPassword = async function(password) {
 	try {
 		return await bcrypt.compareSync(password, this.password)
 	} catch(e) {
@@ -47,4 +47,4 @@ userSchema.methods.validPassword = async function(password) {
 	}
 }
 
-export default mongoose.model('User', userSchema)
+export default mongoose.model('User', schema)

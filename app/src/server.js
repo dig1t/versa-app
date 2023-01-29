@@ -15,7 +15,7 @@ const ServerSideRender = (req, res) => {
 	
 	let didError = false
 	
-	const { pipe, abort } = renderToPipeableStream(
+	const { pipe } = renderToPipeableStream(
 		<React.StrictMode>
 			<StaticRouter location={req.url}>
 				<App assets={assets} />
@@ -34,10 +34,13 @@ const ServerSideRender = (req, res) => {
 				console.log('shell err')
 				
 				res.statusCode = 500
-				res.render('template', {
-					assets: JSON.stringify(assets),
-					bundle: assets.bundle
-				})
+				
+				res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${assets};</script><script src="${bundle}"></script>`)
+				
+				// res.render('template', {
+				// 	assets: JSON.stringify(assets),
+				// 	bundle: assets.bundle
+				// })
 			},
 			onError(err) {
 				console.log('on err')

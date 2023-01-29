@@ -1,27 +1,16 @@
 import express from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
-import mongoose from 'mongoose'
 
 import { rateLimiterMiddleware } from './util'
 
 import config from '../config'
 
+import db from './containers/db'
 import routes from './containers/routes'
 import statusMessage from './constants/statusMessage'
 
 const app = express()
-
-/* Setup mongoose */
-const db = mongoose.connection
-
-mongoose.set('strictQuery', false)
-mongoose.Promise = global.Promise
-
-db.on('error', console.error.bind(console, 'MongoDB Error:'))
-db.once('open', () => {
-	console.log('Connected to MongoDB')
-})
 
 /* Setup express */
 app.use(express.json())
@@ -97,9 +86,15 @@ app.use('/v1', routes)
 
 app.get('*', (_, res) => res.apiResult(404))
 
-app.listen(config.apiPort, () => {
-	console.log(`API Server started on port ${config.apiPort}`)
-	mongoose.connect(config.db, { useNewUrlParser: true })
+db.connect()
+db.instance.once('open', () => {
+	console.log('Connected to MongoDB')
+	app.emit('ready')
 })
+
+app.on('ready', () => app.listen(
+	config.apiPort,
+	() => console.log(`API Server started on port ${config.apiPort}`)
+))
 
 app.on('error', err => console.error(err))

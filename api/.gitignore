@@ -7,8 +7,13 @@ yarn-error.log*
 
 # Config
 package-lock.json
-config.js
-*.code-workspace
+.env
 
 # Dependency directories
 node_modules/
+
+# Cache
+.sass-cache/
+
+# Compiled
+dist/*

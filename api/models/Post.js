@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 
-const postSchema = new Schema({
+const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
 		alias: 'postId'
@@ -22,4 +22,4 @@ const postSchema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('Post', postSchema)
+export default mongoose.model('Post', schema)
