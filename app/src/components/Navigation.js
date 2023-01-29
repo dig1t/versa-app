@@ -58,10 +58,10 @@ export const Navigation = () => {
 		<div className="container">
 			<ul>
 				<li className="app-link center-wrap">
-					<Link className={classNames(
+					<Link to="/" className={classNames(
 						'icon',
 						'icon-full-height',
-					)} to="/">
+					)}>
 						<Icon name="logo-letter" />
 					</Link>
 				</li>

@@ -16,6 +16,12 @@ async function render(req, res) {
 	} catch (err) {
 		console.error(err)
 		res.send('Internal Error')
+	} finally {
+		// if (process.env.NODE_ENV === 'development') {
+		// 	for (const modulePath in require.cache) {
+		// 		if (modulePath.startsWith(path.join(__dirname, '/../../src/'))) delete require.cache[modulePath]
+		// 	}
+		// }
 	}
 }
 

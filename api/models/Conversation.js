@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 
-const conversationSchema = new Schema({
+const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
 		alias: 'conversationId'
@@ -29,4 +29,4 @@ const conversationSchema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('Conversation', conversationSchema)
+export default mongoose.model('Conversation', schema)

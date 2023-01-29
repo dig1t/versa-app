@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 
-const profileSchema = new Schema({
+const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
 		alias: 'userId',
@@ -40,10 +40,10 @@ const profileSchema = new Schema({
 	}
 }, { _id: false })
 
-profileSchema.pre('save', function(next) {
+schema.pre('save', function(next) {
 	this.username = this._id
 	
 	next()
 })
 
-export default mongoose.model('Profile', profileSchema)
+export default mongoose.model('Profile', schema)

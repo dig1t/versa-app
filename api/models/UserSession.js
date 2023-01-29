@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 
-const userSessionSchema = new Schema({
+const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
 		alias: 'sessionId'
@@ -22,4 +22,4 @@ const userSessionSchema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('UserSession', userSessionSchema)
+export default mongoose.model('UserSession', schema)

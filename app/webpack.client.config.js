@@ -8,7 +8,16 @@ const dev = process.env.NODE_ENV === 'development'
 module.exports = {
 	mode: dev ? 'development' : 'production',
 	
+	cache: !dev,
+	
 	devtool: 'inline-source-map',
+	
+	watchOptions: {
+		ignored: [
+			path.resolve(__dirname, 'node_modules'),
+			path.resolve(__dirname, 'dist')
+		]
+	},
 	
 	entry: {
 		main: [
@@ -20,7 +29,8 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'dist/public/assets/js'),
 		filename: 'bundle.js',
-		publicPath: '/assets'
+		publicPath: '/assets',
+		//clean: true
 	},
 	
 	module: {
@@ -37,16 +47,17 @@ module.exports = {
 					}
 				}]
 			},
-			{
+			/*{
 				test: /\.svg$/i,
 				type: 'asset',
 				resourceQuery: /url/ // *.svg?url
 			},
 			{
 				test: /\.svg$/,
+				//issuer: /\.js$/,
 				resourceQuery: { not: [/url/] },
 				use: ['@svgr/webpack']
-			}
+			}*/
 		]
 	},
 	

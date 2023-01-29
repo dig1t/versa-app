@@ -5,7 +5,6 @@ const schema = new Schema({
 		type: Schema.Types.ObjectId,
 		alias: 'contentId'
 	},
-	
 	userId: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
@@ -16,6 +15,13 @@ const schema = new Schema({
 		type: String,
 		maxlength: 50
 	},
+	created: {
+		type: Date,
+		maxlength: 27,
+		default: new Date().toISOString(),
+		required: true
+	},
+	private: Boolean,
 	
 	mediaId: {
 		type: Schema.Types.ObjectId,
@@ -38,10 +44,10 @@ const schema = new Schema({
 		} */
 	},
 	
-	collaborators: [{
+	/*collaborators: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Collaborator'
-	}],
+	}],*/
 	
 	// Not real time stats
 	// likes: {
@@ -55,14 +61,7 @@ const schema = new Schema({
 	// reposts: {
 	// 	type: Number,
 	// 	default: 0
-	// },
-	
-	created: {
-		type: Date,
-		maxlength: 27,
-		default: new Date().toISOString(),
-		required: true
-	}
+	// }
 }, { _id: false })
 
 export default mongoose.model('Content', schema)

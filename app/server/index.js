@@ -37,8 +37,6 @@ app.use((_, res, next) => {
 	res.header('Access-Control-Allow-Credentials', 'true')
 	next()
 })
-app.set('view engine', 'ejs')
-app.set('views', 'server/views')
 
 if (app.get('env') === 'production') {
 	app.use(rateLimiterMiddleware)
