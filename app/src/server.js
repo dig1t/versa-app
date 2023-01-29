@@ -36,11 +36,7 @@ const ServerSideRender = (req, res) => {
 				res.statusCode = 500
 				
 				res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${assets};</script><script src="${bundle}"></script>`)
-				
-				// res.render('template', {
-				// 	assets: JSON.stringify(assets),
-				// 	bundle: assets.bundle
-				// })
+				res.end()
 			},
 			onError(err) {
 				console.log('on err')
