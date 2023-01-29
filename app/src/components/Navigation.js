@@ -78,7 +78,6 @@ export const Navigation = () => {
 				
 				<Shortcut icon="home" redirect="/home" />
 				<Shortcut icon="message" redirect="/chat" />
-				<Shortcut />
 				
 				<NavButton type="action">
 					<Icon name="new-post" />
