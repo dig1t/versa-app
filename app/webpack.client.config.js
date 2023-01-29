@@ -47,7 +47,7 @@ module.exports = {
 					}
 				}]
 			},
-			/*{
+			{
 				test: /\.svg$/i,
 				type: 'asset',
 				resourceQuery: /url/ // *.svg?url
@@ -57,7 +57,7 @@ module.exports = {
 				//issuer: /\.js$/,
 				resourceQuery: { not: [/url/] },
 				use: ['@svgr/webpack']
-			}*/
+			}
 		]
 	},
 	
