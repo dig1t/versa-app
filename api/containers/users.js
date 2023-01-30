@@ -7,12 +7,13 @@ import { validateText } from '../util'
 import User from '../models/User'
 import UserSession from '../models/UserSession'
 import Profile from '../models/Profile'
+import config from '../constants/config'
 
 const deserializeUser = user => ({
 	userId: user.userId.toHexString(),
 	isAdmin: user.isAdmin,
 	isMod: user.isMod,
-	createdAt: user.createdAt
+	created: user.created
 })
 
 const deserializeProfile = profile => ({
@@ -27,19 +28,14 @@ const deserializeProfile = profile => ({
 	lastActive: profile.lastActive
 })
 
-const getUserIdFromSession = sessionId => new Promise(async (resolve, reject) => {
-	UserSession.findOne({ sessionId: sanitize(sessionId) })
-		.then(user => {
-			const userId = user && user.userId.toHexString()
-			
-			if (userId) {
-				(!user.isDeleted) ? resolve(userId) : reject('Session is invalid')
-			} else {
-				reject('Session not found')
-			}
-		})
-		.catch(() => reject('Could not find session'))
-})
+const getUserIdFromSession = async sessionId => {
+	const user = UserSession.findOne({ sessionId: sanitize(sessionId) })
+	
+	if (!user) throw 'Could not find session'
+	if (user.isDeleted) throw 'Session is invalid'
+	
+	return user.userId.toHexString()
+}
 
 const emailExists = async email => {
 	const count = await User.countDocuments({ email: sanitize(email) })
@@ -53,119 +49,115 @@ const userIdExists = async userId => {
 	return count > 0 ? true : false
 }
 
-const createSession = (req, userId) => new Promise(async (resolve, reject) => {
-	if (await userIdExists(userId)) {
-		const sessionId = new mongoose.Types.ObjectId()
-		const session = UserSession({
-			sessionId,
-			userId,
-			agent: req.headers['user-agent'],
-			ip: req.ip
-		})
-		
-		session.save()
-			.then(() => resolve(sessionId))
-			.catch(e => reject(e))
-	} else {
-		reject('User does not exist')
+const createSession = async (req, userId) => {
+	if (!await userIdExists(userId)) throw 'User does not exist'
+	
+	const sessionId = new mongoose.Types.ObjectId()
+	const session = UserSession({
+		sessionId,
+		userId,
+		agent: req.headers['user-agent'],
+		ip: req.ip
+	})
+	
+	try {
+		await session.save()
+	} catch(e) {
+		throw 'Could not create session'
 	}
-})
+	
+	return sessionId
+}
 
-const authenticate = req => new Promise(async (resolve, reject) => {
+const authenticate = async req => {
 	const { email, password } = req.fields
 	
-	User.findOne({ email: sanitize(email) })
-		.then(async user => {
-			if (!user || !await user.validPassword(password))
-				return reject('Please try another email or password')
-			
-			const userId = user.userId.toHexString()
-			
-			createSession(req, userId)
-				.then(sessionId => resolve({
-					user: deserializeUser(user),
-					sessionId
-				}))
-				.catch(e => reject(e))
-		})
-		.catch(e => reject(e))
-})
+	const user = await User.findOne({ email: sanitize(email) })
+	
+	if (!user || !await user.validPassword(password)) {
+		throw 'Please try another email or password'
+	}
+	
+	const userId = user.userId.toHexString()
+	
+	return {
+		user: deserializeUser(user),
+		sessionId: await createSession(req, userId)
+	}
+}
 
-const authenticateSession = sessionId => new Promise(async (resolve, reject) => {
-	getUserIdFromSession(sessionId)
-		.then(async userId => {
-			getUserFromUserId(userId)
-				.then(user => resolve(user))
-				.catch(() => reject('Could not get user data'))
-		})
-		.catch(e => reject(e))
-})
+const authenticateSession = async sessionId => {
+	const userId = await getUserIdFromSession(sessionId)
+	const user = await getUserFromUserId(userId)
+	
+	if (!user) throw 'Could not get user data'
+	
+	return user
+}
 
-const createAccount = req => new Promise(async (resolve, reject) => {
+const createAccount = async req => {
 	const { name, email, password } = req.fields
 	
-	if (name.length > 20 || !validateText(name, 'name')) {
-		reject('Name is invalid')
-	} else if (email.length > 320 || !validateText(email, 'email')) {
-		reject('Email is invalid')
-	} else if (password.length > 9999 || !validateText(password, 'password')) {
-		reject('Password does not meet requirements')
+	if (name.length > config.user.maxNameLength || !validateText(name, 'name')) {
+		throw 'Name is invalid'
+	} else if (email.length > config.user.maxEmailLength || !validateText(email, 'email')) {
+		throw 'Email is invalid'
+	} else if (password.length > config.user.maxPasswordLength || !validateText(password, 'password')) {
+		throw 'Password does not meet requirements'
 	} else if (await emailExists(email)) {
-		reject('E-mail in use')
-	} else {
-		const userId = crypto.randomBytes(12).toString('hex')
-		const users = await User.find().countDocuments()
-		
-		const user = new User({
-			_id: userId,
-			email,
-			isAdmin: users === 0
-		})
-		
-		user.password = await user.hashString(password)
-		
-		user.save()
-			.then(() => {
-				const userId = user.userId
-				
-				const profile = new Profile({
-					_id: userId,
-					name
-				})
-				
-				profile.save()
-					.then(() => {
-						createSession(req, userId)
-							.then(sessionId => {
-								resolve({
-									user: deserializeUser(user),
-									profile: deserializeProfile(profile),
-									sessionId
-								})
-							})
-							.catch(e => reject(e))
-					})
-					.catch(e => reject(e))
-			})
-			.catch(e => reject(e))
+		throw 'E-mail in use'
 	}
-})
+	
+	const userId = crypto.randomBytes(12).toString('hex')
+	const users = await User.find().countDocuments()
+	
+	const user = new User({
+		userId,
+		email,
+		isAdmin: users === 0
+	})
+	
+	user.password = await user.hashString(password)
+	
+	try {
+		await user.save()
+	} catch(e) {
+		throw 'Could not create user'
+	}
+	
+	const profile = new Profile({
+		userId,
+		name
+	})
+	
+	try {
+		await profile.save()
+	} catch(e) {
+		throw 'Could not create profile'
+	}
+	
+	return {
+		user: deserializeUser(user),
+		profile: deserializeProfile(profile),
+		sessionId: createSession(req, userId)
+	}
+}
 
-const getUserFromUserId = userId => new Promise(async (resolve, reject) => {
-	User.findOne({ _id: sanitize(userId) })
-		.then(user => {
-			user ? resolve(deserializeUser(user)) : reject('User ID is invalid')
-		})
-		.catch(e => reject(e))
-})
+const getUserFromUserId = async userId => {
+	const user = await User.findOne({ _id: sanitize(userId) })
+	
+	if (!user) throw 'User ID is invalid'
+	
+	return deserializeUser(user)
+}
 
-const getProfileFromUserId = userId => new Promise(async (resolve, reject) => {
-	Profile.findOne({ _id: sanitize(userId) })
-		.then(profile => {
-			profile ? resolve(deserializeProfile(profile)) : reject('User ID is invalid')
-		})
-		.catch(e => reject(e))
-})
+const getProfileFromUserId = async userId => {
+	const profile = await Profile.findOne({ _id: sanitize(userId) })
+	
+	if (!profile) throw 'User ID is invalid'
+	
+	return deserializeProfile(profile)
+}
 
 export {
 	emailExists,

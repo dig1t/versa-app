@@ -4,7 +4,7 @@ export default ({ children, assets }) => {
 	// const [SEO, setSEO] = useState({
 	// 	lang: 'en',
 	// 	title: 'Versa',
-	// 	description: 'social media network'
+	// 	description: 'social media network' 
 	// })
 	const SEO = {
 		lang: 'en',
@@ -14,15 +14,13 @@ export default ({ children, assets }) => {
 	
 	return <html lang={ SEO.lang }>
 		<head>
-			<title>{ SEO.title }</title>
-			
 			<meta charSet="utf-8" />
 			<meta name="monsterile-web-app-capable" content="yes" />
 			<meta name="viewport" content="width=device-width, minimum-scale=1.0" />
 			<meta name="theme-color" content="#9e15cc" />
-			
 			<link rel="manifest" href="/manifest.json" />
 			
+			<title>{ SEO.title }</title>
 			<link rel="icon" type="image/png" href="/assets/i/icon@16x16.png" sizes="16x16" />
 			<link rel="icon" type="image/png" href="/assets/i/icon@32x32.png" sizes="32x32" />
 			
