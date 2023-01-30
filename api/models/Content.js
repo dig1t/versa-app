@@ -54,7 +54,7 @@ const schema = new Schema({
 	// 	type: Number,
 	// 	default: 0
 	// },
-	// replies: {
+	// comments: {
 	// 	type: Number,
 	// 	default: 0
 	// },

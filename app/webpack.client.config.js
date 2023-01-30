@@ -30,7 +30,7 @@ module.exports = {
 		path: path.join(__dirname, 'dist/public/assets/js'),
 		filename: 'bundle.js',
 		publicPath: '/assets',
-		//clean: true
+		clean: true
 	},
 	
 	module: {

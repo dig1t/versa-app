@@ -6,9 +6,9 @@ const schema = new Schema({
 		type: Schema.Types.ObjectId,
 		alias: 'userId'
 	},
-	createdAt: {
+	created: {
 		type: Date,
-		default: Date.now()
+		default: new Date().toISOString()
 	},
 	email: {
 		type: String,
