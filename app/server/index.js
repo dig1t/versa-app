@@ -90,6 +90,7 @@ db.instance.once('open', () => {
 		share_target: {
 			action: '/share',
 			method: 'GET',
+			enctype: 'multipart/form-data',
 			params: {
 				title: 'title',
 				text: 'text',

@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose'
 
 import config from '../../config'
@@ -12,5 +11,6 @@ db.on('error', console.error.bind(console, 'MongoDB Error:'))
 
 export default {
 	instance: db,
-	connect: () => mongoose.connect(config.appDB, { useNewUrlParser: true })
+	connect: uri => mongoose.connect(uri || config.appDB, { useNewUrlParser: true }),
+	disconnect: () => db.close()
 }

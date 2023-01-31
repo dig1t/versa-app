@@ -36,18 +36,14 @@ const schema = new Schema({
 		type: Schema.Types.Number,
 		maxlength: 1
 		/* {
-			1: 'normal',
-			2: 'quoted',
-			3: 'repost',
-			4: 'reply',
-			5: 'collab' (someone added you as a collaborator)
+			1: 'content' // ex: quoting a post
 		} */
 	},
 	
-	/*collaborators: [{
+	/* collaborators: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Collaborator'
-	}],*/
+	}], */
 	
 	// Not real time stats
 	// likes: {

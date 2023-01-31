@@ -29,7 +29,7 @@ const deserializeProfile = profile => ({
 })
 
 const getUserIdFromSession = async sessionId => {
-	const user = UserSession.findOne({ sessionId: sanitize(sessionId) })
+	const user = await UserSession.findOne({ _id: sanitize(sessionId) })
 	
 	if (!user) throw 'Could not find session'
 	if (user.isDeleted) throw 'Session is invalid'
@@ -109,12 +109,10 @@ const createAccount = async req => {
 	}
 	
 	const userId = crypto.randomBytes(12).toString('hex')
-	const users = await User.find().countDocuments()
 	
 	const user = new User({
 		userId,
-		email,
-		isAdmin: users === 0
+		email
 	})
 	
 	user.password = await user.hashString(password)
@@ -146,7 +144,7 @@ const createAccount = async req => {
 const getUserFromUserId = async userId => {
 	const user = await User.findOne({ _id: sanitize(userId) })
 	
-	if (!user) throw 'User ID is invalid'
+	if (!user) throw 'User does not exist'
 	
 	return deserializeUser(user)
 }
@@ -154,7 +152,7 @@ const getUserFromUserId = async userId => {
 const getProfileFromUserId = async userId => {
 	const profile = await Profile.findOne({ _id: sanitize(userId) })
 	
-	if (!profile) throw 'User ID is invalid'
+	if (!profile) throw 'Profile does not exist'
 	
 	return deserializeProfile(profile)
 }
