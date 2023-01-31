@@ -6,72 +6,66 @@ import Post from '../models/Post'
 import Content from '../models/Content'
 import config from '../constants/config'
 
-// Post data structure
-// when pulled from api
-/* const post = {
-	...postData
-	content: {
-		...data
-		media: {}, // Media pulled from database
-	},
-	collaborators: {}, // Pull all userIds matching from collab modal
-} */
+const POST_TYPES = {
+	CONTENT: 1,
+	COLLAB: 2
+}
 
-// const propsExist = (props, keys) => {
-// 	keys.map(key => {
-// 		if (!props[key]) throw new error(`${key} missing`)
-// 	})
+// const EMBED_TYPES = {
+// 	CONTENT: 1
 // }
 
-const createContent = async data => {
-	if (!data.userId) throw new Error('Missing userId')
+const deserializeContent = content => ({
+	contentId: content.contentId.toHexString(),
+	userId: content.userId.toHexString(),
+	body: content.body,
+	created: content.created,
+	private: content.private,
 	
-	if (body.length > config.post.maxBodyLength || !validateText(body, 'text')) {
+	media: content.media ? {
+		mediaId: content.media.mediaId.toHexString(),
+		userId: content.media.userId.toHexString(),
+		source: content.media.source, // Direct URL
+		created: content.media.created
+	} : null
+})
+
+const deserializePost = (post, content) => ({
+	postId: post.postId.toHexString(),
+	userId: post.userId.toHexString(),
+	created: post.created,
+	
+	content: deserializeContent(content)
+})
+
+const createContent = async data => {
+	if (!data.userId) throw 'Missing userId'
+	if (!data.body) throw 'Missing body'
+	
+	if (data.body.length > config.post.maxBodyLength || !validateText(data.body, 'text')) {
 		throw `Content body is too long, max characters is ${config.post.maxBodyLength}`
 	}
 	
 	const contentId = new mongoose.Types.ObjectId()
 	const content = new Content({
 		contentId,
-		userId,
-		body
+		userId: data.userId,
+		body: data.body
 	})
 	
 	try {
 		await content.save()
 		
-		return {
-			contentId,
-			userId,
-			body,
-			created: content.created
-		}
+		return content
 	} catch(e) {
 		throw 'Could not create content'
 	}
 }
 
-const serializePost = (post, content) => ({
-	...post,
-	content
-})
-
-/*
-{
-	post: {
-		postId,
-		//contentId: content.contentId,
-		userId,
-		created: post.created
-	},
-	message: 'Post has been created'
-}
-*/
-
 const createPost = async (userId, query) => {
 	const { body } = query
 	
-	if (body.length > config.post.maxBodyLength || !validateText(text, 'text')) {
+	if (body.length > config.post.maxBodyLength || !validateText(body, 'text')) {
 		throw `Content body is too long, max characters is ${config.post.maxBodyLength}`
 	}
 	
@@ -89,13 +83,37 @@ const createPost = async (userId, query) => {
 	
 	try {
 		await post.save()
+		
+		return deserializePost(post, content)
 	} catch(e) {
 		throw 'Could not create post'
 	}
+}
+
+const deletePost = async postId => {
+	const post = await Post.findOne({ _id: sanitize(postId) })
 	
-	return serializePost(post, content)
+	if (!post) throw 'Could not find post'
+	
+	try {
+		if (post.type === POST_TYPES.CONTENT) {
+			// User owns content of the post
+			// Delete both the post and content
+			
+			await Post.deleteMany({ contentId: post.contentId })
+			await Content.deleteOne({ _id: post.contentId })
+		} else {
+			// Use was tagged as a collaborator or
+			// reposted another user's content
+			// Delete just the post
+			await post.delete()
+		}
+	} catch(e) {
+		throw 'Could not delete post'
+	}
 }
 
 export {
-	createPost
+	createPost,
+	deletePost
 }

@@ -1,4 +1,4 @@
 export default {
 	domain: 'localhost',
-	apiDomain: 'localhost:82'
+	apiDomain: 'localhost:81'
 }

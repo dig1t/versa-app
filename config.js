@@ -2,7 +2,7 @@ const dev = process.env.NODE_ENV
 
 module.exports = {
 	port: 80,
-	apiPort: 82,
+	apiPort: 81,
 	devPort: 3030,
 	name: 'Versa',
 	meta: {

@@ -19,6 +19,16 @@ const schema = new Schema({
 		maxlength: 27,
 		default: new Date().toISOString(),
 		required: true
+	},
+	
+	type: {
+		type: Schema.Types.Number,
+		maxlength: 1,
+		default: 1
+		/* {
+			1: 'content',
+			2: 'collab' (someone added you as a collaborator)
+		} */
 	}
 }, { _id: false })
 

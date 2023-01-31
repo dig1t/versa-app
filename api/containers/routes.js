@@ -93,7 +93,7 @@ router.post('/post/new', asyncMiddleware(async (req, res) => {
 		const userId = await getUserIdFromSession(req.fields.sessionId)
 		
 		try {
-			const post = createPost(userId, req.fields)
+			const post = await createPost(userId, req.fields)
 			
 			res.apiResult(200, post)
 		} catch(err) {
