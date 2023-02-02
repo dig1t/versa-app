@@ -2,10 +2,10 @@ import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 import crypto from 'crypto'
 
-import server from '../../server'
+import server from '../../src/server'
 import {
 	deleteAccount
-} from '../../containers/users'
+} from '../../src/containers/users'
 import { MOCK_USER } from '../data'
 
 chai.config.includeStack = true

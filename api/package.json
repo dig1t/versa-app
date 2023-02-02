@@ -42,6 +42,7 @@
     "mocha": "^10.2.0",
     "mongo-sanitize": "^1.1.0",
     "mongodb-memory-server": "^8.11.4",
-    "mongoose": "^6.8.1"
+    "mongoose": "^6.8.1",
+    "oidc-provider": "^8.1.0"
   }
 }
