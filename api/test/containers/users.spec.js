@@ -1,14 +1,14 @@
 import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 
-import server from '../../server'
+import server from '../../src/server'
 import {
 	emailExists,
 	getUserIdFromSession,
 	getUserFromSession,
 	getUserFromUserId,
 	getProfileFromUserId,
-} from '../../containers/users'
+} from '../../src/containers/users'
 import mockUser from '../util/mockUser'
 import { MOCK_USER } from '../data'
 

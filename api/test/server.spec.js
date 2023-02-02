@@ -2,7 +2,7 @@ import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 import express from 'express'
 
-import { apiMiddleware } from '../util'
+import { apiMiddleware } from '../src/util'
 
 const server = express()
 

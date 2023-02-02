@@ -1,4 +1,4 @@
-import { createPost, deletePost } from '../../containers/posts'
+import { createPost, deletePost } from '../../src/containers/posts'
 import mockUser from '../util/mockUser'
 
 describe('create post/content', async () => {
