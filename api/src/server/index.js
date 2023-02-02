@@ -3,9 +3,9 @@ import compression from 'compression'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 
-import { rateLimiterMiddleware, apiMiddleware } from './util'
+import { rateLimiterMiddleware, apiMiddleware } from '../util'
 
-import routes from './containers/routes'
+import routes from '../containers/routes'
 
 const app = express()
 
