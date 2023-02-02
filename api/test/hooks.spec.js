@@ -8,9 +8,8 @@ export const mochaHooks = {
 	},
 	
 	afterAll: async () => {
+		await mockDatabase.dropCollections(db.instance)
 		await db.disconnect()
 		await mockDatabase.stop()
-	},
-	
-	afterEach: async () => await mockDatabase.dropCollections(db.instance)
+	}
 }

@@ -17,7 +17,8 @@ export const apiCall = config => new Promise(async (resolve, reject) => {
 			headers: {
 				'Content-Type' : 'application/json; charset=UTF-8',
 				'Accept': 'Token'
-			}
+			},
+			withCredentials: true
 			// ,tokens, etc
 		}
 	)
@@ -25,7 +26,7 @@ export const apiCall = config => new Promise(async (resolve, reject) => {
 			response.data.success ? resolve(response.data.data) : reject(response.data.message)
 		})
 		.catch(error => {
-			console.error(error.response && error.response.data)
+			console.error(config.url, error.response && error.response.data)
 			reject('Server error, try again later')
 		})
 })

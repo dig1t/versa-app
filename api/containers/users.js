@@ -7,10 +7,12 @@ import { validateText } from '../util'
 import User from '../models/User'
 import UserSession from '../models/UserSession'
 import Profile from '../models/Profile'
+
 import config from '../constants/config'
 
 const deserializeUser = user => ({
 	userId: user.userId.toHexString(),
+	email: user.email,
 	isAdmin: user.isAdmin,
 	isMod: user.isMod,
 	created: user.created
@@ -28,6 +30,22 @@ const deserializeProfile = profile => ({
 	lastActive: profile.lastActive
 })
 
+const getUserFromUserId = async userId => {
+	const user = await User.findOne({ _id: sanitize(userId) })
+	
+	if (!user) throw 'User does not exist'
+	
+	return deserializeUser(user)
+}
+
+const getProfileFromUserId = async userId => {
+	const profile = await Profile.findOne({ _id: sanitize(userId) })
+	
+	if (!profile) throw 'Profile does not exist'
+	
+	return deserializeProfile(profile)
+}
+
 const getUserIdFromSession = async sessionId => {
 	const user = await UserSession.findOne({ _id: sanitize(sessionId) })
 	
@@ -35,6 +53,13 @@ const getUserIdFromSession = async sessionId => {
 	if (user.isDeleted) throw 'Session is invalid'
 	
 	return user.userId.toHexString()
+}
+
+const getUserFromSession = async sessionId => {
+	const userId = await getUserIdFromSession(sessionId)
+	const user = await getUserFromUserId(userId)
+	
+	return user
 }
 
 const emailExists = async email => {
@@ -66,7 +91,7 @@ const createSession = async (req, userId) => {
 		throw 'Could not create session'
 	}
 	
-	return sessionId
+	return sessionId.toHexString()
 }
 
 const authenticate = async req => {
@@ -84,15 +109,6 @@ const authenticate = async req => {
 		user: deserializeUser(user),
 		sessionId: await createSession(req, userId)
 	}
-}
-
-const authenticateSession = async sessionId => {
-	const userId = await getUserIdFromSession(sessionId)
-	const user = await getUserFromUserId(userId)
-	
-	if (!user) throw 'Could not get user data'
-	
-	return user
 }
 
 const createAccount = async req => {
@@ -137,31 +153,29 @@ const createAccount = async req => {
 	return {
 		user: deserializeUser(user),
 		profile: deserializeProfile(profile),
-		sessionId: createSession(req, userId)
+		sessionId: await createSession(req, userId)
 	}
 }
 
-const getUserFromUserId = async userId => {
+const deleteAccount = async userId => {
 	const user = await User.findOne({ _id: sanitize(userId) })
 	
-	if (!user) throw 'User does not exist'
+	if (!user) throw 'Could not find user'
 	
-	return deserializeUser(user)
-}
-
-const getProfileFromUserId = async userId => {
-	const profile = await Profile.findOne({ _id: sanitize(userId) })
-	
-	if (!profile) throw 'Profile does not exist'
-	
-	return deserializeProfile(profile)
+	try {
+		await User.deleteOne({ _id: user._id })
+	} catch(e) {
+		throw 'Could not delete user'
+	}
 }
 
 export {
 	emailExists,
 	getUserIdFromSession,
-	authenticate, authenticateSession,
-	createAccount,
 	getUserFromUserId,
-	getProfileFromUserId
+	getProfileFromUserId,
+	getUserFromSession,
+	authenticate,
+	createAccount,
+	deleteAccount
 }

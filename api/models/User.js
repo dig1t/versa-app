@@ -16,7 +16,7 @@ const schema = new Schema({
 		unique: true
 	},
 	password: String,
-	passwordEnabled: { // if user signed up using SSO, this will be disabled
+	usePassword: { // if user signed up using SSO, this will be disabled
 		type: Boolean,
 		default: true
 	},
@@ -46,5 +46,10 @@ schema.methods.validPassword = async function(password) {
 		console.error(e)
 	}
 }
+
+schema.pre('deleteOne', { document: true, query: false }, function() {
+    this.model('Profile').deleteOne({ userId: this._id })
+	this.model('UserSession').deleteMany({ userId: this._id })
+})
 
 export default mongoose.model('User', schema)
