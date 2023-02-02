@@ -1,5 +1,5 @@
 import server from './src/server'
-import db from './src/containers/db'
+import db from './src/server/containers/db'
 import config from '../config'
 
 db.connect()
