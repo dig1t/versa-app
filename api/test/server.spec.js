@@ -17,8 +17,8 @@ server.get('/ping', (req, res) => {
 
 chai.use(chaiHttp)
 
-describe('api middleware', function() {
-	it('finds required fields', async function() {
+describe('api middleware', () => {
+	it('finds required fields', async () => {
 		const MOCK_USERID = 'fd9256899cf76129713f1e70'
 		
 		const res = await chai.request(server)

@@ -46,4 +46,11 @@ schema.pre('save', function(next) {
 	next()
 })
 
+schema.pre('deleteOne', { document: true, query: false }, function() {
+    this.model('Content').deleteMany({ userId: this._id })
+    this.model('Comment').deleteMany({ userId: this._id })
+    this.model('Post').deleteMany({ userId: this._id })
+    this.model('Follower').deleteMany({ userId: this._id })
+})
+
 export default mongoose.model('Profile', schema)

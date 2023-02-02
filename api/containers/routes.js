@@ -6,9 +6,9 @@ import { asyncMiddleware } from '../util'
 import {
 	authenticate,
 	createAccount,
+	getProfileFromUserId,
 	getUserIdFromSession,
-	getUserFromUserId,
-	getProfileFromUserId
+	getUserFromSession
 } from './users'
 import { createPost } from './posts'
 
@@ -17,10 +17,15 @@ const router = Router()
 router.get('/ping', (_req, res) => res.json({ pong: true }))
 
 router.get('/user', asyncMiddleware(async (req, res) => {
-	if (!res.getFields([ 'userId' ], true)) return
+	if (!res.getFields([ 'userId', 'sessionId' ], true)) return
 	
 	try {
-		const user = await getUserFromUserId(req.fields.userId)
+		const userId = await getUserIdFromSession(req.fields.sessionId)
+		
+		// Possible attack?
+		if (!userId || req.fields.userId !== userId) throw 'Unexpected Error'
+		
+		const user = await getUserFromSession(req.fields.sessionId)
 		
 		res.apiResult(200, user)
 	} catch(err) {
@@ -32,7 +37,7 @@ router.get('/user', asyncMiddleware(async (req, res) => {
 
 router.get('/user/profile', asyncMiddleware(async (req, res) => {
 	if (!res.getFields([ 'userId' ], true)) return
-	
+	console.log(req.cookies)
 	try {
 		const profile = await getProfileFromUserId(req.fields.userId)
 		
@@ -62,9 +67,9 @@ router.post('/user/authenticate_session', asyncMiddleware(async (req, res) => {
 	if (!res.getFields([ 'sessionId' ], true)) return
 	
 	try {
-		const result = await authenticateSession(req.fields.sessionId)
+		const user = await getUserFromSession(req.fields.sessionId)
 		
-		res.apiResult(200, result)
+		res.apiResult(200, user)
 	} catch(err) {
 		res.apiResult(401, {
 			message: err

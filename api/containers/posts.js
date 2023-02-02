@@ -100,13 +100,13 @@ const deletePost = async postId => {
 			// User owns content of the post
 			// Delete both the post and content
 			
-			await Post.deleteMany({ contentId: post.contentId })
+			//await Post.deleteMany({ contentId: post.contentId })
 			await Content.deleteOne({ _id: post.contentId })
 		} else {
 			// Use was tagged as a collaborator or
 			// reposted another user's content
 			// Delete just the post
-			await post.delete()
+			await post.deleteOne({ _id: post.postId })
 		}
 	} catch(e) {
 		throw 'Could not delete post'

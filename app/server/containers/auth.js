@@ -30,7 +30,10 @@ passport.serializeUser((data, done) => done(null, {
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
-	apiGet('/user', { userId: user.userId })
+	apiGet('/user', {
+		userId: user.userId,
+		sessionId: user.sessionId
+	})
 		.then(data => done(null, {
 			userId: user.userId,
 			isAdmin: data.isAdmin,

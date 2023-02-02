@@ -64,7 +64,8 @@ db.instance.once('open', () => {
 		cookie: {
 			expires: new Date().setMonth(new Date().getMonth() + 18),
 			// serve secure cookies in production
-			secure: process.env.NODE_ENV === 'production'
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'strict'
 		},
 		httpOnly: true,
 		resave: false,

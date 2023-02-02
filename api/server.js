@@ -1,6 +1,7 @@
 import express from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 
 import { rateLimiterMiddleware, apiMiddleware } from './util'
 
@@ -14,10 +15,12 @@ app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(apiMiddleware())
+app.use(cookieParser())
 
 if (app.get('env') == 'development') {
 	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', '*')
+		res.header('Access-Control-Allow-Origin', 'http://localhost')
+		res.header('Access-Control-Allow-Credentials', true)
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 		next()
 	})
