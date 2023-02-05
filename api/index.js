@@ -1,9 +1,17 @@
 import server from './src/server'
-import db from './src/server/containers/db'
+import db from './src/services/db'
+//import openid from './src/services/auth/openid'
+import oauth from './src/services/auth/oauth'
 import config from '../config'
 
+server.oauth = new oauth()
+
+server.use(server.oauth.inject())
+
 db.connect()
-db.instance.once('open', () => {
+db.instance.once('open', async () => {
+	await server.oauth.inject(server)
+	
 	console.log('Connected to MongoDB')
 	server.emit('ready')
 })
@@ -20,3 +28,5 @@ server.on('ready', () => server.listen(
 ))
 
 server.on('error', err => console.error(err))
+
+server.get('*', (_, res) => res.sendStatus(404))
