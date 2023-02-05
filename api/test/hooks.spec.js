@@ -1,4 +1,4 @@
-import db from '../src/server/containers/db'
+import db from '../src/services/db'
 import mockDatabase from './util/mockDatabase'
 
 export const mochaHooks = {

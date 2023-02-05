@@ -45,8 +45,8 @@ if (app.get('env') === 'production') {
 	app.use(helmet.contentSecurityPolicy({
 		directives: {
 			defaultSrc: ["'self'"],
-			styleSrc: ["'self'", 'https://versa.dig1t.io'],
-			scriptSrc: ["'self'", 'https://versa.dig1t.io']
+			styleSrc: ["'self'", config.domain],
+			scriptSrc: ["'self'", config.domain]
 		}
 	}))
 	app.use(helmet.referrerPolicy({ policy: 'no-referrer' }))
@@ -80,9 +80,9 @@ db.instance.once('open', () => {
 	
 	/* PWA manifest file */
 	app.get('/manifest.json', (_, res) => res.send({
-		name: config.meta.title,
-		short_name: config.name,
-		description: config.meta.description,
+		name: config.appName,
+		short_name: config.appName,
+		description: config.appDescription,
 		start_url: '/login',
 		display: 'standalone',
 		orientation: 'portrait',
