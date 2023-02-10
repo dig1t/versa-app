@@ -2,7 +2,7 @@ import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
-import { apiGet, apiPost } from '../../src/util/api'
+import { apiGet, apiPost } from '../../src/util/api.js'
 
 const router = Router()
 
@@ -12,6 +12,7 @@ const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(()
 	next()
 }) : next()
 
+// TODO: DEPRECATED
 const apiFieldMiddleware = (req, _, next) => {
 	const data = req.body?.data
 	
@@ -21,6 +22,11 @@ const apiFieldMiddleware = (req, _, next) => {
 	
 	next()
 }
+
+const deserializeAuthUser = user => ({
+	userId: user.userId,
+	isAdmin: user.isAdmin
+})
 
 // Extract the userId from the auth strategy
 passport.serializeUser((data, done) => done(null, {
@@ -67,55 +73,66 @@ router.post('/auth/logout', (req, res) => {
 	})
 })
 
-const deserializeAuthUser = user => ({
-	userId: user.userId,
-	isAdmin: user.isAdmin
-})
-
 router.post(
 	'/auth/login',
-	logoutMiddleware,
+	logoutMiddleware, // Clear session/cookie data if logged in
 	apiFieldMiddleware,
-	(req, res) => passport.authenticate('local', (_, data) => {
-		data ? req.login(data, () => res.send({
-			success: true,
-			data: deserializeAuthUser(data.user)
-		})) : res.send({
-			success: false,
-			message: 'Not logged in'
-		})
+	(req, res) => passport.authenticate('local', async (_, data) => {
+		try {
+			await req.loginUser(data)
+			
+			res.send({
+				success: true,
+				data: deserializeAuthUser(data.user),
+			})
+		} catch(e) {
+			res.send({
+				success: false,
+				message: 'Not logged in'
+			})
+		}
 	})(req, res)
 )
 
 router.post(
 	'/auth/signup',
-	(req, res) => {
+	async (req, res) => {
 		if (req.isAuthenticated()) return res.send({
 			success: false,
 			message: 'Already logged in'
 		})
 		
-		apiPost('/user/new', req.body.data)
-			.then(data => req.login(data, () => res.send({
+		try {
+			const data = apiPost('/user/new', req.body.data)
+			
+			await req.loginUser(data)
+			
+			res.send({
 				success: true,
 				data: {
 					user: data.user,
 					profile: data.profile
 				}
-			})))
-			.catch(e => res.send({
+			})
+		} catch(e) {
+			res.send({
 				success: false,
 				message: `Error while signing up ${e}`
-			}))
+			})
+		}
 	}
 )
 
-router.get('/auth/get_user', (req, res) => res.send(req.isAuthenticated() ? {
-	success: true,
-	data: deserializeAuthUser(req.user)
-} : {
-	success: false,
-	message: 'Not logged in'
-}))
+router.get('/auth/get_user', (req, res) => {
+	console.log('HTTP COOKIES', req.cookies)
+	
+	res.send(req.isAuthenticated() ? {
+		success: true,
+		data: deserializeAuthUser(req.user)
+	} : {
+		success: false,
+		message: 'Not logged in'
+	})
+})
 
 export default router

@@ -3,8 +3,8 @@ import { formatDistance } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-import Avatar from './Avatar'
-import { Icon } from '../components/UI'
+import Avatar from './Avatar.js'
+import { Icon } from '../components/UI/index.js'
 
 const PostMedia = ({ type, source }) => {
 	// media: {

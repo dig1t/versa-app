@@ -17,4 +17,4 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('Collaborator', schema)
+export default mongoose.models.Collaborator || mongoose.model('Collaborator', schema)

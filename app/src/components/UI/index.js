@@ -1,10 +1,10 @@
-import BurgerMenu from './BurgerMenu'
-import Carousel from './Carousel'
-import Modal from './Modal'
-import Input from './Input'
-import Placeholder from './Placeholder'
-import Icon from './Icon'
-import CatPills from './CatPills'
+import BurgerMenu from './BurgerMenu.js'
+import Carousel from './Carousel.js'
+import Modal from './Modal.js'
+import Input from './Input.js'
+import Placeholder from './Placeholder.js'
+import Icon from './Icon.js'
+import CatPills from './CatPills.js'
 
 export {
 	BurgerMenu,

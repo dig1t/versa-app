@@ -32,4 +32,4 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('Post', schema)
+export default mongoose.models.Post || mongoose.model('Post', schema)

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Layout from '../Layout'
-import Logout from '../../containers/Logout'
+import Layout from '../Layout.js'
+import Logout from '../../containers/Logout.js'
 
 const LogoutRoute = () => <Layout page="logout">
 	<Logout />

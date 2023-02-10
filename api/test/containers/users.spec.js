@@ -1,16 +1,16 @@
 import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 
-import server from '../../src/server'
+import server from '../../src/server.js'
 import {
 	emailExists,
 	getUserIdFromSession,
 	getUserFromSession,
 	getUserFromUserId,
 	getProfileFromUserId,
-} from '../../src/containers/users'
-import mockUser from '../util/mockUser'
-import { MOCK_USER } from '../data'
+} from '../../src/containers/users.js'
+import mockUser from '../util/mockUser.js'
+import { MOCK_USER } from '../data.js'
 
 chai.config.includeStack = true
 
@@ -36,7 +36,7 @@ describe('account functions', () => {
 	})
 	
 	it('authenticates a user using a password', async () => {
-		const res = await chai.request(server)
+		const request = await chai.request(server)
 			.post('/v1/user/authenticate')
 			.send({
 				data: {
@@ -45,12 +45,12 @@ describe('account functions', () => {
 				}
 			})
 		
-		assert.equal(res.status, 200)
-		assert.equal(res.body.success, true)
+		assert.equal(request.status, 200)
+		assert.equal(request.body.success, true)
 		
-		assert.exists(res.body, 'data')
-		assert.exists(res.body.data, 'user')
-		assert.exists(res.body.data, 'sessionId')
+		assert.exists(request.body, 'data')
+		assert.exists(request.body.data, 'user')
+		assert.exists(request.body.data, 'sessionId')
 	})
 	
 	it('gets user from sessionId', async () => {
@@ -71,5 +71,5 @@ describe('account functions', () => {
 		assert(userId, account.user.userId)
 	})
 	
-	it('deletes an account', async () => await mockUser.delete())
+	it('deletes an account', async () => await mockUser.delete(account.user.userId))
 })

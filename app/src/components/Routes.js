@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 
-import PrivateRoute from './PrivateRoute'
+import PrivateRoute from './PrivateRoute.js'
 
 const Error = React.lazy(() => import('./Routes/Error'))
 const Landing = React.lazy(() => import('./Routes/Landing'))

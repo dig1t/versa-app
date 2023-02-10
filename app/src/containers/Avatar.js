@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import { defaultAssets } from '../constants/assets'
+import { defaultAssets } from '../constants/assets.js'
 
 const ActivityCircle = () => <svg version="1.1" x="0" y="0" viewBox="0 0 50 50">
 	<g>

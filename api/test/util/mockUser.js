@@ -2,11 +2,11 @@ import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 import crypto from 'crypto'
 
-import server from '../../src/server'
+import server from '../../src/server.js'
 import {
 	deleteAccount
-} from '../../src/containers/users'
-import { MOCK_USER } from '../data'
+} from '../../src/containers/users.js'
+import { MOCK_USER } from '../data.js'
 
 chai.config.includeStack = true
 
@@ -40,5 +40,5 @@ export default {
 		return account
 	},
 	
-	delete: async () => await deleteAccount(account.user.userId)
+	delete: async userId => await deleteAccount(userId)
 }

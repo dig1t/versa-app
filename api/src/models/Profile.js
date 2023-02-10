@@ -53,4 +53,4 @@ schema.pre('deleteOne', { document: true, query: false }, function() {
     this.model('Follower').deleteMany({ userId: this._id })
 })
 
-export default mongoose.model('Profile', schema)
+export default mongoose.models.Profile || mongoose.model('Profile', schema)

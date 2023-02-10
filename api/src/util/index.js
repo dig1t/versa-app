@@ -1,7 +1,7 @@
-import { asyncMiddleware } from './asyncMiddleware'
-import { apiMiddleware } from './apiMiddleware'
-import { rateLimiterMiddleware } from './rateLimiterMiddleware'
-import validateText from './validateText'
+import { asyncMiddleware } from './asyncMiddleware.js'
+import { apiMiddleware } from './apiMiddleware.js'
+import { rateLimiterMiddleware } from './rateLimiterMiddleware.js'
+import validateText from './validateText.js'
 
 export {
 	asyncMiddleware,

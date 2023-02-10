@@ -37,4 +37,4 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('Media', schema)
+export default mongoose.models.Media || mongoose.model('Media', schema)

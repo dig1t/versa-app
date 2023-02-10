@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
-import { validateText } from '../../util'
+import { validateText } from '../../util/index.js'
 
 /* use Input for easy validation
 ** boolean optional - by default all inputs are required unless specified as optional

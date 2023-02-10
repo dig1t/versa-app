@@ -1,14 +1,14 @@
 import React, { Suspense } from 'react'
 import { Provider } from 'react-redux'
 
-import { createStore } from '../store'
+import { createStore } from '../store.js'
 
-import AppRoutes from './Routes'
-import Html from './Html'
+import AppRoutes from './Routes.js'
+import Html from './Html.js'
 
-import { FetchInitialData } from '../containers/FetchInitialData'
-import { HydrationProvider } from '../context/Hydration'
-import Loading from './Loading'
+import { FetchInitialData } from '../containers/FetchInitialData.js'
+import { HydrationProvider } from '../context/Hydration.js'
+import Loading from './Loading.js'
 
 const store = createStore()
 

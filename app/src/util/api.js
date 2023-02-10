@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import config from '../constants/config'
+import config from '../constants/config.js'
 
 const BASE_URL = `http://${config.apiDomain}/v1`
 

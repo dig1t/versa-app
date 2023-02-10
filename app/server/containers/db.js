@@ -2,7 +2,7 @@
 import mongoose from 'mongoose'
 import MongoStore from 'connect-mongo'
 
-import config from '../../../config'
+import config from '../../../config.js'
 
 const db = mongoose.connection
 

@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { times } from '../../src/util'
+import { times } from '../../src/util/index.js'
 
 describe('times utility', () => {
 	it('repeats a function x times', () => {

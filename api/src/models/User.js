@@ -52,4 +52,4 @@ schema.pre('deleteOne', { document: true, query: false }, function() {
 	this.model('UserSession').deleteMany({ userId: this._id })
 })
 
-export default mongoose.model('User', schema)
+export default mongoose.models.User || mongoose.model('User', schema)

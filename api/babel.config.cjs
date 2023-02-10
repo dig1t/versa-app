@@ -9,7 +9,8 @@ module.exports = function babel(api) {
 			['@babel/preset-env', {
 				'targets': {
 					node: 'current'
-				}
+				},
+				'shippedProposals': true
 			}]
 		],
 		

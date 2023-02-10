@@ -1,24 +1,24 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-//require('fix-esm').register()
-
 import express from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 
-import { rateLimiterMiddleware, apiMiddleware } from './util'
+import { rateLimiterMiddleware, apiMiddleware } from './util/index.js'
 
-import routes from './containers/routes'
-import config from '../../config'
+import useAPI from './containers/routes.js'
+import config from '../../config.js'
+import OAuth2 from './services/auth/oauth.js'
 
 const app = express()
 
-/* Setup express */
+const oauth = OAuth2()
+
 app.use(express.json())
 app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(apiMiddleware())
+app.use(oauth.inject(app))
 app.use(cookieParser())
 
 if (config.dev) {
@@ -45,11 +45,12 @@ if (config.dev) {
 	}))
 	app.use(helmet.referrerPolicy({ policy: 'no-referrer' }))
 	app.use(helmet.frameguard({ action: 'deny' }))
-	app.use(helmet({ noCache: dev }))
+	app.use(helmet({ noCache: config.dev }))
 	
 	app.set('trust proxy', 1) // trust first proxy
 }
 
-app.use('/v1', routes)
+app.use('/oauth', oauth.use(app))
+app.use('/v1', useAPI(app))
 
 export default app

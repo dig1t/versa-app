@@ -1,55 +1,274 @@
 import { Router } from 'express'
-import NodeOAuthServer from 'oauth2-server'
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
+import Provider from 'oidc-provider/lib/index.js'
 
-import config from '../../../../config'
+import config from '../../../../config.js'
+import Adapter from './Adapter.js'
+import oauth2Config from '../../constants/oauth2Config.js'
+import { authenticateUserCredentials, getUserFromUserId } from '../../containers/users.js'
 
-import OAuth from '../../models/OAuth'
-import oauth2Config from '../../constants/oauth2Config'
-
-//console.log(mongoose.connection.readyState)
-
-const router = Router()
-
-const inject = async app => {
-	const provider = await getProvider()
-	
-	app.
-	
-	app.use(provider.callback())
-}
-
-class oauth {
+class OAuth2 {
 	constructor() {
-		this.provider = new NodeOAuthServer({
-			model: OAuth
+		this.appCreds = {
+			client_id: config.client_id,
+			client_secret: config.client_secret
+		}
+		
+		const issuer = `${config.apiDomain}:${config.apiPort}`
+		
+		this.provider = new Provider(issuer, {
+			adapter: Adapter,
+			...oauth2Config
 		})
 	}
 	
-	async authenticate()
+	generateString(length) {
+		return crypto.randomBytes(length || 16).toString('hex')
+	}
 	
-	async authorize(req, res) {
-		const request = new Request(req)
-		const response = new Response(res)
+	generateClientCredentials() {
+		return {
+			client_id: this.generateString(16),
+			client_secret: this.generateString(32)
+		}
+	}
+	
+	async hashString(plainString) {
+		try {
+			const salt = await bcrypt.genSalt(8)
+			return await bcrypt.hashSync(plainString, salt, null)
+		} catch(e) {
+			throw Error(e)
+		}
+	}
+	
+	async validateString(plainString, hashedString) {
+		return await bcrypt.compareSync(plainString, hashedString)
+	}
+	
+	isExpired(timestamp) {
+		const expiryDate = new Date(timestamp * 1000)
 		
-		return await this.provider.authorize(
-			request, response, options
+		return (expiryDate - new Date()) < 0
+	}
+	
+	// ROPC Grant is ONLY for 1st party authentication
+	async ROPCGrant(email, password) {
+		try {
+			const user = await authenticateUserCredentials(email, password)
+			
+			const grant = new this.provider.Grant({
+				clientId: this.appCreds.client_id,
+				accountId: user.userId
+			})
+			
+			grant.addResourceScope('api', 'api:read api:write')
+			
+			await grant.save()
+			
+			grant.grantId = grant.jti
+			
+			return grant
+		} catch(e) {
+			throw 'Internal server error'
+		}
+	}
+	
+	async getClient(clientId) {
+		const client = await this.provider.Client.find(clientId)
+		
+		if (!client) return
+		
+		return client
+	}
+	
+	async getGrant(grantId) {
+		const grant = await this.provider.Grant.find(grantId)
+		
+		if (!grant) return
+		
+		return grant
+	}
+	
+	async getRefreshToken(refreshTokenId) {
+		const refreshToken = await this.provider.RefreshToken.find(refreshTokenId)
+		
+		if (!refreshToken) return
+		
+		return refreshToken
+	}
+	
+	async validateClient(clientId, clientSecret) {
+		const client = await this.getClient(clientId)
+		
+		if (!client) return false
+		
+		return await this.validateString(
+			clientSecret, // plain text secret to test
+			client.clientSecret // hashed secret
 		)
 	}
 	
-	inject() {
-		return async (req, res, next) => {
+	async issueRefreshToken(grantId) {
+		const grant = await this.getGrant(grantId)
+		
+		if (!grant) throw 'Grant not found'
+		if (this.isExpired(grant.exp)) throw 'Grant expired'
+		
+		const client = await this.getClient(grant.clientId)
+		
+		if (!client) throw 'Client not found'
+		
+		const refreshToken = new this.provider.RefreshToken({
+			accountId: grant.accountId,
+			grantId: grant.jti,
+			client: client,
+			scope: 'scope',
+		})
+		
+		try {
+			await refreshToken.save()
+		} catch(e) {
+			return
+		}
+		
+		return refreshToken.jti
+	}
+	
+	async issueAccessToken(refreshTokenId, clientId) {
+		const client = await this.provider.Client.find(
+			clientId || this.appCreds.client_id
+		)
+		const refreshToken = await this.getRefreshToken(refreshTokenId)
+		
+		if (!client || !refreshToken || this.isExpired(refreshToken.exp)) return
+		
+		const accessToken = new this.provider.AccessToken({
+			accountId: refreshToken.accountId,
+			refreshTokenId: refreshToken,
+			client: client,
+			scope: 'api api:read api:write'
+		})
+		
+		try {
+			await accessToken.save()
+		} catch(e) {
+			return
+		}
+		
+		return accessToken.jti
+	}
+	
+	async verifyAccessToken(accessToken) {
+		try {
+			const token = await this.provider.AccessToken.find(accessToken)
 			
-			try {
-				res.locals.oauth = {
-					authorization_code: await this.authorize(req, res)
-				}
-				
-				next()
-			} catch(e) {
-				next(e)
+			if (!token || this.isExpired(token.exp)) throw 'Invalid token'
+			
+			const user = await getUserFromUserId(token.accountId)
+			
+			if (!user) throw 'No user found'
+			
+			return {
+				success: true,
+				user
+			}
+		} catch(e) {
+			return {
+				success: false
 			}
 		}
 	}
+	
+	async getAPIAccessToken(refreshTokenId) {
+		return await this.issueAccessToken(
+			refreshTokenId, this.appCreds.client_id
+		)
+	}
+	
+	// Middlewares
+	authorize() {
+		return async (req, res, next) => {
+			const authorizationCode = req.headers?.authorization.split(' ')
+			
+			if (!authorizationCode || !authorizationCode[0] === 'Bearer') res.sendStatus(401)
+			
+			const authVerification = await this.verifyAccessToken(authorizationCode[1])
+			
+			if (authVerification.success) {
+				req._oauth.user = authVerification.user
+				
+				next()
+			} else {
+				res.sendStatus(401)
+			}
+		}
+	}
+	
+	useROPCGrant() {
+		return async (req, res, next) => {
+			if (!req.fields) return res.sendStatus(500)
+			
+			try {
+				const grant = await this.ROPCGrant(
+					req.fields.email,
+					req.fields.password
+				)
+				
+				req._oauth = { grant }
+				
+				next()
+			} catch(e) {
+				res.sendStatus(401)
+			}
+		}
+	}
+	
+	inject(server) {
+		server.oauth = this
+		
+		return (req, res, next) => {
+			req.oauth = this
+			req._oauth = {}
+			
+			next()
+		}
+	}
+	
+	use() {
+		const router = new Router()
+		
+		router.get('/token', async (req, res) => {
+			const refreshToken = req.cookies?.vrt
+			
+			if (!refreshToken) return res.sendStatus(401)
+			
+			const accessToken = await this.getAPIAccessToken(refreshToken)
+			
+			res.json({
+				access_token: accessToken
+			})
+		})
+		
+		return router
+	}
+	
+	init() {
+		//const Provider = await import('oidc-provider')
+		const issuer = `${config.apiDomain}:${config.apiPort}`
+		
+		this.provider = new Provider.default(issuer, {
+			adapter: Adapter,
+			...oauth2Config
+		})
+	}
 }
 
-export default oauth
+export default () => {
+	const oauth = new OAuth2()
+	
+	//await oauth.init()
+	
+	return oauth
+}

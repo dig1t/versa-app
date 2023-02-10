@@ -1,8 +1,8 @@
 import React from 'react'
 import classNames from 'classnames'
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux.js'
 
-import { Navigation } from './Navigation'
+import { Navigation } from './Navigation.js'
 
 const Layout = props => {
 	const appTheme = useSelector(state => state.settings.appTheme)

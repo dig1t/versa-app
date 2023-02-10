@@ -1,5 +1,5 @@
-import { asyncMiddleware } from './asyncMiddleware'
-import { rateLimiterMiddleware } from './rateLimiterMiddleware'
+import { asyncMiddleware } from './asyncMiddleware.js'
+import { rateLimiterMiddleware } from './rateLimiterMiddleware.js'
 
 export {
 	asyncMiddleware,

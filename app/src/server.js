@@ -2,7 +2,7 @@ import React from 'react'
 import { renderToPipeableStream } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom/server'
 
-import App from './components/App'
+import App from './components/App.js'
 
 const assets = {
 	bundle: '/assets/js/bundle.js',

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
 
-import Layout from '../Layout'
-import Loading from '../Loading'
-import Avatar from '../../containers/Avatar'
-import Feed from '../../containers/Feed'
-import { CatPills, Icon } from '../UI'
+import Layout from '../Layout.js'
+import Loading from '../Loading.js'
+import Avatar from '../../containers/Avatar.js'
+import Feed from '../../containers/Feed.js'
+import { CatPills, Icon } from '../UI/index.js'
 
 const feedCategories = [
 	{
