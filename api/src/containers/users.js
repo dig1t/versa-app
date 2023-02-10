@@ -2,13 +2,13 @@ import sanitize from 'mongo-sanitize'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
-import { validateText } from '../util'
+import { validateText } from '../util/index.js'
 
-import User from '../models/User'
-import UserSession from '../models/UserSession'
-import Profile from '../models/Profile'
+import User from '../models/User.js'
+import UserSession from '../models/UserSession.js'
+import Profile from '../models/Profile.js'
 
-import config from '../constants/config'
+import config from '../constants/config.js'
 
 const deserializeUser = user => ({
 	userId: user.userId.toHexString(),
@@ -94,21 +94,14 @@ const createSession = async (req, userId) => {
 	return sessionId.toHexString()
 }
 
-const authenticate = async req => {
-	const { email, password } = req.fields
-	
+const authenticateUserCredentials = async (email, password) => {
 	const user = await User.findOne({ email: sanitize(email) })
 	
 	if (!user || !await user.validPassword(password)) {
 		throw 'Please try another email or password'
 	}
 	
-	const userId = user.userId.toHexString()
-	
-	return {
-		user: deserializeUser(user),
-		sessionId: await createSession(req, userId)
-	}
+	return deserializeUser(user)
 }
 
 const createAccount = async req => {
@@ -150,10 +143,17 @@ const createAccount = async req => {
 		throw 'Could not create profile'
 	}
 	
+	// Issue user an oauth grant and refresh token
+	const grant = await req.oauth.ROPCGrant(email, password)
+	const refreshToken = await req.oauth.issueRefreshToken(
+		grant.grantId
+	)
+	
 	return {
 		user: deserializeUser(user),
 		profile: deserializeProfile(profile),
-		sessionId: await createSession(req, userId)
+		grantId: grant.grantId,
+		refreshTokenId: refreshToken
 	}
 }
 
@@ -175,7 +175,7 @@ export {
 	getUserFromUserId,
 	getProfileFromUserId,
 	getUserFromSession,
-	authenticate,
+	authenticateUserCredentials,
 	createAccount,
 	deleteAccount
 }

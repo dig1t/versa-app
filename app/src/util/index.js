@@ -1,7 +1,7 @@
-import { apiCall, apiGet, apiPost } from './api'
-import times from './times'
-import validateText from './validateText'
-import { createLoadingSelector, createErrorMessageSelector } from './fetchSelectors'
+import { apiCall, apiGet, apiPost } from './api.js'
+import times from './times.js'
+import validateText from './validateText.js'
+import { createLoadingSelector, createErrorMessageSelector } from './fetchSelectors.js'
 
 export {
 	apiCall,

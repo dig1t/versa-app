@@ -22,4 +22,4 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('UserSession', schema)
+export default mongoose.models.UserSession || mongoose.model('UserSession', schema)

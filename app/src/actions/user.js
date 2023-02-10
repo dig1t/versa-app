@@ -46,7 +46,10 @@ export const fetchUserSuspenseful = dispatch => suspenseWrap(new Promise(resolve
 export const fetchUserAuth = () => dispatch => {
 	dispatch({ type: USER_FETCH_REQUEST })
 	
-	apiCall({ url: '/auth/get_user' })
+	apiCall({
+		url: '/auth/get_user',
+		withCredentials: true
+	})
 		.then(data => dispatch({
 			type: USER_FETCH_SUCCESS,
 			payload: data

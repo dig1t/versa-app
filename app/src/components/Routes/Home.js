@@ -1,10 +1,10 @@
 import React from 'react'
 
-import Layout from '../Layout'
-import PostEditor from '../../containers/PostEditor'
-import StoriesList from '../../containers/StoriesList'
-import Feed from '../../containers/Feed'
-import { CatPills } from '../UI'
+import Layout from '../Layout.js'
+import PostEditor from '../../containers/PostEditor.js'
+import StoriesList from '../../containers/StoriesList.js'
+import Feed from '../../containers/Feed.js'
+import { CatPills } from '../UI/index.js'
 
 const feedCategories = [
 	{

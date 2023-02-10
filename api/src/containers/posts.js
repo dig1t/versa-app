@@ -1,10 +1,11 @@
 import mongoose from 'mongoose'
+import sanitize from 'mongo-sanitize'
 
-import { validateText } from '../util'
+import { validateText } from '../util/index.js'
 
-import Post from '../models/Post'
-import Content from '../models/Content'
-import config from '../constants/config'
+import Post from '../models/Post.js'
+import Content from '../models/Content.js'
+import config from '../constants/config.js'
 
 const POST_TYPES = {
 	CONTENT: 1,

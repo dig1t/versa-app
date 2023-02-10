@@ -1,0 +1,8 @@
+{
+  "exit": true,
+  "require": ["@babel/register", "test/hooks.spec.js"],
+  "reporter": "nyan",
+  "spec": "test/**/*.spec.js",
+  "timeout": 10000,
+  "bail": true
+}

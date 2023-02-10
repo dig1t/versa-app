@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 
-import { isAuthenticated } from '../context/Auth'
-import { isHydrated } from '../context/Hydration'
-import { defaultAssets } from '../constants/assets'
-import Avatar from '../containers/Avatar'
-import { Icon } from './UI'
-// import Logout from '../../containers/Logout'
+import { isAuthenticated } from '../context/Auth.js'
+import { isHydrated } from '../context/Hydration.js'
+import { defaultAssets } from '../constants/assets.js'
+import Avatar from '../containers/Avatar.js'
+import { Icon } from './UI/index.js'
+// import Logout from '../../containers/Logout.js'
 
-//import { BurgerMenu } from './UI'
+//import { BurgerMenu } from './UI/index.js'
 
 const appLinks = [
 	['/', 'Home', 'home'],

@@ -1,5 +1,5 @@
-import config from '../../../config'
-import * as jwks from '../jwks.json'
+import config from '../../../config.js'
+import jwks from '../jwks.json' assert { type: 'json' };
 
 /*
 import fs from 'fs'
@@ -20,13 +20,16 @@ Promise.all([
 export default {
 	clients: [
 		{
-			client_id: 'foo',
+			client_id: config.client_id,
+			client_secret: config.client_secret,
+			
 			redirect_uris: [config.domain],
-			response_types: ['id_token'],
-			grant_types: ['authorization_code', 'implicit', 'refresh_token'],
-			token_endpoint_auth_method: 'none',
+			grant_types: ['authorization_code'],
+			scope: 'openid'
 		}
 	],
+	
+	grants: ['ropc'],
 	
 	scopes: ['openid', 'offline_access', 'api:read'],
 	
@@ -37,7 +40,21 @@ export default {
 	features: {
 		devInteractions: {
 			enabled: false
+		},
+		
+		revocation: {
+			enabled: true
 		}
+	},
+	
+	ttl: {
+		AccessToken: 24 * 60 * 60 * 7, // 1 week
+		AuthorizationCode: 24 * 60 * 60, // 1 day
+		ClientCredentials: 24 * 60 * 60, // 1 day
+		DeviceCode: 24 * 60 * 60, // 1 day
+		IdToken: 24 * 60 * 60, // 1 day
+		RefreshToken: 24 * 60 * 60 * 365, // 1 year
+		Grant: 24 * 60 * 60 * 365 // 1 year
 	},
 	
 	jwks

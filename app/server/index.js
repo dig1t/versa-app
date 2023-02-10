@@ -6,11 +6,11 @@ import { webpack } from 'webpack'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
 
-import { rateLimiterMiddleware, asyncMiddleware } from './util'
-import webpackServerConfig from '../webpack.client.config'
-import config from '../../config'
-import auth from './containers/auth'
-import db from './containers/db'
+import { rateLimiterMiddleware, asyncMiddleware } from './util/index.js'
+import webpackServerConfig from '../webpack.client.config.js'
+import config from '../../config.js'
+import auth from './containers/auth.js'
+import db from './containers/db.js'
 import useRequire from './util/require.cjs'
 
 const app = express()
@@ -59,7 +59,7 @@ if (app.get('env') === 'production') {
 db.connect()
 db.instance.once('open', () => {
 	app.use(session({
-		name: 'authId',
+		name: 'vs',
 		secret: config.expressSecret,
 		cookie: {
 			expires: new Date().setMonth(new Date().getMonth() + 18),

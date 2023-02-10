@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import Layout from '../Layout'
+import Layout from '../Layout.js'
 
 const Landing = () => <Layout page="landing" disableNav={true}>
 	<section className="hero">

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import Layout from '../Layout'
+import Layout from '../Layout.js'
 
 const Error = () => <Layout page="error">
 	<div className="error-page align-center-wrap">

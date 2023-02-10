@@ -29,4 +29,4 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.model('Conversation', schema)
+export default mongoose.models.Conversation || mongoose.model('Conversation', schema)

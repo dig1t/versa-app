@@ -2,7 +2,7 @@ import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 import express from 'express'
 
-import { apiMiddleware } from '../src/util'
+import { apiMiddleware } from '../src/util/index.js'
 
 const server = express()
 
@@ -12,7 +12,7 @@ server.use(apiMiddleware())
 server.get('/ping', (req, res) => {
 	if (!res.getFields([ 'userId' ], true)) return
 	
-	res.apiResult(200, req.fields)
+	req.apiResult(200, req.fields)
 })
 
 chai.use(chaiHttp)
@@ -21,7 +21,7 @@ describe('api middleware', () => {
 	it('finds required fields', async () => {
 		const MOCK_USERID = 'fd9256899cf76129713f1e70'
 		
-		const res = await chai.request(server)
+		const request = await chai.request(server)
 			.get('/ping')
 			.send({
 				data: {
@@ -29,8 +29,8 @@ describe('api middleware', () => {
 				}
 			})
 		
-		assert.equal(res.status, 200)
-		assert.equal(res.body.success, true)
-		assert.equal(res.body.data.userId, MOCK_USERID)
+		assert.equal(request.status, 200)
+		assert.equal(request.body.success, true)
+		assert.equal(request.body.data.userId, MOCK_USERID)
 	})
 })

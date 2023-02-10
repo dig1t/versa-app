@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Avatar from './Avatar'
-import { defaultAssets } from '../constants/assets'
+import Avatar from './Avatar.js'
+import { defaultAssets } from '../constants/assets.js'
 
 const storiesData = [ // TODO: REPLACE PSUEDO DATA
 	{

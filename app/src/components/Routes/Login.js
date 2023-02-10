@@ -2,9 +2,9 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import AuthForm from '../../containers/AuthForm'
-import Layout from '../Layout'
-import { setAuthenticatedUser, userLogout } from '../../actions/user'
+import AuthForm from '../../containers/AuthForm.js'
+import Layout from '../Layout.js'
+import { setAuthenticatedUser, userLogout } from '../../actions/user.js'
 
 const inputs = [
 	{

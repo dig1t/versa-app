@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Input, Icon } from '../components/UI'
+import { Input, Icon } from '../components/UI/index.js'
 
 const PostEditor = () => {
 	const [text, setText] = useState('')

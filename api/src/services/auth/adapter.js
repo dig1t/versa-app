@@ -1,3 +1,5 @@
+import mongoose from 'mongoose'
+
 let DB
 
 const grantable = new Set([
@@ -43,9 +45,11 @@ class MongoAdapter {
 	constructor(name) {
 		this.name = name
 		
+		DB = mongoose.connection
+		
 		// NOTE: you should never be creating indexes at runtime in production, the following is in
 		// place just for demonstration purposes of the indexes required
-		collections.add(this.name)
+		if (process.env.NODE_ENV === 'development') collections.add(this.name)
 	}
 	
 	// NOTE: the payload for Session model may contain client_id as keys, make sure you do not use

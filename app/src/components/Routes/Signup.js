@@ -2,10 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
-import AuthForm from '../../containers/AuthForm'
-import Layout from '../Layout'
-import { setAuthenticatedUser, setUserProfile, userLogout } from '../../actions/user'
-import { addUserProfile } from '../../actions/profile'
+import AuthForm from '../../containers/AuthForm.js'
+import Layout from '../Layout.js'
+import { setAuthenticatedUser, setUserProfile, userLogout } from '../../actions/user.js'
+import { addUserProfile } from '../../actions/profile.js'
 
 const inputs = [
 	{

@@ -71,4 +71,4 @@ schema.pre(['deleteOne', 'deleteMany'], { document: true, query: false }, functi
     this.model('Comment').deleteMany({ contentId: this._id })
 })
 
-export default mongoose.model('Content', schema)
+export default mongoose.models.Content || mongoose.model('Content', schema)

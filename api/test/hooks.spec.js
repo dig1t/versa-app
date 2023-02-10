@@ -1,5 +1,5 @@
-import db from '../src/services/db'
-import mockDatabase from './util/mockDatabase'
+import db from '../src/services/db.js'
+import mockDatabase from './util/mockDatabase.js'
 
 export const mochaHooks = {
 	beforeAll: async () => {
