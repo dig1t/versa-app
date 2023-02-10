@@ -74,26 +74,6 @@ const userIdExists = async userId => {
 	return count > 0 ? true : false
 }
 
-const createSession = async (req, userId) => {
-	if (!await userIdExists(userId)) throw 'User does not exist'
-	
-	const sessionId = new mongoose.Types.ObjectId()
-	const session = UserSession({
-		sessionId,
-		userId,
-		agent: req.headers['user-agent'],
-		ip: req.ip
-	})
-	
-	try {
-		await session.save()
-	} catch(e) {
-		throw 'Could not create session'
-	}
-	
-	return sessionId.toHexString()
-}
-
 const authenticateUserCredentials = async (email, password) => {
 	const user = await User.findOne({ email: sanitize(email) })
 	
@@ -171,6 +151,7 @@ const deleteAccount = async userId => {
 
 export {
 	emailExists,
+	userIdExists,
 	getUserIdFromSession,
 	getUserFromUserId,
 	getProfileFromUserId,
