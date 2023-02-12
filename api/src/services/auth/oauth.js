@@ -190,11 +190,15 @@ class OAuth2 {
 	// Middlewares
 	authorize() {
 		return async (req, res, next) => {
-			const authorizationCode = req.headers?.authorization.split(' ')
+			const authorizationCode = req.headers?.authorization
 			
-			if (!authorizationCode || !authorizationCode[0] === 'Bearer') res.sendStatus(401)
+			if (!authorizationCode) return res.sendStatus(401)
 			
-			const authVerification = await this.verifyAccessToken(authorizationCode[1])
+			const accessToken = authorizationCode.split(' ')
+			
+			if (!accessToken[0] === 'Bearer') return res.sendStatus(401)
+			
+			const authVerification = await this.verifyAccessToken(accessToken[1])
 			
 			if (authVerification.success) {
 				req._oauth.user = authVerification.user

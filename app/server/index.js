@@ -28,17 +28,23 @@ if (app.get('env') === 'development') {
 	}))
 }
 
-app.use(cookieParser())
 app.use(express.json())
 app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
+app.use(cookieParser())
 app.use((_, res, next) => {
 	res.header('Access-Control-Allow-Credentials', 'true')
 	next()
 })
 
-if (app.get('env') === 'production') {
+if (config.dev) {
+	app.use((req, res, next) => {
+		res.header('Access-Control-Allow-Origin', config.domain)
+		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+		next()
+	})
+} else {
 	app.use(rateLimiterMiddleware)
 	
 	/* Setup helmet */
@@ -51,7 +57,7 @@ if (app.get('env') === 'production') {
 	}))
 	app.use(helmet.referrerPolicy({ policy: 'no-referrer' }))
 	app.use(helmet.frameguard({ action: 'deny' }))
-	app.use(helmet({ noCache: app.get('env') === 'development' }))
+	app.use(helmet({ noCache: config.dev }))
 	
 	app.set('trust proxy', 1) // trust first proxy
 }
@@ -59,12 +65,12 @@ if (app.get('env') === 'production') {
 db.connect()
 db.instance.once('open', () => {
 	app.use(session({
-		name: 'vs',
+		name: 'vss',
 		secret: config.expressSecret,
 		cookie: {
-			expires: new Date().setMonth(new Date().getMonth() + 18),
+			expires: new Date().setMonth(new Date().getMonth() + 12),
 			// serve secure cookies in production
-			secure: process.env.NODE_ENV === 'production',
+			secure: !config.dev,
 			sameSite: 'strict'
 		},
 		httpOnly: true,
@@ -91,7 +97,7 @@ db.instance.once('open', () => {
 		share_target: {
 			action: '/share',
 			method: 'GET',
-			enctype: 'multipart/form-data',
+			enctype: 'application/x-www-form-urlencoded',
 			params: {
 				title: 'title',
 				text: 'text',
