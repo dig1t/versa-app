@@ -1,3 +1,7 @@
+import config from '../../../config.js'
+
+const maxTokenAge = 24 * 60 * 60 * 365
+
 export default (req, res, next) => {
 	req.loginUser = data => new Promise((resolve, reject) => {
 		if (!data) throw 'Missing user data'
@@ -9,10 +13,14 @@ export default (req, res, next) => {
 			req.session.save()
 			
 			// Set httpOnly RefreshToken cookie
-			res.cookie('vrt', data.refreshTokenId, {
-				maxAge: 24 * 60 * 60 * 365,
-				httpOnly: true
-			})
+			res.cookie(
+				config.shortName.refreshToken,
+				data.refreshTokenId,
+				{
+					maxAge: maxTokenAge,
+					httpOnly: true
+				}
+			)
 			
 			err ? reject(err) : resolve()
 		})

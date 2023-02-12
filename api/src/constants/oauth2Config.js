@@ -23,7 +23,7 @@ export default {
 			client_id: config.client_id,
 			client_secret: config.client_secret,
 			
-			redirect_uris: [config.domain],
+			redirect_uris: [config._domain],
 			grant_types: ['authorization_code'],
 			scope: 'openid'
 		}

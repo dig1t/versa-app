@@ -18,15 +18,13 @@ export default server => {
 	router.get(
 		'/user',
 		useFields({ fields: ['userId', 'sessionId'] }),
-		server.oauth.authorize(),
+		//server.oauth.authorize(),
 		asyncMiddleware(async (req) => {
 			try {
-				const userId = req._oauth.user.userId
-				
-				// Possible attack?
-				if (!userId || req.fields.userId !== userId) throw 'Unexpected Error'
-				
 				const user = await getUserFromSession(req.fields.sessionId)
+				
+				// Possible attack
+				if (user.userId !== req.fields.userId) throw 'Unexpected Error'
 				
 				req.apiResult(200, user)
 			} catch(err) {

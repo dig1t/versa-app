@@ -6,7 +6,7 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "dev": "babel-watch index.js",
+    "dev": "babel-watch index.js -w ./src",
     "start": "set NODE_ENV=production&& node dist/server.js",
     "test": "set NODE_ENV=development&& mocha",
     "lint": "eslint \"**/*.js\" --ignore-pattern node_modules/"

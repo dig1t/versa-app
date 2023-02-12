@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import AuthForm from '../../containers/AuthForm.js'
 import Layout from '../Layout.js'
 import { setAuthenticatedUser, userLogout } from '../../actions/user.js'
+import Logout from '../../containers/Logout.js'
 
 const inputs = [
 	{
@@ -36,6 +37,7 @@ const Login = () => {
 	
 	return <Layout page="landing">
 		<section className="auth">
+			<Logout />
 			<div className="box center-wrap">
 				<div className="form-wrap">
 					<Link to="/" className="btn-back" />

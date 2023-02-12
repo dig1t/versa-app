@@ -2,6 +2,7 @@ import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
+import config from '../../../config.js'
 import { apiGet, apiPost } from '../../src/util/api.js'
 import { authMiddleware } from '../util/index.js'
 
@@ -26,20 +27,22 @@ const apiFieldMiddleware = (req, _, next) => {
 	next()
 }
 
-const deserializeAuthUser = user => ({
+const deserializeAuthorizedUser = user => ({
 	userId: user.userId,
-	isAdmin: user.isAdmin
+	isAdmin: user.isAdmin,
+	isAdmin: user.isMod
 })
 
 // Extract the userId from the auth strategy
-passport.serializeUser((data, done) => done(null, {
-	userId: data.user.userId,
-	sessionId: data.sessionId
-}))
+passport.serializeUser((data, done) => {
+	done(null, {
+		userId: data.user.userId,
+		sessionId: data.sessionId
+	})
+})
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
-	console.log(user)
 	apiGet('/user', {
 		userId: user.userId,
 		sessionId: user.sessionId
@@ -70,7 +73,11 @@ passport.use('local', new LocalStrategy(
 /* Define Routes */
 router.post('/auth/logout', (req, res) => {
 	req.logout(() => {
+		res.clearCookie(config.shortName.session)
+		res.clearCookie(config.shortName.refreshToken)
+		
 		req.session.destroy()
+		
 		res.send({
 			success: true
 		})
@@ -83,12 +90,11 @@ router.post(
 	apiFieldMiddleware,
 	(req, res) => passport.authenticate('local', async (_, data) => {
 		try {
-			console.log('GRANT WORKED', data)
 			await req.loginUser(data)
 			
 			res.send({
 				success: true,
-				data: deserializeAuthUser(data.user),
+				data: deserializeAuthorizedUser(data.user),
 			})
 		} catch(e) {
 			res.send({
@@ -115,7 +121,7 @@ router.post(
 			res.send({
 				success: true,
 				data: {
-					user: data.user,
+					user: deserializeAuthorizedUser(data.user),
 					profile: data.profile
 				}
 			})
@@ -129,11 +135,9 @@ router.post(
 )
 
 router.get('/auth/get_user', (req, res) => {
-	console.log('HTTP COOKIES', req.cookies)
-	
 	res.send(req.isAuthenticated() ? {
 		success: true,
-		data: deserializeAuthUser(req.user)
+		data: deserializeAuthorizedUser(req.user)
 	} : {
 		success: false,
 		message: 'Not logged in'

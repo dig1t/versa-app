@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import Provider from 'oidc-provider/lib/index.js'
 
 import config from '../../../../config.js'
-import Adapter from './Adapter.js'
+import Adapter from './adapter.js'
 import oauth2Config from '../../constants/oauth2Config.js'
 import { authenticateUserCredentials, getUserFromUserId } from '../../containers/users.js'
 
@@ -15,7 +15,7 @@ class OAuth2 {
 			client_secret: config.client_secret
 		}
 		
-		const issuer = `${config.apiDomain}:${config.apiPort}`
+		const issuer = `${config._apiDomain}:${config.apiPort}`
 		
 		this.provider = new Provider(issuer, {
 			adapter: Adapter,
@@ -244,7 +244,7 @@ class OAuth2 {
 		const router = new Router()
 		
 		router.get('/token', async (req, res) => {
-			const refreshToken = req.cookies?.vrt
+			const refreshToken = req.cookies?.[config.shortName.refreshToken]
 			
 			if (!refreshToken) return res.sendStatus(401)
 			
@@ -257,22 +257,10 @@ class OAuth2 {
 		
 		return router
 	}
-	
-	init() {
-		//const Provider = await import('oidc-provider')
-		const issuer = `${config.apiDomain}:${config.apiPort}`
-		
-		this.provider = new Provider.default(issuer, {
-			adapter: Adapter,
-			...oauth2Config
-		})
-	}
 }
 
 export default () => {
 	const oauth = new OAuth2()
-	
-	//await oauth.init()
 	
 	return oauth
 }

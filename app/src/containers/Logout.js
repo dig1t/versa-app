@@ -16,7 +16,15 @@ const Logout = () => {
 			method: 'post',
 			url: '/auth/logout'
 		})
-			.then(() => dispatch(userLogout()))
+			.then(() => {
+				try {
+					localStorage.clear()
+				} catch(e) {
+					console.error('Could not clear cookies')
+				}
+				
+				dispatch(userLogout())
+			})
 		
 		setClicked(true)
 	}

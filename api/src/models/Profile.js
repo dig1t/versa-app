@@ -37,6 +37,10 @@ const schema = new Schema({
 	lastActive: {
 		type: Date,
 		default: Date.now()
+	},
+	created: {
+		type: Date,
+		default: new Date().toISOString()
 	}
 }, { _id: false })
 
