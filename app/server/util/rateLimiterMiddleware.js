@@ -5,6 +5,6 @@ const rateLimiter = new Bottleneck({
 	minTime: 1000
 })
 
-export const rateLimiterMiddleware = (req, res, next) => {
+export default (req, res, next) => {
 	rateLimiter.submit(next)
 }

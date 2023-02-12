@@ -3,8 +3,11 @@ import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 import { apiGet, apiPost } from '../../src/util/api.js'
+import { authMiddleware } from '../util/index.js'
 
 const router = Router()
+
+router.use(authMiddleware)
 
 const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(() => {
 	req.loggedUserOut = true
@@ -36,6 +39,7 @@ passport.serializeUser((data, done) => done(null, {
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
+	console.log(user)
 	apiGet('/user', {
 		userId: user.userId,
 		sessionId: user.sessionId
@@ -79,6 +83,7 @@ router.post(
 	apiFieldMiddleware,
 	(req, res) => passport.authenticate('local', async (_, data) => {
 		try {
+			console.log('GRANT WORKED', data)
 			await req.loginUser(data)
 			
 			res.send({

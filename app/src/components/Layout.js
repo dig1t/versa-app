@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { useSelector } from 'react-redux.js'
+import { useSelector } from 'react-redux'
 
 import { Navigation } from './Navigation.js'
 

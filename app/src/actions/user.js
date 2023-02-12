@@ -10,7 +10,6 @@ import {
 } from '../constants/actionTypes.js'
 
 import { apiGet, apiCall } from '../util/api.js'
-import { suspenseWrap } from '../util/suspenseWrap.js'
 
 export const userLogout = status => dispatch => dispatch({
 	type: USER_LOGOUT_SUCCESS
@@ -25,23 +24,6 @@ export const setUserProfile = data => dispatch => dispatch({
 	type: USER_PROFILE_FETCH_SUCCESS,
 	payload: data
 })
-
-export const fetchUserSuspenseful = dispatch => suspenseWrap(new Promise(resolve => {
-	apiCall({ url: '/auth/get_user' })
-		.then(data => {
-			dispatch({
-				type: USER_FETCH_SUCCESS,
-				payload: data
-			})
-			resolve()
-		})
-		.catch(() => {
-			dispatch({
-				type: USER_FETCH_FAILURE
-			})
-			resolve()
-		})
-}))
 
 export const fetchUserAuth = () => dispatch => {
 	dispatch({ type: USER_FETCH_REQUEST })

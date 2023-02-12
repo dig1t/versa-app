@@ -17,14 +17,17 @@ app.use(express.json())
 app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
+app.use(cookieParser())
 app.use(apiMiddleware())
 app.use(oauth.inject(app))
-app.use(cookieParser())
+app.use((_, res, next) => {
+	res.header('Access-Control-Allow-Credentials', 'true')
+	next()
+})
 
 if (config.dev) {
 	app.use((req, res, next) => {
 		res.header('Access-Control-Allow-Origin', config.domain)
-		res.header('Access-Control-Allow-Credentials', true)
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 		next()
 	})
@@ -39,8 +42,8 @@ if (config.dev) {
 	app.use(helmet.contentSecurityPolicy({
 		directives: {
 			defaultSrc: ["'self'"],
-			styleSrc: ["'self'", config.domain],
-			scriptSrc: ["'self'", config.domain]
+			styleSrc: ["'self'", config.apiDomain],
+			scriptSrc: ["'self'", config.apiDomain]
 		}
 	}))
 	app.use(helmet.referrerPolicy({ policy: 'no-referrer' }))

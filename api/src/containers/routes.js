@@ -1,15 +1,14 @@
 import { Router } from 'express'
 
 import {
+	authenticate,
 	createAccount,
 	getProfileFromUserId,
-	getUserIdFromSession,
 	getUserFromSession,
 	getUserFromUserId
 } from './users.js'
 import { createPost } from './posts.js'
-import { asyncMiddleware } from '../util/index.js'
-import { useFields } from '../util/apiMiddleware.js'
+import { asyncMiddleware, useFields } from '../util/index.js'
 
 export default server => {
 	const router = new Router()
@@ -19,9 +18,10 @@ export default server => {
 	router.get(
 		'/user',
 		useFields({ fields: ['userId', 'sessionId'] }),
-		asyncMiddleware(async (req, res) => {
+		server.oauth.authorize(),
+		asyncMiddleware(async (req) => {
 			try {
-				const userId = await getUserIdFromSession(req.fields.sessionId)
+				const userId = req._oauth.user.userId
 				
 				// Possible attack?
 				if (!userId || req.fields.userId !== userId) throw 'Unexpected Error'
@@ -30,9 +30,7 @@ export default server => {
 				
 				req.apiResult(200, user)
 			} catch(err) {
-				req.apiResult(500, {
-					message: err
-				})
+				req.apiResult(500)
 			}
 		})
 	)
@@ -59,14 +57,15 @@ export default server => {
 		server.oauth.useROPCGrant(),
 		asyncMiddleware(async req => {
 			try {
-				const refreshToken = await server.oauth.issueRefreshToken(
+				const result = await authenticate(
+					req,
+					req._oauth.grant.accountId,
 					req._oauth.grant.grantId
 				)
 				
 				req.apiResult(200, {
-					user: await getUserFromUserId(req._oauth.grant.accountId),
-					grantId: req._oauth.grant.grantId,
-					refreshTokenId: refreshToken
+					...result,
+					user: await getUserFromUserId(req._oauth.grant.accountId)
 				})
 			} catch(err) {
 				req.apiResult(401, {
