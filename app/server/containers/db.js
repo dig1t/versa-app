@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose'
 import MongoStore from 'connect-mongo'
 
@@ -13,6 +12,11 @@ db.on('error', console.error.bind(console, 'MongoDB Error:'))
 
 export default {
 	instance: db,
-	getStore: () => MongoStore.create({ client: mongoose.connection.getClient() }),
-	connect: () => mongoose.connect(config.appDB, { useNewUrlParser: true })
+	getStore: () => MongoStore.create({
+		client: mongoose.connection.getClient()
+	}),
+	connect: () => mongoose.connect(
+		config.appDB,
+		{ useNewUrlParser: true }
+	)
 }

@@ -4,40 +4,41 @@ import config from '../constants/config.js'
 
 const BASE_URL = `http://${config.apiDomain}/v1`
 
-export const apiCall = config => new Promise(async (resolve, reject) => {
-	const method = config.method || 'get'
+export const apiCall = options => new Promise(async (resolve, reject) => {
+	const method = options.method || 'get'
 	
 	axios(
 		{
 			method,
-			url: config.url,
+			url: options.url,
 			[method === 'get' ? 'params' : 'data']: (
-				config._data || { data: config.data }
+				options._data || { data: options.data }
 			),
 			headers: {
 				'Content-Type' : 'application/x-www-form-urlencoded',
 				'Accept': 'Token'
 			},
-			withCredentials: true
-			// ,tokens, etc
+			withCredentials: options.withCredentials
 		}
 	)
 		.then(response => {
 			response.data.success ? resolve(response.data.data) : reject(response.data.message)
 		})
 		.catch(error => {
-			console.error(config.url, error.response && error.response.data)
+			console.error(options.url, error.response && error.response.data)
 			reject('Server error, try again later')
 		})
 })
 
 export const apiGet = (route, data) => apiCall({
 	url: BASE_URL + route,
+	withCredentials: true,
 	data
 })
 
 export const apiPost = (route, data) => apiCall({
 	method: 'post',
 	url: BASE_URL + route,
+	withCredentials: true,
 	data
 })

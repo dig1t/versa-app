@@ -1,3 +1,5 @@
+require('dotenv').config({ path: '../.env' })
+
 module.exports = function babel(api) {
 	api.cache.using(() => process.env.NODE_ENV)
 	
@@ -16,6 +18,9 @@ module.exports = function babel(api) {
 		plugins: [
 			'@babel/plugin-proposal-class-properties',
 			'@babel/plugin-transform-react-jsx',
+			['inline-dotenv', {
+				path: '../.env'
+			}]
 		]
 	}
 }

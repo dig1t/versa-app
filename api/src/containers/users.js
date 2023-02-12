@@ -12,7 +12,7 @@ import config from '../constants/config.js'
 
 const deserializeUser = user => ({
 	userId: user.userId.toHexString(),
-	email: user.email,
+	//email: user.email,
 	isAdmin: user.isAdmin,
 	isMod: user.isMod,
 	created: user.created

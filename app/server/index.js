@@ -65,7 +65,7 @@ if (config.dev) {
 db.connect()
 db.instance.once('open', () => {
 	app.use(session({
-		name: 'vss',
+		name: config.shortName.session,
 		secret: config.expressSecret,
 		cookie: {
 			expires: new Date().setMonth(new Date().getMonth() + 12),
@@ -92,7 +92,7 @@ db.instance.once('open', () => {
 		start_url: '/login',
 		display: 'standalone',
 		orientation: 'portrait',
-		theme_color: config.theme_color,
+		theme_color: config.brandColor,
 		background_color: '#ffffff',
 		share_target: {
 			action: '/share',
