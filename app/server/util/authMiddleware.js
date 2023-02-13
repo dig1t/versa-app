@@ -18,7 +18,8 @@ export default (req, res, next) => {
 				data.refreshTokenId,
 				{
 					maxAge: maxTokenAge,
-					httpOnly: true
+					httpOnly: true,
+					sameSite: 'strict'
 				}
 			)
 			

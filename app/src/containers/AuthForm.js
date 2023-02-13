@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import { Input } from '../components/UI/index.js'
-import { apiCall } from '../util/api.js'
+import api from '../util/api.js'
 import { isHydrated } from '../context/Hydration.js'
 
 const AuthForm = props => {
@@ -49,7 +49,7 @@ const AuthForm = props => {
 		event.preventDefault()
 		
 		// Only post if all inputs are valid
-		if (canSubmit) apiCall({
+		if (canSubmit) api.call({
 			method: 'post',
 			url: props.apiUrl,
 			data: formData
