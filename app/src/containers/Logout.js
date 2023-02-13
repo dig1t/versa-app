@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { userLogout } from '../actions/user.js'
-import { apiCall } from '../util/api.js'
+import api from '../util/api.js'
 
 const Logout = () => {
 	const dispatch = useDispatch()
@@ -12,7 +12,7 @@ const Logout = () => {
 	const handleClick = event => {
 		event.preventDefault()
 		
-		!clicked && apiCall({
+		!clicked && api.call({
 			method: 'post',
 			url: '/auth/logout'
 		})

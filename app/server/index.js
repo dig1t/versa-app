@@ -75,7 +75,7 @@ db.instance.once('open', () => {
 		},
 		httpOnly: true,
 		resave: false,
-		saveUninitialized: true,
+		saveUninitialized: false,
 		store: db.getStore()
 	}))
 	

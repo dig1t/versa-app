@@ -3,12 +3,14 @@ import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 import config from '../../../config.js'
-import { apiGet, apiPost } from '../../src/util/api.js'
+import api from '../../src/util/api.js'
 import { authMiddleware } from '../util/index.js'
 
 const router = Router()
 
 router.use(authMiddleware)
+
+api.setOption('withCredentials', false)
 
 const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(() => {
 	req.loggedUserOut = true
@@ -43,7 +45,7 @@ passport.serializeUser((data, done) => {
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
-	apiGet('/user', {
+	api.get('/v1/user', {
 		userId: user.userId,
 		sessionId: user.sessionId
 	})
@@ -61,7 +63,7 @@ passport.use('local', new LocalStrategy(
 	{ usernameField: 'email' },
 	(email, password, done) => {
 		try {
-			apiPost('/user/authenticate', { email, password })
+			api.post('/v1/user/authenticate', { email, password })
 				.then(data => done(null, data))
 				.catch(error => done(null, false, { message: error }))
 		} catch(e) {
@@ -90,6 +92,7 @@ router.post(
 	apiFieldMiddleware,
 	(req, res) => passport.authenticate('local', async (_, data) => {
 		try {
+			console.log('auth data', data)
 			await req.loginUser(data)
 			
 			res.send({
@@ -114,7 +117,7 @@ router.post(
 		})
 		
 		try {
-			const data = apiPost('/user/new', req.body.data)
+			const data = api.post('/v1/user/new', req.body.data)
 			
 			await req.loginUser(data)
 			

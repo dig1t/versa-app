@@ -6,10 +6,13 @@ import {
 	USER_FETCH_REQUEST,
 	USER_FETCH_SUCCESS,
 	USER_FETCH_FAILURE,
-	PROFILE_FETCH_SUCCESS
+	PROFILE_FETCH_SUCCESS,
+	USER_FETCH_TOKEN_REQUEST,
+	USER_FETCH_TOKEN_SUCCESS,
+	USER_FETCH_TOKEN_FAILURE
 } from '../constants/actionTypes.js'
 
-import { apiGet, apiCall } from '../util/api.js'
+import api from '../util/api.js'
 
 export const userLogout = status => dispatch => dispatch({
 	type: USER_LOGOUT_SUCCESS
@@ -28,7 +31,7 @@ export const setUserProfile = data => dispatch => dispatch({
 export const fetchUserAuth = () => dispatch => {
 	dispatch({ type: USER_FETCH_REQUEST })
 	
-	apiCall({
+	api.call({
 		url: '/auth/get_user',
 		withCredentials: true
 	})
@@ -42,12 +45,28 @@ export const fetchUserAuth = () => dispatch => {
 		}))
 }
 
+export const fetchAccessToken = () => dispatch => {
+	dispatch({ type: USER_FETCH_TOKEN_REQUEST })
+	
+	api.get('/oauth/token', null, { customErrorHandler: true })
+		.then(response => {
+			dispatch({
+				type: USER_FETCH_TOKEN_SUCCESS,
+				payload: response.data
+			})
+		})
+		.catch(error => dispatch({
+			type: USER_FETCH_TOKEN_FAILURE,
+			payload: error
+		}))
+}
+
 export const fetchUserProfile = () => (dispatch, getState) => {
 	const { user } = getState()
 	
 	dispatch({ type: USER_PROFILE_FETCH_REQUEST })
 	
-	apiGet('/user/profile', { userId: user.userId })
+	api.get('/v1/user/profile', { userId: user.userId })
 		.then(data => {
 			dispatch({
 				type: USER_PROFILE_FETCH_SUCCESS,
