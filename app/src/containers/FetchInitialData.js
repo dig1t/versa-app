@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { fetchAccessToken, fetchUserAuth, fetchUserProfile } from '../actions/user.js'
+import { fetchUserAuth, fetchUserProfile } from '../actions/user.js'
 import { AuthProvider, isAuthenticated } from '../context/Auth.js'
 
 import Loading from '../components/Loading.js'
@@ -9,17 +9,15 @@ import Loading from '../components/Loading.js'
 const AsyncAuthFetch = ({ children }) => {
 	const dispatch = useDispatch()
 	
-	const { loggedIn, userId } = isAuthenticated()
+	const { loggedIn } = isAuthenticated()
 	
 	useEffect(() => {
 		dispatch(fetchUserAuth())
 	}, [])
 	
 	useEffect(() => {
-		console.log('logged in?', loggedIn)
 		if (loggedIn) {
 			dispatch(fetchUserProfile())
-			dispatch(fetchAccessToken())
 		}
 	}, [loggedIn])
 	

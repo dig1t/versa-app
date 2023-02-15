@@ -1,4 +1,8 @@
 export default options => (req, res, next) => {
+	if (!req._using) req._using = {}
+	
+	req._using.useFields = '1.0.0'
+	
 	if (!options || typeof options !== 'object') throw 'Missing options'
 	
 	const data = (

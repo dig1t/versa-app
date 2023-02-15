@@ -9,13 +9,18 @@
     "build-client": "webpack --config webpack.client.config.js --progress profile",
     "build-server": "webpack --config webpack.server.config.js --progress profile",
     "build": "npm run build-css && npm run build-client && npm run build-server",
+    
     "dev-css": "grunt && grunt watch",
     "dev-webpack-watch": "set NODE_ENV=development&& webpack --config webpack.client.config.js --progress profile --watch",
     "dev-server-watch": "set NODE_ENV=development&& babel-node server/index.js",
     "dev-server-reload": "set NODE_ENV=development&& babel-watch server/index.js",
     "dev-watch": "concurrently \"npm run dev-webpack-watch\" \"npm run dev-server-watch\"",
-    "dev": "set NODE_ENV=development&& concurrently \"npm run dev-watch\" \"npm run dev-css\"",
+    "dev-watch-reload": "concurrently \"npm run dev-webpack-watch\" \"npm run dev-server-reload\"",
+    "dev": "concurrently \"npm run dev-watch\" \"npm run dev-css\"",
+    "dev-reload": "concurrently \"npm run dev-watch-reload\" \"npm run dev-css\"",
+    
     "start": "set NODE_ENV=production&& node dist/server.bundle.js",
+    
     "test": "set NODE_ENV=development&& mocha --exit --recursive --require @babel/register"
   },
   "repository": {

@@ -1,6 +1,8 @@
+// @version 1.0.0
+
 import axios from 'axios'
 
-import { USER_FETCH_TOKEN_SUCCESS } from '../constants/actionTypes.js'
+import { USER_FETCH_SUCCESS } from '../constants/actionTypes.js'
 
 import config from '../constants/config.js'
 
@@ -43,8 +45,9 @@ class API {
 					),
 					headers: {
 						'Content-Type' : 'application/x-www-form-urlencoded',
-						Accept: 'Token',
-						Authorization: includeAT ? `Bearer ${this._keys.accessToken}` : null
+						Accept: '*/*',
+						Authorization: includeAT ? `Bearer ${this._keys.accessToken}` : null,
+						...options.headers
 					},
 					withCredentials: options.withCredentials
 				}
@@ -88,8 +91,8 @@ class API {
 const api = new API()
 
 export const apiReduxMiddleware = store => next => action => {
-	if (action.type === USER_FETCH_TOKEN_SUCCESS) {
-		api.setKey('accessToken', action.payload.access_token)
+	if (action.type === USER_FETCH_SUCCESS) {
+		api.setKey('accessToken', action.payload.accessToken)
 	}
 	
 	next(action)

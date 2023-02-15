@@ -44,18 +44,16 @@ class OAuth2 {
 		}
 	}
 	
-	encodeAccessToken(token) {
-		if (!token) throw 'Missing Access Token'
+	encodeToken(token) {
+		if (!token) throw 'Missing Token'
 		
-		const buffer = Buffer.from(token, 'utf8')
-		return buffer.toString('base64')
+		return Buffer.from(token, 'utf8').toString('base64')
 	}
 	
-	decodeAccessToken(base64Token) {
+	decodeToken(base64Token) {
 		if (!base64Token) throw 'Missing base64 Token'
 		
-		const buffer = Buffer.from(base64Token, 'base64')
-		return buffer.toString('utf8')
+		return Buffer.from(base64Token, 'base64').toString('utf8')
 	}
 	
 	async validateString(plainString, hashedString) {
@@ -214,7 +212,7 @@ class OAuth2 {
 			if (!accessToken[0] === 'Bearer') return res.sendStatus(401)
 			
 			const authVerification = await this.verifyAccessToken(
-				this.decodeAccessToken(accessToken[1])
+				this.decodeToken(accessToken[1])
 			)
 			
 			if (authVerification.success) {
@@ -265,11 +263,15 @@ class OAuth2 {
 			
 			if (!refreshToken) return res.sendStatus(401)
 			
-			const accessToken = await this.getAPIAccessToken(refreshToken)
-			
-			res.json({
-				access_token: this.encodeAccessToken(accessToken)
-			})
+			try {
+				const accessToken = await this.getAPIAccessToken(refreshToken)
+				
+				res.json({
+					access_token: this.encodeToken(accessToken)
+				})
+			} catch(e) {
+				res.sendStatus(500)
+			}
 		})
 		
 		return router
