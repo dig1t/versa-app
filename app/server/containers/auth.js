@@ -2,20 +2,17 @@ import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
+import config from '../../../config.js'
 import api from '../../src/util/api.js'
-import { authMiddleware } from '../util/index.js'
+import authMiddleware, { privateRoute, logout } from '../util/authMiddleware.js'
+import apiMiddleware from '../util/apiMiddleware.js'
 
 const router = Router()
 
-router.use(authMiddleware)
+router.use(apiMiddleware())
+router.use(authMiddleware())
 
 api.setOption('withCredentials', false)
-
-const logoutMiddleware = async (req, _, next) => {
-	await req.logout()
-	
-	next()
-}
 
 // TODO: DEPRECATED
 const apiFieldMiddleware = (req, _, next) => {
@@ -74,36 +71,28 @@ passport.use('local', new LocalStrategy(
 /* Define Routes */
 router.post('/auth/logout', async (req, res) => {
 	try {
-		await req.logout()
+		await req.logoutUser()
 		
-		res.send({
-			success: true
-		})
+		req.apiResult(200)
 	} catch(e) {
-		res.status(500).json({
-			success: false
-		})
+		req.apiResult(500)
 	}
 })
 
 router.post(
 	'/auth/login',
-	logoutMiddleware, // Clear session/cookie data if logged in
+	logout, // Clear session/cookie data if logged in
 	apiFieldMiddleware,
 	(req, res) => passport.authenticate('local', async (_, data) => {
 		try {
-			console.log('auth data', data)
 			await req.loginUser(data)
 			
-			res.send({
-				success: true,
-				data: deserializeAuthorizedUser(data.user),
+			req.apiResult(200, {
+				user: deserializeAuthorizedUser(data.user),
+				access_token: await req.getAccessToken(data.refreshTokenId)
 			})
 		} catch(e) {
-			res.status(401).json({
-				success: false,
-				message: 'Could not authenticate'
-			})
+			req.apiResult(401)
 		}
 	})(req, res)
 )
@@ -111,8 +100,7 @@ router.post(
 router.post(
 	'/auth/signup',
 	async (req, res) => {
-		if (req.isAuthenticated()) return res.status(400).send({
-			success: false,
+		if (req.authenticated()) return req.apiResult(400, {
 			message: 'Already logged in'
 		})
 		
@@ -121,30 +109,38 @@ router.post(
 			
 			await req.loginUser(data)
 			
-			res.send({
-				success: true,
-				data: {
-					user: deserializeAuthorizedUser(data.user),
-					profile: data.profile
-				}
+			req.apiResult(200, {
+				user: deserializeAuthorizedUser(data.user),
+				profile: data.profile
 			})
 		} catch(e) {
-			res.status(500).send({
-				success: false,
+			req.apiResult(500, {
 				message: `Error while signing up ${e}`
 			})
 		}
 	}
 )
 
-router.get('/auth/get_user', (req, res) => {
-	req.isAuthenticated() ? res.json({
-		success: true,
-		data: deserializeAuthorizedUser(req.user)
-	}) : res.status(401).json({
-		success: false,
-		message: 'Not logged in'
-	})
-})
+router.get(
+	'/auth/get_user',
+	privateRoute,
+	async (req, res) => {
+		try {
+			const refreshToken = req.cookies?.[config.shortName.refreshToken]
+			
+			if (!refreshToken) throw 'Missing refresh token'
+			
+			req.apiResult(200, {
+				user: deserializeAuthorizedUser(req.user),
+				access_token: await req.getAccessToken(refreshToken)
+			})
+		} catch(e) {
+			console.log('wadadasassadsa', e)
+			req.apiResult(401, {
+				message: 'Not authenticated'
+			})
+		}
+	}
+)
 
 export default router

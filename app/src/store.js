@@ -9,7 +9,8 @@ export const createStore = preloadedState => configureStore({
 	reducer,
 	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(
 		thunk,
-		apiReduxMiddleware
+		apiReduxMiddleware,
+		logger
 	),
 	devTools: true,
 	preloadedState
