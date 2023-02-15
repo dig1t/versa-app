@@ -8,6 +8,7 @@ import passport from 'passport'
 
 import { rateLimiterMiddleware, asyncMiddleware } from './util/index.js'
 import webpackServerConfig from '../webpack.client.config.js'
+import serverConfig from './serverConfig.js'
 import config from '../../config.js'
 import auth from './containers/auth.js'
 import db from './containers/db.js'
@@ -68,7 +69,7 @@ db.instance.once('open', () => {
 		name: config.shortName.session,
 		secret: config.expressSecret,
 		cookie: {
-			expires: new Date().setMonth(new Date().getMonth() + 12),
+			maxAge: serverConfig.maxTokenAge,
 			// serve secure cookies in production
 			secure: !config.dev,
 			sameSite: 'strict'
