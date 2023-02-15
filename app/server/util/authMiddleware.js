@@ -1,6 +1,5 @@
 import config from '../../../config.js'
-
-const maxTokenAge = 24 * 60 * 60 * 365
+import serverConfig from '../serverConfig.js'
 
 export default (req, res, next) => {
 	req.loginUser = data => new Promise((resolve, reject) => {
@@ -17,7 +16,7 @@ export default (req, res, next) => {
 				config.shortName.refreshToken,
 				data.refreshTokenId,
 				{
-					maxAge: maxTokenAge,
+					maxAge: serverConfig.maxTokenAge,
 					httpOnly: true,
 					sameSite: 'strict'
 				}
@@ -25,6 +24,21 @@ export default (req, res, next) => {
 			
 			err ? reject(err) : resolve()
 		})
+	})
+	
+	req.logout = () => new Promise((resolve, reject) => {
+		req.isAuthenticated() ? req.logout(error => {
+			if (error) return reject(error)
+			
+			req.loggedUserOut = true
+			
+			res.clearCookie(config.shortName.session)
+			res.clearCookie(config.shortName.refreshToken)
+			
+			req.session.destroy()
+			
+			resolve()
+		}) : resolve()
 	})
 	
 	next()

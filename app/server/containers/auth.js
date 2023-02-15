@@ -2,7 +2,6 @@ import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
-import config from '../../../config.js'
 import api from '../../src/util/api.js'
 import { authMiddleware } from '../util/index.js'
 
@@ -12,11 +11,11 @@ router.use(authMiddleware)
 
 api.setOption('withCredentials', false)
 
-const logoutMiddleware = (req, _, next) => req.isAuthenticated() ? req.logout(() => {
-	req.loggedUserOut = true
+const logoutMiddleware = async (req, _, next) => {
+	await req.logout()
 	
 	next()
-}) : next()
+}
 
 // TODO: DEPRECATED
 const apiFieldMiddleware = (req, _, next) => {
@@ -73,17 +72,18 @@ passport.use('local', new LocalStrategy(
 ))
 
 /* Define Routes */
-router.post('/auth/logout', (req, res) => {
-	req.logout(() => {
-		res.clearCookie(config.shortName.session)
-		res.clearCookie(config.shortName.refreshToken)
-		
-		req.session.destroy()
+router.post('/auth/logout', async (req, res) => {
+	try {
+		await req.logout()
 		
 		res.send({
 			success: true
 		})
-	})
+	} catch(e) {
+		res.status(500).json({
+			success: false
+		})
+	}
 })
 
 router.post(
@@ -100,9 +100,9 @@ router.post(
 				data: deserializeAuthorizedUser(data.user),
 			})
 		} catch(e) {
-			res.send({
+			res.status(401).json({
 				success: false,
-				message: 'Not logged in'
+				message: 'Could not authenticate'
 			})
 		}
 	})(req, res)
@@ -111,7 +111,7 @@ router.post(
 router.post(
 	'/auth/signup',
 	async (req, res) => {
-		if (req.isAuthenticated()) return res.send({
+		if (req.isAuthenticated()) return res.status(400).send({
 			success: false,
 			message: 'Already logged in'
 		})
@@ -129,7 +129,7 @@ router.post(
 				}
 			})
 		} catch(e) {
-			res.send({
+			res.status(500).send({
 				success: false,
 				message: `Error while signing up ${e}`
 			})
@@ -138,10 +138,10 @@ router.post(
 )
 
 router.get('/auth/get_user', (req, res) => {
-	res.send(req.isAuthenticated() ? {
+	req.isAuthenticated() ? res.json({
 		success: true,
 		data: deserializeAuthorizedUser(req.user)
-	} : {
+	}) : res.status(401).json({
 		success: false,
 		message: 'Not logged in'
 	})

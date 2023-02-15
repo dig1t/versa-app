@@ -29,7 +29,7 @@ const Home = () => <Layout page="home">
 						pills={feedCategories}
 						default="all"
 						handleSelection={type => {
-							console.log('selected pill of type:', type)
+							
 						}}
 					/>
 					<div className="box">

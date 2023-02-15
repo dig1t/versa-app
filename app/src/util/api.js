@@ -92,8 +92,6 @@ export const apiReduxMiddleware = store => next => action => {
 		api.setKey('accessToken', action.payload.access_token)
 	}
 	
-	console.log(action.type, api._keys)
-	
 	next(action)
 }
 
