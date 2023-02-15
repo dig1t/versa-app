@@ -2,6 +2,7 @@ import { Router } from 'express'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import Provider from 'oidc-provider/lib/index.js'
+import { Buffer } from 'node:buffer'
 
 import config from '../../../../config.js'
 import Adapter from './adapter.js'
@@ -41,6 +42,20 @@ class OAuth2 {
 		} catch(e) {
 			throw Error(e)
 		}
+	}
+	
+	encodeAccessToken(token) {
+		if (!token) throw 'Missing Access Token'
+		
+		const buffer = Buffer.from(token, 'utf8')
+		return buffer.toString('base64')
+	}
+	
+	decodeAccessToken(base64Token) {
+		if (!base64Token) throw 'Missing base64 Token'
+		
+		const buffer = Buffer.from(base64Token, 'base64')
+		return buffer.toString('utf8')
 	}
 	
 	async validateString(plainString, hashedString) {
@@ -198,7 +213,9 @@ class OAuth2 {
 			
 			if (!accessToken[0] === 'Bearer') return res.sendStatus(401)
 			
-			const authVerification = await this.verifyAccessToken(accessToken[1])
+			const authVerification = await this.verifyAccessToken(
+				this.decodeAccessToken(accessToken[1])
+			)
 			
 			if (authVerification.success) {
 				req._oauth.user = authVerification.user
@@ -251,7 +268,7 @@ class OAuth2 {
 			const accessToken = await this.getAPIAccessToken(refreshToken)
 			
 			res.json({
-				access_token: accessToken
+				access_token: this.encodeAccessToken(accessToken)
 			})
 		})
 		
