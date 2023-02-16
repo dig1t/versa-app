@@ -12,6 +12,7 @@ import { validateText } from '../../util/index.js'
 const Input = props => {
 	const [errorText, setErrorText] = useState(null)
 	const [value, setValue] = useState('')
+	const [visibleValue, setVisibleValue] = useState('')
 	const [isValid, setIsValid] = useState(
 		props.optional || (!(
 			// Make text and textareas valid temporarily
@@ -22,6 +23,11 @@ const Input = props => {
 	const [focused, setFocused] = useState(props.autoFocus)
 	
 	useEffect(() => props.handleValueChange(value), [value])
+	
+	useEffect(() => {
+		setValue(props.value)
+		setVisibleValue(props.value)
+	}, [props.value])
 	
 	useEffect(() => {
 		if (typeof props.handleValidity !== 'undefined' && props.optional) {
@@ -69,6 +75,7 @@ const Input = props => {
 	
 	const handleChange = useCallback(event => {
 		setValue(event.target.value)
+		setVisibleValue(event.target.value)
 		validate()
 	})
 	
@@ -110,6 +117,7 @@ const Input = props => {
 						validate()
 						setFocused(false)
 					}}
+					value={visibleValue}
 				/>
 			case 'select':
 				return <select {...attributes} multiple={props.multiple}>
@@ -150,6 +158,7 @@ const Input = props => {
 						validate()
 						setFocused(false)
 					}}
+					value={visibleValue}
 				/>
 		}
 	})
