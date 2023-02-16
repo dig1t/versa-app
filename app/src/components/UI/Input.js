@@ -27,6 +27,7 @@ const Input = props => {
 	useEffect(() => {
 		setValue(props.value)
 		setVisibleValue(props.value)
+		validate()
 	}, [props.value])
 	
 	useEffect(() => {
