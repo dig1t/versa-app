@@ -3,15 +3,14 @@ import compression from 'compression'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 
-import { rateLimiterMiddleware, apiMiddleware } from './util/index.js'
+import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
+import apiMiddleware from './util/apiMiddleware.js'
 
 import useAPI from './containers/routes.js'
 import config from '../../config.js'
-import OAuth2 from './services/auth/oauth.js'
+import oauth from './services/auth/oauth.js'
 
 const app = express()
-
-const oauth = OAuth2()
 
 app.use(express.json())
 app.use(express.static('dist/public'))

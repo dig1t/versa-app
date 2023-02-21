@@ -49,6 +49,10 @@ export const fetchUserAuth = () => dispatch => {
 		url: '/auth/get_user'
 	})
 		.then(data => {
+			if (!data.user) return dispatch({
+				type: USER_FETCH_FAILURE
+			})
+			
 			dispatch({
 				type: USER_FETCH_SUCCESS,
 				payload: data
@@ -69,7 +73,7 @@ export const fetchUserProfile = () => (dispatch, getState) => {
 	
 	dispatch({ type: USER_PROFILE_FETCH_REQUEST })
 	
-	api.get('/v1/user/profile', { userId: user.userId })
+	api.get('/v1/profile', { userId: user.userId })
 		.then(data => {
 			dispatch({
 				type: USER_PROFILE_FETCH_SUCCESS,

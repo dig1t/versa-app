@@ -1,33 +1,24 @@
+import { Router } from 'express'
 import sanitize from 'mongo-sanitize'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
-
-import { validateText } from '../util/index.js'
 
 import User from '../models/User.js'
 import UserSession from '../models/UserSession.js'
 import Profile from '../models/Profile.js'
 
 import config from '../constants/config.js'
+import { validateText } from '../util/index.js'
+import useFields from '../util/useFields.js'
+import {
+	deserializeProfile
+} from './profiles.js'
 
 const deserializeUser = user => ({
-	userId: user.userId.toHexString(),
-	//email: user.email,
+	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
 	isAdmin: user.isAdmin,
 	isMod: user.isMod,
 	created: user.created
-})
-
-const deserializeProfile = profile => ({
-	userId: profile.userId.toHexString(),
-	username: profile.username,
-	name: profile.name,
-	verificationLevel: profile.verificationLevel,
-	avatar: profile.avatar,
-	bannerPhoto: profile.bannerPhoto,
-	bio: profile.bio,
-	website: profile.website,
-	lastActive: profile.lastActive
 })
 
 const getUserFromUserId = async userId => {
@@ -36,14 +27,6 @@ const getUserFromUserId = async userId => {
 	if (!user) throw 'User does not exist'
 	
 	return deserializeUser(user)
-}
-
-const getProfileFromUserId = async userId => {
-	const profile = await Profile.findOne({ _id: sanitize(userId) })
-	
-	if (!profile) throw 'Profile does not exist'
-	
-	return deserializeProfile(profile)
 }
 
 const getUserIdFromSession = async sessionId => {
@@ -162,7 +145,7 @@ const createAccount = async req => {
 	
 	// Issue user an oauth grant and refresh token
 	const grant = await req.oauth.ROPCGrant(email, password)
-	const result = authenticate(req, userId, grant.grantId)
+	const result = await authenticate(req, userId, grant.grantId)
 	
 	result.user = deserializeUser(user)
 	result.profile = deserializeProfile(profile)
@@ -186,11 +169,101 @@ export {
 	emailExists,
 	getUserIdFromSession,
 	getUserFromUserId,
-	getProfileFromUserId,
 	getUserFromSession,
 	createSession,
 	authenticate,
 	authenticateUserCredentials,
 	createAccount,
 	deleteAccount
+}
+
+export default server => {
+	const router = new Router()
+	
+	router.get(
+		'/user',
+		useFields({ fields: ['userId', 'sessionId'] }),
+		server.oauth.authorize({ optional: true }),
+		async (req) => {
+			try {
+				const user = await getUserFromSession(req.fields.sessionId)
+				
+				// Possible attack
+				if (user.userId !== req.fields.userId) throw 'Unexpected Error'
+				
+				req.apiResult(200, user)
+			} catch(err) {
+				req.apiResult(500)
+			}
+		}
+	)
+	
+	router.post(
+		'/user/authenticate',
+		useFields({ fields: ['email', 'password'] }),
+		server.oauth.useROPCGrant(),
+		async req => {
+			try {
+				const result = await authenticate(
+					req,
+					req._oauth.grant.accountId,
+					req._oauth.grant.grantId
+				)
+				
+				req.apiResult(200, {
+					...result,
+					user: await getUserFromUserId(req._oauth.grant.accountId)
+				})
+			} catch(err) {
+				req.apiResult(401, {
+					message: err
+				})
+			}
+		}
+	)
+	
+	/* router.post(
+		'/user/authenticate_session',
+		useFields({ fields: ['sessionId'] }),
+		async (req, res) => {
+			try {
+				const user = await getUserFromSession(req.fields.sessionId)
+				
+				req.apiResult(200, user)
+			} catch(err) {
+				req.apiResult(401, {
+					message: err
+				})
+			}
+		}
+	) */
+	
+	router.post(
+		'/user/new',
+		useFields({ fields: ['name', 'email', 'password'] }),
+		async req => {
+			try {
+				const account = await createAccount(req)
+				
+				req.apiResult(200, account)
+			} catch(err) {
+				console.log(err)
+				req.apiResult(500, {
+					message: err
+				})
+			}
+		}
+	)
+	
+	/*
+	router.get('/user/posts', (req, res) => {
+		likes
+	})
+	
+	router.get('/user', (req, res) => {
+		
+	})
+	*/
+	
+	return router
 }

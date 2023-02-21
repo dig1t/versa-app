@@ -5,27 +5,27 @@ import { defaultAssets } from '../constants/assets.js'
 
 const storiesData = [ // TODO: REPLACE PSUEDO DATA
 	{
-		userId: 't43r5evr44ewtf',
+		userId: 'b1c7a98f3a7f59b9d145de5c',
 		relationshipLevel: 2,
 		avatar: defaultAssets.avatar
 	},
 	{
-		userId: 't43r5evr44ewtf',
+		userId: 'b1c7a98f3a7f59b9d145de5c',
 		relationshipLevel: 1,
 		avatar: defaultAssets.avatar
 	},
 	{
-		userId: 't43r5evr44ewtf',
+		userId: 'b1c7a98f3a7f59b9d145de5c',
 		relationshipLevel: 1,
 		avatar: defaultAssets.avatar
 	},
 	{
-		userId: 't43r5evr44ewtf',
+		userId: 'b1c7a98f3a7f59b9d145de5c',
 		relationshipLevel: 1,
 		avatar: defaultAssets.avatar
 	},
 	{
-		userId: 't43r5evr44ewtf',
+		userId: 'b1c7a98f3a7f59b9d145de5c',
 		relationshipLevel: 1,
 		avatar: defaultAssets.avatar
 	}

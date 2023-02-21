@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Post from './Post.js'
+import Loading from '../components/Loading.js'
+import { getProfileFeed } from '../actions/feed.js'
 
 const fakeData = [ // TODO: REPLACE PSUEDO DATA
 	{
@@ -25,15 +29,33 @@ const fakeData = [ // TODO: REPLACE PSUEDO DATA
 ]
 
 const Feed = props => {
-	const posts = fakeData
-	let ii = 0
+	const dispatch = useDispatch()
+	const feed = useSelector(state => state.feed.posts)
+	
+	const [posts, setPosts] = useState([])
+	const [fetching, setFetching] = useState(false)
+	
+	useEffect(() => {
+		if (!fetching) {
+			setFetching(true)
+			dispatch(getProfileFeed(props.userId, props.feedType))
+		}
+	}, [])
+	
+	useEffect(() => {
+		setPosts(feed)
+		
+		if (fetching) setFetching(false)
+	}, [feed])
+	
 	return <div className="list">
-		{posts.map(post => {
-			ii++
-			
-			return <Post data={post} key={post.contentId + ii} />
-		})}
+		{posts.map(post => <Post data={post} key={post.postId} />)}
+		{fetching && <Loading />}
 	</div>
+}
+
+Feed.propTypes = {
+	userId: PropTypes.string.isRequired
 }
 
 export default Feed

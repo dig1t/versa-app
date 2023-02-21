@@ -1,14 +1,30 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Input, Icon } from '../components/UI/index.js'
+import api from '../util/api.js'
 
 const PostEditor = () => {
-	const [text, setText] = useState('')
+	const [data, setData] = useState({
+		text: ''
+	})
+	
+	useEffect(() => {
+		console.log(data)
+	}, [data])
+	
+	const handleSubmit = event => {
+		const body = data.text
+		
+		setData({ text: '' })
+		
+		api.post('/v1/post/new', { body })
+	}
 	
 	return <div className="post-editor">
 		<label className="box">
 			<Input
-				handleValueChange={value => setText(value)}
+				handleValueChange={value => setData({ text: value })}
+				value={data.text}
 				type="textarea"
 				placeholder="Write a status..."
 				displayError={false}
@@ -19,7 +35,10 @@ const PostEditor = () => {
 						<Icon name="photo" />
 					</div>
 				</div>
-				<button className="btn btn-round btn-primary post">Post</button>
+				<button
+					className="btn btn-round btn-primary post"
+					onClick={handleSubmit}
+				>Post</button>
 			</div>
 		</label>
 	</div>

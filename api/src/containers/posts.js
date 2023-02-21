@@ -1,11 +1,14 @@
+import { Router } from 'express'
 import mongoose from 'mongoose'
 import sanitize from 'mongo-sanitize'
 
+import config from '../constants/config.js'
 import { validateText } from '../util/index.js'
+import useFields from '../util/useFields.js'
 
 import Post from '../models/Post.js'
 import Content from '../models/Content.js'
-import config from '../constants/config.js'
+import { getProfileFromUserId } from './profiles.js'
 
 const POST_TYPES = {
 	CONTENT: 1,
@@ -17,26 +20,28 @@ const POST_TYPES = {
 // }
 
 const deserializeContent = content => ({
-	contentId: content.contentId.toHexString(),
+	contentId: content._id.toHexString(),
 	userId: content.userId.toHexString(),
 	body: content.body,
 	created: content.created,
 	private: content.private,
 	
-	media: content.media ? {
-		mediaId: content.media.mediaId.toHexString(),
-		userId: content.media.userId.toHexString(),
-		source: content.media.source, // Direct URL
-		created: content.media.created
-	} : null
+	media: typeof content.media === 'object' && content.media[0] ? {
+		mediaId: content.media[0]._id.toHexString(),
+		userId: content.media[0].userId.toHexString(),
+		source: content.media[0].source, // Direct URL
+		created: content.media[0].created
+	} : undefined
 })
 
 const deserializePost = (post, content) => ({
-	postId: post.postId.toHexString(),
+	postId: post._id.toHexString(),
 	userId: post.userId.toHexString(),
 	created: post.created,
 	
-	content: deserializeContent(content)
+	content: deserializeContent(
+		(typeof post.content === 'object' && post.content[0]) || content
+	)
 })
 
 const createContent = async data => {
@@ -114,7 +119,195 @@ const deletePost = async postId => {
 	}
 }
 
+const getContent = async contentId => {
+	const content = await Content.findOne({ contentId })
+	
+	if (!content) throw 'Content not found'
+	
+	return deserializeContent(content)
+}
+
+const isConnection = async (userId, requesterUserId) => {
+	if (!requesterUserId) return false
+	
+	if (userId === requesterUserId) return true
+	
+	return true
+}
+
+const contentPipeline = async _options => {
+	const options = {
+		requesterUserId: '0',
+		
+		..._options
+	}
+	
+	const requesterUserId = { $toObjectId: options.requesterUserId }
+	
+	const pipeline = []
+	
+	if (options.contentId) pipeline.push({
+		'$match': {
+			_id: { $toObjectId: options.contentId }
+		}
+	})
+	
+	pipeline.push(
+		{ $match: {
+			private: { $ne: true }
+		} },
+		{ $addFields: { contentId: '$_id' } },
+		{ $project: {
+			contentId: 1,
+			userId: 1,
+			body: 1,
+			created: 1,
+			private: 1
+		} }
+	)
+	
+	return pipeline
+}
+
+const profileFeedPipeline = async _options => {
+	const options = {
+		canViewContent: false,
+		requesterUserId: '0',
+		
+		..._options
+	}
+	
+	if (!options.userId) throw 'profileFeedPipeline: Missing userId'
+	
+	const profile = await getProfileFromUserId(options.userId)
+	
+	if (!profile) throw 'Could not find profile'
+	
+	const canViewFeed = !profile.private || isConnection(
+		profile.userId, options.requesterUserId
+	)
+	
+	if (!canViewFeed) return {} // No posts to show
+	
+	return [
+		{ $match: {
+			$expr: {
+				$eq: [
+					'$userId',
+					{ $toObjectId: options.userId }
+				]
+			}
+		} },
+		{ $sort: {
+			created: -1
+		} },
+		{ $lookup: {
+			from: 'contents',
+			localField: 'contentId',
+			foreignField: '_id',
+			pipeline: await contentPipeline({
+				requesterUserId: options.requesterUserId
+			}),
+			as: 'content'
+		} },
+		{ $limit: config.profile.maxFeedPagePosts },
+		{ $addFields: { postId: '$_id' } },
+		{ $project: {
+			type: 0,
+			__v: 0
+		} }
+	]
+}
+
+const getPost = async (postId, requesterUserId) => {
+	const post = await Post.findOne({ postId })
+	
+	if (!post) throw 'Post not found'
+	
+	// Private content can only be viewed by the content creator
+	const content = await getContent(post.contentId)
+	
+	if (content.private && requesterUserId !== contentOwner.userId) throw 'Post is private'
+	
+	const posterProfile = await getProfileFromUserId(post.userId)
+	
+	if (posterProfile.private) {
+		// TODO: REPLACE WITH CONNECTION CHECK
+		// profile.isConnection(userId, requesterUserId)
+		const canViewPosts = await isConnection(post.userId, requesterUserId)
+		
+		if (!canViewPosts) throw 'Not friends with poster'
+	}
+	
+	const contentOwner = (
+		content.userId === posterProfile.userId
+	) ? posterProfile : await getProfileFromUserId(content.userId)
+	
+	if (posterProfile.userId !== contentOwner.userId && contentOwner.private) {
+		// TODO: REPLACE WITH CONNECTION CHECK
+		// profile.isConnection(userId, requesterUserId)
+		const canViewContent = await isConnection(content.userId, requesterUserId)
+		
+		if (!canViewContent) throw 'Not friends with content owner'
+	}
+	
+	return post
+}
+
 export {
+	contentPipeline,
+	profileFeedPipeline,
+	deserializePost,
 	createPost,
 	deletePost
+}
+
+export default server => {
+	const router = new Router()
+	
+	router.post(
+		'/post/new',
+		useFields({ fields: ['body'] }),
+		server.oauth.authorize(),
+		async req => {
+			try {
+				const post = await createPost(req._oauth.user.userId, req.fields)
+				
+				req.apiResult(200, post)
+			} catch(err) {
+				req.apiResult(500, {
+					message: err
+				})
+			}
+		}
+	)
+	
+	router.post(
+		'/post',
+		useFields({ fields: ['postId']}),
+		server.oauth.authorize({ optional: true }),
+		async req => {
+			try {
+				const post = await getPost(req.fields.postId)
+				
+				if (!post) throw 'Post not found'
+				
+				
+				
+				req.apiResult(200, post)
+			} catch(err) {
+				req.apiResult(500, {
+					message: err
+				})
+			}
+		}
+	)
+	
+	/*
+	router.post('/post/like', (req, res) => {
+		
+	})
+	*/
+	
+	return router
 }
