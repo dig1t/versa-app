@@ -31,13 +31,11 @@ const deserializeAuthorizedUser = user => ({
 	isAdmin: user.isMod
 })
 
-// Extract the userId from the auth strategy
-passport.serializeUser((data, done) => {
-	done(null, {
-		userId: data.user.userId,
-		sessionId: data.sessionId
-	})
-})
+// Extract the userId and sessionId from the auth strategy
+passport.serializeUser((data, done) => done(null, {
+	userId: data.user.userId,
+	sessionId: data.sessionId
+}))
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
@@ -105,7 +103,7 @@ router.post(
 		})
 		
 		try {
-			const data = api.post('/v1/user/new', req.body.data)
+			const data = await api.post('/v1/user/new', req.body)
 			
 			await req.loginUser(data)
 			
@@ -123,9 +121,10 @@ router.post(
 
 router.get(
 	'/auth/get_user',
-	privateRoute,
 	async (req, res) => {
 		try {
+			if (!req.authenticated()) throw 'Not authenticated'
+			
 			const refreshToken = req.cookies?.[config.shortName.refreshToken]
 			
 			if (!refreshToken) throw 'Missing refresh token'
@@ -135,8 +134,7 @@ router.get(
 				access_token: await req.getAccessToken(refreshToken)
 			})
 		} catch(e) {
-			console.log('wadadasassadsa', e)
-			req.apiResult(401, {
+			req.apiResult(200, {
 				message: 'Not authenticated'
 			})
 		}

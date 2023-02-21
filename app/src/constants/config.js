@@ -1,4 +1,6 @@
+const domain = typeof window !== 'undefined' ? window?.location?.host : 'localhost'
+
 export default {
-	domain: 'localhost',
-	apiDomain: 'localhost:81'
+	domain: typeof window !== 'undefined' ? window?.location?.host : 'localhost',
+	apiDomain: `${typeof window !== 'undefined' ? window?.location?.host : 'localhost'}:81`
 }

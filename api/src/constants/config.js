@@ -8,7 +8,12 @@ const user = {
 	maxPasswordLength: 9999
 }
 
+const profile = {
+	maxFeedPagePosts: 10
+}
+
 export default {
 	post,
-	user
+	user,
+	profile
 }

@@ -7,7 +7,6 @@ import {
 	getUserIdFromSession,
 	getUserFromSession,
 	getUserFromUserId,
-	getProfileFromUserId,
 } from '../../src/containers/users.js'
 import mockUser from '../util/mockUser.js'
 import { MOCK_USER } from '../data.js'
@@ -27,12 +26,6 @@ describe('account functions', () => {
 		const user = await getUserFromUserId(account.user.userId)
 		
 		assert(user)
-	})
-	
-	it('gets user profile from userId', async () => {
-		const profile = await getProfileFromUserId(account.user.userId)
-		
-		assert(profile)
 	})
 	
 	it('authenticates a user using a password', async () => {

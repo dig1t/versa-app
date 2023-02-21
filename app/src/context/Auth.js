@@ -10,16 +10,19 @@ export const isAuthenticated = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
 	const [loggedIn, setLoggedIn] = useState(null)
-	const { userId, accessToken } = useSelector(state => ({
+	const { authenticated, userId, accessToken } = useSelector(state => ({
+		authenticated: state.user.authenticated,
 		userId: state.user.userId,
 		accessToken: state.user.accessToken
 	}))
 	
 	useEffect(() => {
-		const isLoggedIn = userId !== null && accessToken !== null
+		const credentials = userId !== null && accessToken !== null
 		
-		if (isLoggedIn) setLoggedIn(isLoggedIn)
-	}, [userId, accessToken])
+		if ((credentials && authenticated) || authenticated === false) {
+			setLoggedIn(authenticated)
+		}
+	}, [userId, accessToken, authenticated])
 	
 	return <AuthContext.Provider value={{ loggedIn, userId }}>
 		{ children }

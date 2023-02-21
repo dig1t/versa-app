@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 
-import { USER_FETCH_SUCCESS } from '../constants/actionTypes.js'
+import { USER_FETCH_TOKEN_SUCCESS } from '../constants/actionTypes.js'
 
 import config from '../constants/config.js'
 
@@ -40,9 +40,7 @@ class API {
 				{
 					method,
 					url: options.url,
-					[method === 'get' ? 'params' : 'data']: (
-						options._data || { data: options.data }
-					),
+					[method === 'get' ? 'params' : 'data']: options.data,
 					headers: {
 						'Content-Type' : 'application/x-www-form-urlencoded',
 						Accept: '*/*',
@@ -91,8 +89,8 @@ class API {
 const api = new API()
 
 export const apiReduxMiddleware = store => next => action => {
-	if (action.type === USER_FETCH_SUCCESS) {
-		api.setKey('accessToken', action.payload.accessToken)
+	if (action.type === USER_FETCH_TOKEN_SUCCESS) {
+		api.setKey('accessToken', action.payload.access_token)
 	}
 	
 	next(action)

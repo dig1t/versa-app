@@ -201,15 +201,17 @@ class OAuth2 {
 	}
 	
 	// Middlewares
-	authorize() {
+	authorize(_options) {
+		const options = _options || {}
+		
 		return async (req, res, next) => {
 			const authorizationCode = req.headers?.authorization
 			
-			if (!authorizationCode) return res.sendStatus(401)
+			if (!authorizationCode) return options.optional ? next() : res.sendStatus(401)
 			
 			const accessToken = authorizationCode.split(' ')
 			
-			if (!accessToken[0] === 'Bearer') return res.sendStatus(401)
+			if (!accessToken[0] === 'Bearer') return res.sendStatus(400)
 			
 			const authVerification = await this.verifyAccessToken(
 				this.decodeToken(accessToken[1])
@@ -278,8 +280,6 @@ class OAuth2 {
 	}
 }
 
-export default () => {
-	const oauth = new OAuth2()
-	
-	return oauth
-}
+const oauth = new OAuth2()
+
+export default oauth

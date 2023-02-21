@@ -2,7 +2,7 @@ import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 import express from 'express'
 
-import OAuth2 from '../../src/services/auth/oauth.js'
+import oauth from '../../src/services/auth/oauth.js'
 import mockUser from '../util/mockUser.js'
 import { MOCK_USER } from '../data.js'
 import config from '../../../config.js'
@@ -15,7 +15,6 @@ chai.use(chaiHttp)
 
 describe('oauth', async () => {
 	let account
-	let oauth
 	
 	let userGrant
 	let refreshToken
@@ -23,7 +22,6 @@ describe('oauth', async () => {
 	
 	before(async () => {
 		account = await mockUser.create()
-		oauth = await OAuth2()
 		
 		server.get('/sensitive-data', oauth.authorize(), (req, res) => {
 			res.sendStatus(200)

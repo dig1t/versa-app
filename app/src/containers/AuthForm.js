@@ -49,34 +49,38 @@ const AuthForm = props => {
 		event.preventDefault()
 		
 		// Only post if all inputs are valid
-		if (canSubmit) api.call({
-			method: 'post',
-			url: props.apiUrl,
-			data: formData
-		})
-			.then(data => {
-				if (hydrated) {
-					if (props.handleResult) props.handleResult(true, data)
-					
-					setRedirect(true)
+		if (canSubmit) {
+			api.call({
+				method: 'post',
+				url: props.apiUrl,
+				data: {
+					...formData
 				}
 			})
-			.catch(error => {
-				if (hydrated) {
-					if (props.handleResult) props.handleResult(false)
-					
-					setRedirect(false)
-				}
-				
-				setAuthMessage(error)
-				setCanSubmit(false)
-				
-				// Clear the password field
-				if (formData.password) setFormData({
-					...formData,
-					password: ''
+				.then(data => {
+					if (hydrated) {
+						if (props.handleResult) props.handleResult(true, data)
+						
+						setRedirect(true)
+					}
 				})
-			})
+				.catch(error => {
+					if (hydrated) {
+						if (props.handleResult) props.handleResult(false)
+						
+						setRedirect(false)
+					}
+					
+					setAuthMessage(error)
+					setCanSubmit(false)
+					
+					// Clear the password field
+					if (formData.password) setFormData({
+						...formData,
+						password: ''
+					})
+				})
+		}
 	}}>
 		{redirect && props.redirect ? <Navigate to={props.redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>

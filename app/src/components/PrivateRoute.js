@@ -14,7 +14,6 @@ const PrivateRoute = props => {
 		(requireAuth && loggedIn) || (requireNoAuth && !loggedIn) || !hydrated
 	)
 	
-	//return renderedComponent
 	return canRenderCheck() ? <Outlet /> : <Navigate to={redirectTo} />
 }
 

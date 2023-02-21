@@ -1,38 +1,47 @@
-export default options => (req, res, next) => {
+const defaultOptions = {
+	allowObjects: false
+}
+
+export default _options => (req, res, next) => {
+	const options = {
+		...defaultOptions,
+		..._options
+	}
+	
 	if (!req._using) req._using = {}
 	
-	req._using.useFields = '1.0.0'
+	req._using.useFields = '1.0.2'
 	
-	if (!options || typeof options !== 'object') throw 'Missing options'
-	
-	const data = (
-		typeof req.body.data !== 'undefined' && (req.body.data.data || req.body.data)
-	) || req.query?.data || req.body
+	const data = {
+		...req.body,
+		...req.query
+	}
 	
 	if (!data) return res.status(400).json({
+		success: false,
 		message: 'Missing fields'
 	})
 	
-	req.fields = {}
+	if (!options.allowObjects) {
+		for (let key in data) {
+			if (typeof data[key] === 'object') return res.status(400).json({
+				success: false,
+				message: 'Bad syntax'
+			})
+		}
+	}
 	
 	if (options.fields) {
 		for (let field in options.fields) {
 			if (data[options.fields[field]] === undefined)
 				return res.status(400).json({
+					success: false,
 					message: `Missing field: ${options.fields[field]}`
 				})
-			
-			req.fields[options.fields[field]] = data[options.fields[field]]
 		}
 	}
 	
-	if (options.optionalFields) {
-		for (let field in options.fields) {
-			if (data[options.fields[field]] !== undefined) {
-				req.fields[options.fields[field]] = data[options.fields[field]]
-			}
-		}
-	}
+	req.fields = data
 	
 	next()
 }

@@ -42,10 +42,16 @@ const Post = ({ data }) => {
 		{ addSuffix: true, includeSeconds: true }
 	)
 	
+	data.profile = {
+		username: 'dig1t',
+		name: 'digit',
+		verificationLevel: 1
+	}
+	
 	return <div className="post" data-id={data.postId}>
 		<div className="container">
 			<div className="post-avatar">
-				<Avatar img={data.profile.avatar} />
+				<Avatar userId={data.content.userId} />
 			</div>
 			<div className="main">
 				<div className="details">
@@ -62,27 +68,32 @@ const Post = ({ data }) => {
 							hidden={!data.profile.verificationLevel || data.profile.verificationLevel === 0}
 						/>
 					</span>
-					<span className="username">@{data.profile.username}</span>
+					<span className="username"><Link
+						to={`/@${data.profile.username}`}
+						className="unstyled-link"
+					>
+						@{data.profile.username}
+					</Link></span>
 					<span>&bull;</span>
 					<span className="time">{timePosted}</span>
 					<div className="options"><Icon name="ellipsis" /></div>
 				</div>
 				<div className="content">
-					{data.text && <div className="text">{data.text}</div>}
-					{data.media && <PostMedia {...data.media} />}
+					{data.content.body && <div className="text">{data.content.body}</div>}
+					{data.content.media && <PostMedia {...data.content.media} />}
 				</div>
 				<div className="actions">
-					<div className="action likes selected align-center-wrap">
+					<div className="action likes align-center-wrap">
 						<Icon name="heart" />
-						<span>{data.likes}</span>
+						<span>{data.content.likes || 0}</span>
 					</div>
 					<div className="action comments align-center-wrap">
 						<Icon name="comment" />
-						<span>{data.comments}</span>
+						<span>{data.content.comments || 0}</span>
 					</div>
 					<div className="action likes align-center-wrap">
 						<Icon name="repost" />
-						<span>{data.reposts}</span>
+						<span>{data.content.reposts || 0}</span>
 					</div>
 				</div>
 			</div>

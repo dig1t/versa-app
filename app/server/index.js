@@ -6,7 +6,7 @@ import { webpack } from 'webpack'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
 
-import { rateLimiterMiddleware } from './util/index.js'
+import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import webpackServerConfig from '../webpack.client.config.js'
 import serverConfig from './serverConfig.js'
 import config from '../../config.js'

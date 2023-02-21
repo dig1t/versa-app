@@ -51,7 +51,7 @@ export const Navigation = () => {
 	const hydrated = isHydrated()
 	const { loggedIn } = isAuthenticated()
 	
-	const profile = useSelector(state => state.user.profile)
+	const userId = useSelector(state => state.user.userId)
 	
 	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />
@@ -86,9 +86,9 @@ export const Navigation = () => {
 			
 			<ul className="shortcuts user-shortcuts">
 				<li className="shortcut avatar">
-					{profile.username && <Avatar
+					{userId && <Avatar
 						status="online"
-						username={profile.username}
+						userId={userId}
 						clickRedirect
 					/>}
 				</li>

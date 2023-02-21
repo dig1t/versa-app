@@ -1,7 +1,9 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import { getProfile } from '../actions/profile.js'
 import { defaultAssets } from '../constants/assets.js'
 
 const ActivityCircle = () => <svg version="1.1" x="0" y="0" viewBox="0 0 50 50">
@@ -12,10 +14,33 @@ const ActivityCircle = () => <svg version="1.1" x="0" y="0" viewBox="0 0 50 50">
 </svg>
 
 const Avatar = props => {
-	const { img, status, hasStory, username, clickRedirect } = props
+	const dispatch = useDispatch()
+	const { profileList } = useSelector(state => ({
+		profileList: state.profiles.profileList
+	}))
+	
+	const { img, status, hasStory, userId, clickRedirect } = props
+	
+	const [avatarImg, setAvatarImg] = useState(img)
+	const [fetching, setFetching] = useState(false)
+	const [profile, setProfile] = useState(null)
+	
+	useEffect(() => {
+		if (profile !== null) return
+		
+		const profileFetch = profileList.find(data => data.userId === userId)
+		
+		if (profileFetch) {
+			setProfile(profileFetch)
+			setAvatarImg(profileFetch.avatar || defaultAssets.avatar)
+		} else if (typeof userId !== 'undefined' && !fetching) {
+			setFetching(true)
+			dispatch(getProfile(userId))
+		}
+	}, [profile, fetching])
 	
 	const RenderLink = ({ children }) => {
-		return clickRedirect && username ? <Link to={`/@${username}`}>
+		return clickRedirect && profile && profile.username ? <Link to={`/@${profile.username}`}>
 			{ children }
 		</Link> : <>{ children }</>
 	}
@@ -30,7 +55,7 @@ const Avatar = props => {
 			<div className="border">
 				<RenderLink>
 					<div className="img" style={{
-						backgroundImage: `url(${img || defaultAssets.avatar})`
+						backgroundImage: `url(${avatarImg || defaultAssets.avatar})`
 					}} />
 					{status && <div className={classNames(
 						'activity-status', status
@@ -43,7 +68,6 @@ const Avatar = props => {
 }
 
 /*
-
 				<div className="avatar">
 					<div className="push" />
 					<div className="avatar-wrap">

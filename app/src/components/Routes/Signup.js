@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import AuthForm from '../../containers/AuthForm.js'
 import Layout from '../Layout.js'
 import { setAuthenticatedUser, setUserProfile, userLogout } from '../../actions/user.js'
-import { addUserProfile } from '../../actions/profile.js'
+import { addProfile } from '../../actions/profile.js'
 
 const inputs = [
 	{
@@ -43,7 +43,7 @@ const Signup = () => {
 		if (success) {
 			dispatch(setAuthenticatedUser(data.user))
 			dispatch(setUserProfile(data.profile)) // replace with bottom function
-			dispatch(addUserProfile(data.profile)) // add profile to cached profiles
+			dispatch(addProfile(data.profile)) // add profile to cached profiles
 		} else {
 			dispatch(userLogout())
 		}

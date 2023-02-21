@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
 
 import Layout from '../Layout.js'
@@ -7,6 +7,7 @@ import Loading from '../Loading.js'
 import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
 import { CatPills, Icon } from '../UI/index.js'
+import { getProfileFromUsername } from '../../actions/profile.js'
 
 const feedCategories = [
 	{
@@ -27,21 +28,24 @@ const FollowButton = props => {
 	const isFollowing = false
 	
 	return <button className="edit-profile btn-round btn-outline">{
-		
+		isFollowing ? 'Unfollow' : 'Follow'
 	}</button>
 }
 
 const Profile = () => {
-	const { profileList, username } = useSelector(state => ({
+	const dispatch = useDispatch()
+	const { profileList, username, invalidProfiles } = useSelector(state => ({
 		profileList: state.profiles.profileList,
-		username: state.user.username
+		invalidProfiles: state.profiles.invalidProfiles,
+		username: state.user.profile.username
 	}))
 	
 	const { usernameParam } = useParams()
 	const [profileData, setProfileData] = useState(null)
-	const [usernameQuery, setUsernameQuery] = useState({})
+	const [usernameQuery, setUsernameQuery] = useState(null)
 	const [isUserProfile, setIsUserProfile] = useState(false)
 	const [redirect, setRedirect] = useState(null)
+	const [fetching, setFetching] = useState(false)
 	//const [isFriend, setIsFriend] = useState(false)
 	
 	useEffect(() => {
@@ -52,15 +56,28 @@ const Profile = () => {
 	}, [])
 	
 	useEffect(() => {
-		const profile = profileList.find(data => data.username === usernameQuery)
+		const invalidProfile = invalidProfiles.find(invalidUsername => invalidUsername === usernameQuery)
 		
-		if (profile && profile.username === usernameQuery) {
-			setIsUserProfile(profile.username === username)
+		if (invalidProfile) return setRedirect('/error?e=no-user')
+		
+		if (profileData !== null || usernameQuery === null) return
+		
+		const profile = profileList.find(data => data.username === usernameQuery)
+		console.log(profile, !fetching)
+		if (profile) {
 			setProfileData(profile)
-		} else {
-			//setRedirect('/error?e=no-user')
+		} else if (!fetching) {
+			setFetching(true)
+			dispatch(getProfileFromUsername(usernameQuery))
 		}
-	}, [usernameQuery, profileList])
+	}, [usernameQuery, profileList, invalidProfiles])
+	
+	useEffect(() => {
+		if (!profileData) return
+		
+		profileData && setIsUserProfile(profileData.username === username)
+		console.log('IS SELF PROFILE???', profileData.username === username, profileData.username, username)
+	}, [username, profileData])
 	
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}
@@ -72,7 +89,7 @@ const Profile = () => {
 					</div>
 					<div className="details">
 						<div className="avatar-container">
-							<Avatar img={profileData.avatar} />
+							<Avatar userId={profileData.userId} />
 						</div>
 						<div className="container">
 							<div className="name align-center-wrap">
@@ -91,7 +108,9 @@ const Profile = () => {
 								</a>
 							</div>}
 						</div>
-						{isUserProfile && <button className="edit-profile btn-round btn-outline">Edit Profile</button>}
+						{isUserProfile ? <button className="edit-profile btn-round btn-outline">
+							Edit Profile
+						</button> : <FollowButton userId={profileData.userId} />}
 					</div>
 					<div className="community-stats grid">
 						<div className="stat col-6">
@@ -115,7 +134,7 @@ const Profile = () => {
 							console.log('selected pill of type:', type)
 						}}
 					/>
-					<Feed />
+					<Feed userId={profileData.userId} />
 				</div>
 			</div>
 		</div>}
