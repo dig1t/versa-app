@@ -8,7 +8,9 @@ import {
 } from '../constants/actionTypes.js'
 
 export default (state = {
-	posts: []
+	posts: [],
+	userId: null,
+	type: null
 }, action) => {
 	switch(action.type) {
 		case FEED_FETCH_REQUEST:

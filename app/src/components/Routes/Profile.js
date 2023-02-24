@@ -63,7 +63,7 @@ const Profile = () => {
 		if (profileData !== null || usernameQuery === null) return
 		
 		const profile = profileList.find(data => data.username === usernameQuery)
-		console.log(profile, !fetching)
+		
 		if (profile) {
 			setProfileData(profile)
 		} else if (!fetching) {
@@ -76,7 +76,6 @@ const Profile = () => {
 		if (!profileData) return
 		
 		profileData && setIsUserProfile(profileData.username === username)
-		console.log('IS SELF PROFILE???', profileData.username === username, profileData.username, username)
 	}, [username, profileData])
 	
 	return <Layout page="profile">

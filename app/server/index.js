@@ -29,11 +29,13 @@ if (app.get('env') === 'development') {
 	}))
 }
 
+app.disable('x-powered-by')
 app.use(express.json())
 app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
+app.disable('x-powered-by')
 app.use((_, res, next) => {
 	res.header('Access-Control-Allow-Credentials', 'true')
 	next()
@@ -77,7 +79,7 @@ db.instance.once('open', () => {
 		httpOnly: true,
 		resave: false,
 		saveUninitialized: false,
-		store: db.getStore()
+		store: db.getStore() // TODO: Convert to REST API store (https://www.npmjs.com/package/restsession)
 	}))
 	
 	app.use(passport.initialize())

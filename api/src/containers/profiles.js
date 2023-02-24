@@ -1,13 +1,10 @@
 import { Router } from 'express'
-import mongoose from 'mongoose'
 import sanitize from 'mongo-sanitize'
 
-import config from '../constants/config.js'
-import { getUserFromUserId } from './users.js'
 import {
-	contentPipeline,
 	deserializePost,
-	profileFeedPipeline
+	profileFeedPipeline,
+	getContent
 } from './posts.js'
 import { validateText } from '../util/index.js'
 import useFields from '../util/useFields.js'
@@ -44,42 +41,67 @@ const getProfileFromUsername = async username => await _getProfile({
 })
 
 const getProfilePosts = async (userId, requesterUserId) => {
-	const user = await getProfileFromUserId(userId)
+	const profile = await getProfileFromUserId(userId)
 	
-	if (!user) throw 'Could not find user'
+	if (!profile) throw 'Could not find user'
 	
 	const posts = await Post.aggregate(
 		await profileFeedPipeline({
-			userId: user.userId,
+			userId: profile.userId,
 			requesterUserId
 		})
 	)
 	
-	/*
-		.match({
-			userId: { $toObjectId: user.userId },
-		})
-		.sort({
-			created: -1
-		})
-		.lookup({
-			from: 'contents',
-			localField: 'contentId',
-			foreignField: '_id',
-			pipeline: contentPipeline({ requesterUserId }),
-			as: 'content'
-		})
-		.limit(10)
-		.project({
-			type: 0,
-			__v: 0
-		})
-	*/
-	
 	if (!posts) throw 'Could not get profile feed'
 	
-	//return posts
-	return posts.map(post => deserializePost(post))
+	const profileCache = [ profile ]
+	
+	for (const post of posts) {
+		try {
+			const profileFind = profileCache.find(
+				data => data.userId === post.userId
+			)
+			
+			post.content = await getContent(post.contentId)
+			
+			if (!profileFind) {
+				profileCache.push(
+					// If the content's owner is the same as the poster,
+					// use the content profile, else fetch the poster's profile
+					post.content.userId === post.userId ? post.content.profile : await getProfileFromUserId(post.userId)
+				)
+			}
+			
+			if (post.content.userId !== post.userId) {
+				const contentProfileFind = profileCache.find(
+					data => data.userId === post.content.userId
+				)
+				
+				if (!contentProfileFind) profileCache.push(post.content.profile)
+			}
+		} catch(e) {
+			// Error fetching content
+			// TODO: post blank object??
+			console.log('fetch content err', e)
+			post.content = {}
+		}
+	}
+	
+	/*/
+	// Post
+	{
+		...post,
+		content: {
+			...contentData,
+			profile
+		},
+	}*/
+	return posts.map(post => ({
+		...deserializePost(post),
+		profile: profileCache.find(
+			data => data.userId === post.userId.toHexString()
+		)
+	}))
 }
 
 export {

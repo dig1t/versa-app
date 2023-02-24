@@ -11,7 +11,13 @@ export const addProfile = data => dispatch => dispatch({
 	payload: data
 })
 
-export const getProfile = userId => dispatch => {
+export const getProfile = userId => (dispatch, getState) => {
+	const { profiles } = getState()
+	
+	const profile = profiles.profileList.find(data => data.userId === userId)
+	
+	if (profile) return
+	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	
 	api.get('/v1/profile', { userId })
@@ -25,9 +31,15 @@ export const getProfile = userId => dispatch => {
 		}))
 }
 
-export const getProfileFromUsername = username => dispatch => {
+export const getProfileFromUsername = username => (dispatch, getState) => {
+	const { profiles } = getState()
+	
+	const profile = profiles.profileList.find(data => data.userId === userId)
+	
+	if (profile) return
+	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
-	console.log('fetch ', username)
+	
 	api.get('/v1/profile', { username })
 		.then(data => dispatch({
 			type: PROFILE_FETCH_SUCCESS,

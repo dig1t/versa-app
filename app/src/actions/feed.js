@@ -6,7 +6,11 @@ import {
 
 import api from '../util/api.js'
 
-export const getProfileFeed = userId => dispatch => {
+export const getProfileFeed = userId => (dispatch, getState) => {
+	const { feed } = getState()
+	
+	if (feed.userId === userId) return
+	
 	dispatch({ type: PROFILE_FEED_FETCH_REQUEST })
 	
 	api.get('/v1/profile/feed', { userId })
@@ -15,7 +19,6 @@ export const getProfileFeed = userId => dispatch => {
 			payload: data
 		}))
 		.catch(error => dispatch({
-			type: PROFILE_FEED_FETCH_FAILURE,
-			payload: error
+			type: PROFILE_FEED_FETCH_FAILURE
 		}))
 }

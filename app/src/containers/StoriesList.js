@@ -36,7 +36,7 @@ const StoriesList = () => {
 		<ul>
 			{storiesData.map(story => {
 				return <li className="story" key={Math.random().toString()}>
-					<Avatar img={story.avatar} />
+					<Avatar avatar={story.avatar} />
 				</li>
 			})}
 		</ul>

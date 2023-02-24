@@ -19,14 +19,14 @@ const Avatar = props => {
 		profileList: state.profiles.profileList
 	}))
 	
-	const { img, status, hasStory, userId, clickRedirect } = props
+	const { avatar, status, hasStory, userId, clickRedirect } = props
 	
-	const [avatarImg, setAvatarImg] = useState(img)
+	const [avatarImg, setAvatarImg] = useState(avatar)
 	const [fetching, setFetching] = useState(false)
 	const [profile, setProfile] = useState(null)
 	
 	useEffect(() => {
-		if (profile !== null) return
+		if (profile !== null || typeof avatar !== 'undefined') return
 		
 		const profileFetch = profileList.find(data => data.userId === userId)
 		
