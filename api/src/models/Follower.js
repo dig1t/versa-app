@@ -15,7 +15,7 @@ const schema = new Schema({
 		ref: 'User',
 		required: true
 	},
-	requested: Schema.Types.Boolean, // If profile is private, this will check true
+	requested: Schema.Types.Boolean, // If target profile is private, this will check true
 	created: {
 		type: Date,
 		maxlength: 27,

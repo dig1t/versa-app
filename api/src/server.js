@@ -17,12 +17,10 @@ app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
+app.disable('etag')
+app.disable('x-powered-by')
 app.use(apiMiddleware())
 app.use(oauth.inject(app))
-app.use((_, res, next) => {
-	res.header('Access-Control-Allow-Credentials', 'true')
-	next()
-})
 
 if (config.dev) {
 	app.use((req, res, next) => {
@@ -51,6 +49,16 @@ if (config.dev) {
 	
 	app.set('trust proxy', 1) // trust first proxy
 }
+
+app.use((req, res, next) => {
+	res.header('Access-Control-Allow-Credentials', true)
+	res.header('Access-Control-Max-Age', 86400)
+	
+	// Chrome preflight request
+	if (req.method === 'OPTIONS') return res.sendStatus(200)
+	
+	next()
+})
 
 app.use('/oauth', oauth.use(app))
 app.use('/v1', useAPI(app))

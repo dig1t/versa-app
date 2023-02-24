@@ -42,9 +42,9 @@ class API {
 					url: options.url,
 					[method === 'get' ? 'params' : 'data']: options.data,
 					headers: {
-						'Content-Type' : 'application/x-www-form-urlencoded',
 						Accept: '*/*',
 						Authorization: includeAT ? `Bearer ${this._keys.accessToken}` : null,
+						'Content-Type' : 'application/x-www-form-urlencoded',
 						...options.headers
 					},
 					withCredentials: options.withCredentials

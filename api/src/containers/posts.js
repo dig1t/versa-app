@@ -19,7 +19,7 @@ const POST_TYPES = {
 // 	CONTENT: 1
 // }
 
-const deserializeContent = content => ({
+const deserializeContent = (content, profile) => ({
 	contentId: content._id.toHexString(),
 	userId: content.userId.toHexString(),
 	body: content.body,
@@ -31,17 +31,19 @@ const deserializeContent = content => ({
 		userId: content.media[0].userId.toHexString(),
 		source: content.media[0].source, // Direct URL
 		created: content.media[0].created
-	} : undefined
+	} : undefined,
+	
+	profile
 })
 
-const deserializePost = (post, content) => ({
+const deserializePost = (post, content, profile) => ({
 	postId: post._id.toHexString(),
 	userId: post.userId.toHexString(),
 	created: post.created,
 	
-	content: deserializeContent(
-		(typeof post.content === 'object' && post.content[0]) || content
-	)
+	profile: profile || post.profile,
+	
+	content: content || post.content
 })
 
 const createContent = async data => {
@@ -62,7 +64,7 @@ const createContent = async data => {
 	try {
 		await content.save()
 		
-		return content
+		return deserializeContent(content)
 	} catch(e) {
 		throw 'Could not create content'
 	}
@@ -90,9 +92,13 @@ const createPost = async (userId, query) => {
 	try {
 		await post.save()
 		
-		return deserializePost(post, content)
+		return deserializePost(
+			post,
+			content,
+			await getProfileFromUserId(userId)
+		)
 	} catch(e) {
-		throw 'Could not create post'
+		throw `posts.createPost() - ${e}` || 'Could not create post'
 	}
 }
 
@@ -119,12 +125,14 @@ const deletePost = async postId => {
 	}
 }
 
-const getContent = async contentId => {
-	const content = await Content.findOne({ contentId })
+const getContent = async (contentId, requesterUserId) => {
+	const content = await Content.findOne({ _id: contentId })
 	
 	if (!content) throw 'Content not found'
 	
-	return deserializeContent(content)
+	const profile = await getProfileFromUserId(content.userId)
+	
+	return deserializeContent(content, profile)
 }
 
 const isConnection = async (userId, requesterUserId) => {
@@ -137,12 +145,8 @@ const isConnection = async (userId, requesterUserId) => {
 
 const contentPipeline = async _options => {
 	const options = {
-		requesterUserId: '0',
-		
 		..._options
 	}
-	
-	const requesterUserId = { $toObjectId: options.requesterUserId }
 	
 	const pipeline = []
 	
@@ -201,17 +205,10 @@ const profileFeedPipeline = async _options => {
 		{ $sort: {
 			created: -1
 		} },
-		{ $lookup: {
-			from: 'contents',
-			localField: 'contentId',
-			foreignField: '_id',
-			pipeline: await contentPipeline({
-				requesterUserId: options.requesterUserId
-			}),
-			as: 'content'
-		} },
 		{ $limit: config.profile.maxFeedPagePosts },
-		{ $addFields: { postId: '$_id' } },
+		{ $addFields: {
+			postId: '$_id'
+		} },
 		{ $project: {
 			type: 0,
 			__v: 0
@@ -258,6 +255,7 @@ export {
 	contentPipeline,
 	profileFeedPipeline,
 	deserializePost,
+	getContent,
 	createPost,
 	deletePost
 }

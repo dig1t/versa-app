@@ -51,7 +51,7 @@ const Post = ({ data }) => {
 	return <div className="post" data-id={data.postId}>
 		<div className="container">
 			<div className="post-avatar">
-				<Avatar userId={data.content.userId} />
+				<Avatar avatar={data.content.profile.avatar} />
 			</div>
 			<div className="main">
 				<div className="details">
