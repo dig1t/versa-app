@@ -1,6 +1,7 @@
 {
   "exit": true,
-  "require": ["@babel/register", "test/hooks.spec.js"],
+  "require": ["@babel/register", "dotenv/config", "test/hooks.spec.js"],
+  "env": "dotenv_config_path=../.env",
   "reporter": "nyan",
   "spec": "test/**/*.spec.js",
   "timeout": 10000,

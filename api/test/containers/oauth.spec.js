@@ -1,6 +1,7 @@
 import chai, { assert } from 'chai'
 import chaiHttp from 'chai-http'
 import express from 'express'
+import cookieParser from 'cookie-parser'
 
 import oauth from '../../src/services/auth/oauth.js'
 import mockUser from '../util/mockUser.js'
@@ -10,6 +11,9 @@ import config from '../../../config.js'
 const server = express()
 
 server.use(express.json())
+server.use(cookieParser())
+server.use(oauth.inject(server))
+server.use('/oauth', oauth.use(server))
 
 chai.use(chaiHttp)
 
@@ -23,9 +27,13 @@ describe('oauth', async () => {
 	before(async () => {
 		account = await mockUser.create()
 		
-		server.get('/sensitive-data', oauth.authorize(), (req, res) => {
-			res.sendStatus(200)
-		})
+		server.get(
+			'/sensitive-data',
+			server.oauth.authorize(),
+			(req, res) => {
+				res.sendStatus(200)
+			}
+		)
 	})
 	
 	it('validates a client', async () => {
@@ -51,16 +59,18 @@ describe('oauth', async () => {
 			userGrant.grantId
 		)
 		
-		assert(refreshToken)
+		assert.exists(refreshToken)
 	})
 	
 	it('creates an access token', async () => {
-		accessToken = await oauth.issueAccessToken(
-			account.user.userId,
-			refreshToken
-		)
+		const res = await chai.request(server)
+			.get('/oauth/token')
+			.set('Cookie', `${config.shortName.refreshToken}=${refreshToken}`)
+			.send()
 		
-		assert(accessToken)
+		accessToken = res.body.access_token
+		
+		assert.exists(res.body, 'access_token')
 	})
 	
 	it('authenticates a user using an access token', async () => {
@@ -81,7 +91,9 @@ describe('oauth', async () => {
 	})
 	
 	it('verifies an access token', async () => {
-		const tokenIsValid = await oauth.verifyAccessToken(accessToken)
+		const tokenIsValid = await oauth.verifyAccessToken(
+			oauth.decodeToken(accessToken)
+		)
 		
 		assert.equal(tokenIsValid.success, true)
 	})
