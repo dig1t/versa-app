@@ -32,10 +32,8 @@ describe('account functions', () => {
 		const request = await chai.request(server)
 			.post('/v1/user/authenticate')
 			.send({
-				data: {
-					email: account.user.email,
-					password: MOCK_USER.password
-				}
+				email: account.user.email,
+				password: MOCK_USER.password
 			})
 		
 		assert.equal(request.status, 200)
@@ -43,11 +41,11 @@ describe('account functions', () => {
 		
 		assert.exists(request.body, 'data')
 		assert.exists(request.body.data, 'user')
-		assert.exists(request.body.data, 'sessionId')
+		assert.exists(request.body.data, 'auth')
 	})
 	
 	it('gets user from sessionId', async () => {
-		const user = await getUserFromSession(account.sessionId)
+		const user = await getUserFromSession(account.auth.sessionId)
 		
 		assert(user.userId, account.user.userId)
 	})
@@ -59,7 +57,7 @@ describe('account functions', () => {
 	})
 	
 	it('checks if a user email exists', async () => {
-		const userId = await getUserIdFromSession(account.sessionId)
+		const userId = await getUserIdFromSession(account.auth.sessionId)
 		
 		assert(userId, account.user.userId)
 	})

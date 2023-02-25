@@ -16,8 +16,8 @@ import {
 
 const deserializeUser = user => ({
 	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
-	isAdmin: user.isAdmin,
-	isMod: user.isMod,
+	isAdmin: user.isAdmin || false,
+	isMod: user.isMod || false,
 	created: user.created
 })
 
@@ -145,12 +145,13 @@ const createAccount = async req => {
 	
 	// Issue user an oauth grant and refresh token
 	const grant = await req.oauth.ROPCGrant(email, password)
-	const result = await authenticate(req, userId, grant.grantId)
+	const auth = await authenticate(req, userId, grant.grantId)
 	
-	result.user = deserializeUser(user)
-	result.profile = deserializeProfile(profile)
-	
-	return result
+	return {
+		auth,
+		user: deserializeUser(user),
+		profile: deserializeProfile(profile)
+	}
 }
 
 const deleteAccount = async userId => {
@@ -204,14 +205,14 @@ export default server => {
 		server.oauth.useROPCGrant(),
 		async req => {
 			try {
-				const result = await authenticate(
+				const auth = await authenticate(
 					req,
 					req._oauth.grant.accountId,
 					req._oauth.grant.grantId
 				)
 				
 				req.apiResult(200, {
-					...result,
+					auth,
 					user: await getUserFromUserId(req._oauth.grant.accountId)
 				})
 			} catch(err) {

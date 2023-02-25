@@ -3,18 +3,20 @@ import chaiHttp from 'chai-http'
 import express from 'express'
 
 import apiMiddleware from '../src/util/apiMiddleware.js'
+import useFields from '../src/util/useFields.js'
 
 const server = express()
 
 server.use(express.json())
 server.use(apiMiddleware())
 
-server.get('/ping', (req, res) => {
-	if (!res.getFields([ 'userId' ], true)) return
-	
-	req.apiResult(200, req.fields)
-})
-
+server.get(
+	'/ping',
+	useFields({ fields: ['userId'] }),
+	req => {
+		req.apiResult(200, req.fields)
+	}
+)
 chai.use(chaiHttp)
 
 describe('api middleware', () => {
@@ -24,9 +26,7 @@ describe('api middleware', () => {
 		const request = await chai.request(server)
 			.get('/ping')
 			.send({
-				data: {
-					userId: MOCK_USERID
-				}
+				userId: MOCK_USERID
 			})
 		
 		assert.equal(request.status, 200)
