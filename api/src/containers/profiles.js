@@ -27,7 +27,7 @@ const deserializeProfile = profile => ({
 const _getProfile = async match => {
 	const profile = await Profile.findOne(match)
 	
-	if (!profile) throw 'Profile does not exist'
+	if (!profile) throw new Error('Profile does not exist')
 	
 	return deserializeProfile(profile)
 }
@@ -43,7 +43,7 @@ const getProfileFromUsername = async username => await _getProfile({
 const getProfilePosts = async (userId, requesterUserId) => {
 	const profile = await getProfileFromUserId(userId)
 	
-	if (!profile) throw 'Could not find user'
+	if (!profile) throw new Error('Could not find user')
 	
 	const posts = await Post.aggregate(
 		await profileFeedPipeline({
@@ -52,7 +52,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 		})
 	)
 	
-	if (!posts) throw 'Could not get profile feed'
+	if (!posts) throw new Error('Could not get profile feed')
 	
 	const profileCache = [ profile ]
 	
@@ -119,7 +119,7 @@ export default () => {
 		async req => {
 			try {
 				if (!req.fields.userId && !req.fields.username) {
-					throw 'Missing fields: userId or username'
+					throw new Error('Missing fields: userId or username')
 				} else if (req.fields.username && !validateText(req.fields.username, 'username')) {
 					throw new Error()
 				}
