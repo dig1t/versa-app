@@ -1,3 +1,5 @@
+import mongoose from 'mongoose'
+
 const version = '1.0.0'
 
 const Util = function() {
@@ -25,12 +27,38 @@ const validateText = (text, validateFor) => {
 	return exp ? exp.test(text) : text
 }
 
+const mongoValidate = (input, type) => {
+	switch(type) {
+		case 'id':
+			return mongoose.isValidObjectId(input)
+		default: {
+			return true
+		}
+	}
+}
+
+const mongoSanitize = input => {
+	if (typeof input === 'object') {
+		for (let key in input) {
+			if (/^\$/.test(key)) {
+				delete input[key]
+			} else {
+				mongoSanitize(input[key])
+			}
+		}
+	}
+	
+	return input
+}
+
 const util = new Util()
 
 util.validateText = validateText
 
 export {
-	validateText
+	validateText,
+	mongoValidate,
+	mongoSanitize
 }
 
 export default util

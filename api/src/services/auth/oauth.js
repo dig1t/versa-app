@@ -160,7 +160,7 @@ class OAuth2 {
 		const accessToken = new this.provider.AccessToken({
 			accountId: refreshToken.accountId,
 			refreshTokenId: refreshToken,
-			client: client,
+			client,
 			scope: 'api api:read api:write'
 		})
 		

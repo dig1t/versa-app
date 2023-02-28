@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import sanitize from 'mongo-sanitize'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
@@ -8,7 +7,7 @@ import UserSession from '../models/UserSession.js'
 import Profile from '../models/Profile.js'
 
 import config from '../constants/config.js'
-import { validateText } from '../util/index.js'
+import { validateText, mongoSanitize } from '../util/index.js'
 import useFields from '../util/useFields.js'
 import {
 	deserializeProfile
@@ -22,7 +21,7 @@ const deserializeUser = user => ({
 })
 
 const getUserFromUserId = async userId => {
-	const user = await User.findOne({ _id: sanitize(userId) })
+	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!user) throw 'User does not exist'
 	
@@ -30,7 +29,7 @@ const getUserFromUserId = async userId => {
 }
 
 const getUserIdFromSession = async sessionId => {
-	const user = await UserSession.findOne({ _id: sanitize(sessionId) })
+	const user = await UserSession.findOne({ _id: mongoSanitize(sessionId) })
 	
 	if (!user) throw 'Could not find session'
 	if (user.isDeleted) throw 'Session is invalid'
@@ -46,7 +45,7 @@ const getUserFromSession = async sessionId => {
 }
 
 const emailExists = async email => {
-	const count = await User.countDocuments({ email: sanitize(email) })
+	const count = await User.countDocuments({ email: mongoSanitize(email) })
 	
 	return count > 0 ? true : false
 }
@@ -95,7 +94,7 @@ const authenticate = async (req, userId, _grantId) => {
 }
 
 const authenticateUserCredentials = async (email, password) => {
-	const user = await User.findOne({ email: sanitize(email) })
+	const user = await User.findOne({ email: mongoSanitize(email) })
 	
 	if (!user || !await user.validPassword(password)) {
 		throw 'Please try another email or password'
@@ -155,12 +154,14 @@ const createAccount = async req => {
 }
 
 const deleteAccount = async userId => {
-	const user = await User.findOne({ _id: sanitize(userId) })
+	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!user) throw 'Could not find user'
 	
 	try {
 		await User.deleteOne({ _id: user._id })
+		
+		return { deleted: true }
 	} catch(e) {
 		throw 'Could not delete user'
 	}

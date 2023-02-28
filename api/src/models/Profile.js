@@ -17,8 +17,10 @@ const schema = new Schema({
 	},
 	avatar: String,
 	bannerPhoto: String,
-	verificationLevel: {
+	verificationLevel: { // TODO: REPLACE WITH PROFILE BADGES
 		type: Number,
+		min: 0,
+		max: 1,
 		maxlength: 1,
 		default: 0
 	},
@@ -38,6 +40,8 @@ const schema = new Schema({
 		type: Date,
 		default: Date.now()
 	},
+	followers: 0,
+	following: 0,
 	created: {
 		type: Date,
 		default: new Date().toISOString()
@@ -50,11 +54,15 @@ schema.pre('save', function(next) {
 	next()
 })
 
-schema.pre('deleteOne', { document: true, query: false }, function() {
-    this.model('Content').deleteMany({ userId: this._id })
-    this.model('Comment').deleteMany({ userId: this._id })
-    this.model('Post').deleteMany({ userId: this._id })
-    this.model('Follower').deleteMany({ userId: this._id })
-})
+schema.pre(
+	'deleteOne',
+	{ document: true, query: false },
+	function() {
+		this.model('Content').deleteMany({ userId: this._id })
+		this.model('Comment').deleteMany({ userId: this._id })
+		this.model('Post').deleteMany({ userId: this._id })
+		this.model('Follower').deleteMany({ userId: this._id })
+	}
+)
 
 export default mongoose.models.Profile || mongoose.model('Profile', schema)

@@ -40,35 +40,33 @@ const schema = new Schema({
 		} */
 	},
 	
-	comments: [{
-		type: Schema.Types.ObjectId,
-		ref: 'Comment'
-	}]
-	
-	/* collaborators: [{
+	collaborators: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Collaborator'
-	}], */
+	}],
 	
-	// Not real time stats
-	// likes: {
-	// 	type: Number,
-	// 	default: 0
-	// },
-	// comments: {
-	// 	type: Number,
-	// 	default: 0
-	// },
-	// reposts: {
-	// 	type: Number,
-	// 	default: 0
-	// }
+	likes: {
+		type: Number,
+		default: 0
+	},
+	comments: {
+		type: Number,
+		default: 0
+	},
+	reposts: {
+		type: Number,
+		default: 0
+	}
 }, { _id: false })
 
-schema.pre(['deleteOne', 'deleteMany'], { document: true, query: false }, function() {
-	this.model('Collaborator').deleteMany({ contentId: this._id })
-	this.model('Post').deleteMany({ contentId: this._id })
-    this.model('Comment').deleteMany({ contentId: this._id })
-})
+schema.pre(
+	['deleteOne', 'deleteMany'],
+	{ document: true, query: false },
+	function() {
+		this.model('Collaborator').deleteMany({ contentId: this._id })
+		this.model('Post').deleteMany({ contentId: this._id })
+		this.model('Comment').deleteMany({ contentId: this._id })
+	}
+)
 
 export default mongoose.models.Content || mongoose.model('Content', schema)

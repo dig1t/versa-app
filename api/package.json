@@ -43,7 +43,6 @@
     "fix-esm": "^1.0.1",
     "helmet": "^6.0.1",
     "mocha": "^10.2.0",
-    "mongo-sanitize": "^1.1.0",
     "mongodb-memory-server": "^8.11.4",
     "mongoose": "^6.9.1",
     "node-jose": "^2.1.1",
