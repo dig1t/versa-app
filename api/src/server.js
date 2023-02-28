@@ -12,13 +12,13 @@ import oauth from './services/auth/oauth.js'
 
 const app = express()
 
+app.disable('etag')
+app.disable('x-powered-by')
 app.use(express.json())
 app.use(express.static('dist/public'))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
-app.disable('etag')
-app.disable('x-powered-by')
 app.use(apiMiddleware())
 app.use(oauth.inject(app))
 
@@ -62,5 +62,20 @@ app.use((req, res, next) => {
 
 app.use('/oauth', oauth.use(app))
 app.use('/v1', useAPI(app))
+
+// Log all requests and their fields
+if (config.dev) app.use((req, res, next) => {
+	console.log(req.url, req.fields)
+	next()
+})
+
+app.get('*', (req, res) => res.status(404).send())
+
+app.use((err, req, res, next) => {
+	if (err) {
+		if (config.dev) console.error(err.stack)
+		return res.status(500).send()
+	}
+})
 
 export default app

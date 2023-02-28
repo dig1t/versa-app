@@ -10,7 +10,7 @@ const schema = new Schema({
 		ref: 'User',
 		required: true
 	},
-	followUserId: {
+	followerUserId: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true
@@ -24,4 +24,4 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-export default mongoose.models.Collaborator || mongoose.model('Collaborator', schema)
+export default mongoose.models.Follower || mongoose.model('Follower', schema)

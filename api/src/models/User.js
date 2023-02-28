@@ -47,9 +47,13 @@ schema.methods.validPassword = async function(password) {
 	}
 }
 
-schema.pre('deleteOne', { document: true, query: false }, function() {
-    this.model('Profile').deleteOne({ userId: this._id })
-	this.model('UserSession').deleteMany({ userId: this._id })
-})
+schema.pre(
+	'deleteOne',
+	{ document: true, query: false },
+	function() {
+		this.model('Profile').deleteOne({ userId: this._id })
+		this.model('UserSession').deleteMany({ userId: this._id })
+	}
+)
 
 export default mongoose.models.User || mongoose.model('User', schema)

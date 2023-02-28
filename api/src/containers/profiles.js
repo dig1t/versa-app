@@ -1,12 +1,11 @@
 import { Router } from 'express'
-import sanitize from 'mongo-sanitize'
 
 import {
 	deserializePost,
 	profileFeedPipeline,
 	getContent
 } from './posts.js'
-import { validateText } from '../util/index.js'
+import { validateText, mongoSanitize } from '../util/index.js'
 import useFields from '../util/useFields.js'
 
 import Post from '../models/Post.js'
@@ -16,12 +15,13 @@ const deserializeProfile = profile => ({
 	userId: profile.userId.toHexString(),
 	username: profile.username,
 	name: profile.name,
-	verificationLevel: profile.verificationLevel,
+	verificationLevel: profile.verificationLevel || 0,
 	avatar: profile.avatar,
 	bannerPhoto: profile.bannerPhoto,
-	bio: profile.bio,
+	bio: profile.bio || '',
 	website: profile.website,
-	lastActive: profile.lastActive
+	lastActive: profile.lastActive,
+	private: profile.private || false
 })
 
 const _getProfile = async match => {
@@ -33,11 +33,11 @@ const _getProfile = async match => {
 }
 
 const getProfileFromUserId = async userId => await _getProfile({
-	_id: sanitize(userId)
+	_id: mongoSanitize(userId)
 })
 
 const getProfileFromUsername = async username => await _getProfile({
-	username: sanitize(username)
+	username: mongoSanitize(username)
 })
 
 const getProfilePosts = async (userId, requesterUserId) => {
@@ -110,7 +110,7 @@ export {
 	getProfilePosts
 }
 
-export default server => {
+export default () => {
 	const router = new Router()
 	
 	router.get(

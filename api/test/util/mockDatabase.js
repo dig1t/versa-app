@@ -4,7 +4,11 @@ let mongoServer
 
 export default {
 	startMockServer: async () => {
-		mongoServer = await MongoMemoryServer.create()
+		try {
+			mongoServer = await MongoMemoryServer.create()
+		} catch(e) {
+			console.error(e)
+		}
 	},
 	
 	getUri: () => mongoServer.getUri(),

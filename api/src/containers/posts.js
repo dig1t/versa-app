@@ -1,14 +1,14 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
-import sanitize from 'mongo-sanitize'
 
 import config from '../constants/config.js'
-import { validateText } from '../util/index.js'
+import { validateText, mongoSanitize } from '../util/index.js'
 import useFields from '../util/useFields.js'
 
 import Post from '../models/Post.js'
 import Content from '../models/Content.js'
 import { getProfileFromUserId } from './profiles.js'
+import { isConnection } from './connections.js'
 
 const POST_TYPES = {
 	CONTENT: 1,
@@ -103,7 +103,7 @@ const createPost = async (userId, query) => {
 }
 
 const deletePost = async postId => {
-	const post = await Post.findOne({ _id: sanitize(postId) })
+	const post = await Post.findOne({ _id: mongoSanitize(postId) })
 	
 	if (!post) throw 'Could not find post'
 	
@@ -114,11 +114,15 @@ const deletePost = async postId => {
 			
 			//await Post.deleteMany({ contentId: post.contentId })
 			await Content.deleteOne({ _id: post.contentId })
+			
+			return { deleted: true }
 		} else {
 			// Use was tagged as a collaborator or
 			// reposted another user's content
 			// Delete just the post
 			await post.deleteOne({ _id: post.postId })
+			
+			return { deleted: true }
 		}
 	} catch(e) {
 		throw 'Could not delete post'
@@ -132,15 +136,13 @@ const getContent = async (contentId, requesterUserId) => {
 	
 	const profile = await getProfileFromUserId(content.userId)
 	
+	const canViewContent = profile.private ? (
+		typeof requesterUserId === 'undefined' ? await isConnection(content.userId, requesterUserId) : false
+	) : true
+	
+	if (!canViewContent) throw 'Cannot view private content'
+	
 	return deserializeContent(content, profile)
-}
-
-const isConnection = async (userId, requesterUserId) => {
-	if (!requesterUserId) return false
-	
-	if (userId === requesterUserId) return true
-	
-	return true
 }
 
 const contentPipeline = async _options => {

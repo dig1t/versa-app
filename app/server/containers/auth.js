@@ -34,7 +34,7 @@ const deserializeAuthorizedUser = user => ({
 // Extract the userId and sessionId from the auth strategy
 passport.serializeUser((data, done) => done(null, {
 	userId: data.user.userId,
-	sessionId: data.sessionId
+	sessionId: data.auth.sessionId
 }))
 
 // Call the API to retrieve basic info about the user
