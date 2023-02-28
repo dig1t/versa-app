@@ -17,7 +17,7 @@ const deserializeFollow = follow => ({
 const getFollower = async followId => {
 	const connection = await Follower.findOne({ _id: mongoSanitize(followId) })
 	
-	if (!connection) throw 'Connection does not exist'
+	if (!connection) throw new Error('Connection does not exist')
 	
 	return deserializeFollow(connection)
 }
@@ -51,7 +51,7 @@ const getConnection = async (userId, requesterUserId) => {
 const getFollowers = async userId => {
 	const connection = await Follower.find({ userId: mongoSanitize(userId) })
 	
-	if (!connection) throw 'Connection does not exist'
+	if (!connection) throw new Error('Connection does not exist')
 	
 	return deserializeProfile(connection)
 }
@@ -87,8 +87,8 @@ const getFollowCount = async userId => {
 }
 
 const createConnection = async (userId, requesterUserId) => {
-	if (!userId) throw 'Missing userId'
-	if (!requesterUserId) throw 'Missing requester userId'
+	if (!userId) throw new Error('Missing userId')
+	if (!requesterUserId) throw new Error('Missing requester userId')
 	
 	if (!mongoValidate(userId, 'id') || !mongoValidate(requesterUserId, 'id')) {
 		throw `Invalid userId`
@@ -106,7 +106,7 @@ const createConnection = async (userId, requesterUserId) => {
 		
 		return deserializeFollow(connection)
 	} catch(e) {
-		throw 'Could not create connection'
+		throw new Error('Could not create connection')
 	}
 }
 
@@ -120,7 +120,7 @@ const deleteConnection = async (userId, requesterUserId) => {
 		
 		return { deleted: true }
 	} catch(e) {
-		throw 'Could not delete connection'
+		throw new Error('Could not delete connection')
 	}
 }
 

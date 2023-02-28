@@ -23,7 +23,7 @@ const deserializeUser = user => ({
 const getUserFromUserId = async userId => {
 	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
-	if (!user) throw 'User does not exist'
+	if (!user) throw new Error('User does not exist')
 	
 	return deserializeUser(user)
 }
@@ -31,8 +31,8 @@ const getUserFromUserId = async userId => {
 const getUserIdFromSession = async sessionId => {
 	const user = await UserSession.findOne({ _id: mongoSanitize(sessionId) })
 	
-	if (!user) throw 'Could not find session'
-	if (user.isDeleted) throw 'Session is invalid'
+	if (!user) throw new Error('Could not find session')
+	if (user.isDeleted) throw new Error('Session is invalid')
 	
 	return user.userId.toHexString()
 }
@@ -57,7 +57,7 @@ const userIdExists = async userId => {
 }
 
 const createSession = async (req, userId) => {
-	if (!await userIdExists(userId)) throw 'User does not exist'
+	if (!await userIdExists(userId)) throw new Error('User does not exist')
 	
 	const sessionId = new mongoose.Types.ObjectId()
 	const session = UserSession({
@@ -70,7 +70,7 @@ const createSession = async (req, userId) => {
 	try {
 		await session.save()
 	} catch(e) {
-		throw 'Could not create session'
+		throw new Error('Could not create session')
 	}
 	
 	return sessionId.toHexString()
@@ -79,7 +79,7 @@ const createSession = async (req, userId) => {
 const authenticate = async (req, userId, _grantId) => {
 	const grantId = _grantId || req._oauth?.grant?.grantId
 	
-	if (!grantId) throw 'User grant missing'
+	if (!grantId) throw new Error('User grant missing')
 	
 	const sessionId = await createSession(req, userId)
 	const refreshToken = await req.oauth.issueRefreshToken(
@@ -97,7 +97,7 @@ const authenticateUserCredentials = async (email, password) => {
 	const user = await User.findOne({ email: mongoSanitize(email) })
 	
 	if (!user || !await user.validPassword(password)) {
-		throw 'Please try another email or password'
+		throw new Error('Please try another email or password')
 	}
 	
 	return deserializeUser(user)
@@ -107,13 +107,13 @@ const createAccount = async req => {
 	const { name, email, password } = req.fields
 	
 	if (name.length > config.user.maxNameLength || !validateText(name, 'name')) {
-		throw 'Name is invalid'
+		throw new Error('Name is invalid')
 	} else if (email.length > config.user.maxEmailLength || !validateText(email, 'email')) {
-		throw 'Email is invalid'
+		throw new Error('Email is invalid')
 	} else if (password.length > config.user.maxPasswordLength || !validateText(password, 'password')) {
-		throw 'Password does not meet requirements'
+		throw new Error('Password does not meet requirements')
 	} else if (await emailExists(email)) {
-		throw 'E-mail in use'
+		throw new Error('E-mail in use')
 	}
 	
 	const userId = crypto.randomBytes(12).toString('hex')
@@ -128,7 +128,7 @@ const createAccount = async req => {
 	try {
 		await user.save()
 	} catch(e) {
-		throw 'Could not create user'
+		throw new Error('Could not create user')
 	}
 	
 	const profile = new Profile({
@@ -139,7 +139,7 @@ const createAccount = async req => {
 	try {
 		await profile.save()
 	} catch(e) {
-		throw 'Could not create profile'
+		throw new Error('Could not create profile')
 	}
 	
 	// Issue user an oauth grant and refresh token
@@ -156,14 +156,14 @@ const createAccount = async req => {
 const deleteAccount = async userId => {
 	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
-	if (!user) throw 'Could not find user'
+	if (!user) throw new Error('Could not find user')
 	
 	try {
 		await User.deleteOne({ _id: user._id })
 		
 		return { deleted: true }
 	} catch(e) {
-		throw 'Could not delete user'
+		throw new Error('Could not delete user')
 	}
 }
 
@@ -191,7 +191,7 @@ export default server => {
 				const user = await getUserFromSession(req.fields.sessionId)
 				
 				// Possible attack
-				if (user.userId !== req.fields.userId) throw 'Unexpected Error'
+				if (user.userId !== req.fields.userId) throw new Error('Unexpected Error')
 				
 				req.apiResult(200, user)
 			} catch(err) {

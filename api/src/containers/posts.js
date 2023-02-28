@@ -47,8 +47,8 @@ const deserializePost = (post, content, profile) => ({
 })
 
 const createContent = async data => {
-	if (!data.userId) throw 'Missing userId'
-	if (!data.body) throw 'Missing body'
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.body) throw new Error('Missing body')
 	
 	if (data.body.length > config.post.maxBodyLength || !validateText(data.body, 'text')) {
 		throw `Content body is too long, max characters is ${config.post.maxBodyLength}`
@@ -66,7 +66,7 @@ const createContent = async data => {
 		
 		return deserializeContent(content)
 	} catch(e) {
-		throw 'Could not create content'
+		throw new Error('Could not create content')
 	}
 }
 
@@ -105,7 +105,7 @@ const createPost = async (userId, query) => {
 const deletePost = async postId => {
 	const post = await Post.findOne({ _id: mongoSanitize(postId) })
 	
-	if (!post) throw 'Could not find post'
+	if (!post) throw new Error('Could not find post')
 	
 	try {
 		if (post.type === POST_TYPES.CONTENT) {
@@ -125,14 +125,14 @@ const deletePost = async postId => {
 			return { deleted: true }
 		}
 	} catch(e) {
-		throw 'Could not delete post'
+		throw new Error('Could not delete post')
 	}
 }
 
 const getContent = async (contentId, requesterUserId) => {
 	const content = await Content.findOne({ _id: contentId })
 	
-	if (!content) throw 'Content not found'
+	if (!content) throw new Error('Content not found')
 	
 	const profile = await getProfileFromUserId(content.userId)
 	
@@ -140,7 +140,7 @@ const getContent = async (contentId, requesterUserId) => {
 		typeof requesterUserId === 'undefined' ? await isConnection(content.userId, requesterUserId) : false
 	) : true
 	
-	if (!canViewContent) throw 'Cannot view private content'
+	if (!canViewContent) throw new Error('Cannot view private content')
 	
 	return deserializeContent(content, profile)
 }
@@ -183,11 +183,11 @@ const profileFeedPipeline = async _options => {
 		..._options
 	}
 	
-	if (!options.userId) throw 'profileFeedPipeline: Missing userId'
+	if (!options.userId) throw new Error('profileFeedPipeline: Missing userId')
 	
 	const profile = await getProfileFromUserId(options.userId)
 	
-	if (!profile) throw 'Could not find profile'
+	if (!profile) throw new Error('Could not find profile')
 	
 	const canViewFeed = !profile.private || isConnection(
 		profile.userId, options.requesterUserId
@@ -221,12 +221,12 @@ const profileFeedPipeline = async _options => {
 const getPost = async (postId, requesterUserId) => {
 	const post = await Post.findOne({ postId })
 	
-	if (!post) throw 'Post not found'
+	if (!post) throw new Error('Post not found')
 	
 	// Private content can only be viewed by the content creator
 	const content = await getContent(post.contentId)
 	
-	if (content.private && requesterUserId !== contentOwner.userId) throw 'Post is private'
+	if (content.private && requesterUserId !== contentOwner.userId) throw new Error('Post is private')
 	
 	const posterProfile = await getProfileFromUserId(post.userId)
 	
@@ -235,7 +235,7 @@ const getPost = async (postId, requesterUserId) => {
 		// profile.isConnection(userId, requesterUserId)
 		const canViewPosts = await isConnection(post.userId, requesterUserId)
 		
-		if (!canViewPosts) throw 'Not friends with poster'
+		if (!canViewPosts) throw new Error('Not friends with poster')
 	}
 	
 	const contentOwner = (
@@ -247,7 +247,7 @@ const getPost = async (postId, requesterUserId) => {
 		// profile.isConnection(userId, requesterUserId)
 		const canViewContent = await isConnection(content.userId, requesterUserId)
 		
-		if (!canViewContent) throw 'Not friends with content owner'
+		if (!canViewContent) throw new Error('Not friends with content owner')
 	}
 	
 	return post
@@ -290,7 +290,7 @@ export default server => {
 			try {
 				const post = await getPost(req.fields.postId)
 				
-				if (!post) throw 'Post not found'
+				if (!post) throw new Error('Post not found')
 				
 				
 				

@@ -45,13 +45,13 @@ class OAuth2 {
 	}
 	
 	encodeToken(token) {
-		if (!token) throw 'Missing Token'
+		if (!token) throw new Error('Missing Token')
 		
 		return Buffer.from(token, 'utf8').toString('base64')
 	}
 	
 	decodeToken(base64Token) {
-		if (!base64Token) throw 'Missing base64 Token'
+		if (!base64Token) throw new Error('Missing base64 Token')
 		
 		return Buffer.from(base64Token, 'base64').toString('utf8')
 	}
@@ -84,7 +84,7 @@ class OAuth2 {
 			
 			return grant
 		} catch(e) {
-			throw 'Internal server error'
+			throw new Error('Internal server error')
 		}
 	}
 	
@@ -126,12 +126,12 @@ class OAuth2 {
 	async issueRefreshToken(grantId) {
 		const grant = await this.getGrant(grantId)
 		
-		if (!grant) throw 'Grant not found'
-		if (this.isExpired(grant.exp)) throw 'Grant expired'
+		if (!grant) throw new Error('Grant not found')
+		if (this.isExpired(grant.exp)) throw new Error('Grant expired')
 		
 		const client = await this.getClient(grant.clientId)
 		
-		if (!client) throw 'Client not found'
+		if (!client) throw new Error('Client not found')
 		
 		const refreshToken = new this.provider.RefreshToken({
 			accountId: grant.accountId,
@@ -177,11 +177,11 @@ class OAuth2 {
 		try {
 			const token = await this.provider.AccessToken.find(accessToken)
 			
-			if (!token || this.isExpired(token.exp)) throw 'Invalid token'
+			if (!token || this.isExpired(token.exp)) throw new Error('Invalid token')
 			
 			const user = await getUserFromUserId(token.accountId)
 			
-			if (!user) throw 'No user found'
+			if (!user) throw new Error('No user found')
 			
 			return {
 				success: true,

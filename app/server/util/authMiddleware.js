@@ -7,9 +7,9 @@ import api from '../../src/util/api.js'
 // User must have an authenticated session to continue
 export const privateRoute = (req, res, next) => {
 	if (typeof req._using?.auth === 'undefined') {
-		throw 'authMiddleware: Middleware is required'
+		throw new Error('authMiddleware: Middleware is required')
 	} else if (typeof req._using?.api === 'undefined') {
-		throw 'apiMiddleware: Middleware is required'
+		throw new Error('apiMiddleware: Middleware is required')
 	}
 	
 	req.authenticated() ? next() : req.apiResult(401)
@@ -17,7 +17,7 @@ export const privateRoute = (req, res, next) => {
 
 export const logout = async (req, res, next) => {
 	if (typeof req._using?.auth === 'undefined') {
-		throw 'authMiddleware: Middleware is required'
+		throw new Error('authMiddleware: Middleware is required')
 	}
 	
 	await req.logoutUser()
@@ -31,7 +31,7 @@ export default () => (req, res, next) => {
 	req._using.auth = '1.0.0'
 	
 	req.getAccessToken = async refreshToken => {
-		if (!refreshToken) throw 'authMiddleware.getAccessToken(): Missing refresh token'
+		if (!refreshToken) throw new Error('authMiddleware.getAccessToken(): Missing refresh token')
 		
 		const response = await api.get('/oauth/token', null, {
 			headers: {
@@ -44,8 +44,8 @@ export default () => (req, res, next) => {
 	}
 	
 	req.loginUser = data => new Promise((resolve, reject) => {
-		if (!data) throw 'Missing user data'
-		if (!data.refreshTokenId) throw 'Missing internal data'
+		if (!data) throw new Error('Missing user data')
+		if (!data.refreshTokenId) throw new Error('Missing internal data')
 		
 		req.login(data, err => {
 			// Set httpOnly RefreshToken cookie

@@ -123,11 +123,11 @@ router.get(
 	'/auth/get_user',
 	async (req, res) => {
 		try {
-			if (!req.authenticated()) throw 'Not authenticated'
+			if (!req.authenticated()) throw new Error('Not authenticated')
 			
 			const refreshToken = req.cookies?.[config.shortName.refreshToken]
 			
-			if (!refreshToken) throw 'Missing refresh token'
+			if (!refreshToken) throw new Error('Missing refresh token')
 			
 			req.apiResult(200, {
 				user: deserializeAuthorizedUser(req.user),
