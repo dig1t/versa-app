@@ -19,8 +19,8 @@ const Logout = () => {
 			.then(() => {
 				try {
 					localStorage.clear()
-				} catch(e) {
-					console.error('Could not clear cookies')
+				} catch(error) {
+					console.error('Could not clear cookies', error)
 				}
 				
 				dispatch(userLogout())

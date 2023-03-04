@@ -13,8 +13,8 @@ async function render(req, res) {
 		}
 		
 		await require(ServerSideRender)?.default(req, res)
-	} catch (err) {
-		console.error(err)
+	} catch(error) {
+		console.error(error)
 		res.send('Internal Error')
 	} finally {
 		// if (process.env.NODE_ENV === 'development') {

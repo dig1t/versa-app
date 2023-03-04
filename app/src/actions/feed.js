@@ -13,7 +13,7 @@ export const getProfileFeed = userId => (dispatch, getState) => {
 	
 	dispatch({ type: PROFILE_FEED_FETCH_REQUEST })
 	
-	api.get('/v1/profile/feed', { userId })
+	api.get(`/v1/profile/${userId}/feed`)
 		.then(data => dispatch({
 			type: PROFILE_FEED_FETCH_SUCCESS,
 			payload: data

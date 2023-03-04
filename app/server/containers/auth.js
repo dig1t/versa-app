@@ -39,8 +39,7 @@ passport.serializeUser((data, done) => done(null, {
 
 // Call the API to retrieve basic info about the user
 passport.deserializeUser((user, done) => {
-	api.get('/v1/user', {
-		userId: user.userId,
+	api.get(`/v1/user/${user.userId}`, {
 		sessionId: user.sessionId
 	})
 		.then(data => done(null, {
@@ -49,7 +48,7 @@ passport.deserializeUser((user, done) => {
 			isMod: data.isMod,
 			sessionId: user.sessionId
 		}))
-		.catch(e => done(e, {}))
+		.catch(error => done(error, {}))
 })
 
 /* Define Authentication Methods */
@@ -60,7 +59,7 @@ passport.use('local', new LocalStrategy(
 			api.post('/v1/user/authenticate', { email, password })
 				.then(data => done(null, data))
 				.catch(error => done(null, false, { message: error }))
-		} catch(e) {
+		} catch(error) {
 			done(null, false, { message: 'Server error!!!111' })
 		}
 	}
@@ -72,7 +71,7 @@ router.post('/auth/logout', async (req, res) => {
 		await req.logoutUser()
 		
 		req.apiResult(200)
-	} catch(e) {
+	} catch(error) {
 		req.apiResult(500)
 	}
 })
@@ -87,9 +86,10 @@ router.post(
 			
 			req.apiResult(200, {
 				user: deserializeAuthorizedUser(data.user),
-				access_token: await req.getAccessToken(data.refreshTokenId)
+				access_token: await req.getAccessToken(data.auth.refreshTokenId)
 			})
-		} catch(e) {
+		} catch(error) {
+			console.log(error)
 			req.apiResult(401)
 		}
 	})(req, res)
@@ -111,9 +111,9 @@ router.post(
 				user: deserializeAuthorizedUser(data.user),
 				profile: data.profile
 			})
-		} catch(e) {
+		} catch(error) {
 			req.apiResult(500, {
-				message: `Error while signing up ${e}`
+				message: `Error while signing up ${error}`
 			})
 		}
 	}
@@ -133,7 +133,7 @@ router.get(
 				user: deserializeAuthorizedUser(req.user),
 				access_token: await req.getAccessToken(refreshToken)
 			})
-		} catch(e) {
+		} catch(error) {
 			req.apiResult(200, {
 				message: 'Not authenticated'
 			})

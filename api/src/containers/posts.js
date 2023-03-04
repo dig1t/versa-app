@@ -2,13 +2,13 @@ import { Router } from 'express'
 import mongoose from 'mongoose'
 
 import config from '../constants/config.js'
-import { validateText, mongoSanitize } from '../util/index.js'
+import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
 import useFields from '../util/useFields.js'
 
 import Post from '../models/Post.js'
 import Content from '../models/Content.js'
-import { getProfileFromUserId } from './profiles.js'
-import { isConnection } from './connections.js'
+import { canViewProfile, getProfileFromUserId } from './profiles.js'
+import { isMutualFollower } from './follows.js'
 
 const POST_TYPES = {
 	CONTENT: 1,
@@ -51,7 +51,7 @@ const createContent = async data => {
 	if (!data.body) throw new Error('Missing body')
 	
 	if (data.body.length > config.post.maxBodyLength || !validateText(data.body, 'text')) {
-		throw `Content body is too long, max characters is ${config.post.maxBodyLength}`
+		throw new Error(`Content body is too long, max characters is ${config.post.maxBodyLength}`)
 	}
 	
 	const contentId = new mongoose.Types.ObjectId()
@@ -65,7 +65,7 @@ const createContent = async data => {
 		await content.save()
 		
 		return deserializeContent(content)
-	} catch(e) {
+	} catch(error) {
 		throw new Error('Could not create content')
 	}
 }
@@ -74,31 +74,33 @@ const createPost = async (userId, query) => {
 	const { body } = query
 	
 	if (body.length > config.post.maxBodyLength || !validateText(body, 'text')) {
-		throw `Content body is too long, max characters is ${config.post.maxBodyLength}`
+		throw new Error(`Content body is too long, max characters is ${config.post.maxBodyLength}`)
 	}
 	
-	const content = await createContent({
-		userId,
-		body: query.body
-	})
-	
-	const postId = new mongoose.Types.ObjectId()
-	const post = new Post({
-		postId,
-		contentId: content.contentId,
-		userId
-	})
-	
 	try {
-		await post.save()
-		
-		return deserializePost(
-			post,
-			content,
-			await getProfileFromUserId(userId)
-		)
-	} catch(e) {
-		throw `posts.createPost() - ${e}` || 'Could not create post'
+		return await mongoSession(async () => {
+			const content = await createContent({
+				userId,
+				body: query.body
+			})
+			
+			const postId = new mongoose.Types.ObjectId()
+			const post = new Post({
+				postId,
+				contentId: content.contentId,
+				userId
+			})
+			
+			await post.save()
+			
+			return deserializePost(
+				post,
+				content,
+				await getProfileFromUserId(userId)
+			)
+		})
+	} catch(error) {
+		throw new Error(`posts.createPost() - ${error}` || 'Could not create post')
 	}
 }
 
@@ -124,7 +126,7 @@ const deletePost = async postId => {
 			
 			return { deleted: true }
 		}
-	} catch(e) {
+	} catch(error) {
 		throw new Error('Could not delete post')
 	}
 }
@@ -137,7 +139,7 @@ const getContent = async (contentId, requesterUserId) => {
 	const profile = await getProfileFromUserId(content.userId)
 	
 	const canViewContent = profile.private ? (
-		typeof requesterUserId === 'undefined' ? await isConnection(content.userId, requesterUserId) : false
+		typeof requesterUserId === 'undefined' ? await isMutualFollower(content.userId, requesterUserId) : false
 	) : true
 	
 	if (!canViewContent) throw new Error('Cannot view private content')
@@ -189,9 +191,9 @@ const profileFeedPipeline = async _options => {
 	
 	if (!profile) throw new Error('Could not find profile')
 	
-	const canViewFeed = !profile.private || isConnection(
-		profile.userId, options.requesterUserId
-	)
+	const canViewFeed = !profile.private
+		|| profile.userId === options.requesterUserId
+		|| isMutualFollower(profile.userId, options.requesterUserId)
 	
 	if (!canViewFeed) return {} // No posts to show
 	
@@ -219,23 +221,21 @@ const profileFeedPipeline = async _options => {
 }
 
 const getPost = async (postId, requesterUserId) => {
-	const post = await Post.findOne({ postId })
+	const post = await Post.findOne({ _id: mongoSanitize(postId) })
 	
 	if (!post) throw new Error('Post not found')
 	
 	// Private content can only be viewed by the content creator
 	const content = await getContent(post.contentId)
 	
-	if (content.private && requesterUserId !== contentOwner.userId) throw new Error('Post is private')
+	if (content.private && requesterUserId !== content.userId) throw new Error('Post is private')
 	
 	const posterProfile = await getProfileFromUserId(post.userId)
 	
 	if (posterProfile.private) {
-		// TODO: REPLACE WITH CONNECTION CHECK
-		// profile.isConnection(userId, requesterUserId)
-		const canViewPosts = await isConnection(post.userId, requesterUserId)
+		const userCanViewProfile = await canViewProfile(post.userId, requesterUserId)
 		
-		if (!canViewPosts) throw new Error('Not friends with poster')
+		if (!userCanViewProfile) throw new Error('Not friends with poster')
 	}
 	
 	const contentOwner = (
@@ -243,11 +243,9 @@ const getPost = async (postId, requesterUserId) => {
 	) ? posterProfile : await getProfileFromUserId(content.userId)
 	
 	if (posterProfile.userId !== contentOwner.userId && contentOwner.private) {
-		// TODO: REPLACE WITH CONNECTION CHECK
-		// profile.isConnection(userId, requesterUserId)
-		const canViewContent = await isConnection(content.userId, requesterUserId)
+		const userCanViewProfile = await canViewProfile(content.userId, requesterUserId)
 		
-		if (!canViewContent) throw new Error('Not friends with content owner')
+		if (!userCanViewProfile) throw new Error('Not friends with content owner')
 	}
 	
 	return post
@@ -258,6 +256,7 @@ export {
 	profileFeedPipeline,
 	deserializePost,
 	getContent,
+	getPost,
 	createPost,
 	deletePost
 }
@@ -274,37 +273,34 @@ export default server => {
 				const post = await createPost(req._oauth.user.userId, req.fields)
 				
 				req.apiResult(200, post)
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(500, {
-					message: err
+					message: error
 				})
 			}
 		}
 	)
 	
 	router.post(
-		'/post',
-		useFields({ fields: ['postId']}),
+		'/post/:postId',
 		server.oauth.authorize({ optional: true }),
 		async req => {
 			try {
-				const post = await getPost(req.fields.postId)
+				const post = await getPost(req.params.postId)
 				
 				if (!post) throw new Error('Post not found')
 				
-				
-				
 				req.apiResult(200, post)
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(500, {
-					message: err
+					message: error
 				})
 			}
 		}
 	)
 	
 	/*
-	router.post('/post/like', (req, res) => {
+	router.post('/post/:postId/like', (req, res) => {
 		
 	})
 	*/

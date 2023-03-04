@@ -13,4 +13,4 @@ server.on('ready', () => server.listen(
 	() => console.log(`API Server started on port ${config.apiPort}`)
 ))
 
-server.on('error', err => console.error(err))
+server.on('error', error => console.error(error))

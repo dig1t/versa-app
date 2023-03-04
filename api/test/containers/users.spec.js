@@ -15,7 +15,7 @@ chai.config.includeStack = true
 
 chai.use(chaiHttp)
 
-describe('account functions', () => {
+describe('account functions', async () => {
 	let account
 	
 	it('creates an account (user and profile)', async () => {

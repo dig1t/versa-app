@@ -20,7 +20,7 @@ export const getProfile = userId => (dispatch, getState) => {
 	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	
-	api.get('/v1/profile', { userId })
+	api.get(`/v1/profile/${userId}`)
 		.then(data => dispatch({
 			type: PROFILE_FETCH_SUCCESS,
 			payload: data
@@ -40,7 +40,7 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	
-	api.get('/v1/profile', { username })
+	api.get(`/v1/profile/username/${username}`)
 		.then(data => dispatch({
 			type: PROFILE_FETCH_SUCCESS,
 			payload: data

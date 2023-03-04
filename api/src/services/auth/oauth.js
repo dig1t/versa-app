@@ -39,8 +39,8 @@ class OAuth2 {
 		try {
 			const salt = await bcrypt.genSalt(8)
 			return await bcrypt.hashSync(plainString, salt, null)
-		} catch(e) {
-			throw Error(e)
+		} catch(error) {
+			throw new Error(error)
 		}
 	}
 	
@@ -83,7 +83,7 @@ class OAuth2 {
 			grant.grantId = grant.jti
 			
 			return grant
-		} catch(e) {
+		} catch(error) {
 			throw new Error('Internal server error')
 		}
 	}
@@ -142,7 +142,7 @@ class OAuth2 {
 		
 		try {
 			await refreshToken.save()
-		} catch(e) {
+		} catch(error) {
 			return
 		}
 		
@@ -166,7 +166,7 @@ class OAuth2 {
 		
 		try {
 			await accessToken.save()
-		} catch(e) {
+		} catch(error) {
 			return
 		}
 		
@@ -187,7 +187,7 @@ class OAuth2 {
 				success: true,
 				user
 			}
-		} catch(e) {
+		} catch(error) {
 			return {
 				success: false
 			}
@@ -240,7 +240,7 @@ class OAuth2 {
 				req._oauth = { grant }
 				
 				next()
-			} catch(e) {
+			} catch(error) {
 				res.sendStatus(401)
 			}
 		}
@@ -271,7 +271,7 @@ class OAuth2 {
 				res.json({
 					access_token: this.encodeToken(accessToken)
 				})
-			} catch(e) {
+			} catch(error) {
 				res.sendStatus(500)
 			}
 		})

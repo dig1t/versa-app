@@ -6,6 +6,7 @@ const schema = new Schema({
 		alias: 'userId',
 		ref: 'User'
 	},
+	
 	username: {
 		type: String,
 		maxlength: 24
@@ -15,8 +16,10 @@ const schema = new Schema({
 		required: true,
 		maxlength: 24
 	},
+	
 	avatar: String,
 	bannerPhoto: String,
+	
 	verificationLevel: { // TODO: REPLACE WITH PROFILE BADGES
 		type: Number,
 		min: 0,
@@ -24,6 +27,7 @@ const schema = new Schema({
 		maxlength: 1,
 		default: 0
 	},
+	
 	bio: {
 		type: String,
 		maxlength: 50
@@ -36,12 +40,15 @@ const schema = new Schema({
 		type: Number,
 		maxlength: 15
 	},
+	
 	lastActive: {
 		type: Date,
 		default: Date.now()
 	},
+	
 	followers: 0,
 	following: 0,
+	
 	created: {
 		type: Date,
 		default: new Date().toISOString()
