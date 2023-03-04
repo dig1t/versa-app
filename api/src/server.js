@@ -71,9 +71,9 @@ if (config.dev) app.use((req, res, next) => {
 
 app.get('*', (req, res) => res.status(404).send())
 
-app.use((err, req, res, next) => {
-	if (err) {
-		if (config.dev) console.error(err.stack)
+app.use((error, req, res) => {
+	if (error) {
+		if (config.dev) console.error(error.stack)
 		return res.status(500).send()
 	}
 })

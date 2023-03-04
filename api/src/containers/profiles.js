@@ -5,11 +5,11 @@ import {
 	profileFeedPipeline,
 	getContent
 } from './posts.js'
-import { validateText, mongoSanitize } from '../util/index.js'
-import useFields from '../util/useFields.js'
+import { validateText, mongoSanitize, mongoValidate } from '../util/index.js'
 
 import Post from '../models/Post.js'
 import Profile from '../models/Profile.js'
+import { isFollowing } from './follows.js'
 
 const deserializeProfile = profile => ({
 	userId: profile.userId.toHexString(),
@@ -32,13 +32,42 @@ const _getProfile = async match => {
 	return deserializeProfile(profile)
 }
 
-const getProfileFromUserId = async userId => await _getProfile({
-	_id: mongoSanitize(userId)
-})
+const getProfileFromUserId = async userId => {
+	if (!mongoValidate(userId, 'id')) throw new Error('profiles.getProfileFromUserId(): Invalid type of id')
+	
+	return await _getProfile(
+		{ _id: mongoSanitize(userId) }
+	)
+}
 
-const getProfileFromUsername = async username => await _getProfile({
-	username: mongoSanitize(username)
-})
+const getProfileFromUsername = async username => {
+	if (!validateText(username, 'username')) throw new Error('profiles.getProfileFromUsername(): Invalid type of username')
+	
+	return await _getProfile(
+		{ username: mongoSanitize(username) }
+	)
+}
+
+const canViewProfile = async (userId, requesterUserId) => {
+	const profile = await getProfileFromUserId(userId)
+	
+	if (!profile.private) return true
+	
+	// Profile is private and request is from an unauthenticated user
+	if (typeof userId !== 'string') return false
+	
+	return isFollowing(userId, requesterUserId)
+}
+
+const isProfilePrivate = async userId => {
+	const profile = await Profile.findOne({ _id: mongoSanitize(userId) })
+		.select('private')
+	
+	if (!profile) throw new Error('Profile does not exist')
+	
+	// Model by default does not have this setting set
+	return profile.private || false
+}
 
 const getProfilePosts = async (userId, requesterUserId) => {
 	const profile = await getProfileFromUserId(userId)
@@ -79,10 +108,10 @@ const getProfilePosts = async (userId, requesterUserId) => {
 				
 				if (!contentProfileFind) profileCache.push(post.content.profile)
 			}
-		} catch(e) {
+		} catch(error) {
 			// Error fetching content
 			// TODO: post blank object??
-			console.log('fetch content err', e)
+			console.log('fetch content err', error)
 			post.content = {}
 		}
 	}
@@ -107,49 +136,72 @@ const getProfilePosts = async (userId, requesterUserId) => {
 export {
 	deserializeProfile,
 	getProfileFromUserId,
+	canViewProfile,
+	isProfilePrivate,
 	getProfilePosts
 }
 
-export default () => {
+export default server => {
 	const router = new Router()
 	
 	router.get(
-		'/profile',
-		useFields(),
+		[
+			'/profile/:userId?',
+			'/profile/username/:username'
+		],
+		server.oauth.authorize({ optional: true }),
 		async req => {
 			try {
-				if (!req.fields.userId && !req.fields.username) {
+				if (!req.params.userId && !req.params.username) {
 					throw new Error('Missing fields: userId or username')
-				} else if (req.fields.username && !validateText(req.fields.username, 'username')) {
-					throw new Error()
+				} else if (req.params.username && !validateText(req.params.username, 'username')) {
+					throw new Error('Invalid username')
 				}
 				
 				const profile = (
-					req.fields.userId && await getProfileFromUserId(req.fields.userId)
+					req.params.userId && await getProfileFromUserId(req.params.userId)
 				) || (
-					req.fields.username && await getProfileFromUsername(req.fields.username)
+					req.params.username && await getProfileFromUsername(req.params.username)
 				)
 				
+				if (!profile) throw new Error()
+				
+				const requesterUserId = req._oauth?.user?.userId
+				
+				if (requesterUserId) {
+					// Should this data be separated?
+					profile.isSelf = profile.userId === requesterUserId
+					profile.following = !profile.isSelf && await isFollowing(profile.userId, requesterUserId)
+					profile.followedBy = !profile.isSelf && await isFollowing(requesterUserId, profile.userId)
+					profile.isMutualFollower = profile.following && profile.followedBy
+				}
+				
 				req.apiResult(200, profile)
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(500, {
-					message: err
+					message: error || 'Could not get profile'
 				})
 			}
 		}
 	)
 	
 	router.get(
-		'/profile/feed',
-		useFields({ fields: ['userId'] }),
+		'/profile/:userId/feed',
+		server.oauth.authorize({ optional: true }),
 		async req => {
 			try {
-				const posts = await getProfilePosts(req.fields.userId)
+				const userCanViewProfile = await canViewProfile(req.params.userId, req._oauth?.user?.userId)
+				
+				if (!userCanViewProfile) return req.apiResult(500, {
+					message: 'Not authorized to view profile'
+				})
+				
+				const posts = await getProfilePosts(req.params.userId, req._oauth?.user?.userId)
 				
 				req.apiResult(200, posts)
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(500, {
-					message: err
+					message: error
 				})
 			}
 		}

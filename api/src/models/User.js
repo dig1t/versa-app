@@ -34,16 +34,16 @@ schema.methods.hashString = async password => {
 	try {
 		const salt = await bcrypt.genSalt(8)
 		return bcrypt.hashSync(password, salt, null)
-	} catch(e) {
-		console.error(e)
+	} catch(error) {
+		console.error(error)
 	}
 }
 
 schema.methods.validPassword = async function(password) {
 	try {
 		return await bcrypt.compareSync(password, this.password)
-	} catch(e) {
-		console.error(e)
+	} catch(error) {
+		console.error(error)
 	}
 }
 

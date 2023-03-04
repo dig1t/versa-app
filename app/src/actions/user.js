@@ -73,7 +73,7 @@ export const fetchUserProfile = () => (dispatch, getState) => {
 	
 	dispatch({ type: USER_PROFILE_FETCH_REQUEST })
 	
-	api.get('/v1/profile', { userId: user.userId })
+	api.get(`/v1/profile/${user.userId}`)
 		.then(data => {
 			dispatch({
 				type: USER_PROFILE_FETCH_SUCCESS,

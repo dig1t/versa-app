@@ -6,8 +6,8 @@ export default {
 	startMockServer: async () => {
 		try {
 			mongoServer = await MongoMemoryServer.create()
-		} catch(e) {
-			console.error(e)
+		} catch(error) {
+			console.error(error)
 		}
 	},
 	

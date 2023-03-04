@@ -7,7 +7,7 @@ import UserSession from '../models/UserSession.js'
 import Profile from '../models/Profile.js'
 
 import config from '../constants/config.js'
-import { validateText, mongoSanitize } from '../util/index.js'
+import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
 import useFields from '../util/useFields.js'
 import {
 	deserializeProfile
@@ -69,7 +69,7 @@ const createSession = async (req, userId) => {
 	
 	try {
 		await session.save()
-	} catch(e) {
+	} catch(error) {
 		throw new Error('Could not create session')
 	}
 	
@@ -116,41 +116,33 @@ const createAccount = async req => {
 		throw new Error('E-mail in use')
 	}
 	
-	const userId = crypto.randomBytes(12).toString('hex')
-	
-	const user = new User({
-		userId,
-		email
-	})
-	
-	user.password = await user.hashString(password)
-	
-	try {
+	return await mongoSession(async () => {
+		const userId = crypto.randomBytes(12).toString('hex')
+		
+		const user = new User({
+			userId,
+			email
+		})
+		const profile = new Profile({
+			userId,
+			name
+		})
+		
+		user.password = await user.hashString(password)
+		
 		await user.save()
-	} catch(e) {
-		throw new Error('Could not create user')
-	}
-	
-	const profile = new Profile({
-		userId,
-		name
-	})
-	
-	try {
 		await profile.save()
-	} catch(e) {
-		throw new Error('Could not create profile')
-	}
-	
-	// Issue user an oauth grant and refresh token
-	const grant = await req.oauth.ROPCGrant(email, password)
-	const auth = await authenticate(req, userId, grant.grantId)
-	
-	return {
-		auth,
-		user: deserializeUser(user),
-		profile: deserializeProfile(profile)
-	}
+		
+		// Issue user an oauth grant and refresh token
+		const grant = await req.oauth.ROPCGrant(email, password)
+		const auth = await authenticate(req, userId, grant.grantId)
+		
+		return {
+			auth,
+			user: deserializeUser(user),
+			profile: deserializeProfile(profile)
+		}
+	})
 }
 
 const deleteAccount = async userId => {
@@ -162,7 +154,7 @@ const deleteAccount = async userId => {
 		await User.deleteOne({ _id: user._id })
 		
 		return { deleted: true }
-	} catch(e) {
+	} catch(error) {
 		throw new Error('Could not delete user')
 	}
 }
@@ -183,18 +175,18 @@ export default server => {
 	const router = new Router()
 	
 	router.get(
-		'/user',
-		useFields({ fields: ['userId', 'sessionId'] }),
+		'/user/:userId',
+		useFields({ fields: ['sessionId'] }),
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {
 				const user = await getUserFromSession(req.fields.sessionId)
 				
 				// Possible attack
-				if (user.userId !== req.fields.userId) throw new Error('Unexpected Error')
+				if (user.userId !== req.params.userId) throw new Error('Unexpected Error')
 				
 				req.apiResult(200, user)
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(500)
 			}
 		}
@@ -216,9 +208,9 @@ export default server => {
 					auth,
 					user: await getUserFromUserId(req._oauth.grant.accountId)
 				})
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(401, {
-					message: err
+					message: error
 				})
 			}
 		}
@@ -232,9 +224,9 @@ export default server => {
 				const user = await getUserFromSession(req.fields.sessionId)
 				
 				req.apiResult(200, user)
-			} catch(err) {
+			} catch(error) {
 				req.apiResult(401, {
-					message: err
+					message: error
 				})
 			}
 		}
@@ -248,24 +240,14 @@ export default server => {
 				const account = await createAccount(req)
 				
 				req.apiResult(200, account)
-			} catch(err) {
-				console.log(err)
+			} catch(error) {
+				console.log(error)
 				req.apiResult(500, {
-					message: err
+					message: error
 				})
 			}
 		}
 	)
-	
-	/*
-	router.get('/user/posts', (req, res) => {
-		likes
-	})
-	
-	router.get('/user', (req, res) => {
-		
-	})
-	*/
 	
 	return router
 }

@@ -123,6 +123,6 @@ app.on('ready', () => app.listen(
 	() => console.log(`Server started on port ${config.port}`)
 ))
 
-app.on('error', err => console.error(err))
+app.on('error', error => console.error(error))
 
 export default app

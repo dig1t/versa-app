@@ -45,13 +45,13 @@ export default () => (req, res, next) => {
 	
 	req.loginUser = data => new Promise((resolve, reject) => {
 		if (!data) throw new Error('Missing user data')
-		if (!data.refreshTokenId) throw new Error('Missing internal data')
+		if (!data.auth.refreshTokenId) throw new Error('Missing internal data')
 		
-		req.login(data, err => {
+		req.login(data, error => {
 			// Set httpOnly RefreshToken cookie
 			res.cookie(
 				config.shortName.refreshToken,
-				data.refreshTokenId,
+				data.auth.refreshTokenId,
 				{
 					maxAge: serverConfig.maxTokenAge,
 					httpOnly: true,
@@ -59,7 +59,7 @@ export default () => (req, res, next) => {
 				}
 			)
 			
-			err ? reject(err) : resolve()
+			error ? reject(error) : resolve()
 		})
 	})
 	

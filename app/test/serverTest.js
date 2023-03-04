@@ -9,7 +9,7 @@ describe('express request', () => {
 	it('loads the landing page', () => {
 		chai.request(app)
 			.get('/')
-			.end((err, res) => {
+			.end((error, res) => {
 				res.should.have.status(200)
 			})
 	})

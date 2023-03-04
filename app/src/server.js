@@ -31,17 +31,17 @@ const ServerSideRender = (req, res) => {
 			},
 			onShellError() {
 				// Something errored before we could complete the shell so we emit an alternative shell.
-				console.log('shell err')
+				console.log('shell error')
 				
 				res.statusCode = 500
 				
 				res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${assets};</script><script src="${bundle}"></script>`)
 				res.end()
 			},
-			onError(err) {
-				console.log('on err')
+			onError(error) {
+				console.log('on error')
 				didError = true
-				console.error(err)
+				console.error(error)
 			},
 		}
 	)
