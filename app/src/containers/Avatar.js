@@ -28,7 +28,7 @@ const Avatar = props => {
 	useEffect(() => {
 		if (profile !== null || typeof avatar !== 'undefined') return
 		
-		const profileFetch = profileList.find(data => data.userId === userId)
+		const profileFetch = profileList[userId]
 		
 		if (profileFetch) {
 			setProfile(profileFetch)
@@ -37,7 +37,7 @@ const Avatar = props => {
 			setFetching(true)
 			dispatch(getProfile(userId))
 		}
-	}, [profile, fetching])
+	}, [profile, profileList, fetching])
 	
 	const RenderLink = ({ children }) => {
 		return clickRedirect && profile && profile.username ? <Link to={`/@${profile.username}`}>
