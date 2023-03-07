@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
+import api from '../../util/api.js'
 import Layout from '../Layout.js'
 import Loading from '../Loading.js'
 import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
 import { CatPills, Icon } from '../UI/index.js'
-import { getProfileFromUsername } from '../../actions/profile.js'
+import { followProfile, getProfileFromUsername } from '../../actions/profile.js'
+import classNames from 'classnames'
 
 const feedCategories = [
 	{
@@ -25,11 +28,34 @@ const feedCategories = [
 ]
 
 const FollowButton = props => {
-	const isFollowing = false
+	const [requesting, setRequesting] = useState(false)
+	const dispatch = useDispatch()
 	
-	return <button className="edit-profile btn-round btn-outline">{
-		isFollowing ? 'Unfollow' : 'Follow'
+	const handleClick = input => {
+		input.preventDefault()
+		
+		// Prevent user from spamming the server
+		if (requesting) return console.log('dont spam')
+		
+		console.log('FOLLOW?', !props.following)
+		//setRequesting(true)
+		dispatch(followProfile(props.userId, !props.following))
+	}
+	
+	return <button
+		className={classNames(
+			'cta edit-profile btn-round btn-outline',
+			props.following ? 'btn-secondary following' : 'not-following'
+		)}
+		onClick={handleClick}
+	>{
+		props.following ? 'Unfollow' : 'Follow'
 	}</button>
+}
+
+FollowButton.propTypes = {
+	following: PropTypes.bool.isRequired,
+	userId: PropTypes.string.isRequired
 }
 
 const Profile = () => {
@@ -43,10 +69,13 @@ const Profile = () => {
 	const { usernameParam } = useParams()
 	const [profileData, setProfileData] = useState(null)
 	const [usernameQuery, setUsernameQuery] = useState(null)
-	const [isUserProfile, setIsUserProfile] = useState(false)
 	const [redirect, setRedirect] = useState(null)
 	const [fetching, setFetching] = useState(false)
 	//const [isFriend, setIsFriend] = useState(false)
+	
+	useEffect(() => {
+		console.log(profileData)
+	}, [profileData])
 	
 	useEffect(() => {
 		const param = /\@(\w+)/.exec(usernameParam)
@@ -71,12 +100,6 @@ const Profile = () => {
 			dispatch(getProfileFromUsername(usernameQuery))
 		}
 	}, [usernameQuery, profileList, invalidProfiles])
-	
-	useEffect(() => {
-		if (!profileData) return
-		
-		profileData && setIsUserProfile(profileData.username === username)
-	}, [username, profileData])
 	
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}
@@ -107,9 +130,12 @@ const Profile = () => {
 								</a>
 							</div>}
 						</div>
-						{isUserProfile ? <button className="edit-profile btn-round btn-outline">
+						{profileData.connection?.isSelf ? <button className="edit-profile btn-round btn-outline">
 							Edit Profile
-						</button> : <FollowButton userId={profileData.userId} />}
+						</button> : <FollowButton
+							following={profileData.connection.following}
+							userId={profileData.userId}
+						/>}
 					</div>
 					<div className="community-stats grid">
 						<div className="stat col-6">
@@ -133,7 +159,6 @@ const Profile = () => {
 							console.log('selected pill of type:', type)
 						}}
 					/>
-					<Feed userId={profileData.userId} />
 				</div>
 			</div>
 		</div>}

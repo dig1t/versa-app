@@ -159,16 +159,19 @@ const createFollow = async (userId, followerUserId) => {
 			)
 		})
 		
-		return deserializeFollow(follow)
+		return {
+			...deserializeFollow(follow),
+			following: true
+		}
 	} catch(error) {
-		throw new Error('Could not create follow')
+		throw new Error('Could follow the target user')
 	}
 }
 
 const deleteFollow = async (userId, followerUserId) => {
 	const follow = await getFollow(userId, followerUserId)
 	
-	if (!follow) throw new Error('Could not find follow')
+	if (!follow) throw new Error('User is not following target user')
 	
 	try {
 		await mongoSession(async () => {
@@ -183,7 +186,7 @@ const deleteFollow = async (userId, followerUserId) => {
 			)
 		})
 		
-		return { deleted: true }
+		return { following: false }
 	} catch(error) {
 		throw new Error('Could not delete follow')
 	}
@@ -246,7 +249,7 @@ export default server => {
 		}
 	)
 	
-	router.get(
+	router.post(
 		'/follow/new',
 		useFields({ fields: ['userId'] }),
 		server.oauth.authorize(),
@@ -266,13 +269,11 @@ export default server => {
 		}
 	)
 	
-	router.get(
+	router.post(
 		'/follow/unfollow',
 		useFields({ fields: ['userId'] }),
 		server.oauth.authorize(),
 		async req => {
-			// TODO: Add private profile follow requests
-			
 			try {
 				req.apiResult(
 					200,

@@ -1,5 +1,5 @@
 import config from '../../../config.js'
-import jwks from '../jwks.json' assert { type: 'json' };
+import jwks from '../jwks.json' assert { type: 'json' }
 
 /*
 import fs from 'fs'

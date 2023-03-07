@@ -1,7 +1,27 @@
 import {
 	PROFILE_FETCH_SUCCESS,
-	PROFILE_FETCH_FAILURE
+	PROFILE_FETCH_FAILURE,
+	PROFILE_FOLLOW_UPDATE
 } from '../constants/actionTypes.js'
+
+const findProfileIndex = (profileList, userId) => {
+	let min = 0
+	let max = profileList.length - 1
+	
+	while (min <= max) {
+		const mid = (min + max) >> 1
+		
+		if (profileList[mid].userId === userId) {
+			return mid
+		} else if (profileList[mid].userId < userId) {
+			min = mid + 1
+		} else {
+			end = mid -1
+		}
+	}
+	
+	return -1
+}
 
 export default (state = {
 	profileList: [],
@@ -24,6 +44,25 @@ export default (state = {
 			return {
 				...state,
 				invalidProfiles: state.invalidProfiles.concat(action.payload)
+			}
+		}
+		case PROFILE_FOLLOW_UPDATE: {
+			const profileList = state.profileList.slice()
+			const index = findProfileIndex(profileList, action.payload.userId)
+			
+			const profile = profileList[index]
+			
+			profileList.splice(index, 1, {
+				...profile,
+				connection: {
+					...profile.connection,
+					following: action.payload.following
+				}
+			})
+			
+			return {
+				...state,
+				profileList
 			}
 		}
 		default: {

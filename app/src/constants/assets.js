@@ -1,4 +1,4 @@
 export const defaultAssets = {
-	avatar: '/assets/i/avatar.png',
-	banner: '/assets/i/banner.jpg'
+	avatar: '/assets/i/default-avatar.png',
+	banner: '/assets/i/default-banner.jpg'
 }
