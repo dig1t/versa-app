@@ -15,9 +15,7 @@ export const addProfile = data => dispatch => dispatch({
 export const getProfile = userId => (dispatch, getState) => {
 	const { profiles } = getState()
 	
-	const profile = profiles.profileList.find(data => data.userId === userId)
-	
-	if (profile) return
+	if (profiles.profileList[userId]) return
 	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	
@@ -35,9 +33,7 @@ export const getProfile = userId => (dispatch, getState) => {
 export const getProfileFromUsername = username => (dispatch, getState) => {
 	const { profiles } = getState()
 	
-	const profile = profiles.profileList.find(data => data.userId === userId)
-	
-	if (profile) return
+	if (profiles.idsByUsername[username]) return
 	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	

@@ -11,6 +11,7 @@ import Feed from '../../containers/Feed.js'
 import { CatPills, Icon } from '../UI/index.js'
 import { followProfile, getProfileFromUsername } from '../../actions/profile.js'
 import classNames from 'classnames'
+import { binarySearch } from '../../util/index.js'
 
 const feedCategories = [
 	{
@@ -60,10 +61,10 @@ FollowButton.propTypes = {
 
 const Profile = () => {
 	const dispatch = useDispatch()
-	const { profileList, username, invalidProfiles } = useSelector(state => ({
+	const { profileList, idsByUsername, invalidUsernames } = useSelector(state => ({
 		profileList: state.profiles.profileList,
-		invalidProfiles: state.profiles.invalidProfiles,
-		username: state.user.profile.username
+		idsByUsername: state.profiles.idsByUsername,
+		invalidUsernames: state.profiles.invalidUsernames
 	}))
 	
 	const { usernameParam } = useParams()
@@ -85,21 +86,23 @@ const Profile = () => {
 	}, [])
 	
 	useEffect(() => {
-		const invalidProfile = invalidProfiles.find(invalidUsername => invalidUsername === usernameQuery)
-		
+		const invalidProfile = binarySearch(invalidUsernames, usernameQuery) > -1
+		console.log('list update')
 		if (invalidProfile) return setRedirect('/error?e=no-user')
 		
-		if (profileData !== null || usernameQuery === null) return
+		const userId = idsByUsername[usernameQuery]
 		
-		const profile = profileList.find(data => data.username === usernameQuery)
+		if (
+			(profileData !== null && profileList[userId] === profileData) || usernameQuery === null
+		) return
 		
-		if (profile) {
-			setProfileData(profile)
+		if (userId) {
+			setProfileData(profileList[userId])
 		} else if (!fetching) {
 			setFetching(true)
 			dispatch(getProfileFromUsername(usernameQuery))
 		}
-	}, [usernameQuery, profileList, invalidProfiles])
+	}, [usernameQuery, profileList, invalidUsernames])
 	
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}

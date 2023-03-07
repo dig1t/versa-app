@@ -25,12 +25,54 @@ const validateText = (text, validateFor) => {
 	return exp ? exp.test(text) : text
 }
 
+const binarySearch = (array, value) => {
+	let min = 0
+	let max = array.length - 1
+	
+	while (min <= max) {
+		const mid = (min + max) >> 1
+		
+		if (array[mid] === value) {
+			return mid
+		} else if (array[mid] < value) {
+			min = mid + 1
+		} else {
+			end = mid -1
+		}
+	}
+	
+	return -1
+}
+
+const binarySearchArrayChild = (array, key, value) => {
+	let min = 0
+	let max = array.length - 1
+	
+	while (min <= max) {
+		const mid = (min + max) >> 1
+		
+		if (array[mid][key] === value) {
+			return mid
+		} else if (array[mid].key < value) {
+			min = mid + 1
+		} else {
+			end = mid -1
+		}
+	}
+	
+	return -1
+}
+
 const util = new Util()
 
 util.validateText = validateText
+util.binarySearch = binarySearch
+util.binarySearchArrayChild = binarySearchArrayChild
 
 export {
-	validateText
+	validateText,
+	binarySearch,
+	binarySearchArrayChild
 }
 
 export default util
