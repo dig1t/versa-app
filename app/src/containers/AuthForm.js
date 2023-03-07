@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-import { Input } from '../components/UI/index.js'
 import api from '../util/api.js'
+import { Input } from '../components/UI/index.js'
 import { isHydrated } from '../context/Hydration.js'
 
 const AuthForm = props => {

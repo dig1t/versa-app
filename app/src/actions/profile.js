@@ -1,7 +1,8 @@
 import {
 	PROFILE_FETCH_REQUEST,
 	PROFILE_FETCH_SUCCESS,
-	PROFILE_FETCH_FAILURE
+	PROFILE_FETCH_FAILURE,
+	PROFILE_FOLLOW_UPDATE
 } from '../constants/actionTypes.js'
 
 import api from '../util/api.js'
@@ -49,4 +50,21 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 			type: PROFILE_FETCH_FAILURE,
 			payload: username
 		}))
+}
+
+export const followProfile = (userId, newFollow) => dispatch => {
+	api.post(
+		`/v1/follow/${newFollow ? 'new' : 'unfollow'}`,
+		{ userId }
+	)
+		.then(data => dispatch({
+			type: PROFILE_FOLLOW_UPDATE,
+			payload: {
+				following: data.following,
+				userId
+			}
+		}))
+		.catch(error => {
+			console.log('FOLLOW ERR', error)
+		})
 }

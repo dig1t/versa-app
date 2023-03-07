@@ -24,7 +24,7 @@
 			padding-top: 2.8rem;
 			position: relative;
 			
-			button.edit-profile {
+			button.cta {
 				position: absolute;
 				top: 0;
 				right: 0;
@@ -89,10 +89,9 @@
 					letter-spacing: .03rem;
 				}
 				
-				&:hover {
-					//background: rgba(0, 0, 0, .1);
-					text-decoration: underline;
-				}
+				/*&:hover {
+					background: rgba(0, 0, 0, .1);
+				}*/
 			}
 		}
 	}

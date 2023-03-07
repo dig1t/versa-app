@@ -67,7 +67,7 @@ describe('profile follows', async () => {
 	it('creates a follow', async () => {
 		follow = await createFollow(account.user.userId, account2.user.userId)
 		
-		assert.exists(follow, 'followId')
+		assert.equal(follow.following, true)
 	})
 	
 	it('expects account2 to follow account1', async () => {
@@ -140,7 +140,7 @@ describe('profile follows', async () => {
 	it('deletes a follow', async () => {
 		const res = await deleteFollow(account.user.userId, account2.user.userId)
 		
-		assert.equal(res.deleted, true)
+		assert.equal(res.following, false)
 	})
 	
 	it('expects a user\'s follower count to be 0', async () => {

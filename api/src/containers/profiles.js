@@ -21,7 +21,9 @@ const deserializeProfile = profile => ({
 	bio: profile.bio || '',
 	website: profile.website,
 	lastActive: profile.lastActive,
-	private: profile.private || false
+	private: profile.private || false,
+	followers: profile.followers || 0,
+	following: profile.following || 0
 })
 
 const _getProfile = async match => {
@@ -169,11 +171,17 @@ export default server => {
 				const requesterUserId = req._oauth?.user?.userId
 				
 				if (requesterUserId) {
-					// Should this data be separated?
-					profile.isSelf = profile.userId === requesterUserId
-					profile.following = !profile.isSelf && await isFollowing(profile.userId, requesterUserId)
-					profile.followedBy = !profile.isSelf && await isFollowing(requesterUserId, profile.userId)
-					profile.isMutualFollower = profile.following && profile.followedBy
+					// TODO: Move to follows.js?
+					const isSelf = profile.userId === requesterUserId
+					const following = !isSelf && await isFollowing(requesterUserId, profile.userId)
+					const followedBy = !isSelf && await isFollowing(profile.userId, requesterUserId)
+					
+					profile.connection = {
+						isSelf,
+						following,
+						followedBy,
+						isMutualFollower: following && followedBy
+					}
 				}
 				
 				req.apiResult(200, profile)
