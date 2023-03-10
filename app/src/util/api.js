@@ -1,5 +1,6 @@
 // @version 1.0.0
 
+import { useEffect, useState } from 'react';
 import axios from 'axios'
 
 import { USER_FETCH_TOKEN_SUCCESS } from '../constants/actionTypes.js'
@@ -32,12 +33,10 @@ class API {
 		}
 		
 		const method = options.method || 'get'
+		const includeAT = !options.excludeToken && this._keys.accessToken
 		
-		return new Promise(async (resolve, reject) => {
-			const includeAT = !options.excludeToken && this._keys.accessToken
-			
-			axios(
-				{
+		const promiseFactory = async (resolve, reject) => {
+			axios({
 					method,
 					url: options.url,
 					[method === 'get' ? 'params' : 'data']: options.data,
@@ -48,12 +47,9 @@ class API {
 						...options.headers
 					},
 					withCredentials: options.withCredentials
-				}
-			)
+			})
 				.then(response => {
-					if (options.customErrorHandler) {
-						return resolve(response)
-					}
+					if (options.customErrorHandler) return resolve(response)
 					
 					response.data.success ? resolve(response.data.data) : reject(response.data.message)
 				})
@@ -63,7 +59,11 @@ class API {
 					console.error(options.url, error.response && error.response.data)
 					reject('Server error, try again later')
 				})
-		})
+		}
+		
+		return options.component === true ? this.createComponent(
+			promiseFactory
+		) : new Promise(promiseFactory)
 	}
 	
 	get(route, data, options) {
@@ -83,6 +83,32 @@ class API {
 			data,
 			...options
 		})
+	}
+	
+	createComponent(promiseFactory) {
+		const [data, setData] = useState(null)
+		const [error, setError] = useState(null)
+		const [loading, setLoading] = useState(false)
+		
+		useEffect(() => {
+			(
+				async () => {
+					try {
+						setLoading(true)
+						
+						const _data = await new Promise(promiseFactory)
+						
+						setData(_data)
+					} catch(error) {
+						setError(error)
+					} finally {
+						setLoading(false)
+					}
+				}
+			)()
+		}, [])
+		
+		return { data, error, loading }
 	}
 }
 

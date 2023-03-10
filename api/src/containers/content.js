@@ -9,6 +9,7 @@ import Post from '../models/Post.js'
 import Content from '../models/Content.js'
 import { canViewProfile, getProfileFromUserId } from './profiles.js'
 import { isMutualFollower } from './follows.js'
+import Comment from '../models/Comment.js'
 
 const POST_TYPES = {
 	CONTENT: 1,
@@ -44,6 +45,14 @@ const deserializePost = (post, content, profile) => ({
 	profile: profile || post.profile,
 	
 	content: content || post.content
+})
+
+const deserializeComment = comment => ({
+	commentId: comment._id.toHexString(),
+	contentId: comment.contentId.toHexString(),
+	userId: comment.userId.toHexString(),
+	body: comment.body,
+	created: comment.created
 })
 
 const createContent = async data => {
@@ -222,6 +231,7 @@ const profileFeedPipeline = async _options => {
 
 const getPost = async (postId, requesterUserId) => {
 	const post = await Post.findOne({ _id: mongoSanitize(postId) })
+		.select('contentId userId created type')
 	
 	if (!post) throw new Error('Post not found')
 	
@@ -248,7 +258,67 @@ const getPost = async (postId, requesterUserId) => {
 		if (!userCanViewProfile) throw new Error('Not friends with content owner')
 	}
 	
-	return post
+	return deserializePost(post, content, posterProfile)
+}
+
+const createComment = async data => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.contentId) throw new Error('Missing contentId')
+	if (!data.body) throw new Error('Missing body')
+	
+	if (data.body.length > config.post.maxBodyLength || !validateText(data.body, 'text')) {
+		throw new Error(`Comment body is too long, max characters is ${config.post.maxBodyLength}`)
+	}
+	
+	const content = await getContent(data.contentId)
+	
+	if (content.hidden) throw new Error('Could not create comment')
+	
+	const commentId = new mongoose.Types.ObjectId()
+	const comment = new Comment({
+		commentId,
+		contentId: data.contentId,
+		userId: data.userId,
+		body: data.body
+	})
+	
+	try {
+		await comment.save()
+		
+		return deserializeComment(comment)
+	} catch(error) {
+		throw new Error('Could not create comment')
+	}
+}
+
+const deleteComment = async commentId => {
+	const comment = await Comment.findOne({ _id: mongoSanitize(commentId) })
+	
+	if (!comment) throw new Error('Could not find comment')
+	
+	try {
+		await Comment.deleteOne({ _id: comment.commentId })
+		
+		return { deleted: true }
+	} catch(error) {
+		throw new Error('Could not delete post')
+	}
+}
+
+const getComments = async (contentId, requesterUserId) => {
+	const content = await getContent(contentId, requesterUserId)
+	
+	if (content.hidden) throw new Error('Could not create comment')
+	
+	try {
+		const comments = await Comment.find({ contentId: mongoSanitize(contentId)} )
+			.sort({ created: -1 })
+			.limit(10)
+		
+		return comments.map(comment => deserializeComment(comment))
+	} catch(error) {
+		throw new Error('Could not get comments')
+	}
 }
 
 export {
@@ -258,11 +328,71 @@ export {
 	getContent,
 	getPost,
 	createPost,
-	deletePost
+	deletePost,
+	createComment,
+	deleteComment,
+	getComments
 }
 
 export default server => {
 	const router = new Router()
+	
+	router.get(
+		'/content/:contentId',
+		server.oauth.authorize({ optional: true }),
+		async req => {
+			try {
+				const content = await getContent(req.params.contentId, req._oauth.user.userId)
+				
+				if (!content) throw new Error('Content not found')
+				
+				req.apiResult(200, content)
+			} catch(error) {
+				req.apiResult(500, {
+					message: error
+				})
+			}
+		}
+	)
+	
+	router.post(
+		'/content/:contentId/comment',
+		useFields({ fields: ['body'] }),
+		server.oauth.authorize(),
+		async req => {
+			try {
+				const post = await createComment({
+					userId: req._oauth.user.userId,
+					contentId: req.params.contentId,
+					body: req.fields.body
+				})
+				
+				req.apiResult(200, post)
+			} catch(error) {
+				req.apiResult(500, {
+					message: error
+				})
+			}
+		}
+	)
+	
+	router.get(
+		'/content/:contentId/comments',
+		server.oauth.authorize({ optional: true }),
+		async req => {
+			try {
+				const comments = await getComments(req.params.contentId, req._oauth?.user?.userId)
+				
+				if (!comments) throw new Error('Comments not found')
+				
+				req.apiResult(200, comments)
+			} catch(error) {
+				req.apiResult(500, {
+					message: error
+				})
+			}
+		}
+	)
 	
 	router.post(
 		'/post/new',
@@ -281,12 +411,12 @@ export default server => {
 		}
 	)
 	
-	router.post(
+	router.get(
 		'/post/:postId',
 		server.oauth.authorize({ optional: true }),
 		async req => {
 			try {
-				const post = await getPost(req.params.postId)
+				const post = await getPost(req.params.postId, req._oauth.user.userId)
 				
 				if (!post) throw new Error('Post not found')
 				
@@ -300,7 +430,7 @@ export default server => {
 	)
 	
 	/*
-	router.post('/post/:postId/like', (req, res) => {
+	router.post('/content/:contentId/like', (req, res) => {
 		
 	})
 	*/

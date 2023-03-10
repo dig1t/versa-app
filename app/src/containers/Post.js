@@ -2,85 +2,58 @@ import React, { useCallback } from 'react'
 import { formatDistance } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import Avatar from './Avatar.js'
 import { Icon } from '../components/UI/index.js'
-
-const PostMedia = ({ type, source }) => {
-	// media: {
-	// 	type: 'image',
-	// 	source: 'https://via.placeholder.com/1500'
-	// }
-	
-	const renderMedia = useCallback(() => {
-		switch(type) {
-			case 'album':
-				return <div className="album-wrap">
-					<div className="img img-fill" style={{
-						backgroundImage: `url(${source})`
-					}} />
-				</div>
-			case 'image':
-				return <img src={source} />
-		}
-	}, [type])
-	
-	return <div className="media">
-		{renderMedia()}
-	</div>
-}
-
-PostMedia.propTypes = {
-	type: PropTypes.string.isRequired,
-	source: PropTypes.string.isRequired
-}
+import { VerifiedBadge } from './VerifiedBadge.js'
+import ContentMedia from './ContentMedia.js'
 
 const Post = ({ data }) => {
+	const profileList = useSelector(state => state.profiles.profileList)
+	
 	const timePosted = formatDistance(
 		new Date(data.created),
 		new Date(),
 		{ addSuffix: true, includeSeconds: true }
 	)
 	
-	data.profile = {
-		username: 'dig1t',
-		name: 'digit',
-		verificationLevel: 1
-	}
+	const contentProfile = profileList[data.content.userId]
 	
 	return <div className="post" data-id={data.postId}>
 		<div className="container">
 			<div className="post-avatar">
-				<Avatar avatar={data.content.profile.avatar} />
+				<Avatar avatar={contentProfile.avatar} />
 			</div>
 			<div className="main">
 				<div className="details">
 					<span className="name align-center-wrap">
 						<Link
-							to={`/@${data.profile.username}`}
+							to={`/@${contentProfile.username}`}
 							className="unstyled-link"
 						>
-							{data.profile.name}
+							{contentProfile.name}
 						</Link>
-						<Icon
-							svg
-							name="verified"
-							hidden={!data.profile.verificationLevel || data.profile.verificationLevel === 0}
-						/>
+						<VerifiedBadge verificationLevel={contentProfile.verificationLevel} />
 					</span>
 					<span className="username"><Link
-						to={`/@${data.profile.username}`}
+						to={`/@${contentProfile.username}`}
 						className="unstyled-link"
 					>
-						@{data.profile.username}
+						@{contentProfile.username}
 					</Link></span>
 					<span>&bull;</span>
-					<span className="time">{timePosted}</span>
+					<span className="time"><Link
+						to={`/@${contentProfile.username}/${data.content.contentId}`}
+						className="unstyled-link"
+					>
+						{timePosted}
+					</Link></span>
 					<div className="options"><Icon name="ellipsis" /></div>
 				</div>
 				<div className="content">
 					{data.content.body && <div className="text">{data.content.body}</div>}
-					{data.content.media && <PostMedia {...data.content.media} />}
+					{data.content.media && <ContentMedia {...data.content.media} />}
 				</div>
 				<div className="actions">
 					<div className="action likes align-center-wrap">

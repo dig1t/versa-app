@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
-import api from '../../util/api.js'
 import Layout from '../Layout.js'
 import Loading from '../Loading.js'
 import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
-import { CatPills, Icon } from '../UI/index.js'
+import { CatPills } from '../UI/index.js'
 import { followProfile, getProfileFromUsername } from '../../actions/profile.js'
-import classNames from 'classnames'
 import { binarySearch } from '../../util/index.js'
+import { defaultAssets } from '../../constants/assets.js'
+import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 
 const feedCategories = [
 	{
@@ -29,17 +30,11 @@ const feedCategories = [
 ]
 
 const FollowButton = props => {
-	const [requesting, setRequesting] = useState(false)
 	const dispatch = useDispatch()
 	
 	const handleClick = input => {
 		input.preventDefault()
 		
-		// Prevent user from spamming the server
-		if (requesting) return console.log('dont spam')
-		
-		console.log('FOLLOW?', !props.following)
-		//setRequesting(true)
 		dispatch(followProfile(props.userId, !props.following))
 	}
 	
@@ -67,19 +62,14 @@ const Profile = () => {
 		invalidUsernames: state.profiles.invalidUsernames
 	}))
 	
-	const { usernameParam } = useParams()
+	const { username } = useParams()
 	const [profileData, setProfileData] = useState(null)
 	const [usernameQuery, setUsernameQuery] = useState(null)
 	const [redirect, setRedirect] = useState(null)
 	const [fetching, setFetching] = useState(false)
-	//const [isFriend, setIsFriend] = useState(false)
 	
 	useEffect(() => {
-		console.log(profileData)
-	}, [profileData])
-	
-	useEffect(() => {
-		const param = /\@(\w+)/.exec(usernameParam)
+		const param = /\@(\w+)/.exec(username)
 		const usernameExec = param && param[1]
 		
 		usernameExec ? setUsernameQuery(usernameExec) : setRedirect('/error')
@@ -87,7 +77,7 @@ const Profile = () => {
 	
 	useEffect(() => {
 		const invalidProfile = binarySearch(invalidUsernames, usernameQuery) > -1
-		console.log('list update')
+		
 		if (invalidProfile) return setRedirect('/error?e=no-user')
 		
 		const userId = idsByUsername[usernameQuery]
@@ -110,7 +100,12 @@ const Profile = () => {
 			<div className="col-12 col-desktop-4">
 				<div className="info box">
 					<div className="banner">
-						<div className="img" />
+						<div
+							className="img"
+							style={{
+								backgroundImage: `url(${profileData.banner || defaultAssets.banner})`
+							}}
+						/>
 					</div>
 					<div className="details">
 						<div className="avatar-container">
@@ -119,11 +114,7 @@ const Profile = () => {
 						<div className="container">
 							<div className="name align-center-wrap">
 								<span>{profileData.name}</span>
-								<Icon
-									svg
-									name="verified"
-									hidden={!profileData.verificationLevel || profileData.verificationLevel === 0}
-								/>
+								<VerifiedBadge verificationLevel={profileData.verificationLevel} />
 							</div>
 							<div className="username">@{profileData.username}</div>
 							{profileData.bio && <div className="bio">{profileData.bio}</div>}
@@ -162,6 +153,7 @@ const Profile = () => {
 							console.log('selected pill of type:', type)
 						}}
 					/>
+					<Feed userId={profileData.userId} />
 				</div>
 			</div>
 		</div>}

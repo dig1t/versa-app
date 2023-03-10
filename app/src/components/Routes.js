@@ -10,6 +10,7 @@ const Login = React.lazy(() => import('./Routes/Login'))
 const Signup = React.lazy(() => import('./Routes/Signup'))
 const Logout = React.lazy(() => import('./Routes/Logout'))
 const Profile = React.lazy(() => import('./Routes/Profile'))
+const Content = React.lazy(() => import('./Routes/Content'))
 
 //<PrivateRoute exact path="/my/settings" component={UserSettings} requireAuth={true} redirect="/login" />
 //<PrivateRoute exact path="/login" component={Login} requireNoAuth={true} redirect="/" />
@@ -27,7 +28,8 @@ const AppRoutes = () => <Routes>
 		<Route path="/logout" element={<Logout />} />
 	</Route>
 	
-	<Route path="/:usernameParam" element={<Profile />} />
+	<Route path="/:username" element={<Profile />} />
+	<Route path="/:username/:contentId" element={<Content />} />
 	
 	<Route path="/error" element={<Error />} />
 	<Route path="*" element={<Error />} />

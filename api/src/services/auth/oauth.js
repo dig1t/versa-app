@@ -207,11 +207,11 @@ class OAuth2 {
 		return async (req, res, next) => {
 			const authorizationCode = req.headers?.authorization
 			
-			if (!authorizationCode) return options.optional ? next() : res.sendStatus(401)
+			if (!authorizationCode) return options.optional === true ? next() : res.sendStatus(401)
 			
 			const accessToken = authorizationCode.split(' ')
 			
-			if (!accessToken[0] === 'Bearer') return res.sendStatus(400)
+			if (accessToken[0] !== 'Bearer') return res.sendStatus(400)
 			
 			const authVerification = await this.verifyAccessToken(
 				this.decodeToken(accessToken[1])
