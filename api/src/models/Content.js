@@ -33,7 +33,7 @@ const schema = new Schema({
 		ref: 'Post'
 	},
 	embedType: {
-		type: Schema.Types.Number,
+		type: Number,
 		maxlength: 1
 		/* {
 			1: 'content' // ex: quoting a post

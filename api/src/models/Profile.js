@@ -46,8 +46,14 @@ const schema = new Schema({
 		default: Date.now()
 	},
 	
-	followers: 0,
-	following: 0,
+	followers: {
+		type: Number,
+		default: 0
+	},
+	following: {
+		type: Number,
+		default: 0
+	},
 	
 	created: {
 		type: Date,

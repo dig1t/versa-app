@@ -136,14 +136,13 @@ const Content = () => {
 					</div>
 					<CommentEditor
 						contentId={contentId}
-						handleSuccess={comment => {
-							setComments(comments.unshift(comment))
-						}}
+						handleSuccess={comment => setComments(state => [comment, ...state])}
 					/>
 					<div className="comments">
 						{commentsLoading && <Loading />}
+						{commentError && <div>{commentError}</div>}
 						{comments.map(comment => {
-							return <div className="comment">
+							return <div className="comment" key={comment.commentId}>
 								<div className="time">{comment.created}</div>
 								<div className="body">{comment.body}</div>
 							</div>
