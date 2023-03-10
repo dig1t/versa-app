@@ -6,7 +6,7 @@ const schema = new Schema({
 		alias: 'mediaId'
 	},
 	type: {
-		type: Schema.Types.Number,
+		type: Number,
 		maxlength: 1,
 		required: true
 		/* {
@@ -22,7 +22,7 @@ const schema = new Schema({
 		required: true
 	},
 	cdn: {
-		type: Schema.Types.String,
+		type: String,
 		required: true
 	},
 	sourceId: {

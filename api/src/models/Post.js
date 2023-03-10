@@ -22,7 +22,7 @@ const schema = new Schema({
 	},
 	
 	type: {
-		type: Schema.Types.Number,
+		type: Number,
 		maxlength: 1,
 		default: 1
 		/* {
