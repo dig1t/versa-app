@@ -4,12 +4,12 @@ import {
 	deserializePost,
 	profileFeedPipeline,
 	getContent
-} from './posts.js'
+} from './content.js'
 import { validateText, mongoSanitize, mongoValidate } from '../util/index.js'
 
 import Post from '../models/Post.js'
 import Profile from '../models/Profile.js'
-import { isFollowing } from './follows.js'
+import { isFollowing, getConnection } from './follows.js'
 
 const deserializeProfile = profile => ({
 	userId: profile.userId.toHexString(),
@@ -171,17 +171,7 @@ export default server => {
 				const requesterUserId = req._oauth?.user?.userId
 				
 				if (requesterUserId) {
-					// TODO: Move to follows.js?
-					const isSelf = profile.userId === requesterUserId
-					const following = !isSelf && await isFollowing(requesterUserId, profile.userId)
-					const followedBy = !isSelf && await isFollowing(profile.userId, requesterUserId)
-					
-					profile.connection = {
-						isSelf,
-						following,
-						followedBy,
-						isMutualFollower: following && followedBy
-					}
+					profile.connection = await getConnection(profile.userId, requesterUserId)
 				}
 				
 				req.apiResult(200, profile)

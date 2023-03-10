@@ -5,6 +5,7 @@ import { fetchStatus, fetchErrors } from './fetchStatus.js'
 import user from './user.js'
 import profiles from './profiles.js'
 import settings from './settings.js'
+import content from './content.js'
 import feed from './feed.js'
 
 export default combineReducers({
@@ -14,5 +15,6 @@ export default combineReducers({
 	settings,
 	user,
 	profiles,
+	content,
 	feed
 })

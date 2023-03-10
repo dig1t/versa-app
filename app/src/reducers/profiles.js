@@ -1,7 +1,8 @@
 import {
 	PROFILE_FETCH_SUCCESS,
 	PROFILE_FETCH_FAILURE,
-	PROFILE_FOLLOW_UPDATE
+	PROFILE_FOLLOW_UPDATE,
+	PROFILE_ADD_ARRAY
 } from '../constants/actionTypes.js'
 
 export default (state = {
@@ -10,10 +11,36 @@ export default (state = {
 	invalidUsernames: []
 }, action) => {
 	switch(action.type) {
+		case PROFILE_ADD_ARRAY: {
+			const keys = Object.keys(action.payload)
+			const newProfiles = {}
+			const newUsernames = {}
+			
+			keys.map(userId => {
+				if (!state.profileList[userId]) newProfiles[userId] = action.payload[userId]
+			})
+			
+			keys.map(userId => {
+				const username = action.payload[userId].username
+				
+				if (!newUsernames[username]) newUsernames[username] = userId
+			})
+			
+			return {
+				...state,
+				profileList: {
+					...state.profileList,
+					...newProfiles
+				},
+				idsByUsername: {
+					...state.idsByUsername,
+					...newUsernames
+				}
+			}
+		}
 		case PROFILE_FETCH_SUCCESS: {
 			return {
 				...state,
-				// using concat on the data object makes adding profiles quicker
 				profileList: {
 					...state.profileList,
 					[action.payload.userId]: action.payload

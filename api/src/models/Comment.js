@@ -14,7 +14,7 @@ const schema = new Schema({
 		ref: 'User',
 		required: true
 	},
-	text: {
+	body: {
 		type: String,
 		maxlength: 50
 	},

@@ -127,6 +127,22 @@ const getFollowingCount = async userId => {
 	return profile.following
 }
 
+const getConnection = async (userId, requesterUserId) => {
+	if (!userId) throw new Error('getConnection(): Missing userId')
+	if (!requesterUserId) throw new Error('getConnection(): Missing requester userId')
+	
+	const isSelf = userId === requesterUserId
+	const following = !isSelf && await isFollowing(requesterUserId, userId)
+	const followedBy = !isSelf && await isFollowing(userId, requesterUserId)
+	
+	return {
+		isSelf,
+		following,
+		followedBy,
+		isMutualFollower: following && followedBy
+	}
+}
+
 const createFollow = async (userId, followerUserId) => {
 	if (!userId) throw new Error('Missing userId')
 	if (!followerUserId) throw new Error('Missing followerUserId')
@@ -200,12 +216,26 @@ export {
 	getFollowingCount,
 	isFollowing,
 	isMutualFollower,
+	getConnection,
 	createFollow,
 	deleteFollow
 }
 
 export default server => {
 	const router = new Router()
+	
+	router.get(
+		'/follow/connection',
+		useFields({
+			fields: ['userId']
+		}),
+		server.oauth.authorize(),
+		async req => {
+			req.apiResult(200, {
+				connection: await getConnection(req.fields.userId, req._oauth.user.userId)
+			})
+		}
+	)
 	
 	router.get(
 		'/follow/list',
