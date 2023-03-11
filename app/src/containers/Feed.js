@@ -49,7 +49,7 @@ const Feed = props => {
 	}, [feed])
 	
 	return <div className="list">
-		{posts.map(post => <Post data={post} key={post.postId} />)}
+		{posts.map(post => <Post key={post.postId} {...post} />)}
 		{fetching && <Loading />}
 	</div>
 }

@@ -104,6 +104,14 @@
 						color: var(--primary-color);
 						font-weight: $font-semibold;
 					}
+					
+					&.like.active .icon {
+						color: var(--red-600);
+						
+						&:hover {
+							color: inherit;
+						}
+					}
 				}
 				
 				.icon {

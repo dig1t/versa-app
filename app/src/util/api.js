@@ -85,6 +85,26 @@ class API {
 		})
 	}
 	
+	put(route, data, options) {
+		return this.call({
+			method: 'put',
+			url: this.defaultOptions.baseUrl + route,
+			withCredentials: true,
+			data,
+			...options
+		})
+	}
+	
+	delete(route, data, options) {
+		return this.call({
+			method: 'delete',
+			url: this.defaultOptions.baseUrl + route,
+			withCredentials: true,
+			data,
+			...options
+		})
+	}
+	
 	createComponent(promiseFactory) {
 		const [data, setData] = useState(null)
 		const [error, setError] = useState(null)

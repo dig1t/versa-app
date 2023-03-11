@@ -10,6 +10,7 @@ import Content from '../models/Content.js'
 import { canViewProfile, getProfileFromUserId } from './profiles.js'
 import { isMutualFollower } from './follows.js'
 import Comment from '../models/Comment.js'
+import Like from '../models/Like.js'
 
 const POST_TYPES = {
 	CONTENT: 1,
@@ -26,6 +27,12 @@ const deserializeContent = (content, profile) => ({
 	body: content.body,
 	created: content.created,
 	private: content.private,
+	
+	liked: content.liked,
+	
+	likes: content.likes,
+	comments: content.comments,
+	reposts: content.reposts,
 	
 	media: typeof content.media === 'object' && content.media[0] ? {
 		mediaId: content.media[0]._id.toHexString(),
@@ -53,6 +60,12 @@ const deserializeComment = comment => ({
 	userId: comment.userId.toHexString(),
 	body: comment.body,
 	created: comment.created
+})
+
+const deserializeLike = like => ({
+	likeId: like._id.toHexString(),
+	contentId: like.contentId.toHexString(),
+	userId: like.userId.toHexString()
 })
 
 const createContent = async data => {
@@ -153,6 +166,13 @@ const getContent = async (contentId, requesterUserId) => {
 	
 	if (!canViewContent) throw new Error('Cannot view private content')
 	
+	if (requesterUserId) {
+		content.liked = await userLikesContent({
+			userId: requesterUserId,
+			contentId
+		})
+	}
+	
 	return deserializeContent(content, profile)
 }
 
@@ -236,7 +256,7 @@ const getPost = async (postId, requesterUserId) => {
 	if (!post) throw new Error('Post not found')
 	
 	// Private content can only be viewed by the content creator
-	const content = await getContent(post.contentId)
+	const content = await getContent(post.contentId, requesterUserId)
 	
 	if (content.private && requesterUserId !== content.userId) throw new Error('Post is private')
 	
@@ -258,7 +278,11 @@ const getPost = async (postId, requesterUserId) => {
 		if (!userCanViewProfile) throw new Error('Not friends with content owner')
 	}
 	
-	return deserializePost(post, content, posterProfile)
+	return deserializePost(
+		post,
+		content,
+		posterProfile
+	)
 }
 
 const createComment = async data => {
@@ -283,7 +307,13 @@ const createComment = async data => {
 	})
 	
 	try {
-		await comment.save()
+		await mongoSession(async () => {
+			await comment.save()
+			await Content.updateOne(
+				{ _id: mongoSanitize(data.contentId) },
+				{ $inc: { 'comments': 1 } }
+			)
+		})
 		
 		return deserializeComment(comment)
 	} catch(error) {
@@ -297,7 +327,13 @@ const deleteComment = async commentId => {
 	if (!comment) throw new Error('Could not find comment')
 	
 	try {
-		await Comment.deleteOne({ _id: comment.commentId })
+		await mongoSession(async () => {
+			await Comment.deleteOne({ _id: comment.commentId })
+			await Content.updateOne(
+				{ _id: mongoSanitize(comment.contentId) },
+				{ $inc: { 'comments': -1 } }
+			)
+		})
 		
 		return { deleted: true }
 	} catch(error) {
@@ -321,6 +357,80 @@ const getComments = async (contentId, requesterUserId) => {
 	}
 }
 
+const createLike = async data => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.contentId) throw new Error('Missing contentId')
+	
+	if (await getUserLike(data)) throw new Error('User already liked the content')
+	
+	const content = await getContent(data.contentId)
+	
+	if (content.hidden) throw new Error('Could not create like')
+	
+	const likeId = new mongoose.Types.ObjectId()
+	const like = new Like({
+		likeId,
+		contentId: data.contentId,
+		userId: data.userId
+	})
+	
+	try {
+		await mongoSession(async () => {
+			await like.save()
+			await Content.updateOne(
+				{ _id: mongoSanitize(data.contentId) },
+				{ $inc: { 'likes': 1 } }
+			)
+		})
+		
+		return deserializeLike(like)
+	} catch(error) {
+		throw new Error('Could not create like')
+	}
+}
+
+const deleteLike = async data => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.contentId) throw new Error('Missing contentId')
+	
+	const like = await getUserLike(data)
+	
+	try {
+		await mongoSession(async () => {
+			await Like.deleteOne({ _id: mongoSanitize(like.likeId) })
+			await Content.updateOne(
+				{ _id: mongoSanitize(like.contentId) },
+				{ $inc: { 'likes': -1 } }
+			)
+		})
+		
+		return { deleted: true }
+	} catch(error) {
+		throw new Error('Could not delete like')
+	}
+}
+
+const getUserLike = async data => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.contentId) throw new Error('Missing contentId')
+	
+	const like = await Like.findOne({
+		userId: mongoSanitize(data.userId),
+		contentId: mongoSanitize(data.contentId)
+	})
+	
+	return like ? deserializeLike(like) : null
+}
+
+const userLikesContent = async data => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.contentId) throw new Error('Missing contentId')
+	
+	const like = await getUserLike(data)
+	
+	return like && typeof like.likeId !== 'undefined'
+}
+
 export {
 	contentPipeline,
 	profileFeedPipeline,
@@ -331,7 +441,10 @@ export {
 	deletePost,
 	createComment,
 	deleteComment,
-	getComments
+	getComments,
+	createLike,
+	deleteLike,
+	userLikesContent
 }
 
 export default server => {
@@ -368,6 +481,63 @@ export default server => {
 				})
 				
 				req.apiResult(200, post)
+			} catch(error) {
+				req.apiResult(500, {
+					message: error
+				})
+			}
+		}
+	)
+	
+	router.delete(
+		'/content/:contentId/comment',
+		server.oauth.authorize(),
+		async req => {
+			try {
+				const res = await deleteComment({
+					userId: req._oauth.user.userId,
+					contentId: req.params.contentId
+				})
+				
+				req.apiResult(200, res)
+			} catch(error) {
+				req.apiResult(500, {
+					message: error
+				})
+			}
+		}
+	)
+	
+	router.post(
+		'/content/:contentId/like',
+		server.oauth.authorize(),
+		async req => {
+			try {
+				const like = await createLike({
+					userId: req._oauth.user.userId,
+					contentId: req.params.contentId
+				})
+				
+				req.apiResult(200, like)
+			} catch(error) {
+				req.apiResult(500, {
+					message: error
+				})
+			}
+		}
+	)
+	
+	router.delete(
+		'/content/:contentId/like',
+		server.oauth.authorize(),
+		async req => {
+			try {
+				const res = await deleteLike({
+					userId: req._oauth.user.userId,
+					contentId: req.params.contentId
+				})
+				
+				req.apiResult(200, res)
 			} catch(error) {
 				req.apiResult(500, {
 					message: error

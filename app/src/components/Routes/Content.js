@@ -10,11 +10,12 @@ import api from '../../util/api.js'
 import { binarySearch } from '../../util/index.js'
 import Layout from '../Layout.js'
 import Loading from '../Loading.js'
-import { getContent } from '../../actions/content.js'
+import { addContentStat, getContent } from '../../actions/content.js'
 import { Icon } from '../UI/index.js'
 import Avatar from '../../containers/Avatar.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import CommentEditor from '../../containers/CommentEditor.js'
+import ContentActions from '../../containers/ContentActions.js'
 
 const feedCategories = [
 	{
@@ -117,7 +118,7 @@ const Content = () => {
 			setFetching(true)
 			dispatch(getContent(contentId))
 		}
-	}, [profileList, invalidContentIds])
+	}, [contentList, invalidContentIds])
 	
 	const profile = contentData !== null ? profileList[userId] : {}
 	const timeAgoCreated = contentData && formatDistance(
@@ -161,26 +162,16 @@ const Content = () => {
 									{contentData.body && <div className="text">{contentData.body}</div>}
 									{contentData.media && <ContentMedia {...contentData.media} />}
 								</div>
-								<div className="actions">
-									<div className="action likes align-center-wrap">
-										<Icon name="heart" />
-										<span>{contentData.likes || 0}</span>
-									</div>
-									<div className="action comments align-center-wrap">
-										<Icon name="comment" />
-										<span>{contentData.comments || 0}</span>
-									</div>
-									<div className="action likes align-center-wrap">
-										<Icon name="repost" />
-										<span>{contentData.reposts || 0}</span>
-									</div>
-								</div>
+								<ContentActions {...contentData} noRedirect={true} />
 							</div>
 						</div>
 					</div>
 					<CommentEditor
 						contentId={contentId}
-						handleSuccess={comment => setComments(state => [comment, ...state])}
+						handleSuccess={comment => {
+							dispatch(addContentStat(comment.contentId, 'comments', 1))
+							setComments(state => [comment, ...state])
+						}}
 					/>
 					<div className="comments">
 						{commentsLoading && <Loading />}

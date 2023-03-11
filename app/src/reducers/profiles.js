@@ -2,7 +2,8 @@ import {
 	PROFILE_FETCH_SUCCESS,
 	PROFILE_FETCH_FAILURE,
 	PROFILE_FOLLOW_UPDATE,
-	PROFILE_ADD_ARRAY
+	PROFILE_ADD_ARRAY,
+	PROFILE_CONNECTION_SUCCESS
 } from '../constants/actionTypes.js'
 
 export default (state = {
@@ -35,6 +36,20 @@ export default (state = {
 				idsByUsername: {
 					...state.idsByUsername,
 					...newUsernames
+				}
+			}
+		}
+		case PROFILE_CONNECTION_SUCCESS: {
+			if (!state.profileList[action.payload.userId]) return state
+			
+			return {
+				...state,
+				profileList: {
+					...state.profileList,
+					[action.payload.userId]: {
+						...state.profileList[action.payload.userId],
+						connection: action.payload.connection
+					}
 				}
 			}
 		}
