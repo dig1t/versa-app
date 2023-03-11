@@ -31,6 +31,49 @@ const feedCategories = [
 	}
 ]
 
+const Comment = props => {
+	const profileList = useSelector(state => state.profiles.profileList)
+	
+	const profile = profileList[props.userId]
+	const timeAgoCreated = formatDistance(
+		new Date(props.created),
+		new Date(),
+		{ addSuffix: true, includeSeconds: true }
+	)
+	
+	return <div className="post comment">
+		<div className="container">
+			<div className="post-avatar">
+				<Avatar avatar={profile.avatar} />
+			</div>
+			<div className="main">
+				<div className="details">
+					<span className="name align-center-wrap">
+						<Link
+							to={`/@${profile.username}`}
+							className="unstyled-link"
+						>
+							{profile.name}
+						</Link>
+						<VerifiedBadge verificationLevel={profile.verificationLevel} />
+					</span>
+					<span className="username"><Link
+						to={`/@${profile.username}`}
+						className="unstyled-link"
+					>
+						@{profile.username}
+					</Link></span>
+					<span>&bull;</span>
+					<span className="time">{timeAgoCreated}</span>
+				</div>
+				<div className="content">
+					<div className="text">{props.body}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
 const Content = () => {
 	const dispatch = useDispatch()
 	const { profileList, contentList, invalidContentIds } = useSelector(state => ({
@@ -77,6 +120,11 @@ const Content = () => {
 	}, [profileList, invalidContentIds])
 	
 	const profile = contentData !== null ? profileList[userId] : {}
+	const timeAgoCreated = contentData && formatDistance(
+		new Date(contentData.created),
+		new Date(),
+		{ addSuffix: true, includeSeconds: true }
+	)
 	
 	return <Layout page="content">
 		{redirect && <Navigate to={redirect} />}
@@ -106,11 +154,7 @@ const Content = () => {
 										@{profile.username}
 									</Link></span>
 									<span>&bull;</span>
-									<span className="time">{contentData.created && formatDistance(
-										new Date(contentData.created),
-										new Date(),
-										{ addSuffix: true, includeSeconds: true }
-									)}</span>
+									<span className="time">{contentData.created && timeAgoCreated}</span>
 									<div className="options"><Icon name="ellipsis" /></div>
 								</div>
 								<div className="content">
@@ -141,12 +185,7 @@ const Content = () => {
 					<div className="comments">
 						{commentsLoading && <Loading />}
 						{commentError && <div>{commentError}</div>}
-						{comments.map(comment => {
-							return <div className="comment" key={comment.commentId}>
-								<div className="time">{comment.created}</div>
-								<div className="body">{comment.body}</div>
-							</div>
-						})}
+						{comments.map(comment => <Comment key={comment.commentId} {...comment} />)}
 					</div>
 				</div>
 			</div>

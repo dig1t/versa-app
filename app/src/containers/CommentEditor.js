@@ -22,21 +22,16 @@ const CommentEditor = props => {
 			})
 	}
 	
-	return <div className="post-editor">
+	return <div className="post-editor simple">
 		<label className="box">
 			<Input
 				handleValueChange={value => setData({ text: value })}
 				value={data.text}
 				type="textarea"
-				placeholder="Write a status..."
+				placeholder="Write a comment..."
 				displayError={false}
 			/>
-			<div className="editor-controls">
-				<div className="attachments center-wrap">
-					<div className="photo">
-						<Icon name="photo" />
-					</div>
-				</div>
+			<div className="editor-controls float-r">
 				<button
 					className="btn btn-round btn-primary post"
 					onClick={handleSubmit}
