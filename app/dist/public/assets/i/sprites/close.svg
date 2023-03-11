@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g id="Close">
+    <rect x="28" y="12" width="8" height="40" rx="4" ry="4" transform="translate(-13.25 32) rotate(-45)"/>
+    <rect x="28" y="12" width="8" height="40" rx="4" ry="4" transform="translate(32 -13.25) rotate(45)"/>
+  </g>
+</svg>
