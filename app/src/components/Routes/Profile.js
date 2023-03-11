@@ -9,7 +9,11 @@ import Loading from '../Loading.js'
 import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
 import { CatPills } from '../UI/index.js'
-import { followProfile, getProfileFromUsername } from '../../actions/profile.js'
+import {
+	followProfile,
+	getProfileConnection,
+	getProfileFromUsername
+} from '../../actions/profile.js'
 import { binarySearch } from '../../util/index.js'
 import { defaultAssets } from '../../constants/assets.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
@@ -88,6 +92,10 @@ const Profile = () => {
 		
 		if (userId) {
 			setProfileData(profileList[userId])
+			
+			if (!profileList[userId].connection) dispatch(
+				getProfileConnection(userId)
+			)
 		} else if (!fetching) {
 			setFetching(true)
 			dispatch(getProfileFromUsername(usernameQuery))
@@ -124,12 +132,12 @@ const Profile = () => {
 								</a>
 							</div>}
 						</div>
-						{profileData.connection?.isSelf ? <button className="edit-profile btn-round btn-outline">
+						{profileData.connection && (profileData.connection.isSelf ? <button className="cta edit-profile btn-round btn-outline">
 							Edit Profile
 						</button> : <FollowButton
 							following={profileData.connection.following}
 							userId={profileData.userId}
-						/>}
+						/>)}
 					</div>
 					<div className="community-stats grid">
 						<div className="stat col-6">

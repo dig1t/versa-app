@@ -232,7 +232,8 @@ export default server => {
 		server.oauth.authorize(),
 		async req => {
 			req.apiResult(200, {
-				connection: await getConnection(req.fields.userId, req._oauth.user.userId)
+				connection: await getConnection(req.fields.userId, req._oauth.user.userId),
+				userId: mongoSanitize(req.fields.userId)
 			})
 		}
 	)

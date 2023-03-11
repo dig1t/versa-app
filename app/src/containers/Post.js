@@ -8,19 +8,24 @@ import Avatar from './Avatar.js'
 import { Icon } from '../components/UI/index.js'
 import { VerifiedBadge } from './VerifiedBadge.js'
 import ContentMedia from './ContentMedia.js'
+import ContentActions from './ContentActions.js'
 
-const Post = ({ data }) => {
-	const profileList = useSelector(state => state.profiles.profileList)
+const Post = props => {
+	const { profileList, contentList } = useSelector(state => ({
+		profileList: state.profiles.profileList,
+		contentList: state.content.contentList
+	}))
+	
+	const content = contentList[props.contentId]
+	const contentProfile = profileList[content.userId]
 	
 	const timePosted = formatDistance(
-		new Date(data.created),
+		new Date(props.created),
 		new Date(),
 		{ addSuffix: true, includeSeconds: true }
 	)
 	
-	const contentProfile = profileList[data.content.userId]
-	
-	return <div className="post" data-id={data.postId}>
+	return <div className="post" data-id={props.postId}>
 		<div className="container">
 			<div className="post-avatar">
 				<Avatar avatar={contentProfile.avatar} />
@@ -44,7 +49,7 @@ const Post = ({ data }) => {
 					</Link></span>
 					<span>&bull;</span>
 					<span className="time"><Link
-						to={`/@${contentProfile.username}/${data.content.contentId}`}
+						to={`/@${contentProfile.username}/${content.contentId}`}
 						className="unstyled-link"
 					>
 						{timePosted}
@@ -52,23 +57,10 @@ const Post = ({ data }) => {
 					<div className="options"><Icon name="ellipsis" /></div>
 				</div>
 				<div className="content">
-					{data.content.body && <div className="text">{data.content.body}</div>}
-					{data.content.media && <ContentMedia {...data.content.media} />}
+					{content.body && <div className="text">{content.body}</div>}
+					{content.media && <ContentMedia {...content.media} />}
 				</div>
-				<div className="actions">
-					<div className="action likes align-center-wrap">
-						<Icon name="heart" />
-						<span>{data.content.likes || 0}</span>
-					</div>
-					<div className="action comments align-center-wrap">
-						<Icon name="comment" />
-						<span>{data.content.comments || 0}</span>
-					</div>
-					<div className="action likes align-center-wrap">
-						<Icon name="repost" />
-						<span>{data.content.reposts || 0}</span>
-					</div>
-				</div>
+				<ContentActions {...content} />
 			</div>
 		</div>
 	</div>

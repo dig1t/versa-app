@@ -2,7 +2,8 @@ import {
 	PROFILE_FEED_FETCH_REQUEST,
 	PROFILE_FEED_FETCH_SUCCESS,
 	PROFILE_FEED_FETCH_FAILURE,
-	PROFILE_ADD_ARRAY
+	PROFILE_ADD_ARRAY,
+	CONTENT_ADD_ARRAY
 } from '../constants/actionTypes.js'
 
 import api from '../util/api.js'
@@ -12,7 +13,7 @@ export const getHomeFeed = category => (dispatch, getState) => {
 }
 
 export const getProfileFeed = userId => (dispatch, getState) => {
-	const { feed, profiles } = getState()
+	const { feed, profiles, content } = getState()
 	
 	if (feed.userId === userId) return
 	
@@ -21,30 +22,35 @@ export const getProfileFeed = userId => (dispatch, getState) => {
 	api.get(`/v1/profile/${userId}/feed`)
 		.then(data => {
 			const feed = []
-			const profiles = {}
+			const profileList = {}
+			const contentList = {}
 			
 			data.map(post => {
 				const { profile: postProfile, content: _contentData, ...postData } = post
 				const { profile: contentProfile, ...contentData } = _contentData
 				
-				if (!profiles[postProfile.userId]) profiles[postProfile.userId] = postData.postProfile
-				if (!profiles[contentProfile.userId]) profiles[contentProfile.userId] = contentProfile
+				if (!profileList[postProfile.userId]) profileList[postProfile.userId] = postData.postProfile
+				if (!profileList[contentProfile.userId]) profileList[contentProfile.userId] = contentProfile
+				if (!content.contentList[contentData.contentId]) contentList[contentData.contentId] = {
+					...contentData,
+					userId: contentProfile.userId
+				}
 				
 				feed.push({
 					...postData,
-					content: {
-						...contentData,
-						userId: contentProfile.userId
-					},
+					contentId: contentData.contentId,
 					userId: postProfile.userId
 				})
+				
 			})
 			
-			console.log('FEED', feed)
-			console.log('profiles', profiles)
+			dispatch({
+				type: CONTENT_ADD_ARRAY,
+				payload: contentList
+			})
 			dispatch({
 				type: PROFILE_ADD_ARRAY,
-				payload: profiles
+				payload: profileList
 			})
 			dispatch({
 				type: PROFILE_FEED_FETCH_SUCCESS,

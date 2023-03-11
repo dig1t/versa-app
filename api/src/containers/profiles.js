@@ -93,7 +93,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 				data => data.userId === post.userId
 			)
 			
-			post.content = await getContent(post.contentId)
+			post.content = await getContent(post.contentId, requesterUserId)
 			
 			if (!profileFind) {
 				profileCache.push(

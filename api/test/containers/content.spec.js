@@ -6,7 +6,10 @@ import {
 	deletePost,
 	createComment,
 	deleteComment,
-	getComments
+	getComments,
+	createLike,
+	deleteLike,
+	userLikesContent
 } from '../../src/containers/content.js'
 import mockUser from '../util/mockUser.js'
 
@@ -14,6 +17,7 @@ describe('create post and content', async () => {
 	let account
 	let post
 	let comment
+	let like
 	
 	before(async () => {
 		account = await mockUser.create()
@@ -55,6 +59,33 @@ describe('create post and content', async () => {
 	
 	it('deletes a comment', async () => {
 		const res = await deleteComment(comment.commentId)
+		
+		assert.equal(res.deleted, true)
+	})
+	
+	it('adds a like', async () => {
+		like = await createLike({
+			userId: account.user.userId,
+			contentId: post.content.contentId
+		})
+		
+		assert.exists(like, 'likeId')
+	})
+	
+	it('checks if user likes the content', async () => {
+		const result = await userLikesContent({
+			userId: account.user.userId,
+			contentId: post.content.contentId
+		})
+		
+		assert.equal(result, true)
+	})
+	
+	it('deletes a likes', async () => {
+		const res = await deleteLike({
+			userId: account.user.userId,
+			contentId: post.content.contentId
+		})
 		
 		assert.equal(res.deleted, true)
 	})
