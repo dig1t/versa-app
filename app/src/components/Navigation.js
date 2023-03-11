@@ -89,7 +89,7 @@ export const Navigation = () => {
 					{profile && <Avatar
 						status="online"
 						avatar={profile.avatar}
-						clickRedirect
+						clickRedirect={true}
 					/>}
 				</li>
 			</ul>

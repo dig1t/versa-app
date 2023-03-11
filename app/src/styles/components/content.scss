@@ -23,7 +23,7 @@
 	}
 	
 	.container {
-		margin: 1rem;
+		padding: 1rem;
 		display: flex;
 		
 		.post-avatar {
@@ -114,9 +114,21 @@
 		}
 	}
 	
-	/*.comments {
+	&.comment {
+		.post-avatar {
+			flex-basis: 2.4rem;
+		}
 		
-	}*/
+		.details {
+			.name {
+				font-size: 1rem;
+			}
+			
+			.username {
+				font-size: .8rem;
+			}
+		}
+	}
 }
 
 .post-editor {
@@ -168,6 +180,14 @@
 		
 		> button.post {
 			padding: .6rem 1.4rem;
+		}
+	}
+	
+	&.simple {
+		.input {
+			textarea {
+				min-height: 2rem;
+			}
 		}
 	}
 }

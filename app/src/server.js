@@ -35,7 +35,7 @@ const ServerSideRender = (req, res) => {
 				
 				res.statusCode = 500
 				
-				res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${assets};</script><script src="${bundle}"></script>`)
+				res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${JSON.stringify(assets)};</script><script src="${assets.bundle}"></script>`)
 				res.end()
 			},
 			onError(error) {
