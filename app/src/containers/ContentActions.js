@@ -12,13 +12,13 @@ const ContentActions = props => {
 	const [redirect, setRedirect] = useState(null)
 	const profileList = useSelector(state => state.profiles.profileList)
 	const contentProfile = profileList[props.userId]
-	console.log(props)
+	
 	return <div className="actions">
 		{redirect && <Navigate to={redirect} />}
 		<div
 			className={classNames(
 				'action like align-center-wrap',
-				props.liked && 'active'
+				props.liked && 'selected'
 			)}
 			onClick={input => {
 				input.preventDefault()

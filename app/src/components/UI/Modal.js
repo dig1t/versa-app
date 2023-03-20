@@ -3,14 +3,17 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
+const Modal = props => {
+	return ReactDOM.createPortal(
+		this.modalComponent(),
+		document.body
+	)
+}
+
 /* TODO: add more modal types such as:
 ** video, text, confirmation popups,
 ** custom modals (newsletters, login) */
-class Modal extends React.Component {
-	constructor(props) {
-		super(props)
-	}
-	
+class OldModal extends React.Component {
 	getHeader() {
 		let show = false
 		

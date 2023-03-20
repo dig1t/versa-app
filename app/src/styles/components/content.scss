@@ -101,16 +101,12 @@
 					}
 					
 					&.selected {
-						color: var(--primary-color);
+						color: var(--blue-gray-400);
 						font-weight: $font-semibold;
 					}
 					
-					&.like.active .icon {
+					&.like.selected .icon {
 						color: var(--red-600);
-						
-						&:hover {
-							color: inherit;
-						}
 					}
 				}
 				
