@@ -67,6 +67,19 @@ ui {
 	}
 }
 
+#ui-root {
+	--tooltip-color: rgba(0, 25, 50, .8);
+	
+	.background-close {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 0;
+	}
+}
+
 .address-suggestions {
 	background-color: #fff;
 	width: 100%;
@@ -100,22 +113,20 @@ ui {
 }
 
 // Tooltip
-
-$tooltip-color: rgba(0, 25, 50, .5);
-$tooltip-padding: 5px;
+$tooltip-padding: .4rem;
 
 .tooltip {
-	background-color: $tooltip-color;
+	background-color: var(--tooltip-color);
 	border-radius: $border-radius;
-	padding: $tooltip-padding;
+	padding: $tooltip-padding calc($tooltip-padding * 1.5);
 	text-align: center;
 	position: fixed;
-	display: none;
 	z-index: 999999999;
 	
 	span {
 		color: #fff;
-		font-size: 12px;
+		font-size: .8rem;
+		font-weight: 500;
 	}
 	
 	.nub:after {
@@ -126,41 +137,40 @@ $tooltip-padding: 5px;
 		position: absolute;
 	}
 	
-	.top:after {
+	&.top .nub:after {
 		bottom: 100%;
 		left: 50%;
 		margin-left: -$tooltip-padding;
-		border-bottom-color: $tooltip-color;
+		border-bottom-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
 	
-	.bottom:after {
+	&.bottom .nub:after {
 		top: 100%;
 		left: 50%;
 		margin-left: -$tooltip-padding;
-		border-top-color: $tooltip-color;
+		border-top-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
 	
-	.left:after {
+	&.left .nub:after {
 		right: 100%;
 		top: 50%;
 		margin-top: -$tooltip-padding;
-		border-right-color: $tooltip-color;
+		border-right-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
 	
-	.right:after {
+	&.right .nub:after {
 		left: 100%;
 		top: 50%;
 		margin-top: -$tooltip-padding;
-		border-left-color: $tooltip-color;
+		border-left-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
 }
 
 // Modal
-
 .modal {
 	background-color: transparentize($black, .4);
 	width: 100%;
@@ -186,24 +196,12 @@ $tooltip-padding: 5px;
 		right: 20px;
 	}
 	
-	.background-close {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: -1;
-	}
-	
-	.align {
-		padding: 8px;
-		vertical-align: middle;
-		display: table-cell;
+	.center-wrap {
+		padding: .8rem;
 	}
 	
 	.container {
 		max-width: 500px;
-		margin: 0 auto;
 		position: relative;
 	}
 	
@@ -263,77 +261,43 @@ $tooltip-padding: 5px;
 	}
 }
 
-.drop-down {
-	background-color: #fff;
-	width: 150px;
-	border: 1px solid #ddd;
-	border-radius: $border-radius;
-	padding: 6px 0;
-	position: relative;
-	left: -64px;
-	top: 100%;
-	z-index: 100;
-	display: none;
+.drop-menu {
+	width: 100%;
+	height: 100%;
+	display: table;
+	overflow: hidden;
+	position: fixed;
+	top: 0;
+	z-index: 999999999;
 	
-	&:after, &:before {
-		position: absolute;
-		content: ' ';
-		width: 0;
-		height: 0;
-		border: solid transparent;
-		bottom: 100%;
-		left: 50%;
-		pointer-events: none;
-		list-style-type: none;
-	}
-	
-	&:after {
-		margin-left: -16px;
-		border-bottom-color: #fff;
-		border-width: 16px;
-	}
-	
-	&:before {
-		margin-left: -17.5px;
-		border-bottom-color: #ddd;
-		border-width: 17.5px;
-		bottom: 100%;
-	}
-	
-	.divider {
-		background-color: #ddd;
-		width: 80%;
-		height: 1px;
-		margin: 4px auto;
+	.menu-container {
+		background-color: #fff;
+		border-radius: $border-radius;
+		box-shadow: 6px 6px 8px 2px rgba(0, 0, 0, .2);
+		position: fixed;
+		overflow: hidden;
 	}
 	
 	li {
-		&:not([class]) {
-			height: 24px;
-			text-align: center;
-			font-size: 15px;
+		&.divider {
+			background-color: rgba(0, 0, 0, 0.08);
+			height: 1px;
+			margin: 0 auto;
+		}
+		
+		a {
+			color: inherit;
+			padding: 0.6rem 0.8rem;
+			font-size: .9rem;
+			font-weight: 700;
+			display: block;
+			transition-duration: .1s;
 			
 			&:hover {
 				background-color: #ddd;
-			}
-			
-			a {
-				color: #333;
-				line-height: 24px;
-				text-align: center;
 				text-decoration: none;
-				display: block;
 			}
 		}
-	}
-	
-	.fa {
-		color: #666;
-		margin: 0 -8px;
-		position: relative;
-		left: 32px;
-		float: left;
-		line-height: 24px;
 	}
 }
 
