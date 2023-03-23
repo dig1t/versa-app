@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
-import Provider from 'oidc-provider/lib/index.js'
+import Provider from 'oidc-provider'
 import { Buffer } from 'node:buffer'
 
 import config from '../../../config.js'

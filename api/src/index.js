@@ -1,6 +1,6 @@
-import server from './src/server.js'
-import db from './src/services/db.js'
-import config from './config.js'
+import server from './server.js'
+import db from './services/db.js'
+import config from '../config.js'
 
 db.connect()
 db.instance.once('open', async () => {
