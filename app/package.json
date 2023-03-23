@@ -39,7 +39,7 @@
   "homepage": "https://github.com/dig1t/versa-app#readme",
   "nodemonConfig": {
     "ignore": [
-      "build/*"
+      "dist/*"
     ]
   },
   "globalDependencies": {
