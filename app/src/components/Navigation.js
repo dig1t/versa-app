@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
@@ -8,6 +8,7 @@ import { isHydrated } from '../context/Hydration.js'
 import { defaultAssets } from '../constants/assets.js'
 import Avatar from '../containers/Avatar.js'
 import { Icon } from './UI/index.js'
+import DropMenu from './UI/DropMenu.js'
 // import Logout from '../../containers/Logout.js'
 
 //import { BurgerMenu } from './UI/index.js'
@@ -52,6 +53,8 @@ export const Navigation = () => {
 	const { loggedIn } = isAuthenticated()
 	
 	const profile = useSelector(state => state.user.profile)
+	useEffect(() => console.log(profile),
+	[profile])
 	
 	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />
@@ -88,7 +91,7 @@ export const Navigation = () => {
 				<li className="shortcut avatar">
 					{profile && <Avatar
 						status="online"
-						avatar={profile.avatar}
+						userId={profile.userId}
 						clickRedirect={true}
 					/>}
 				</li>

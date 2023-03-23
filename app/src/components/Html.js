@@ -20,7 +20,7 @@ export default ({ children, assets }) => {
 			<meta name="theme-color" content="#9e15cc" />
 			<link rel="manifest" href="/manifest.json" />
 			
-			<title>{ SEO.title }</title>
+			<title>{SEO.title}</title>
 			<link rel="icon" type="image/png" href="/assets/i/icon@16x16.png" sizes="16x16" />
 			<link rel="icon" type="image/png" href="/assets/i/icon@32x32.png" sizes="32x32" />
 			

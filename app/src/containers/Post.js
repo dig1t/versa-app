@@ -28,7 +28,7 @@ const Post = props => {
 	return <div className="post" data-id={props.postId}>
 		<div className="container">
 			<div className="post-avatar">
-				<Avatar avatar={contentProfile.avatar} />
+				<Avatar userId={contentProfile.userId} />
 			</div>
 			<div className="main">
 				<div className="details">

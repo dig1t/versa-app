@@ -16,6 +16,8 @@ export const addProfile = data => dispatch => dispatch({
 export const getProfile = userId => (dispatch, getState) => {
 	const { profiles } = getState()
 	
+	//if (profiles.requestingUserIds[userId]) return // TODO: IMPLEMENT
+	
 	if (profiles.profileList[userId]) return
 	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
@@ -34,6 +36,8 @@ export const getProfile = userId => (dispatch, getState) => {
 export const getProfileFromUsername = username => (dispatch, getState) => {
 	const { profiles } = getState()
 	
+	//if (profiles.requestingUsernames[username]) return // TODO: IMPLEMENT
+	
 	if (profiles.idsByUsername[username]) return
 	
 	dispatch({ type: PROFILE_FETCH_REQUEST })
@@ -50,8 +54,6 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 }
 
 export const getProfileConnection = userId => (dispatch, getState) => {
-	const { profiles } = getState()
-	
 	api.get('/v1/follow/connection', { userId })
 		.then(data => dispatch({
 			type: PROFILE_CONNECTION_SUCCESS,
