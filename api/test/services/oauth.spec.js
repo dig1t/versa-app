@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser'
 import oauth from '../../src/services/auth/oauth.js'
 import mockUser from '../util/mockUser.js'
 import { MOCK_USER } from '../data.js'
-import config from '../../../config.js'
+import config from '../../config.js'
 
 const server = express()
 
