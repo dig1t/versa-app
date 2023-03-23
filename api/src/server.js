@@ -7,7 +7,7 @@ import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import apiMiddleware from './util/apiMiddleware.js'
 
 import useAPI from './containers/routes.js'
-import config from '../../config.js'
+import config from '../config.js'
 import oauth from './services/auth/oauth.js'
 
 const app = express()

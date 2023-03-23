@@ -6,9 +6,12 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "dev": "babel-watch index.js -w ./src",
-    "start": "set NODE_ENV=production&& node dist/server.js",
-    "test": "set NODE_ENV=development&& mocha",
+    "build": "npx swc ./src/server.js",
+    "dev:compile": "webpack --watch",
+    "dev:watch": "nodemon --watch \"dist/**/*\" -e js ./dist/index.js",
+    "dev": "concurrently \"npm run dev:compile\" \"npm run dev:watch\"",
+    "start": "NODE_ENV=production node dist/server.bundle.js",
+    "test": "NODE_ENV=development&& mocha",
     "lint": "eslint \"**/*.js\" --ignore-pattern node_modules/"
   },
   "repository": {
@@ -33,19 +36,26 @@
     "compression": "^1.7.4",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "helmet": "^6.0.1",
     "mongoose": "^7.0.1",
     "oidc-provider": "^8.1.1"
   },
   "devDependencies": {
+    "@swc/core": "^1.3.42",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
     "chai": "^4.3.7",
     "chai-http": "^4.3.0",
+    "concurrently": "^7.6.0",
+    "dotenv": "^16.0.3",
     "eslint": "^8.35.0",
     "mocha": "^10.2.0",
-    "mongodb-memory-server": "^8.12.0"
+    "mongodb-memory-server": "^8.12.0",
+    "nodemon": "^2.0.22",
+    "swc-loader": "^0.2.3",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1",
+    "webpack-node-externals": "^3.0.0"
   }
 }
