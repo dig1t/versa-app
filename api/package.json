@@ -9,7 +9,7 @@
     "delay": 100
   },
   "scripts": {
-    "build": "webpack --watch",
+    "build": "swc src -D -d dist",
     "dev:compile": "swc src -w -D -d dist",
     "dev:watch": "nodemon --watch \"dist/**/*\" -e js ./dist/index.js",
     "dev": "concurrently \"npm run dev:compile\" \"npm run dev:watch\"",
