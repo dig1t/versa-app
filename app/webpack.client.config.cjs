@@ -11,11 +11,13 @@ const swcOptions = {
 	jsc: {
 		transform: {
 			react: {
-				development: dev,
-				refresh: dev
+				development: true,
+				refresh: true,
+				//runtime: 'automatic'
 			}
 		}
-	}
+	},
+	minify: !dev
 }
 
 module.exports = {
@@ -38,6 +40,7 @@ module.exports = {
 	
 	entry: {
 		main: [
+			dev && 'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
 			path.resolve(__dirname, 'src', 'client.js')
 		].filter(Boolean)
 	},
@@ -45,7 +48,7 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'dist/public/assets/js'),
 		filename: 'bundle.js',
-		publicPath: '/assets',
+		publicPath: '/assets/js/',
 		clean: true
 	},
 	
@@ -55,7 +58,7 @@ module.exports = {
 				test: /\.js$/,
 				exclude: /(node_modules)/,
 				use: [{
-					loader: 'swc-loader',
+					loader: require.resolve('swc-loader'),
 					options: swcOptions
 				}]
 			},

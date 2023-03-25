@@ -16,5 +16,15 @@ module.exports = merge(clientConfig, {
 	output: {
 		path: path.join(__dirname, 'dist/server'),
 		filename: 'server.bundle.js'
+	},
+	
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				exclude: /(node_modules)/,
+				use: ['swc-loader']
+			}
+		]
 	}
 })
