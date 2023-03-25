@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "module": {
+	"type": "commonjs"
+  },
+  "env": {
+    "shippedProposals": true
+  },
+  "jsc": {
+	"parser": {
+	  "syntax": "ecmascript",
+	  "importAssertions": true,
+	  "jsx": true
+	},
+	"target": "es2016",
+	"loose": false,
+	"externalHelpers": true,
+	// Requires v1.2.50 or upper and requires target to be es2016 or upper.
+	"keepClassNames": false,
+	"transform": {
+		"react": {
+			"pragma": "React.createElement",
+			"pragmaFrag": "React.Fragment",
+			"throwIfNamespace": true,
+			"development": false,
+			"useBuiltins": true
+		}
+	}
+  },
+  "minify": false
+}

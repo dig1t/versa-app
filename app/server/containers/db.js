@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import MongoStore from 'connect-mongo'
 
-import config from '../../../config.js'
+import config from '../config.js'
 
 const db = mongoose.connection
 

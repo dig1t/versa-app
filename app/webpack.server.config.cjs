@@ -1,20 +1,20 @@
 const path = require('path')
-const webpackNodeExternals = require('webpack-node-externals')
 const { merge } = require('webpack-merge')
+const webpackNodeExternals = require('webpack-node-externals')
 
-const clientConfig = require('./webpack.client.config.js')
+const clientConfig = require('./webpack.client.config.cjs')
 
 module.exports = merge(clientConfig, {
 	target: 'node',
+	
+	entry: path.resolve(__dirname, 'server', 'index.js'),
 	
 	externalsPresets: { node: true },
 	
 	externals: [ webpackNodeExternals() ],
 	
-	entry: path.resolve(__dirname, 'server', 'index.js'),
-	
 	output: {
-		path: path.join(__dirname, 'dist'),
+		path: path.join(__dirname, 'dist/server'),
 		filename: 'server.bundle.js'
 	}
 })
