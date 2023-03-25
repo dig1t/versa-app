@@ -9,6 +9,7 @@ import path from 'path'
 
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import webpackServerConfig from '../webpack.client.config.cjs'
+
 import serverConfig from './serverConfig.js'
 import config from './config.js'
 import auth from './containers/auth.js'
@@ -24,20 +25,34 @@ const app = express()
 if (app.get('env') === 'development') {
 	webpackServerConfig.entry = {
 		main: [
-			'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true',
+			'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
 			path.resolve(__dirname, '../../src', 'client.js')
 		]
 	}
 	
+	webpackServerConfig.output.path = path.resolve(__dirname, '../public/assets/js')
+	
 	const compiler = webpack(webpackServerConfig)
+	let initialCompile = true
+	
+	compiler.hooks.done.tap('VersaCompiler', stats => {
+		if (initialCompile !== true) console.log('refreshing client...')
+		
+		initialCompile = false
+		
+		return true
+	})
 	
 	app.use(require('webpack-dev-middleware')(compiler, {
-		publicPath: webpackServerConfig.output.publicPath
+		publicPath: webpackServerConfig.output.publicPath,
+		writeToDisk: true,
+		stats: 'none'
 	}))
+	
 	app.use(require('webpack-hot-middleware')(compiler, {
 		log: false,
-		path: '/__webpack_hmr',
-		heartbeat: 10 * 1000
+		path: '/__hot-reload',
+		heartbeat: 1 * 1000
 	}))
 }
 
@@ -123,7 +138,7 @@ db.instance.once('open', () => {
 	
 	/* Route all other traffic to React Renderer */
 	app.get(/^\/(?!auth).*/, async (req, res) => {
-		res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${JSON.stringify(assets)};</script><script src="${assets.bundle}"></script>`)
+		res.write(`<!DOCTYPE html><script>assetManifest=${JSON.stringify(assets)};</script><script src="${assets.bundle}"></script>`)
 		res.end()
 	})
 	
@@ -136,10 +151,5 @@ app.on('ready', () => app.listen(
 ))
 
 app.on('error', error => console.error(error))
-
-process.on('SIGINT', () => console.log('SIGINTSIGINTSIGINTSIGINT'));
-
-// The SIGTERM signal is sent to a process to request its termination.
-process.on('SIGTERM', () => console.log('SIGTERMSIGTERMSIGTERMSIGTERM'));
 
 export default app
