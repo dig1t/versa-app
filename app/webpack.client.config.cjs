@@ -1,16 +1,31 @@
 const webpack = require('webpack')
 const path = require('path')
+const webpackNodeExternals = require('webpack-node-externals')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
-const dotenv = require('dotenv').config({ path: '../.env' })
+const dotenv = require('dotenv').config({ path: '.env' })
 const dev = process.env.NODE_ENV === 'development'
+
+const swcOptions = {
+	sync: true,
+	jsc: {
+		transform: {
+			react: {
+				development: dev,
+				refresh: dev
+			}
+		}
+	}
+}
 
 module.exports = {
 	mode: dev ? 'development' : 'production',
 	
+	target: 'web',
+	
 	cache: !dev,
 	
-	devtool: 'inline-source-map',
+	devtool: dev && 'inline-source-map',
 	
 	watchOptions: {
 		ignored: [
@@ -19,9 +34,10 @@ module.exports = {
 		]
 	},
 	
+	//cleanOnceBeforeBuildPatterns: ['dist/*', '!dist/public'],
+	
 	entry: {
 		main: [
-			'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true',
 			path.resolve(__dirname, 'src', 'client.js')
 		].filter(Boolean)
 	},
@@ -37,14 +53,10 @@ module.exports = {
 		rules: [
 			{
 				test: /\.js$/,
-				exclude: /node_modules/,
+				exclude: /(node_modules)/,
 				use: [{
-					loader: 'babel-loader',
-					options: {
-						plugins: [
-							dev && require.resolve('react-refresh/babel')
-						].filter(Boolean)
-					}
+					loader: 'swc-loader',
+					options: swcOptions
 				}]
 			},
 			{
@@ -62,9 +74,9 @@ module.exports = {
 	},
 	
 	plugins: [
-		new webpack.DefinePlugin({
+		/*new webpack.DefinePlugin({
 			'process.env': JSON.stringify(dotenv.parsed)
-		}),
+		}),*/
 		dev && new webpack.HotModuleReplacementPlugin(),
 		dev && new ReactRefreshPlugin({
 			overlay: {

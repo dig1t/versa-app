@@ -1,6 +1,6 @@
 // @version 1.0.0
 
-import config from '../../../config.js'
+import config from '../config.js'
 import serverConfig from '../serverConfig.js'
 import api from '../../src/util/api.js'
 

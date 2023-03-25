@@ -5,18 +5,30 @@ import helmet from 'helmet'
 import { webpack } from 'webpack'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
+import path from 'path'
 
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
-import webpackServerConfig from '../webpack.client.config.js'
+import webpackServerConfig from '../webpack.client.config.cjs'
 import serverConfig from './serverConfig.js'
-import config from '../../config.js'
+import config from './config.js'
 import auth from './containers/auth.js'
 import db from './containers/db.js'
-import useRequire from './util/require.cjs'
+
+const assets = {
+	bundle: '/assets/js/bundle.js',
+	css: '/assets/css/build.min.css'
+}
 
 const app = express()
 
 if (app.get('env') === 'development') {
+	webpackServerConfig.entry = {
+		main: [
+			'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true',
+			path.resolve(__dirname, '../../src', 'client.js')
+		]
+	}
+	
 	const compiler = webpack(webpackServerConfig)
 	
 	app.use(require('webpack-dev-middleware')(compiler, {
@@ -31,7 +43,7 @@ if (app.get('env') === 'development') {
 
 app.disable('x-powered-by')
 app.use(express.json())
-app.use(express.static('dist/public'))
+app.use(express.static(path.resolve(__dirname, '../public')))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
@@ -110,19 +122,24 @@ db.instance.once('open', () => {
 	}))
 	
 	/* Route all other traffic to React Renderer */
-	app.get(
-		/^\/(?!auth).*/,
-		async (req, res) => await useRequire(req, res)
-	)
+	app.get(/^\/(?!auth).*/, async (req, res) => {
+		res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${JSON.stringify(assets)};</script><script src="${assets.bundle}"></script>`)
+		res.end()
+	})
 	
 	app.emit('ready')
 })
 
 app.on('ready', () => app.listen(
 	config.port,
-	() => console.log(`Server started on port ${config.port}`)
+	() => console.log(`server started on port ${config.port}`)
 ))
 
 app.on('error', error => console.error(error))
+
+process.on('SIGINT', () => console.log('SIGINTSIGINTSIGINTSIGINT'));
+
+// The SIGTERM signal is sent to a process to request its termination.
+process.on('SIGTERM', () => console.log('SIGTERMSIGTERMSIGTERMSIGTERM'));
 
 export default app

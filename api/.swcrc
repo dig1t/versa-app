@@ -11,10 +11,10 @@
       "keepImportAssertions": true
     },
     "parser": {
-    "syntax": "ecmascript",
-    "dynamicImport": false,
-    "topLevelAwait": true,
-    "importAssertions": true
+	  	"syntax": "ecmascript",
+	  	"dynamicImport": false,
+	  	"topLevelAwait": true,
+	  	"importAssertions": true
     },
     "target": "es2022",
     "loose": false,

@@ -2,7 +2,7 @@ import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
-import config from '../../../config.js'
+import config from '../config.js'
 import api from '../../src/util/api.js'
 import authMiddleware, { privateRoute, logout } from '../util/authMiddleware.js'
 import apiMiddleware from '../util/apiMiddleware.js'
