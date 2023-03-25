@@ -1,7 +1,7 @@
 // THIS CONFIG FILE SHOULD NOT BE
 // INCLUDED IN ANY CLIENT CODE
 
-const dev = process.env.NODE_ENV
+import dotenv from 'dotenv'
 
 const domain = 'https://versaapp.co'
 const apiDomain = 'https://api.versaapp.co'
@@ -9,7 +9,11 @@ const apiDomain = 'https://api.versaapp.co'
 const devDomain = 'http://localhost'
 const devApiDomain = 'http://localhost:81'
 
-module.exports = {
+const env = dotenv.config({ path: '.env' }).parsed
+const dev = env.NODE_ENV
+console.log(dev)
+
+export default {
 	port: 80,
 	apiPort: 81,
 	
@@ -23,14 +27,14 @@ module.exports = {
 		refreshToken: 'vrt'
 	},
 	
-	expressSecret: process.env.EXPRESS_SECRET,
+	expressSecret: env.EXPRESS_SECRET,
 	
-	db: dev ? process.env.DEV_DB_URI : process.env.DB_URI,
-	appDB: dev ? process.env.DEV_APP_DB_URI : process.env.APP_DB_URI,
+	db: dev ? env.DEV_DB_URI : env.DB_URI,
+	appDB: dev ? env.DEV_APP_DB_URI : env.APP_DB_URI,
 	
-	client_id: process.env.CLIENT_ID,
-	client_secret: process.env.CLIENT_SECRET,
-	client_secret_original: process.env.CLIENT_SECRET_ORIGINAL,
+	client_id: env.CLIENT_ID,
+	client_secret: env.CLIENT_SECRET,
+	client_secret_original: env.CLIENT_SECRET_ORIGINAL,
 	
 	_domain: domain,
 	_apiDomain: apiDomain,
