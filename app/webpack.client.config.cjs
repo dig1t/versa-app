@@ -27,7 +27,7 @@ module.exports = {
 	
 	cache: !dev,
 	
-	devtool: dev && 'inline-source-map',
+	devtool: false, //dev && 'inline-source-map',
 	
 	watchOptions: {
 		ignored: [

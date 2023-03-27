@@ -105,6 +105,8 @@ class Compiler {
 		console.log(chalk.yellow(`[${this.name}]`), 'restarting server...')
 		
 		return new Promise((resolve, reject) => {
+			if (this.process.killed) return resolve()
+			
 			this.process.on('close', code => {
 				if (code && code > 0) reject(`unexpected error occured during server restart. Exit code: ${code}`)
 				
