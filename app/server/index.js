@@ -8,7 +8,7 @@ import passport from 'passport'
 import path from 'path'
 
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
-import webpackServerConfig from '../webpack.client.config.cjs'
+import webpackClientConfig from '../webpack.client.config.cjs'
 
 import serverConfig from './serverConfig.js'
 import config from './config.js'
@@ -23,16 +23,20 @@ const assets = {
 const app = express()
 
 if (app.get('env') === 'development') {
-	webpackServerConfig.entry = {
-		main: [
-			'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
-			path.resolve(__dirname, '../../src', 'client.js')
-		]
-	}
+	const compiler = webpack({
+		...webpackClientConfig,
+		entry: {
+			main: [
+				'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
+				path.resolve(__dirname, '../../src', 'client.js')
+			]
+		},
+		output: {
+			...webpackClientConfig.output,
+			path: path.resolve(__dirname, '../public/assets/js')
+		}
+	})
 	
-	webpackServerConfig.output.path = path.resolve(__dirname, '../public/assets/js')
-	
-	const compiler = webpack(webpackServerConfig)
 	let initialCompile = true
 	
 	compiler.hooks.done.tap('VersaCompiler', stats => {
@@ -43,12 +47,14 @@ if (app.get('env') === 'development') {
 		return true
 	})
 	
+	// Webpack watcher
 	app.use(require('webpack-dev-middleware')(compiler, {
-		publicPath: webpackServerConfig.output.publicPath,
+		publicPath: webpackClientConfig.output.publicPath,
 		writeToDisk: true,
 		stats: 'none'
 	}))
 	
+	// Socket server
 	app.use(require('webpack-hot-middleware')(compiler, {
 		log: false,
 		path: '/__hot-reload',

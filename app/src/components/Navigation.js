@@ -53,8 +53,6 @@ export const Navigation = () => {
 	const { loggedIn } = isAuthenticated()
 	
 	const profile = useSelector(state => state.user.profile)
-	useEffect(() => console.log(profile),
-	[profile])
 	
 	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />

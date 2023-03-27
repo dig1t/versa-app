@@ -116,7 +116,6 @@ const Profile = () => {
 						/>
 					</div>
 					<div className="details">
-						<span>ads</span>
 						<div className="avatar-container">
 							<Avatar userId={profileData.userId} />
 						</div>
