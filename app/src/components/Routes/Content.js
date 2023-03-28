@@ -20,15 +20,15 @@ import ContentActions from '../../containers/ContentActions.js'
 const feedCategories = [
 	{
 		label: 'Posts',
-		category: 'posts'
+		name: 'posts'
 	},
 	{
 		label: 'Photos',
-		category: 'photos'
+		name: 'photos'
 	},
 	{
 		label: 'Videos',
-		category: 'videos'
+		name: 'videos'
 	}
 ]
 

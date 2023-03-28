@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const path = require('path')
 const webpackNodeExternals = require('webpack-node-externals')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const dotenv = require('dotenv').config({ path: '.env' })
 const dev = process.env.NODE_ENV === 'development'
@@ -25,9 +26,9 @@ module.exports = {
 	
 	target: 'web',
 	
-	cache: !dev,
+	cache: dev,
 	
-	devtool: false, //dev && 'inline-source-map',
+	devtool: dev && 'inline-source-map',
 	
 	watchOptions: {
 		ignored: [
@@ -35,8 +36,6 @@ module.exports = {
 			path.resolve(__dirname, 'dist')
 		]
 	},
-	
-	//cleanOnceBeforeBuildPatterns: ['dist/*', '!dist/public'],
 	
 	entry: {
 		main: [
@@ -58,9 +57,18 @@ module.exports = {
 				test: /\.js$/,
 				exclude: /(node_modules)/,
 				use: [{
-					loader: require.resolve('swc-loader'),
+					loader: 'swc-loader',
 					options: swcOptions
 				}]
+			},
+			{
+				test: /\.css$/i,
+				use: [
+					MiniCssExtractPlugin.loader,
+					'style-loader',
+					'css-loader',
+					'sass-loader'
+				]
 			},
 			{
 				test: /\.svg$/i,
@@ -71,7 +79,16 @@ module.exports = {
 				test: /\.svg$/,
 				//issuer: /\.js$/,
 				resourceQuery: { not: [/url/] },
-				use: ['@svgr/webpack']
+				use: [
+					{
+						loader: 'swc-loader',
+						options: swcOptions
+					},
+					{
+						loader: '@svgr/webpack',
+						options: { babel: false }
+					}
+				]
 			}
 		]
 	},
@@ -80,6 +97,7 @@ module.exports = {
 		/*new webpack.DefinePlugin({
 			'process.env': JSON.stringify(dotenv.parsed)
 		}),*/
+		new MiniCssExtractPlugin(),
 		dev && new webpack.HotModuleReplacementPlugin(),
 		dev && new ReactRefreshPlugin({
 			overlay: {

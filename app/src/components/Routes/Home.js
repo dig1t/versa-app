@@ -9,11 +9,11 @@ import { CatPills } from '../UI/index.js'
 const feedCategories = [
 	{
 		label: 'All',
-		category: 'all'
+		name: 'all'
 	},
 	{
 		label: 'Videos',
-		category: 'videos'
+		name: 'videos'
 	}
 ]
 
@@ -28,8 +28,8 @@ const Home = () => <Layout page="home">
 					<CatPills
 						pills={feedCategories}
 						default="all"
-						handleSelection={type => {
-							console.log('selected pill of type:', type)
+						handleSelection={category => {
+							console.log('selected pill of type:', category.name)
 						}}
 					/>
 					<div className="box">
