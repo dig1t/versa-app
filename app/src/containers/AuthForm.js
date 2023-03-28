@@ -58,11 +58,10 @@ const AuthForm = props => {
 				}
 			})
 				.then(data => {
-					if (hydrated) {
-						if (props.handleResult) props.handleResult(true, data)
-						
-						setRedirect(true)
-					}
+					if (!hydrated) return
+					if (props.handleResult) props.handleResult(true, data)
+					
+					setRedirect(true)
 				})
 				.catch(error => {
 					if (hydrated) {

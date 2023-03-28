@@ -21,15 +21,15 @@ import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 const feedCategories = [
 	{
 		label: 'Posts',
-		category: 'posts'
+		name: 'posts'
 	},
 	{
 		label: 'Photos',
-		category: 'photos'
+		name: 'photos'
 	},
 	{
 		label: 'Videos',
-		category: 'videos'
+		name: 'videos'
 	}
 ]
 
@@ -157,8 +157,8 @@ const Profile = () => {
 						pills={feedCategories}
 						default={profileData.defaultCategory || 'posts'}
 						squared
-						handleSelection={type => {
-							console.log('selected pill of type:', type)
+						handleSelection={category => {
+							console.log('selected pill of type:', category.name)
 						}}
 					/>
 					<Feed userId={profileData.userId} />
