@@ -16,26 +16,14 @@ import auth from './containers/auth.js'
 import db from './containers/db.js'
 
 const assets = {
-	bundle: '/assets/js/bundle.js',
-	css: '/assets/css/build.min.css'
+	bundle: '/assets/client/bundle.js',
+	styles: '/assets/client/styles.css'
 }
 
 const app = express()
 
 if (app.get('env') === 'development') {
-	const compiler = webpack({
-		...webpackClientConfig,
-		entry: {
-			main: [
-				'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
-				path.resolve(__dirname, '../../src', 'client.js')
-			]
-		},
-		output: {
-			...webpackClientConfig.output,
-			path: path.resolve(__dirname, '../public/assets/js')
-		}
-	})
+	const compiler = webpack(webpackClientConfig)
 	
 	let initialCompile = true
 	
@@ -144,7 +132,16 @@ db.instance.once('open', () => {
 	
 	/* Route all other traffic to React Renderer */
 	app.get(/^\/(?!auth).*/, async (req, res) => {
-		res.write(`<!DOCTYPE html><script>assetManifest=${JSON.stringify(assets)};</script><script src="${assets.bundle}"></script>`)
+		res.write(
+`<!DOCTYPE html>
+<head>
+<link href="${assets.styles}" rel="stylesheet">
+</head>
+<body>
+	<div id="root"></div>
+	<script>assetManifest=${JSON.stringify(assets)};</script>
+	<script src="${assets.bundle}"></script>
+</body>`)
 		res.end()
 	})
 	

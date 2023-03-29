@@ -86,7 +86,12 @@ class Compiler {
 		
 		this.process = spawn(
 			'node',
-			[filePath]
+			[filePath],
+			{
+				env: {
+					...process.env
+				}
+			}
 		)
 		
 		this.process.stdout.on('data', data => {
