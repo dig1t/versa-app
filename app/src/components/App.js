@@ -10,7 +10,7 @@ import { FetchInitialData } from '../containers/FetchInitialData.js'
 import { HydrationProvider } from '../context/Hydration.js'
 import Loading from './Loading.js'
 
-import '../styles/main.sass'
+import '../styles/main.scss'
 
 const store = createStore()
 

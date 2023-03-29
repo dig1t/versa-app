@@ -1,11 +1,13 @@
 const path = require('path')
-const { merge } = require('webpack-merge')
 const webpackNodeExternals = require('webpack-node-externals')
 
-const clientConfig = require('./webpack.client.config.cjs')
+const dotenv = require('dotenv').config({ path: '.env' })
+const dev = dotenv.parsed.NODE_ENV === 'development'
 
-module.exports = merge(clientConfig, {
+module.exports = {
 	target: 'node',
+	
+	cache: dev,
 	
 	entry: path.resolve(__dirname, 'server', 'index.js'),
 	
@@ -26,5 +28,7 @@ module.exports = merge(clientConfig, {
 				use: ['swc-loader']
 			}
 		]
-	}
-})
+	},
+	
+	plugins: []
+}

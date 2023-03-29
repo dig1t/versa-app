@@ -1,11 +1,10 @@
 const webpack = require('webpack')
 const path = require('path')
-const webpackNodeExternals = require('webpack-node-externals')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const dotenv = require('dotenv').config({ path: '.env' })
-const dev = process.env.NODE_ENV === 'development'
+const dev = dotenv.parsed.NODE_ENV === 'development'
 
 const swcOptions = {
 	sync: true,
@@ -40,14 +39,14 @@ module.exports = {
 	entry: {
 		main: [
 			dev && 'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
-			path.resolve(__dirname, 'src', 'client.js')
+			path.resolve(__dirname, dev ? '../../src' : 'src', 'client.js')
 		].filter(Boolean)
 	},
 	
 	output: {
-		path: path.join(__dirname, 'dist/public/assets/js'),
+		path: path.join(__dirname, dev ? '../public/assets/client' : 'dist/public/assets/client'),
 		filename: 'bundle.js',
-		publicPath: '/assets/js/',
+		publicPath: '/assets/client',
 		clean: true
 	},
 	
@@ -62,16 +61,23 @@ module.exports = {
 				}]
 			},
 			{
-				test: /\.css$/i,
+				test: /\.scss$/,
 				use: [
 					MiniCssExtractPlugin.loader,
-					'style-loader',
-					'css-loader',
+					{
+						loader: 'css-loader',
+						options: {
+							url: false,
+							//modules: true,
+							sourceMap: false,
+							importLoaders: 1
+						}
+					},
 					'sass-loader'
 				]
 			},
 			{
-				test: /\.svg$/i,
+				test: /\.svg$/,
 				type: 'asset',
 				resourceQuery: /url/ // *.svg?url
 			},
@@ -94,10 +100,10 @@ module.exports = {
 	},
 	
 	plugins: [
-		/*new webpack.DefinePlugin({
-			'process.env': JSON.stringify(dotenv.parsed)
-		}),*/
-		new MiniCssExtractPlugin(),
+		new MiniCssExtractPlugin({
+			filename: 'styles.css',
+			chunkFilename: '[id].[contenthash].css'
+		}),
 		dev && new webpack.HotModuleReplacementPlugin(),
 		dev && new ReactRefreshPlugin({
 			overlay: {
