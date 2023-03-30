@@ -28,7 +28,5 @@ module.exports = {
 				use: ['swc-loader']
 			}
 		]
-	},
-	
-	plugins: []
+	}
 }

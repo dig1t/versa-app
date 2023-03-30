@@ -19,4 +19,5 @@ node_modules/
 # Compiled
 dist/*
 !dist/public
-dist/public/assets/client
+dist/public/assets/js
+dist/public/assets/css
