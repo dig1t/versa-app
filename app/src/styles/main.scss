@@ -8,6 +8,7 @@ $primary-color-name: 'blue';
 @import 'components/content';
 @import 'components/landing';
 @import 'components/profile';
+@import 'components/settings';
 
 :root {
 	--primary-color: #{color(blue)};
