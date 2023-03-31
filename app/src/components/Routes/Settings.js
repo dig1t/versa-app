@@ -10,7 +10,7 @@ import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
 import { CatPills, Icon } from '../UI/index.js'
 
-const pageCategories = [
+const settingsConfig = [
 	{
 		label: 'Account',
 		name: 'account',
@@ -39,7 +39,7 @@ const pageCategories = [
 				endpoint: '/v1/user/email'
 			},
 			{
-				name: 'Private Profile',
+				name: 'Private Profila',
 				description: 'Your profile will only be visible to mutual followers',
 				default: false,
 				type: 'bool',
@@ -73,14 +73,50 @@ Setting.propTypes = {
 }
 
 const SettingsPage = ({ config, data }) => {
+	const [expanded, setExpanded] = useState([])
+	
+	const toggleAccordion = index => {
+		const newExpanded = [...expanded]
+		
+		newExpanded[index] = !newExpanded[index]
+		
+		setExpanded(newExpanded)
+	}
+	
+	useEffect(() => {
+		// Clear expanded indexes once the page changes
+		setExpanded([])
+	}, [config])
+	
 	return <div className="settings-page">
-		<div className="heading">{config.label}</div>
+		<div className="title">{config.label}</div>
+		<ul>
+			{config.settings && config.settings.map((setting, index) => (
+				<li key={index} className={classNames(
+					'accordion',
+					expanded[index] && 'expanded'
+				)}>
+					<div className="accordion-top" onClick={() => toggleAccordion(index)}>
+						<span>
+							<span className="name">{setting.name}</span>
+						</span>
+						<span>
+							<span className="preview">dig1t@versa.co</span>
+							<Icon name="chevron" rot={expanded[index] && 90} />
+						</span>
+					</div>
+					<div className="accordion-content">
+						<div>fewsd</div>
+					</div>
+				</li>
+			))}
+		</ul>
 	</div>
 }
 
 SettingsPage.propTypes = {
 	config: PropTypes.object.isRequired,
-	data: PropTypes.object.isRequired
+	data: PropTypes.object
 }
 
 const Settings = () => {
@@ -111,23 +147,21 @@ const Settings = () => {
 	}
 	
 	return <Layout page="settings">
-		{settingsData !== null && <div className="wrap">
-			<div className="grid">
-				<div className="col-4 col-desktop-4">
-					<div className="heading">Settings</div>
-					<CatPills
-						pills={pageCategories}
-						default={pageCategories[0].name}
-						squared
-						handleSelection={handleSelection}
-					/>
-				</div>
-				<div className="col-8 col-desktop-8">
-					{category !== undefined && settingsData[category.name] && <SettingsPage
-						config={category}
-						data={settingsData[category.name]}
-					/>}
-				</div>
+		{settingsData !== null && <div className="wrap grid">
+			<div className="settings-categories col-4 col-desktop-4">
+				<div className="heading">Settings</div>
+				<CatPills
+					pills={settingsConfig}
+					default={settingsConfig[0].name}
+					squared
+					handleSelection={handleSelection}
+				/>
+			</div>
+			<div className="settings-page col-8 col-desktop-8">
+				{category !== undefined && <SettingsPage
+					config={category}
+					data={settingsData[category.name]}
+				/>}
 			</div>
 		</div>}
 	</Layout>

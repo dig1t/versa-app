@@ -24,8 +24,9 @@ main[data-theme="light"] {
 	--box-color: #fff;
 	--box-color-dark: #{color(blue-gray, 50)};
 	--color-white: #fff;
+	--color-off-white: #f5f5f5;
 	--color-black: #000;
-	--text-color: #{color(black, 800)};
+	--text-color: #{color(blue-gray, 900)};
 	--text-color-secondary: #{color(blue-gray, 400)};
 	--text-color-light: #{color(blue-gray, 200)};
 }
@@ -271,7 +272,7 @@ main {
 		> .wrap {
 			max-width: var(--max-box-size);
 			display: flex;
-			gap: var(--box-spacing);
+			//gap: var(--box-spacing);
 			align-content: flex-start;
 		}
 	}

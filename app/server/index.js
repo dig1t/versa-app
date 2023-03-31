@@ -16,8 +16,8 @@ import auth from './containers/auth.js'
 import db from './containers/db.js'
 
 const assets = {
-	bundle: '/assets/js/bundle.js',
-	styles: '/assets/css/styles.css'
+	bundle: '/assets/client/bundle.js',
+	styles: '/assets/client/styles.css'
 }
 
 const app = express()
