@@ -66,7 +66,7 @@ div.grid {
 }
 
 // Create normal columns and offsets first
-@for $i from $grid-columns through 1 {
+@for $i from $grid-columns through 0 {
 	$property: #{'.col-'}#{$i};
 	$width: percentage(calc($i / $grid-columns));
 	
@@ -94,7 +94,7 @@ div.grid {
 	$width: percentage(calc($i / $grid-columns));
 	
 	@include breakpoint(phone-large, 'max-width') {
-		@if $i > 0 {
+		@if $i > -1 {
 			div.col-phone-#{$i} {
 				flex-basis: $width;
 			}
@@ -106,12 +106,12 @@ div.grid {
 	@each $breakpoint, $prefix in $grid-breakpoints {
 		$col-prop: #{'div.col-'}#{$prefix}#{'-'}#{$i};
 		
-		@if $i > 0 {
+		@if $i > -1 {
 			$columns: append($columns, #{$col-prop}, comma);
 		}
 		
 		@include breakpoint($breakpoint, 'min-width') {
-			@if $i > 0 {
+			@if $i > -1 {
 				#{$col-prop} {
 					flex-basis: $width;
 				}

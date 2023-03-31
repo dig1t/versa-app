@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -10,22 +10,28 @@ const Icon = props => {
 	const { name, scale, hidden } = props
 	const iconName = iconAlias[name] || name
 	
-	const renderIcon = useCallback(() => {
-		const SVGImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
+	const SVGImport = React.memo(() => {
+		const _svgImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
 		
-		return <i
-			className={classNames(
-				'icon',
-				`icon-${iconName}`,
-				scale && `icon-${scale}`
-			)}
-			aria-hidden="true"
-		>
-			<SVGImport />
-		</i>
-	}, [])
+		return <_svgImport />
+	})
 	
-	return !hidden && renderIcon()
+	const _svgImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
+	
+	return !hidden && <i
+		className={classNames(
+			'icon',
+			`icon-${iconName}`,
+			scale && `icon-${scale}`
+		)}
+		aria-hidden="true"
+	>
+		<_svgImport
+			style={{
+				transform: typeof props.rot === 'number' && `rotate(${props.rot}deg)`
+			}}
+		/>
+	</i>
 }
 
 Icon.propTypes = {

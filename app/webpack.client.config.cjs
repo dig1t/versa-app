@@ -44,9 +44,9 @@ module.exports = {
 	},
 	
 	output: {
-		path: path.join(__dirname, dev ? '../public/assets' : 'dist/public/assets'),
-		filename: 'js/bundle.js',
-		publicPath: '/assets',
+		path: path.join(__dirname, dev ? '../public/assets/client' : 'dist/public/assets/client'),
+		filename: 'bundle.js',
+		publicPath: '/assets/client',
 		clean: true
 	},
 	
@@ -101,8 +101,8 @@ module.exports = {
 	
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: 'css/styles.css',
-			chunkFilename: 'css/[id].[contenthash].css'
+			filename: 'styles.css',
+			chunkFilename: '[id].[contenthash].css'
 		}),
 		dev && new webpack.HotModuleReplacementPlugin(),
 		dev && new ReactRefreshPlugin({
