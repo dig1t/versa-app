@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: none;
-        stroke: #000;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 9.27px;
-      }
-    </style>
-  </defs>
-  <path id="Checkmark" class="cls-1" d="M12.55,30.14l11.73,11.73c1.37,1.37,3.58,1.37,4.95,0l22.22-22.22"/>
+  <g id="Checkmark">
+    <path d="M26.76,47.53c-2.17,0-4.22-.85-5.75-2.38l-11.73-11.73c-1.81-1.81-1.81-4.75,0-6.55,1.81-1.81,4.75-1.81,6.55,0l10.93,10.92,21.41-21.41c1.81-1.81,4.75-1.81,6.55,0,1.81,1.81,1.81,4.75,0,6.55l-22.22,22.22c-1.54,1.54-3.58,2.38-5.75,2.38Z"/>
+  </g>
 </svg>
