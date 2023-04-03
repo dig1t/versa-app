@@ -270,6 +270,10 @@ $tooltip-padding: .4rem;
 	top: 0;
 	z-index: 999999999;
 	
+	&-trigger {
+		cursor: pointer;
+	}
+	
 	.menu-container {
 		background-color: #fff;
 		border-radius: $border-radius;
