@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
@@ -10,7 +11,7 @@ const ItemMenu = props => {
 
 const Item = props => {
 	return <li>
-		<a href={props.link}>{props.children}</a>
+		<Link to={props.link}>{props.children}</Link>
 	</li>
 }
 

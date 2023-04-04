@@ -15,10 +15,10 @@ const CommentEditor = props => {
 		setData({ text: '' })
 		
 		api.post(`/v1/content/${props.contentId}/comment`, { body })
-			.then(data => {
+			.then(response => {
 				if (!props.handleSuccess) return
 				
-				props.handleSuccess(data)
+				props.handleSuccess(response)
 			})
 	}
 	
