@@ -4,6 +4,17 @@ import PropTypes from 'prop-types'
 
 import { validateText } from '../../util/index.js'
 
+const optionsToObject = options => options.reduce((result, [label, value]) => {
+	return {
+		...result,
+		[value]: false
+	}
+}, {})
+
+const haveSameKeys = (obj1, obj2) =>
+	Object.keys(obj1).length === Object.keys(obj2).length &&
+	Object.keys(obj1).every(key => obj2.hasOwnProperty(key))
+
 /* use Input for easy validation
 ** boolean optional - by default all inputs are required unless specified as optional
 ** array options
@@ -11,7 +22,9 @@ import { validateText } from '../../util/index.js'
 ** string validateFor - type of text to validate (util/validateText) */
 const Input = props => {
 	const [errorText, setErrorText] = useState(null)
-	const [value, setValue] = useState('')
+	const [value, setValue] = useState(
+		props.type === 'checkboxes' ? optionsToObject(props.options) : props.value
+	)
 	const [visibleValue, setVisibleValue] = useState('')
 	const [isValid, setIsValid] = useState(
 		props.optional || (!(
@@ -25,7 +38,30 @@ const Input = props => {
 	useEffect(() => props.handleValueChange(value), [value])
 	
 	useEffect(() => {
-		setValue(props.value)
+		switch(props.type) {
+			case 'text': case 'textarea': case 'selectButtons':
+				if (typeof props.value !== 'string') return
+				
+				setValue(props.value)
+				
+				break;
+			case 'checkboxes':
+				if (haveSameKeys(props.value, optionsToObject(props.options))) return
+				
+				setValue(
+					optionsToObject(props.options)
+				)
+				break
+			case 'select':
+				if (!props.value instanceof Array) {
+					setValue([])
+				} else {
+					setValue(props.value)
+				}
+			case 'selectButtons':
+				break
+		}
+		
 		setVisibleValue(props.value)
 		validate(props.value)
 	}, [props.value])
@@ -70,11 +106,28 @@ const Input = props => {
 				}
 				
 				break
-			case 'checkboxes': case 'select': case 'selectButtons':
+			case 'select':
+				newValue.map(newOption => {
+					const optionExists = props.options.find(option => option[1] === newOption)
+					
+					// Make sure user didn't manually change the value
+					if (!optionExists) {
+						validity = false
+					}
+				})
+				
+				break
+			case 'selectButtons':
 				const optionExists = props.options.find(option => option[1] === newValue)
 				
 				// Make sure user didn't manually change the value
-				if (!optionExists) validity = false
+				if (!optionExists) {
+					validity = false
+				}
+				
+				break
+			case 'checkboxes':
+				// TODO
 				
 				break
 		}
@@ -85,13 +138,13 @@ const Input = props => {
 			props.handleValidity(validity)
 			setIsValid(validity)
 		}
-	}, [value, props.value])
+	}, [value, props.value, props.type])
 	
-	const handleChange = useCallback(event => {
+	const handleChange = event => {
 		setValue(event.target.value)
 		setVisibleValue(event.target.value)
 		validate()
-	})
+	}
 	
 	// TODO: Swap this with handleChange?
 	const handleKeyDown = useCallback(event => {
@@ -133,29 +186,23 @@ const Input = props => {
 					}}
 					value={visibleValue}
 				/>
-			case 'checkboxes':
-				return <>
-					{props.options.map(option => <label
-						className={classNames(value === option[1] && 'selected')}
-						key={option[1]}
-					>
-						<input {...attributes}
-							type="checkbox"
-							value={option[1]}
-							onChange={handleChange}
-							checked={value === option[1]}
-							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
-						/>
-						<span>{option[0]}</span>
-					</label>)}
-				</>
 			case 'select': // [Label, Value]
-				return <select {...attributes} multiple={props.multiple}>
+				return <select
+					{...attributes}
+					multiple={props.multiple}
+					value={value}
+					onChange={event => {
+						setValue(
+							[...event.target.selectedOptions].map(option => {
+								return option.value
+							})
+						)
+						validate()
+					}}
+				>
 					{props.options.map(option => <option
 						key={option[1]}
 						value={option[1]}
-						onChange={handleChange}
-						defaultValue={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
 					>
 						{option[0]}
 					</option>)}
@@ -192,6 +239,31 @@ const Input = props => {
 					}}
 					value={visibleValue}
 				/>
+			case 'checkboxes':
+				return <>
+					{props.options.map(option => <label
+						className={classNames(
+							value === option[1] && 'selected',
+							`input-checkbox-${props.checkboxStyle}`
+						)}
+						key={option[1]}
+					>
+						<input {...attributes}
+							type="checkbox"
+							value={option[1]}
+							onChange={event => {
+								setValue({
+									...value,
+									[option[1]]: event.target.checked
+								})
+								validate()
+							}}
+							checked={value[option[1]] === true}
+							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+						/>
+						<span>{option[0]}</span>
+					</label>)}
+				</>
 		}
 	})
 	
@@ -223,7 +295,8 @@ Input.defaultProps = {
 	wrap: false,
 	value: '',
 	autoFocus: false,
-	displayError: true
+	displayError: true,
+	checkboxStyle: 'box' // box or slider
 }
 
 Input.propTypes = {
@@ -236,7 +309,8 @@ Input.propTypes = {
 	validateFor: PropTypes.string,
 	defaultValue: PropTypes.string,
 	wrap: PropTypes.bool,
-	displayError: PropTypes.bool
+	displayError: PropTypes.bool,
+	checkboxStyle: PropTypes.string
 }
 
 export default Input
