@@ -1,23 +1,29 @@
 .settings {
+	> .wrap {
+		flex-wrap: nowrap;
+	}
+	
 	.heading {
 		font-weight: $font-black;
-		font-size: 1.8rem;
+		font-size: 1.6rem;
 	}
 	
 	.settings-categories {
+		border-right: 1px solid var(--divider-color);
 		display: flex;
 		flex-direction: column;
-		gap: 2.2rem;
+		gap: 2rem;
 		
 		.cat-pills {
 			flex-direction: column;
+			gap: 0;
 			
 			.pill {
 				color: var(--text-color);
 				background-color: transparent;
 				border-radius: 0;
 				text-align: left;
-				font-size: 1.1rem;
+				font-size: 1rem;
 				font-weight: $font-bold;
 				letter-spacing: .01rem;
 				
@@ -34,16 +40,29 @@
 	}
 	
 	.settings-page {
-		.title {
+		> .header {
 			padding: 0 2rem;
-			font-size: 1.4rem;
-			font-weight: $font-bold;
+			padding-top: .3rem;
+			
+			.title {
+				font-size: 1.4rem;
+				font-weight: $font-black;
+			}
+			
+			.description {
+				color: var(--blue-gray-500);
+				margin-top: .2rem;
+				font-size: .8rem;
+				letter-spacing: .01rem;
+			}
 		}
 		
 		ul {
 			margin-top: 1.2rem;
 			
-			li.accordion {
+			.accordion {
+				border-top: 1px solid var(--divider-color);
+				padding: .4rem 0;
 				overflow: hidden;
 				
 				& > * {
@@ -59,6 +78,7 @@
 					cursor: pointer;
 					display: flex;
 					justify-content: space-between;
+					font-size: 1rem;
 					
 					> span {
 						display: flex;
@@ -66,26 +86,44 @@
 					}
 					
 					.name {
-						font-size: 1.2rem;
-						font-weight: $font-semibold;
+						font-weight: $font-bold;
 					}
 					
 					.preview {
-						color: var(--blue-gray-600);
+						color: var(--blue-gray-200);
 						margin-right: .4rem;
-						font-size: 1rem;
-						font-weight: $font-semibold;
+						font-weight: $font-regular;
 						letter-spacing: -.01rem;
 					}
 					
-					.icon svg {
-						transition-duration: .1s;
+					.icon {
+						color: var(--blue-gray-600);
+						height: 1.4rem;
+						
+						svg {
+							transition-duration: .1s;
+						}
 					}
 				}
 				
 				.accordion-content {
 					height: 0;
 					overflow: hidden;
+					
+					.description {
+						color: var(--blue-gray-500);
+						padding-bottom: .2rem;
+						font-size: .8rem;
+						letter-spacing: .01rem;
+					}
+					
+					.inputs {
+						margin-top: .6rem;
+					}
+					
+					.actions {
+						margin: .6rem 0;
+					}
 				}
 			}
 		}

@@ -8,7 +8,7 @@ import { isHydrated } from '../context/Hydration.js'
 import { defaultAssets } from '../constants/assets.js'
 import Avatar from '../containers/Avatar.js'
 import { Icon } from './UI/index.js'
-import DropMenu from './UI/DropMenu.js'
+import DropMenu, { ItemMenu, Item, ItemDivider } from './UI/DropMenu.js'
 // import Logout from '../../containers/Logout.js'
 
 //import { BurgerMenu } from './UI/index.js'
@@ -54,6 +54,13 @@ export const Navigation = () => {
 	
 	const profile = useSelector(state => state.user.profile)
 	
+	const Menu = <ItemMenu>
+		<Item link={`/@${profile.username}`}>My Profile</Item>
+		<ItemDivider />
+		<Item link="/settings">Settings</Item>
+		<Item link="/logout">Logout</Item>
+	</ItemMenu>
+	
 	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />
 		<div className="container">
@@ -80,18 +87,23 @@ export const Navigation = () => {
 				<Shortcut icon="home" redirect="/home" />
 				<Shortcut icon="message" redirect="/chat" />
 				
-				<NavButton type="action">
-					<Icon name="new-post" />
+				<NavButton type="new-post">
+					<Icon name="plus" />
 				</NavButton>
 			</ul>
 			
 			<ul className="shortcuts user-shortcuts">
 				<li className="shortcut avatar">
-					{profile && <Avatar
-						status="online"
-						userId={profile.userId}
-						clickRedirect={true}
-					/>}
+					<DropMenu
+						menu={Menu}
+						sideOffset={-20}
+						position='right'
+					>
+						{profile && <Avatar
+							status="online"
+							userId={profile.userId}
+						/>}
+					</DropMenu>
 				</li>
 			</ul>
 		</div>

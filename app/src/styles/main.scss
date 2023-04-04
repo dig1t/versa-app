@@ -26,6 +26,7 @@ main[data-theme="light"] {
 	--color-white: #fff;
 	--color-off-white: #f5f5f5;
 	--color-black: #000;
+	--divider-color: var(--blue-gray-50);
 	--text-color: #{color(blue-gray, 900)};
 	--text-color-secondary: #{color(blue-gray, 400)};
 	--text-color-light: #{color(blue-gray, 200)};
@@ -50,8 +51,8 @@ button, a.btn {
 	color: var(--color-white);
 	background-color: $primary-color;
 	border-radius: $border-radius;
-	padding: .6rem 1.2rem;
-	font-size: type-scale(0);
+	padding: .5rem 1.2rem;
+	font-size: .8rem;
 	font-weight: $font-bold;
 	transition-duration: .2s;
 	
@@ -91,12 +92,12 @@ button, a.btn {
 		&-primary {
 			background-color: var(--primary-color);
 			
-			&:hover {
+			&:not(.btn-disabled):hover {
 				background-color: $btn-primary-hover;
 				text-decoration: none;
 			}
 			
-			&:active {
+			&:not(.btn-disabled):active {
 				background-color: $btn-primary-active;
 			}
 		}
@@ -116,6 +117,15 @@ button, a.btn {
 				color: $btn-secondary-active;
 				border-color: $btn-secondary-active;
 			}
+		}
+		
+		&-borderless {
+			border: 0;
+		}
+		
+		&-disabled {
+			background-color: var(--blue-gray-100);
+			cursor: default;
 		}
 	}
 	
@@ -188,7 +198,7 @@ main {
 				}
 				
 				&.divider {
-					background-color: var(--box-color-dark);
+					background-color: var(--divider-color);
 					width: 70%;
 					height: 1px;
 					margin: auto;
@@ -216,7 +226,7 @@ main {
 					height: 100%;
 				}
 				
-				&.action, &.shortcut {
+				&.new-post, &.shortcut {
 					padding: 0 .5rem;
 				}
 				
@@ -255,6 +265,17 @@ main {
 					
 					&.avatar {
 						padding: .6rem;
+					}
+				}
+				
+				&.new-post .wrap {
+					background-color: var(--primary-color);
+					border-radius: 999rem;
+					cursor: pointer;
+					
+					.icon {
+						color: #fff;
+						padding: .4rem;
 					}
 				}
 			}

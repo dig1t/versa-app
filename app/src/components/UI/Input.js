@@ -27,7 +27,7 @@ const Input = props => {
 	useEffect(() => {
 		setValue(props.value)
 		setVisibleValue(props.value)
-		validate()
+		validate(props.value)
 	}, [props.value])
 	
 	useEffect(() => {
@@ -37,33 +37,46 @@ const Input = props => {
 		}
 	}, [])
 	
-	const validate = useCallback(text => {
-		if (!text) text = value
+	const validate = useCallback(newValue => {
+		if (!newValue) newValue = value
 		
 		let validity = true
 		
-		if (props.optional || ( // optional and 1+ characters exist
-			props.optional === false &&
-			text.length >= (props.minLength || 0) &&
-			text.length <= (props.maxLength || -Math.max()) &&
-			text !== '' // not optional and is in between given min/max length
-		)) {
-			if (text.length > 0) {
-				validity = validateText(text, props.validateFor)
-				if (!validity) setErrorText(`${props.validateFor} required`)
-			}
-		} else {
-			validity = false
-			
-			if (text.length !== 0 && text.length <= (props.minLength - 1 || 0)) setErrorText(
-				`${props.validateFor} is too short (${props.minLength} characters)`
-			)
-			
-			if (text.length === 0) setErrorText(`missing ${props.validateFor}`)
-			
-			if (props.maxLength && text.length >= (props.maxLength + 1 || 0)) setErrorText(
-				`${props.validateFor} is too long (${props.maxLength} characters)`
-			)
+		switch(props.type) {
+			case 'text': case 'textarea':
+				if (props.optional || ( // optional and 1+ characters exist
+					props.optional === false &&
+					newValue.length >= (props.minLength || 0) &&
+					newValue.length <= (props.maxLength || -Math.max()) &&
+					newValue !== '' // not optional and is in between given min/max length
+				)) {
+					if (newValue.length > 0) {
+						validity = validateText(newValue, props.validateFor)
+						
+						if (!validity) setErrorText(`${props.validateFor} required`)
+					}
+				} else {
+					validity = false
+					
+					if (newValue.length !== 0 && newValue.length <= (props.minLength - 1 || 0)) setErrorText(
+						`${props.validateFor} is too short (${props.minLength} characters)`
+					)
+					
+					if (newValue.length === 0) setErrorText(`missing ${props.validateFor}`)
+					
+					if (props.maxLength && newValue.length >= (props.maxLength + 1 || 0)) setErrorText(
+						`${props.validateFor} is too long (${props.maxLength} characters)`
+					)
+				}
+				
+				break
+			case 'checkboxes': case 'select': case 'selectButtons':
+				const optionExists = props.options.find(option => option[1] === newValue)
+				
+				// Make sure user didn't manually change the value
+				if (!optionExists) validity = false
+				
+				break
 		}
 		
 		if (validity) setErrorText(null)
@@ -72,7 +85,7 @@ const Input = props => {
 			props.handleValidity(validity)
 			setIsValid(validity)
 		}
-	}, [value])
+	}, [value, props.value])
 	
 	const handleChange = useCallback(event => {
 		setValue(event.target.value)
@@ -120,34 +133,52 @@ const Input = props => {
 					}}
 					value={visibleValue}
 				/>
-			case 'select':
-				return <select {...attributes} multiple={props.multiple}>
-					{props.options.map(option => {
-						return <option
-							key={option[1]}
-							value={option[1]}
-							onChange={event => setValue(event.value)}
-							defaultValue={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}>
-							{option[0]}
-						</option>
-					})}
-				</select>
-			case 'selectButtons':
+			case 'checkboxes':
 				return <>
-					{props.options.map(option => {
-						return <label className={classNames(value === option[1] && 'selected')} key={option[1]}>
-							<input {...attributes}
-								type="radio"
-								value={option[1]}
-								onChange={event => setValue(event.value)}
-								defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
-							/>
-							<span>{option[0]}</span>
-						</label>
-					})}
+					{props.options.map(option => <label
+						className={classNames(value === option[1] && 'selected')}
+						key={option[1]}
+					>
+						<input {...attributes}
+							type="checkbox"
+							value={option[1]}
+							onChange={handleChange}
+							checked={value === option[1]}
+							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+						/>
+						<span>{option[0]}</span>
+					</label>)}
 				</>
-			default:
-				return <input {...attributes}
+			case 'select': // [Label, Value]
+				return <select {...attributes} multiple={props.multiple}>
+					{props.options.map(option => <option
+						key={option[1]}
+						value={option[1]}
+						onChange={handleChange}
+						defaultValue={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+					>
+						{option[0]}
+					</option>)}
+				</select>
+			case 'selectButtons': // [Label, Value]
+				return <>
+					{props.options.map(option => <label
+						className={classNames(value === option[1] && 'selected')}
+						key={option[1]}
+					>
+						<input {...attributes}
+							type="radio"
+							value={option[1]}
+							onChange={handleChange}
+							checked={value === option[1]}
+							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+						/>
+						<span>{option[0]}</span>
+					</label>)}
+				</>
+			case 'text':
+				return <input
+					{...attributes}
 					type={props.type}
 					className={classNames(!props.inlineLabel && 'input-text')}
 					onKeyDown={handleKeyDown}
@@ -171,7 +202,7 @@ const Input = props => {
 		isValid === false && 'error',
 		isValid && 'input-ok',
 		props.inlineLabel && 'inline-label',
-		(focused || value.length > 0) && 'input-focused'
+		focused && 'input-focused'
 	)}>
 		{wrapInput ? <label>
 			{props.label && <span>{props.label}</span>}

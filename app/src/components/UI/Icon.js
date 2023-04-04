@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
 const iconAlias = {
-	like: 'heart',
+	like: 'heart'
 }
 
 const Icon = props => {
@@ -22,7 +22,7 @@ const Icon = props => {
 		className={classNames(
 			'icon',
 			`icon-${iconName}`,
-			scale && `icon-${scale}`
+			//scale && `icon-${scale}`
 		)}
 		aria-hidden="true"
 	>
