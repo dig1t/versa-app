@@ -33,7 +33,7 @@ const AuthForm = props => {
 	}, [validInputs])
 	
 	useEffect(() => {
-		props.inputProps.map(input => {
+		props.inputs.map(input => {
 			setFormData({
 				...formData,
 				[input.name]: ''
@@ -84,7 +84,7 @@ const AuthForm = props => {
 		{redirect && props.redirect ? <Navigate to={props.redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>
 		
-		{props.inputProps.map(input => <Input {...input}
+		{props.inputs.map(input => <Input {...input}
 			key={'auth-form-' + input.name}
 			inlineLabel={true}
 			value={formData[input.name]}
@@ -112,7 +112,7 @@ const AuthForm = props => {
 }
 
 AuthForm.propTypes = {
-	inputProps: PropTypes.array.isRequired,
+	inputs: PropTypes.array.isRequired,
 	apiUrl: PropTypes.string.isRequired
 }
 

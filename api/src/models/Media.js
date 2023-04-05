@@ -32,7 +32,7 @@ const schema = new Schema({
 	created: {
 		type: Date,
 		maxlength: 27,
-		default: new Date().toISOString(),
+		default: Date.now,
 		required: true
 	}
 }, { _id: false })

@@ -11,6 +11,8 @@ const Modal = props => {
 				// eslint-disable-next-line @next/next/no-img-element
 				return <img src={props.image} alt={props.imgAlt} />
 			}
+			default:
+				return props.component
 		}
 	}, [props])
 	
@@ -70,8 +72,8 @@ ModalWrap.defaultProps = {
 }
 
 ModalWrap.propTypes = {
-	type: PropTypes.string.isRequired,
-	component: PropTypes.func,
+	type: PropTypes.string,
+	component: PropTypes.object,
 	inlineTrigger: PropTypes.bool
 }
 

@@ -55,8 +55,7 @@ const settingsConfig = [
 				inputOptions: {
 					type: 'checkboxes',
 					options: [
-						['0', '0'],
-						['1', '1']
+						['Private', 'private']
 					]
 				},
 				endpoint: '/v1/user/email'
@@ -105,6 +104,11 @@ const Setting = ({ expanded, config, data = {}, toggleAccordion }) => {
 	}
 	
 	const Component = config.component || Input
+	const isTextOption = config.inputOptions && (
+		config.inputOptions.type === 'text' ||
+		config.inputOptions.type === 'textarea' ||
+		config.inputOptions.type === undefined
+	)
 	
 	return <div className={classNames(
 		'accordion',
@@ -115,7 +119,11 @@ const Setting = ({ expanded, config, data = {}, toggleAccordion }) => {
 				<span className="name">{config.label || config.name}</span>
 			</span>
 			<span>
-				<span className="preview">{data.value || config.placeholder || config.default}</span>
+				{ isTextOption && <span
+					className="preview"
+				>
+					{data.value || config.placeholder || config.default}
+				</span>}
 				<Icon name="chevron" rot={expanded && 90} />
 			</span>
 		</div>
@@ -157,7 +165,7 @@ Setting.defaultProps = {
 Setting.propTypes = {
 	expanded: PropTypes.bool,
 	config: PropTypes.object.isRequired,
-	data: PropTypes.object, // isRequired
+	data: PropTypes.object, // TODO: isRequired
 	toggleAccordion: PropTypes.func,
 	Component: PropTypes.func
 }
@@ -222,7 +230,7 @@ const Settings = () => {
 		data: settingsData,
 		error,
 		loading:
-	} = api.get(`/v1/user/settings`, null, { component: true })*/
+	} = api.get(`/v1/user/settings`, null, { useHook: true })*/
 	
 	const handleSelection = category => setCategory(category)
 	

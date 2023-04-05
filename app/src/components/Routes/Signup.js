@@ -56,7 +56,7 @@ const Signup = () => {
 					<Link to="/" className="btn-back" />
 					<h3 className="heading">Sign Up</h3>
 					<AuthForm
-						inputProps={inputs}
+						inputs={inputs}
 						apiUrl='/auth/signup'
 						redirect={true}
 						redirectUrl='/'

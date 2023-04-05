@@ -12,19 +12,7 @@ const Logout = () => {
 	const handleClick = event => {
 		event.preventDefault()
 		
-		!clicked && api.call({
-			method: 'post',
-			url: '/auth/logout'
-		})
-			.then(() => {
-				try {
-					localStorage.clear()
-				} catch(error) {
-					console.error('Could not clear cookies', error)
-				}
-				
-				dispatch(userLogout())
-			})
+		!clicked && dispatch(userLogout(true))
 		
 		setClicked(true)
 	}

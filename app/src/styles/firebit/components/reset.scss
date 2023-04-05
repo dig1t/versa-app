@@ -110,13 +110,13 @@ input {
 			box-shadow: none;
 		}
 		
-		&:before {
+		/*&:before {
 			content: '';
 			background-color: inherit;
 			width: 18px;
 			height: 18px;
 			position: absolute;
-		}
+		}*/
 	}
 	
 	&[type="checkbox"] {

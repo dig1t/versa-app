@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import classNames from 'classnames'
 
 import { Input, Icon } from '../components/UI/index.js'
 import api from '../util/api.js'
@@ -7,12 +8,13 @@ const PostEditor = () => {
 	const [data, setData] = useState({
 		text: ''
 	})
+	const [saveReady, setSaveReady] = useState(false)
 	
-	useEffect(() => {
-		console.log(data)
-	}, [data])
+	useEffect(() => setSaveReady(data.text.length > 0), [data])
 	
 	const handleSubmit = event => {
+		if (!saveReady) return
+		
 		const body = data.text
 		
 		setData({ text: '' })
@@ -36,7 +38,10 @@ const PostEditor = () => {
 					</div>
 				</div>
 				<button
-					className="btn btn-round btn-primary post"
+					className={classNames(
+						'btn btn-round btn-primary post',
+						!saveReady && 'btn-disabled'
+					)}
 					onClick={handleSubmit}
 				>Post</button>
 			</div>

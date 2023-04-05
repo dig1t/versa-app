@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 
-import { isAuthenticated } from '../context/Auth.js'
+import { useAuthenticated } from '../context/Auth.js'
 import { isHydrated } from '../context/Hydration.js'
 import { defaultAssets } from '../constants/assets.js'
 import Avatar from '../containers/Avatar.js'
 import { Icon } from './UI/index.js'
 import DropMenu, { ItemMenu, Item, ItemDivider } from './UI/DropMenu.js'
-// import Logout from '../../containers/Logout.js'
+import Modal from './UI/Modal.js'
+import PostEditor from '../containers/PostEditor.js'
+import Logout from '../containers/Logout.js'
 
 //import { BurgerMenu } from './UI/index.js'
 
@@ -50,7 +52,7 @@ const Shortcut = props => <NavButton type="shortcut">
 
 export const Navigation = () => {
 	const hydrated = isHydrated()
-	const { loggedIn } = isAuthenticated()
+	const { loggedIn } = useAuthenticated()
 	
 	const profile = useSelector(state => state.user.profile)
 	
@@ -58,7 +60,10 @@ export const Navigation = () => {
 		<Item link={`/@${profile.username}`}>My Profile</Item>
 		<ItemDivider />
 		<Item link="/settings">Settings</Item>
-		<Item link="/logout">Logout</Item>
+		
+		<li>
+			<Logout />
+		</li>
 	</ItemMenu>
 	
 	return (loggedIn && hydrated) ? <nav>
@@ -87,9 +92,20 @@ export const Navigation = () => {
 				<Shortcut icon="home" redirect="/home" />
 				<Shortcut icon="message" redirect="/chat" />
 				
-				<NavButton type="new-post">
-					<Icon name="plus" />
-				</NavButton>
+				<li className="btn new-post">
+					<Modal
+						component={<PostEditor />}
+					>
+						<div className="btn-wrap">
+							<div className="push" />
+							<div className="wrap">
+								<div className="center-wrap">
+									<Icon name="plus" />
+								</div>
+							</div>
+						</div>
+					</Modal>
+				</li>
 			</ul>
 			
 			<ul className="shortcuts user-shortcuts">
@@ -107,5 +123,14 @@ export const Navigation = () => {
 				</li>
 			</ul>
 		</div>
-	</nav> : <></>
+	</nav> : <nav className="nav-logged-out">
+		<div>
+			<Link to='/login'>
+				Sign In
+			</Link>
+			<Link to='/signup'>
+				Sign Up
+			</Link>
+		</div>
+	</nav>
 }

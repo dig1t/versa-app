@@ -1,7 +1,9 @@
 import React from 'react'
-import { Icon } from '../components/UI/index.js'
+import { Icon, Tooltip } from '../components/UI/index.js'
 
-export const VerifiedBadge = props => <Icon
-	name="verified"
-	hidden={!props.verificationLevel || props.verificationLevel === 0}
-/>
+export const VerifiedBadge = props => <Tooltip text="Verified Account">
+	<Icon
+		name="verified"
+		hidden={!props.verificationLevel || props.verificationLevel === 0}
+	/>
+</Tooltip>

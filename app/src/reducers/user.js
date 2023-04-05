@@ -6,12 +6,23 @@ import {
 	USER_PROFILE_FETCH_SUCCESS
 } from '../constants/actionTypes.js'
 
+export const SETTINGS_FETCH_REQUEST = 'SETTINGS_FETCH_REQUEST'
+export const SETTINGS_FETCH_SUCCESS = 'SETTINGS_FETCH_SUCCESS'
+export const SETTINGS_FETCH_FAILURE = 'SETTINGS_FETCH_FAILURE'
+
+export const SETTINGS_UPDATE = 'SETTINGS_UPDATE'
+
 export default (state = {
 	authenticated: null,
 	userId: null,
+	email: null,
 	accessToken: null,
 	isAdmin: false,
-	profile: {}
+	profile: {},
+	settings: {
+		appTheme: 'light',
+		profilePrivate: false
+	}
 }, action) => {
 	switch(action.type) {
 		case USER_LOGOUT_SUCCESS: {
@@ -28,6 +39,7 @@ export default (state = {
 				...state,
 				authenticated: true,
 				userId: action.payload.user.userId,
+				email: action.payload.user.email,
 				isAdmin: action.payload.user.isAdmin,
 				isMod: action.payload.user.isMod
 			}
@@ -50,6 +62,22 @@ export default (state = {
 				profile: action.payload
 			}
 		}
+		
+		case SETTINGS_FETCH_SUCCESS: {
+			return {
+				...state,
+				settings: action.payload
+			}
+		}
+		case SETTINGS_UPDATE:
+			return (action.payload.key === undefined || action.payload.value === undefined) ? state : {
+				...state,
+				settings: {
+					...state.settings,
+					[action.payload.key]: action.payload.value
+				}
+			}
+		
 		default: {
 			return state
 		}
