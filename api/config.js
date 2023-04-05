@@ -6,7 +6,7 @@ const apiDomain = 'https://api.versaapp.co'
 const devDomain = 'http://localhost'
 const devApiDomain = 'http://localhost:81'
 
-const env = dotenv.config({ path: '.env' }).parsed
+const env = dotenv.config({ path: '../.env' }).parsed
 const dev = env.NODE_ENV
 
 export default {

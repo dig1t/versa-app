@@ -11,7 +11,6 @@ const devApiDomain = 'http://localhost:81'
 
 const env = dotenv.config({ path: '.env' }).parsed
 const dev = env.NODE_ENV
-console.log(dev)
 
 export default {
 	port: 80,
