@@ -8,7 +8,7 @@ const schema = new Schema({
 	},
 	created: {
 		type: Date,
-		default: new Date().toISOString()
+		default: Date.now
 	},
 	email: {
 		type: String,

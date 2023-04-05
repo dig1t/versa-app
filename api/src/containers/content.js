@@ -455,7 +455,7 @@ export default server => {
 		server.oauth.authorize({ optional: true }),
 		async req => {
 			try {
-				const content = await getContent(req.params.contentId, req._oauth.user.userId)
+				const content = await getContent(req.params.contentId, req._oauth?.user?.userId)
 				
 				if (!content) throw new Error('Content not found')
 				

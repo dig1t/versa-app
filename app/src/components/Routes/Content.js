@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import classNames from 'classnames'
 import { Link } from 'react-router-dom'
-import { formatDistance } from 'date-fns'
+import { format, formatDistanceToNowStrict } from 'date-fns'
 
 import api from '../../util/api.js'
 import { binarySearch } from '../../util/index.js'
 import Layout from '../Layout.js'
 import Loading from '../Loading.js'
 import { addContentStat, getContent } from '../../actions/content.js'
-import { Icon } from '../UI/index.js'
+import { Icon, Tooltip } from '../UI/index.js'
 import Avatar from '../../containers/Avatar.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import CommentEditor from '../../containers/CommentEditor.js'
 import ContentActions from '../../containers/ContentActions.js'
+import { useAuthenticated } from '../../context/Auth.js'
 
 const feedCategories = [
 	{
@@ -36,11 +35,21 @@ const Comment = props => {
 	const profileList = useSelector(state => state.profiles.profileList)
 	
 	const profile = profileList[props.userId]
-	const timeAgoCreated = formatDistance(
-		new Date(props.created),
-		new Date(),
-		{ addSuffix: true, includeSeconds: true }
-	)
+	
+	const { timeAgoCreated, dateCreated } = useMemo(() => {
+		const dateInstance = new Date(props.created)
+		
+		return {
+			timeAgoCreated: formatDistanceToNowStrict(
+				dateInstance,
+				{ addSuffix: true, includeSeconds: true }
+			),
+			dateCreated: format(
+				dateInstance,
+				'PPpp'
+			)
+		}
+	}, [props.created])
 	
 	return <div className="post comment">
 		<div className="container">
@@ -65,7 +74,9 @@ const Comment = props => {
 						@{profile.username}
 					</Link></span>
 					<span>&bull;</span>
-					<span className="time">{timeAgoCreated}</span>
+					<span className="time">
+						<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
+					</span>
 				</div>
 				<div className="content">
 					<div className="text">{props.body}</div>
@@ -83,18 +94,27 @@ const Content = () => {
 		invalidContentIds: state.content.invalidContentIds
 	}))
 	
+	const { loggedIn } = useAuthenticated()
 	const { contentId } = useParams()
 	const [contentData, setContentData] = useState(null)
 	const [comments, setComments] = useState([])
 	const [userId, setUserId] = useState(null)
 	const [redirect, setRedirect] = useState(null)
 	const [fetching, setFetching] = useState(false)
+	const [canComment, setCanComment] = useState(false)
 	
 	const {
 		data: commentData,
 		error: commentError,
 		loading: commentsLoading
-	} = api.get(`/v1/content/${contentId}/comments`, null, { component: true })
+	} = api.get(`/v1/content/${contentId}/comments`, null, { useHook: true })
+	
+	useEffect(
+		() => setCanComment(
+			loggedIn === true && contentData !== null && !contentData.disabledComments
+		),
+		[loggedIn, contentData]
+	)
 	
 	useEffect(() => {
 		if (commentData === null) return
@@ -121,11 +141,22 @@ const Content = () => {
 	}, [contentList, invalidContentIds])
 	
 	const profile = contentData !== null ? profileList[userId] : {}
-	const timeAgoCreated = contentData && formatDistance(
-		new Date(contentData.created),
-		new Date(),
-		{ addSuffix: true, includeSeconds: true }
-	)
+	const { timeAgoCreated, dateCreated } = useMemo(() => {
+		if (contentData === null) return {}
+		
+		const dateInstance = new Date(contentData.created)
+		
+		return {
+			timeAgoCreated: formatDistanceToNowStrict(
+				dateInstance,
+				{ addSuffix: true, includeSeconds: true }
+			),
+			dateCreated: format(
+				dateInstance,
+				'PPpp'
+			)
+		}
+	}, [contentData])
 	
 	return <Layout page="content">
 		{redirect && <Navigate to={redirect} />}
@@ -155,7 +186,9 @@ const Content = () => {
 										@{profile.username}
 									</Link></span>
 									<span>&bull;</span>
-									<span className="time">{contentData.created && timeAgoCreated}</span>
+									<span className="time">
+										<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
+									</span>
 									<div className="options"><Icon name="ellipsis" /></div>
 								</div>
 								<div className="content">
@@ -166,13 +199,13 @@ const Content = () => {
 							</div>
 						</div>
 					</div>
-					<CommentEditor
+					{canComment && <CommentEditor
 						contentId={contentId}
 						handleSuccess={comment => {
 							dispatch(addContentStat(comment.contentId, 'comments', 1))
 							setComments(state => [comment, ...state])
 						}}
-					/>
+					/>}
 					<div className="comments">
 						{commentsLoading && <Loading />}
 						{commentError && <div>{commentError}</div>}

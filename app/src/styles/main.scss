@@ -221,9 +221,8 @@ main {
 					}
 				}
 				
-				.icon-new-post {
-					width: 100%;
-					height: 100%;
+				&.new-post .icon {
+					height: 1.8rem;
 				}
 				
 				&.new-post, &.shortcut {

@@ -54,6 +54,10 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 }
 
 export const getProfileConnection = userId => (dispatch, getState) => {
+	const { user } = getState()
+	
+	if (user.authenticated !== true) return
+	
 	api.get('/v1/follow/connection', { userId })
 		.then(data => dispatch({
 			type: PROFILE_CONNECTION_SUCCESS,

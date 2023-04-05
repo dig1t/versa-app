@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import User from '../models/User.js'
 import UserSession from '../models/UserSession.js'
 import Profile from '../models/Profile.js'
+import Setting from '../models/Setting.js'
 
 import config from '../constants/config.js'
 import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
@@ -13,11 +14,18 @@ import {
 	deserializeProfile
 } from './profiles.js'
 
-const deserializeUser = user => ({
+const deserializeUser = (user, settings) => ({
 	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
+	email: user.email,
 	isAdmin: user.isAdmin || false,
 	isMod: user.isMod || false,
-	created: user.created
+	created: user.created,
+	
+	settings: settings || user.settings
+})
+
+const deserializeSettings = settings => ({
+	appTheme: settings.appTheme
 })
 
 const getUserFromUserId = async userId => {
@@ -26,6 +34,14 @@ const getUserFromUserId = async userId => {
 	if (!user) throw new Error('User does not exist')
 	
 	return deserializeUser(user)
+}
+
+const getSettingsFromUserId = async userId => {
+	const settings = await Setting.findOne({ _id: mongoSanitize(userId) })
+	
+	if (!settings) throw new Error('Could not get user settings')
+	
+	return deserializeSettings(settings)
 }
 
 const getUserIdFromSession = async sessionId => {
@@ -127,11 +143,17 @@ const createAccount = async req => {
 			userId,
 			name
 		})
+		const settings = new Setting({
+			userId
+		})
 		
 		user.password = await user.hashString(password)
 		
-		await user.save()
-		await profile.save()
+		await Promise.all([
+			user.save(),
+			profile.save(),
+			settings.save()
+		])
 		
 		// Issue user an oauth grant and refresh token
 		const grant = await req.oauth.ROPCGrant(email, password)
@@ -139,7 +161,7 @@ const createAccount = async req => {
 		
 		return {
 			auth,
-			user: deserializeUser(user),
+			user: deserializeUser(user, deserializeSettings(settings)),
 			profile: deserializeProfile(profile)
 		}
 	})
@@ -186,6 +208,23 @@ export default server => {
 				if (user.userId !== req.params.userId) throw new Error('Unexpected Error')
 				
 				req.apiResult(200, user)
+			} catch(error) {
+				req.apiResult(500)
+			}
+		}
+	)
+	
+	router.get(
+		'/user/:userId/settings',
+		server.oauth.authorize({ optional: true }),
+		async (req) => {
+			try {
+				// Possible attack
+				if (req.params.userId !== req._oauth?.user?.userId) throw new Error('Unexpected Error')
+				
+				const settings = await getSettingsFromUserId(req._oauth.user.userId)
+				
+				req.apiResult(200, settings)
 			} catch(error) {
 				req.apiResult(500)
 			}

@@ -1,11 +1,11 @@
-import React, { useCallback } from 'react'
-import { formatDistance } from 'date-fns'
+import React, { useCallback, useMemo } from 'react'
+import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import Avatar from './Avatar.js'
-import { Icon } from '../components/UI/index.js'
+import { Icon, Tooltip } from '../components/UI/index.js'
 import { VerifiedBadge } from './VerifiedBadge.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
@@ -19,11 +19,20 @@ const Post = props => {
 	const content = contentList[props.contentId]
 	const contentProfile = profileList[content.userId]
 	
-	const timePosted = formatDistance(
-		new Date(props.created),
-		new Date(),
-		{ addSuffix: true, includeSeconds: true }
-	)
+	const { timeAgoCreated, dateCreated } = useMemo(() => {
+		const dateInstance = new Date(props.created)
+		
+		return {
+			timeAgoCreated: formatDistanceToNowStrict(
+				dateInstance,
+				{ addSuffix: true, includeSeconds: true }
+			),
+			dateCreated: format(
+				dateInstance,
+				'PPpp'
+			)
+		}
+	}, [props.created])
 	
 	return <div className="post" data-id={props.postId}>
 		<div className="container">
@@ -52,7 +61,7 @@ const Post = props => {
 						to={`/@${contentProfile.username}/${content.contentId}`}
 						className="unstyled-link"
 					>
-						{timePosted}
+						<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
 					</Link></span>
 					<div className="options"><Icon name="ellipsis" /></div>
 				</div>

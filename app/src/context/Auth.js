@@ -6,7 +6,7 @@ export const AuthContext = createContext({
 	userId: null
 })
 
-export const isAuthenticated = () => useContext(AuthContext)
+export const useAuthenticated = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
 	const [loggedIn, setLoggedIn] = useState(null)

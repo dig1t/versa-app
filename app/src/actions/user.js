@@ -10,11 +10,35 @@ import {
 	PROFILE_FETCH_SUCCESS
 } from '../constants/actionTypes.js'
 
+import {
+	SETTINGS_FETCH_REQUEST,
+	SETTINGS_FETCH_SUCCESS,
+	SETTINGS_FETCH_FAILURE
+} from '../reducers/user.js'
+
 import api from '../util/api.js'
 
-export const userLogout = status => dispatch => dispatch({
-	type: USER_LOGOUT_SUCCESS
-})
+export const userLogout = waitForServer => dispatch => {
+	if (waitForServer !== true) return dispatch({
+		type: USER_LOGOUT_SUCCESS
+	})
+	
+	api.call({
+		method: 'post',
+		url: '/auth/logout'
+	})
+		.then(() => {
+			try {
+				localStorage.clear()
+			} catch(error) {
+				console.error('Could not clear local storage', error)
+			}
+			
+			dispatch({
+				type: USER_LOGOUT_SUCCESS
+			})
+		})
+}
 
 export const setAuthenticatedUser = data => dispatch => {
 	dispatch({
@@ -31,16 +55,6 @@ export const setUserProfile = data => dispatch => dispatch({
 	type: USER_PROFILE_FETCH_SUCCESS,
 	payload: data
 })
-
-/*
-			const response = await api.get('/oauth/token', null, {
-				headers: {
-					cookie: req.headers.cookie
-				},
-				customErrorHandler: true
-			})
-			
-*/
 
 export const fetchUserAuth = () => dispatch => {
 	dispatch({ type: USER_FETCH_REQUEST })
@@ -86,6 +100,22 @@ export const fetchUserProfile = () => (dispatch, getState) => {
 		})
 		.catch(error => dispatch({
 			type: USER_PROFILE_FETCH_FAILURE,
+			payload: error
+		}))
+}
+
+export const fetchUserSettings = () => (dispatch, getState) => {
+	const { user } = getState()
+	
+	dispatch({ type: SETTINGS_FETCH_REQUEST })
+	
+	api.get(`/v1/user/${user.userId}/settings`)
+		.then(data => dispatch({
+			type: SETTINGS_FETCH_SUCCESS,
+			payload: data
+		}))
+		.catch(error => dispatch({
+			type: SETTINGS_FETCH_FAILURE,
 			payload: error
 		}))
 }

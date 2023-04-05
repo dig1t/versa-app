@@ -223,22 +223,6 @@ const Input = props => {
 						<span>{option[0]}</span>
 					</label>)}
 				</>
-			case 'text':
-				return <input
-					{...attributes}
-					type={props.type}
-					className={classNames(!props.inlineLabel && 'input-text')}
-					onKeyDown={handleKeyDown}
-					onInput={handleChange}
-					onChange={handleChange}
-					onKeyUp={handleChange}
-					onFocus={() => setFocused(true)}
-					onBlur={() => {
-						validate()
-						setFocused(false)
-					}}
-					value={visibleValue}
-				/>
 			case 'checkboxes':
 				return <>
 					{props.options.map(option => <label
@@ -264,6 +248,22 @@ const Input = props => {
 						<span>{option[0]}</span>
 					</label>)}
 				</>
+			default:
+				return <input
+					{...attributes}
+					type={props.type}
+					className={classNames(!props.inlineLabel && 'input-text')}
+					onKeyDown={handleKeyDown}
+					onInput={handleChange}
+					onChange={handleChange}
+					onKeyUp={handleChange}
+					onFocus={() => setFocused(true)}
+					onBlur={() => {
+						validate()
+						setFocused(false)
+					}}
+					value={visibleValue}
+				/>
 		}
 	})
 	

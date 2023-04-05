@@ -6,9 +6,11 @@ import PropTypes from 'prop-types'
 
 import { Icon } from '../components/UI/index.js'
 import { addLike, deleteLike } from '../actions/content.js'
+import { useAuthenticated } from '../context/Auth.js'
 
 const ContentActions = props => {
 	const dispatch = useDispatch()
+	const { loggedIn } = useAuthenticated()
 	const [redirect, setRedirect] = useState(null)
 	const profileList = useSelector(state => state.profiles.profileList)
 	const contentProfile = profileList[props.userId]
@@ -18,10 +20,13 @@ const ContentActions = props => {
 		<div
 			className={classNames(
 				'action like align-center-wrap',
-				props.liked && 'selected'
+				props.liked && 'selected',
+				loggedIn !== true && 'disabled'
 			)}
 			onClick={input => {
 				input.preventDefault()
+				
+				if (loggedIn !== true) return
 				
 				dispatch(
 					props.liked ? deleteLike(props.contentId) : addLike(props.contentId)
@@ -43,7 +48,19 @@ const ContentActions = props => {
 			<Icon name="comment" />
 			<span>{props.comments || 0}</span>
 		</div>
-		<div className="action repost align-center-wrap">
+		<div
+			className={classNames(
+				'action repost align-center-wrap',
+				loggedIn !== true && 'disabled'
+			)}
+			onClick={input => {
+				input.preventDefault()
+				
+				if (loggedIn !== true) return
+				
+				console.log('TODO: implement reposts')
+			}}
+		>
 			<Icon name="repost" />
 			<span>{props.reposts || 0}</span>
 		</div>

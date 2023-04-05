@@ -61,7 +61,7 @@ class API {
 				})
 		}
 		
-		return options.component === true ? this.createComponent(
+		return options.useHook === true ? this.createHook(
 			promiseFactory
 		) : new Promise(promiseFactory)
 	}
@@ -105,7 +105,7 @@ class API {
 		})
 	}
 	
-	createComponent(promiseFactory) {
+	createHook(promiseFactory) {
 		const [data, setData] = useState(null)
 		const [error, setError] = useState(null)
 		const [loading, setLoading] = useState(false)

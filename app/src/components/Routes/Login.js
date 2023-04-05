@@ -43,7 +43,7 @@ const Login = () => {
 					<Link to="/" className="btn-back" />
 					<h3 className="heading">Sign In</h3>
 					<AuthForm
-						inputProps={inputs}
+						inputs={inputs}
 						apiUrl='/auth/login'
 						redirect={true}
 						redirectUrl='/home'

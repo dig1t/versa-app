@@ -82,7 +82,7 @@ class Compiler {
 		)
 		
 		this.process = spawn(
-			'node',
+			'node --no-warnings',
 			[filePath]
 		)
 		

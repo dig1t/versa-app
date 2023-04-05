@@ -8,7 +8,7 @@ import Layout from '../Layout.js'
 import Loading from '../Loading.js'
 import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
-import { CatPills } from '../UI/index.js'
+import { CatPills, Modal, Tooltip } from '../UI/index.js'
 import {
 	followProfile,
 	getProfileConnection,
@@ -17,6 +17,7 @@ import {
 import { binarySearch } from '../../util/index.js'
 import { defaultAssets } from '../../constants/assets.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
+import { useAuthenticated } from '../../context/Auth.js'
 
 const feedCategories = [
 	{
@@ -66,6 +67,7 @@ const Profile = () => {
 		invalidUsernames: state.profiles.invalidUsernames
 	}))
 	
+	const { loggedIn } = useAuthenticated()
 	const { username } = useParams()
 	const [profileData, setProfileData] = useState(null)
 	const [usernameQuery, setUsernameQuery] = useState(null)
@@ -93,7 +95,7 @@ const Profile = () => {
 		if (userId) {
 			setProfileData(profileList[userId])
 			
-			if (!profileList[userId].connection) dispatch(
+			if (!profileList[userId].connection && loggedIn) dispatch(
 				getProfileConnection(userId)
 			)
 		} else if (!fetching) {
@@ -108,16 +110,18 @@ const Profile = () => {
 			<div className="col-12 col-desktop-4">
 				<div className="info box">
 					<div className="banner">
-						<div
-							className="img"
-							style={{
-								backgroundImage: `url(${profileData.banner || defaultAssets.banner})`
-							}}
-						/>
+						<Modal type="image" image={profileData.banner || defaultAssets.banner}>
+							<div
+								className="img"
+								style={{
+									backgroundImage: `url(${profileData.banner || defaultAssets.banner})`
+								}}
+							/>
+						</Modal>
 					</div>
 					<div className="details">
 						<div className="avatar-container">
-							<Avatar userId={profileData.userId} />
+							<Avatar userId={profileData.userId} useModal />
 						</div>
 						<div className="container">
 							<div className="name align-center-wrap">
@@ -141,11 +145,15 @@ const Profile = () => {
 					</div>
 					<div className="community-stats grid">
 						<div className="stat col-6">
-							<div className="value">{profileData.followers || 0}</div>
+							<Tooltip text={`${profileData.followers || 0} followers`}>
+								<div className="value">{profileData.followers || 0}</div>
+							</Tooltip>
 							<div className="label">followers</div>
 						</div>
 						<div className="stat col-6">
-							<div className="value">{profileData.following || 0}</div>
+							<Tooltip text={`${profileData.following || 0} following`}>
+								<div className="value">{profileData.following || 0}</div>
+							</Tooltip>
 							<div className="label">following</div>
 						</div>
 					</div>
