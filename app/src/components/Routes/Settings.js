@@ -198,6 +198,7 @@ const SettingsPage = ({ config, data }) => {
 						expanded={expanded[index]}
 						toggleAccordion={() => toggleAccordion(index)}
 						config={setting}
+						data={data}
 					/>
 				</li>
 			))}
@@ -212,17 +213,9 @@ SettingsPage.propTypes = {
 
 const Settings = () => {
 	const dispatch = useDispatch()
-	const { profileList, idsByUsername, invalidUsernames } = useSelector(state => ({
-		profileList: state.profiles.profileList,
-		idsByUsername: state.profiles.idsByUsername,
-		invalidUsernames: state.profiles.invalidUsernames
-	}))
+	const { settings } = useSelector(state => state.user.settings)
 	
-	const [settingsData, setSettingsData] = useState({
-		account: {
-			email: 'test@versa.co'
-		}
-	})
+	const [settingsData, setSettingsData] = useState({})
 	const [category, setCategory] = useState()
 	const [authenticated, setAuthenticated] = useState(false)
 	
@@ -248,7 +241,7 @@ const Settings = () => {
 			<div className="settings-page col-9 col-desktop-9">
 				{category !== undefined && <SettingsPage
 					config={category}
-					data={settingsData[category.name]}
+					data={settingsData}
 				/>}
 			</div>
 		</div>}

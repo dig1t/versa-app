@@ -3,7 +3,7 @@ const path = require('path')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-const dotenv = require('dotenv').config({ path: '.env' })
+const dotenv = require('dotenv').config({ path: '../.env' })
 const dev = dotenv.parsed.NODE_ENV === 'development'
 
 const swcOptions = {
