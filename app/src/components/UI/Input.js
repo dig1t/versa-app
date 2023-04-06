@@ -158,9 +158,10 @@ const Input = props => {
 		
 		setValue(val)
 		validate()
-	})
+	}, [])
 	
-	const attributes = {
+	const attributes = useMemo(() => ({
+		...props.attributes,
 		placeholder: !props.inlineLabel ? props.placeholder : null,
 		name: props.name,
 		id: props.name,
@@ -168,8 +169,9 @@ const Input = props => {
 		maxLength: props.maxLength,
 		autoFocus: props.autoFocus,
 		disabled: props.disabled,
+		autocomplete: props.autocomplete,
 		'aria-required': (props.optional && true) || false
-	}
+	}), [props])
 	
 	const children = useMemo(() => {
 		switch(props.type) {
@@ -265,7 +267,7 @@ const Input = props => {
 					value={visibleValue}
 				/>
 		}
-	})
+	}, [props])
 	
 	const wrapInput = props.type === 'selectButtons' ? true : (props.label || props.wrap)
 	

@@ -35,6 +35,7 @@ export default (state = {
 			}
 		}
 		case USER_FETCH_SUCCESS: {
+			console.log(action.payload)
 			return {
 				...state,
 				authenticated: true,
