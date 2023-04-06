@@ -27,6 +27,7 @@ const apiFieldMiddleware = (req, _, next) => {
 
 const deserializeAuthorizedUser = user => ({
 	userId: user.userId,
+	email: user.email,
 	isAdmin: user.isAdmin,
 	isAdmin: user.isMod
 })
@@ -34,6 +35,7 @@ const deserializeAuthorizedUser = user => ({
 // Extract the userId and sessionId from the auth strategy
 passport.serializeUser((data, done) => done(null, {
 	userId: data.user.userId,
+	email: data.user.email,
 	sessionId: data.auth.sessionId
 }))
 
@@ -44,6 +46,7 @@ passport.deserializeUser((user, done) => {
 	})
 		.then(data => done(null, {
 			userId: user.userId,
+			email: user.email,
 			isAdmin: data.isAdmin,
 			isMod: data.isMod,
 			sessionId: user.sessionId
