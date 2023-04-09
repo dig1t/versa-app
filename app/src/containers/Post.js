@@ -10,17 +10,17 @@ import { VerifiedBadge } from './VerifiedBadge.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
 
-const Post = props => {
+const Post = ({ data }) => {
 	const { profileList, contentList } = useSelector(state => ({
 		profileList: state.profiles.profileList,
 		contentList: state.content.contentList
 	}))
 	
-	const content = contentList[props.contentId]
-	const contentProfile = profileList[content.userId]
+	const content = contentList[data.contentId]
+	const contentProfile = content ? profileList[content.userId] : {}
 	
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
-		const dateInstance = new Date(props.created)
+		const dateInstance = new Date(data.created)
 		
 		return {
 			timeAgoCreated: formatDistanceToNowStrict(
@@ -32,9 +32,9 @@ const Post = props => {
 				'PPpp'
 			)
 		}
-	}, [props.created])
+	}, [data.created])
 	
-	return <div className="post" data-id={props.postId}>
+	return <div className="post" data-id={data.postId}>
 		<div className="container">
 			<div className="post-avatar">
 				<Avatar userId={contentProfile.userId} />
@@ -69,10 +69,14 @@ const Post = props => {
 					{content.body && <div className="text">{content.body}</div>}
 					{content.media && <ContentMedia {...content.media} />}
 				</div>
-				<ContentActions {...content} />
+				<ContentActions data={content} />
 			</div>
 		</div>
 	</div>
+}
+
+Post.propTypes = {
+	data: PropTypes.object.isRequired
 }
 
 export default Post

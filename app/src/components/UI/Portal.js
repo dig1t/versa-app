@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -13,7 +14,7 @@ const getDOMRoot = () => {
 	return root
 }
 
-const Portal = props => {
+const Portal = ({ children }) => {
 	const root = useRef()
 	const [mounted, setMounted] = useState(false)
 	
@@ -24,7 +25,7 @@ const Portal = props => {
 	}, [])
 	
 	return mounted ? ReactDOM.createPortal(
-		props.children,
+		children,
 		root.current
 	) : <></>
 }

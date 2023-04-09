@@ -34,23 +34,23 @@ const feedCategories = [
 	}
 ]
 
-const FollowButton = props => {
+const FollowButton = ({ userId, following }) => {
 	const dispatch = useDispatch()
 	
 	const handleClick = input => {
 		input.preventDefault()
 		
-		dispatch(followProfile(props.userId, !props.following))
+		dispatch(followProfile(userId, !following))
 	}
 	
 	return <button
 		className={classNames(
 			'cta edit-profile btn-round btn-outline',
-			props.following ? 'btn-secondary following' : 'not-following'
+			following ? 'btn-secondary following' : 'not-following'
 		)}
 		onClick={handleClick}
 	>{
-		props.following ? 'Unfollow' : 'Follow'
+		following ? 'Unfollow' : 'Follow'
 	}</button>
 }
 
@@ -163,7 +163,7 @@ const Profile = () => {
 				<div className="feed box">
 					<CatPills
 						pills={feedCategories}
-						default={profileData.defaultCategory || 'posts'}
+						defaultCategory={profileData.defaultCategory || 'posts'}
 						squared
 						handleSelection={category => {
 							console.log('selected pill of type:', category.name)

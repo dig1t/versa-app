@@ -6,7 +6,14 @@ import api from '../util/api.js'
 import { Input } from '../components/UI/index.js'
 import { isHydrated } from '../context/Hydration.js'
 
-const AuthForm = props => {
+const AuthForm = ({
+	buttonText,
+	handleResult,
+	redirect,
+	redirectUrl,
+	inputs,
+	apiUrl
+}) => {
 	const hydrated = isHydrated()
 	
 	const [formData, setFormData] = useState({})
@@ -15,7 +22,7 @@ const AuthForm = props => {
 	
 	//const [inputs, setInputs] = useState({})
 	
-	const [redirect, setRedirect] = useState(false)
+	const [canRedirect, setCanRedirect] = useState(false)
 	const [canSubmit, setCanSubmit] = useState(false)
 	const [authMessage, setAuthMessage] = useState('')
 	
@@ -33,7 +40,7 @@ const AuthForm = props => {
 	}, [validInputs])
 	
 	useEffect(() => {
-		props.inputs.map(input => {
+		inputs.map(input => {
 			setFormData({
 				...formData,
 				[input.name]: ''
@@ -52,22 +59,22 @@ const AuthForm = props => {
 		if (canSubmit) {
 			api.call({
 				method: 'post',
-				url: props.apiUrl,
+				url: apiUrl,
 				data: {
 					...formData
 				}
 			})
 				.then(data => {
 					if (!hydrated) return
-					if (props.handleResult) props.handleResult(true, data)
+					if (handleResult) handleResult(true, data)
 					
-					setRedirect(true)
+					setCanRedirect(true)
 				})
 				.catch(error => {
 					if (hydrated) {
-						if (props.handleResult) props.handleResult(false)
+						if (handleResult) handleResult(false)
 						
-						setRedirect(false)
+						setCanRedirect(false)
 					}
 					
 					setAuthMessage(error)
@@ -81,10 +88,10 @@ const AuthForm = props => {
 				})
 		}
 	}}>
-		{redirect && props.redirect ? <Navigate to={props.redirectUrl} /> : null}
+		{canRedirect && redirect ? <Navigate to={redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>
 		
-		{props.inputs.map(input => <Input {...input}
+		{inputs.map(input => <Input {...input}
 			key={'auth-form-' + input.name}
 			inlineLabel={true}
 			value={formData[input.name]}
@@ -106,12 +113,16 @@ const AuthForm = props => {
 			type="submit"
 			disabled={!canSubmit}
 		>
-			{props.buttonText}
+			{buttonText}
 		</button>
 	</form>
 }
 
 AuthForm.propTypes = {
+	buttonText: PropTypes.string,
+	handleResult: PropTypes.func,
+	redirect: PropTypes.bool,
+	redirectUrl: PropTypes.string,
 	inputs: PropTypes.array.isRequired,
 	apiUrl: PropTypes.string.isRequired
 }

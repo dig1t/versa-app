@@ -12,11 +12,11 @@ const schema = new Schema({
 	},
 	appTheme: {
 		/* {
-			1: 'light',
-			2: 'dark'
+			0: 'light',
+			1: 'dark'
 		} */
 		type: Number,
-		default: 1,
+		default: 0,
 		maxlength: 2
 	},
 }, { _id: false })

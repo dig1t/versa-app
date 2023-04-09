@@ -1,10 +1,9 @@
-import {
-	CONTENT_FETCH_SUCCESS,
-	CONTENT_FETCH_FAILURE,
-	CONTENT_LIKE_UPDATE_SUCCESS,
-	CONTENT_ADD_ARRAY,
-	CONTENT_STAT_UPDATE
-} from '../constants/actionTypes.js'
+export const CONTENT_FETCH_REQUEST = 'CONTENT_FETCH_REQUEST'
+export const CONTENT_FETCH_SUCCESS = 'CONTENT_FETCH_SUCCESS'
+export const CONTENT_FETCH_FAILURE = 'CONTENT_FETCH_FAILURE'
+export const CONTENT_LIKE_UPDATE_SUCCESS = 'CONTENT_LIKE_UPDATE_SUCCESS'
+export const CONTENT_ADD_ARRAY = 'CONTENT_ADD_ARRAY'
+export const CONTENT_STAT_UPDATE = 'CONTENT_STAT_UPDATE'
 
 export default (state = {
 	contentList: {},
@@ -40,7 +39,7 @@ export default (state = {
 		case CONTENT_FETCH_FAILURE: {
 			return {
 				...state,
-				invalidContentIds: invalidContentIds.concat(action.payload)
+				invalidContentIds: state.invalidContentIds.concat(action.payload)
 			}
 		}
 		case CONTENT_LIKE_UPDATE_SUCCESS: {

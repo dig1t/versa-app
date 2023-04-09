@@ -32,16 +32,16 @@ const NavButton = ({ type, children }) => <li className={classNames(
 	</div>
 </li>
 
-const AppLink = props => <li className="app-link center-wrap">
-	<Link to={props.redirect}>
-		{props.icon && <Icon name={props.icon} scale="lg" />}
+const AppLink = ({ icon, redirect }) => <li className="app-link center-wrap">
+	<Link to={redirect}>
+		{icon && <Icon name={icon} scale="lg" />}
 	</Link>
 </li>
 
-const Shortcut = props => <NavButton type="shortcut">
+const Shortcut = ({ redirect }) => <NavButton type="shortcut">
 	<div className="shortcut-btn">
 		<div className="center-wrap">
-			<Link to={props.redirect}>
+			<Link to={redirect}>
 				<div className="img" style={{
 					backgroundImage: `url("${defaultAssets.avatar}")`
 				}} />

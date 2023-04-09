@@ -6,17 +6,14 @@ const iconAlias = {
 	like: 'heart'
 }
 
-const Icon = props => {
-	const { name, scale, hidden } = props
+const Icon = ({ name, scale, hidden, rot }) => {
 	const iconName = iconAlias[name] || name
 	
-	const SVGImport = React.memo(() => {
+	const _svgImport = React.memo(() => {
 		const _svgImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
 		
 		return <_svgImport />
-	})
-	
-	const _svgImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
+	}, [])
 	
 	return !hidden && <i
 		className={classNames(
@@ -28,7 +25,7 @@ const Icon = props => {
 	>
 		<_svgImport
 			style={{
-				transform: typeof props.rot === 'number' && `rotate(${props.rot}deg)`
+				transform: typeof rot === 'number' && `rotate(${rot}deg)`
 			}}
 		/>
 	</i>

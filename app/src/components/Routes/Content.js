@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { format, formatDistanceToNowStrict } from 'date-fns'
+import PropTypes from 'prop-types'
 
 import api from '../../util/api.js'
 import { binarySearch } from '../../util/index.js'
@@ -15,6 +16,7 @@ import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import CommentEditor from '../../containers/CommentEditor.js'
 import ContentActions from '../../containers/ContentActions.js'
 import { useAuthenticated } from '../../context/Auth.js'
+import ContentMedia from '../../containers/ContentMedia.js'
 
 const feedCategories = [
 	{
@@ -31,13 +33,13 @@ const feedCategories = [
 	}
 ]
 
-const Comment = props => {
+const Comment = ({ data }) => {
 	const profileList = useSelector(state => state.profiles.profileList)
 	
-	const profile = profileList[props.userId]
+	const profile = profileList[data.userId]
 	
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
-		const dateInstance = new Date(props.created)
+		const dateInstance = new Date(data.created)
 		
 		return {
 			timeAgoCreated: formatDistanceToNowStrict(
@@ -49,7 +51,7 @@ const Comment = props => {
 				'PPpp'
 			)
 		}
-	}, [props.created])
+	}, [data.created])
 	
 	return <div className="post comment">
 		<div className="container">
@@ -79,11 +81,15 @@ const Comment = props => {
 					</span>
 				</div>
 				<div className="content">
-					<div className="text">{props.body}</div>
+					<div className="text">{data.body}</div>
 				</div>
 			</div>
 		</div>
 	</div>
+}
+
+Comment.propTypes = {
+	data: PropTypes.object.isRequired
 }
 
 const Content = () => {
@@ -195,7 +201,7 @@ const Content = () => {
 									{contentData.body && <div className="text">{contentData.body}</div>}
 									{contentData.media && <ContentMedia {...contentData.media} />}
 								</div>
-								<ContentActions {...contentData} noRedirect={true} />
+								<ContentActions data={contentData} noRedirect={true} />
 							</div>
 						</div>
 					</div>
@@ -209,7 +215,7 @@ const Content = () => {
 					<div className="comments">
 						{commentsLoading && <Loading />}
 						{commentError && <div>{commentError}</div>}
-						{comments.map(comment => <Comment key={comment.commentId} {...comment} />)}
+						{comments.map(comment => <Comment key={comment.commentId} data={comment} />)}
 					</div>
 				</div>
 			</div>

@@ -4,7 +4,7 @@ import {
 	PROFILE_FETCH_FAILURE,
 	PROFILE_FOLLOW_UPDATE,
 	PROFILE_CONNECTION_SUCCESS
-} from '../constants/actionTypes.js'
+} from '../reducers/profiles.js'
 
 import api from '../util/api.js'
 

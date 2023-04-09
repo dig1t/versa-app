@@ -14,8 +14,8 @@ import '../styles/main.scss'
 
 const store = createStore()
 
-const App = props => <HydrationProvider>
-	<Html assets={props.assets} title={props.title}>
+const App = ({ assets, title }) => <HydrationProvider>
+	<Html assets={assets} title={title}>
 		<Provider store={store}>
 			<Suspense fallback={<Loading />}>
 				<FetchInitialData>

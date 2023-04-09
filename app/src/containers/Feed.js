@@ -28,7 +28,7 @@ const fakeData = [ // TODO: REPLACE PSUEDO DATA
 	}
 ]
 
-const Feed = props => {
+const Feed = ({ type, userId }) => {
 	const dispatch = useDispatch()
 	const feed = useSelector(state => state.feed.posts)
 	
@@ -38,7 +38,16 @@ const Feed = props => {
 	useEffect(() => {
 		if (!fetching) {
 			setFetching(true)
-			dispatch(getProfileFeed(props.userId, props.feedType))
+			
+			switch(type) {
+				case 'home':
+					console.log('GET HOME FEED') // TODO: GET HOME FEED
+					//dispatch()
+					break
+				case 'profile':
+					dispatch(getProfileFeed(userId, type))
+					break
+			}
 		}
 	}, [])
 	
@@ -49,13 +58,20 @@ const Feed = props => {
 	}, [feed])
 	
 	return <div className="list">
-		{posts.map(post => <Post key={post.postId} {...post} />)}
+		{posts.map(post => <Post key={post.postId} data={post} />)}
 		{fetching && <Loading />}
 	</div>
 }
 
+Feed.defaultProps = {
+	type: 'profile',
+	category: 'all'
+}
+
 Feed.propTypes = {
-	userId: PropTypes.string.isRequired
+	userId: PropTypes.string,
+	type: PropTypes.string,
+	category: PropTypes.string
 }
 
 export default Feed
