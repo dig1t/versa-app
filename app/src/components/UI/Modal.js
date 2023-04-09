@@ -5,6 +5,8 @@ import classNames from 'classnames'
 import Portal from './Portal.js'
 
 const Modal = props => {
+	const { open, type, toggleModal } = props
+	
 	const modalComponent = useMemo(() => {
 		switch(props.type) {
 			case 'image': {
@@ -17,17 +19,17 @@ const Modal = props => {
 	}, [props])
 	
 	return <Portal>
-		{props.open && <div
-			className={classNames('modal', `modal-${props.type}`)}
+		{open && <div
+			className={classNames('modal', `modal-${type}`)}
 		>
 			<div
 				className="background-close"
 				role="button"
-				onClick={input => props.toggleModal(input)}
+				onClick={toggleModal}
 			/>
 			<button
 				className="close fas fa-times"
-				onClick={input => props.toggleModal(input)}
+				onClick={toggleModal}
 			/>
 			<div className="center-wrap">
 				<div className="container">
@@ -42,6 +44,7 @@ const Modal = props => {
 
 Modal.propTypes = {
 	open: PropTypes.bool.isRequired,
+	type: PropTypes.string,
 	toggleModal: PropTypes.func.isRequired
 }
 

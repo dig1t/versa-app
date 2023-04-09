@@ -151,7 +151,7 @@ const Settings = () => {
 				<div className="heading">Settings</div>
 				<CatPills
 					pills={settingsConfig}
-					default={settingsConfig[0].name}
+					defaultCategory={settingsConfig[0].name}
 					squared
 					handleSelection={handleSelection}
 				/>

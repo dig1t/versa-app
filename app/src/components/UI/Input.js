@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 
 import { validateText } from '../../util/index.js'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const optionsToObject = options => options.reduce((result, [label, value]) => {
 	return {
 		...result,
@@ -13,6 +14,7 @@ const optionsToObject = options => options.reduce((result, [label, value]) => {
 
 const haveSameKeys = (obj1, obj2) =>
 	Object.keys(obj1).length === Object.keys(obj2).length &&
+	// eslint-disable-next-line no-prototype-builtins
 	Object.keys(obj1).every(key => obj2.hasOwnProperty(key))
 
 /* use Input for easy validation

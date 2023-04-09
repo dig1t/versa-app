@@ -7,30 +7,41 @@ import { Icon, Input } from '../components/UI/index.js'
 import { useSelector } from 'react-redux'
 
 const Setting = ({ expanded, config, data, toggleAccordion }) => {
-	const [initialData, setInitialData] = useState({})
-	const [inputData, setInputData] = useState({ value: '' })
+	const [initialData, setInitialData] = useState({ ...data })
+	const [inputData, setInputData] = useState({
+		[config.name]: data[config.name] || ''
+	})
 	const [saveReady, setSaveReady] = useState(false)
 	const [inputValid, setInputValid] = useState(false)
 	
 	useEffect(() => {
-		if (initialData[config.name] !== data[config.name]) {
-			setInputData({ value: data[config.name] || '1' })
-		}
-	}, [data])
+		console.log('inputValid', inputValid)
+	}, [inputValid])
+	
+	useEffect(() => {
+		if (data[config.name] !== initialData[config.name])
+		
+		setInitialData({ ...data })
+		setInputData({
+			[config.name]: data[config.name] || ''
+		})
+	}, [data, config])
 	
 	useEffect(() => {
 		if (typeof config.readyCondition === 'function') {
 			if (config.readyCondition(inputData) !== true) return
 		}
 		
-		setSaveReady(inputValid == true && inputData.value !== data[config.name])
+		setSaveReady(
+			inputValid == true && inputData[config.name] !== data[config.name]
+		)
 	}, [inputData, inputValid])
 	
 	const handleSubmit = event => {
-		if (inputValid !== true) return
-		console.log('save to api', config.endpoint, inputData.value)
+		if (saveReady !== true) return
+		console.log('save to api', config.endpoint, inputData[config.name])
 		
-		const dataValue = inputData.value
+		const dataValue = inputData[config.name]
 		
 		toggleAccordion()
 		
@@ -71,18 +82,18 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 					{...config.inputOptions}
 					handleValueChange={value => {
 						console.log(1, value)
-						setInputData({ value: data[config.name] || '' })
+						setInputData({ [config.name]: value || '' })
 					}}
-					handleValidity={valid => setInputValid(valid)}
-					value={inputData.value}
+					handleValidity={setInputValid}
+					value={inputData[config.name]}
 				/>
 			</div>
 			{!config.saveOnChange && <div className="actions float-r">
 				<button
 					className="cancel btn-secondary btn-borderless"
 					onClick={() => {
-						toggleAccordion()
-						setInputData({ value: initialData.value })
+						//toggleAccordion()
+						setInputData({ [config.name]: data[config.name] })
 					}}
 				>CANCEL</button>
 				<button

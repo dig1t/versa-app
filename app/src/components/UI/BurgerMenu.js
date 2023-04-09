@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const BurgerMenu = props => {
-	const [menuOpen, setMenuOpen] = useState(props.open || false)
+const BurgerMenu = ({ open }) => {
+	const [menuOpen, setMenuOpen] = useState(open || false)
 	
 	return <div
 		className={[

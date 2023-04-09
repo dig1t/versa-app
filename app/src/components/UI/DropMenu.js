@@ -5,13 +5,13 @@ import classNames from 'classnames'
 
 import Portal from './Portal.js'
 
-const ItemMenu = props => {
-	return <ul className="menu">{props.children}</ul>
+const ItemMenu = ({ children }) => {
+	return <ul className="menu">{children}</ul>
 }
 
-const Item = props => {
+const Item = ({ link, children }) => {
 	return <li>
-		<Link to={props.link}>{props.children}</Link>
+		<Link to={link}>{children}</Link>
 	</li>
 }
 
@@ -42,6 +42,7 @@ const Menu = (props, ref) => {
 		}
 		
 		if (props.position === 'left' || (!props.position && (
+			// eslint-disable-next-line no-undef
 			x > window.innerWidth || menuElement.current.offsetWidth + x > window.innerWidth
 		))) {
 			x = parentRect.left - width - props.offset
@@ -49,6 +50,7 @@ const Menu = (props, ref) => {
 		}
 		
 		if (props.position === 'right' || (!props.position && (
+			// eslint-disable-next-line no-undef
 			x < 0 || menuElement.current.offsetWidth + x > window.innerWidth
 		))) {
 			x = parentRect.left + parentRect.width + props.offset
@@ -85,6 +87,7 @@ Menu.propTypes = {
 	open: PropTypes.bool.isRequired,
 	menu: PropTypes.object.isRequired,
 	parentRef: PropTypes.object.isRequired,
+	toggleMenu: PropTypes.func.isRequired,
 	position: PropTypes.string,
 	offset: PropTypes.number
 }

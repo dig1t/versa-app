@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 
-import { USER_FETCH_TOKEN_SUCCESS } from '../constants/actionTypes.js'
+import { USER_FETCH_TOKEN_SUCCESS } from '../reducers/user.js'
 
 import config from '../constants/config.js'
 

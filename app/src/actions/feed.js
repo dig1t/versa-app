@@ -1,16 +1,21 @@
 import {
+	PROFILE_ADD_ARRAY,
+} from '../reducers/profiles.js'
+import {
+	CONTENT_ADD_ARRAY
+} from '../reducers/content.js'
+
+import {
 	PROFILE_FEED_FETCH_REQUEST,
 	PROFILE_FEED_FETCH_SUCCESS,
-	PROFILE_FEED_FETCH_FAILURE,
-	PROFILE_ADD_ARRAY,
-	CONTENT_ADD_ARRAY
-} from '../constants/actionTypes.js'
+	PROFILE_FEED_FETCH_FAILURE
+} from '../reducers/feed.js'
 
 import api from '../util/api.js'
 
-export const getHomeFeed = category => (dispatch, getState) => {
+// export const getHomeFeed = category => (dispatch, getState) => {
 	
-}
+// }
 
 export const getProfileFeed = userId => (dispatch, getState) => {
 	const { feed, profiles, content } = getState()

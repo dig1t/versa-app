@@ -14,6 +14,10 @@ import {
 	deserializeProfile
 } from './profiles.js'
 
+const shortcuts = {
+	appTheme: ['light', 'dark']
+}
+
 const deserializeUser = (user, settings) => ({
 	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
 	email: user.email,
@@ -25,7 +29,7 @@ const deserializeUser = (user, settings) => ({
 })
 
 const deserializeSettings = settings => ({
-	appTheme: settings.appTheme
+	appTheme: shortcuts.appTheme[settings.appTheme || 0]
 })
 
 const getUserFromUserId = async userId => {
@@ -37,7 +41,8 @@ const getUserFromUserId = async userId => {
 }
 
 const getSettingsFromUserId = async userId => {
-	const settings = await Setting.findOne({ _id: mongoSanitize(userId) })
+	console.log(userId)
+	const settings = await Setting.findOne({ userId: mongoSanitize(userId) })
 	
 	if (!settings) throw new Error('Could not get user settings')
 	
@@ -219,14 +224,13 @@ export default server => {
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {
-				// Possible attack
-				if (req.params.userId !== req._oauth?.user?.userId) throw new Error('Unexpected Error')
-				
 				const settings = await getSettingsFromUserId(req._oauth.user.userId)
 				
 				req.apiResult(200, settings)
 			} catch(error) {
-				req.apiResult(500)
+				req.apiResult(500, {
+					message: error
+				})
 			}
 		}
 	)

@@ -27,13 +27,13 @@ const Home = () => <Layout page="home">
 				<div className="feed">
 					<CatPills
 						pills={feedCategories}
-						default="all"
+						defaultCategory="all"
 						handleSelection={category => {
 							console.log('selected pill of type:', category.name)
 						}}
 					/>
 					<div className="box">
-						<Feed />
+						<Feed type='home' />
 					</div>
 				</div>
 			</div>

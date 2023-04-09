@@ -19,13 +19,11 @@ const RenderLink = ({ clickRedirect, profile, children }) => <>
 	</Link> : children}
 </>
 
-const Avatar = props => {
+const Avatar = ({ avatar, status, hasStory, userId, clickRedirect, useModal }) => {
 	const dispatch = useDispatch()
 	const { profileList } = useSelector(state => ({
 		profileList: state.profiles.profileList
 	}))
-	
-	const { avatar, status, hasStory, userId, clickRedirect } = props
 	
 	const [avatarImg, setAvatarImg] = useState()
 	const [fetching, setFetching] = useState(false)
@@ -51,10 +49,10 @@ const Avatar = props => {
 	}, [profileList, fetching])
 	
 	const ModalComponent = React.memo(({ children }) => {
-		return props.useModal ? <Modal type="image" image={avatarImg || defaultAssets.avatar}>
+		return useModal ? <Modal type="image" image={avatarImg || defaultAssets.avatar}>
 			{children}
 		</Modal> : <>{children}</>
-	}, [props.useModal])
+	}, [useModal])
 	
 	return <div
 		className={classNames(

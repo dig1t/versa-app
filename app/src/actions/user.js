@@ -1,19 +1,22 @@
 import {
-	USER_PROFILE_FETCH_REQUEST,
-	USER_PROFILE_FETCH_SUCCESS,
-	USER_PROFILE_FETCH_FAILURE,
+	PROFILE_FETCH_SUCCESS
+} from '../reducers/profiles.js'
+
+import {
 	USER_LOGOUT_SUCCESS,
 	USER_FETCH_REQUEST,
 	USER_FETCH_SUCCESS,
 	USER_FETCH_FAILURE,
 	USER_FETCH_TOKEN_SUCCESS,
-	PROFILE_FETCH_SUCCESS
-} from '../constants/actionTypes.js'
-
-import {
+	USER_PROFILE_FETCH_REQUEST,
+	USER_PROFILE_FETCH_SUCCESS,
+	USER_PROFILE_FETCH_FAILURE,
 	SETTINGS_FETCH_REQUEST,
 	SETTINGS_FETCH_SUCCESS,
-	SETTINGS_FETCH_FAILURE
+	SETTINGS_FETCH_FAILURE,
+	SETTINGS_UPDATE_REQUEST,
+	SETTINGS_UPDATE_SUCCESS,
+	SETTINGS_UPDATE_FAILURE
 } from '../reducers/user.js'
 
 import api from '../util/api.js'
@@ -116,6 +119,22 @@ export const fetchUserSettings = () => (dispatch, getState) => {
 		}))
 		.catch(error => dispatch({
 			type: SETTINGS_FETCH_FAILURE,
+			payload: error
+		}))
+}
+
+export const updateUserSettings = data => (dispatch, getState) => {
+	const { user } = getState()
+	
+	dispatch({ type: SETTINGS_UPDATE_REQUEST })
+	
+	api.post(`/v1/user/${user.userId}/settings`, data)
+		.then(data => dispatch({
+			type: SETTINGS_UPDATE_SUCCESS,
+			payload: data
+		}))
+		.catch(error => dispatch({
+			type: SETTINGS_UPDATE_FAILURE,
 			payload: error
 		}))
 }

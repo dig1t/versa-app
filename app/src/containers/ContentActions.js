@@ -8,19 +8,19 @@ import { Icon } from '../components/UI/index.js'
 import { addLike, deleteLike } from '../actions/content.js'
 import { useAuthenticated } from '../context/Auth.js'
 
-const ContentActions = props => {
+const ContentActions = ({ data, noRedirect }) => {
 	const dispatch = useDispatch()
 	const { loggedIn } = useAuthenticated()
 	const [redirect, setRedirect] = useState(null)
 	const profileList = useSelector(state => state.profiles.profileList)
-	const contentProfile = profileList[props.userId]
+	const contentProfile = profileList[data.userId]
 	
 	return <div className="actions">
 		{redirect && <Navigate to={redirect} />}
 		<div
 			className={classNames(
 				'action like align-center-wrap',
-				props.liked && 'selected',
+				data.liked && 'selected',
 				loggedIn !== true && 'disabled'
 			)}
 			onClick={input => {
@@ -29,24 +29,24 @@ const ContentActions = props => {
 				if (loggedIn !== true) return
 				
 				dispatch(
-					props.liked ? deleteLike(props.contentId) : addLike(props.contentId)
+					data.liked ? deleteLike(data.contentId) : addLike(data.contentId)
 				)
 			}}
 		>
 			<Icon name="heart" />
-			<span>{props.likes || 0}</span>
+			<span>{data.likes || 0}</span>
 		</div>
 		<div
 			className="action comment align-center-wrap"
 			onClick={input => {
-				if (!contentProfile || props.noRedirect) return
+				if (!contentProfile || noRedirect) return
 				
 				input.preventDefault()
-				setRedirect(`/@${contentProfile.username}/${props.contentId}`)
+				setRedirect(`/@${contentProfile.username}/${data.contentId}`)
 			}}
 		>
 			<Icon name="comment" />
-			<span>{props.comments || 0}</span>
+			<span>{data.comments || 0}</span>
 		</div>
 		<div
 			className={classNames(
@@ -62,18 +62,13 @@ const ContentActions = props => {
 			}}
 		>
 			<Icon name="repost" />
-			<span>{props.reposts || 0}</span>
+			<span>{data.reposts || 0}</span>
 		</div>
 	</div>
 }
 
 ContentActions.propTypes = {
-	contentId: PropTypes.string.isRequired,
-	likes: PropTypes.number,
-	comments: PropTypes.number,
-	reposts: PropTypes.number,
-	noRedirect: PropTypes.bool,
-	liked: PropTypes.bool
+	noRedirect: PropTypes.bool
 }
 
 export default ContentActions

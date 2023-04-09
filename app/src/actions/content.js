@@ -1,9 +1,10 @@
 import {
-	PROFILE_FETCH_SUCCESS,
 	CONTENT_FETCH_SUCCESS,
+	CONTENT_FETCH_FAILURE,
 	CONTENT_STAT_UPDATE,
 	CONTENT_LIKE_UPDATE_SUCCESS
-} from '../constants/actionTypes.js'
+} from '../reducers/content.js'
+import { PROFILE_FETCH_SUCCESS } from '../reducers/profiles.js'
 
 import api from '../util/api.js'
 

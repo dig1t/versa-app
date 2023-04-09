@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { Input, Icon } from '../components/UI/index.js'
 import api from '../util/api.js'
 
-const CommentEditor = props => {
+const CommentEditor = ({ contentId, handleSuccess }) => {
 	const [data, setData] = useState({
 		text: ''
 	})
@@ -20,11 +20,11 @@ const CommentEditor = props => {
 		
 		setData({ text: '' })
 		
-		api.post(`/v1/content/${props.contentId}/comment`, { body })
+		api.post(`/v1/content/${contentId}/comment`, { body })
 			.then(response => {
-				if (!props.handleSuccess) return
+				if (!handleSuccess) return
 				
-				props.handleSuccess(response)
+				handleSuccess(response)
 			})
 	}
 	
