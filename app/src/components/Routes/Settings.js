@@ -77,7 +77,7 @@ const settingsConfig = [
 						autoComplete: 'false'
 					}
 				},
-				endpoint: '/v1/settings/username',
+				endpoint: '/v1/settings',
 				endpointMethod: 'put' // default: put
 			},
 			{
@@ -90,7 +90,7 @@ const settingsConfig = [
 						autoComplete: 'false'
 					}
 				},
-				endpoint: '/v1/settings/password',
+				endpoint: '/v1/settings',
 				endpointMethod: 'put' // default: put
 			}
 		]
