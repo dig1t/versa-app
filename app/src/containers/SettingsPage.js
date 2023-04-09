@@ -9,13 +9,11 @@ import { useSelector } from 'react-redux'
 const Setting = ({ expanded, config, data, toggleAccordion }) => {
 	const [initialData, setInitialData] = useState({})
 	const [inputData, setInputData] = useState({ value: '' })
-	//const [inputData, setInputData] = useState({ value: '' })
 	const [saveReady, setSaveReady] = useState(false)
 	const [inputValid, setInputValid] = useState(false)
 	
 	useEffect(() => {
 		if (initialData[config.name] !== data[config.name]) {
-			console.log(183783128)
 			setInputData({ value: data[config.name] || '1' })
 		}
 	}, [data])
@@ -73,7 +71,7 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 					{...config.inputOptions}
 					handleValueChange={value => {
 						console.log(1, value)
-						setInputData({ value: value })
+						setInputData({ value: data[config.name] || '' })
 					}}
 					handleValidity={valid => setInputValid(valid)}
 					value={inputData.value}
@@ -82,7 +80,10 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 			{!config.saveOnChange && <div className="actions float-r">
 				<button
 					className="cancel btn-secondary btn-borderless"
-					onClick={toggleAccordion}
+					onClick={() => {
+						toggleAccordion()
+						setInputData({ value: initialData.value })
+					}}
 				>CANCEL</button>
 				<button
 					className={classNames(
@@ -108,7 +109,7 @@ Setting.propTypes = {
 	Component: PropTypes.func
 }
 
-const SettingsPage = ({ config, settings }) => {
+const SettingsPage = ({ config }) => {
 	const data = useSelector(state => config.selector(state))
 	
 	const [expanded, setExpanded] = useState([])
@@ -146,8 +147,7 @@ const SettingsPage = ({ config, settings }) => {
 }
 
 SettingsPage.propTypes = {
-	config: PropTypes.object.isRequired,
-	//data: PropTypes.object.isRequired
+	config: PropTypes.object.isRequired
 }
 
 export default SettingsPage
