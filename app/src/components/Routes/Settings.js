@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import Loading from '../Loading.js'
 import Layout from '../Layout.js'
@@ -142,13 +143,25 @@ const settingsConfig = [
 ]
 
 const Settings = () => {
+	const { categoryParam } = useParams()
 	const { userId } = useAuthenticated()
 	
+	const navigate = useNavigate()
+	const [initialCategory, setInitialCategory] = useState(settingsConfig[0].name)
 	const profileList = useSelector(state => state.profiles.profileList)
 	const [category, setCategory] = useState()
 	
-	const profile = profileList[userId]
+	useEffect(() => {
+		if (categoryParam) {
+			if (settingsConfig.find(category => category.name === categoryParam)) {
+				setInitialCategory(categoryParam)
+			} else {
+				navigate('/settings')
+			}
+		}
+	}, [categoryParam])
 	
+	const profile = profileList[userId]
 	
 	return <Layout page="settings">
 		{profile ? <div className="wrap grid">
@@ -156,7 +169,7 @@ const Settings = () => {
 				<div className="heading">Settings</div>
 				<CatPills
 					pills={settingsConfig}
-					defaultCategory={settingsConfig[0].name}
+					defaultCategory={initialCategory}
 					squared
 					handleSelection={category => setCategory(category)}
 				/>

@@ -23,6 +23,7 @@ const AppRoutes = () => <Routes>
 	<Route element={<PrivateRoute requireAuth={true} redirectTo="/login" />}>
 		<Route path="/logout" element={<Logout />} />
 		<Route path="/settings" element={<Settings />} />
+		<Route path="/settings/:categoryParam" element={<Settings />} />
 		<Route path="/home" element={<Home />} />
 	</Route>
 	
