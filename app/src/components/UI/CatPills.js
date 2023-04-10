@@ -3,8 +3,15 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) => {
-	const [activeCategory, setActiveCategory] = useState(defaultCategory || null)
+	const [activeCategory, setActiveCategory] = useState(null)
 	const [mounted, setMounted] = useState(false)
+	
+	useEffect(() => {
+		if (pills.find(category => category.name === defaultCategory)) {
+			setActiveCategory(defaultCategory)
+		}
+	}, [defaultCategory])
+	
 	
 	useEffect(() => handleSelection(
 		pills.find(category => category.name === activeCategory)
