@@ -9,6 +9,7 @@ export const USER_FETCH_TOKEN_SUCCESS = 'USER_FETCH_TOKEN_SUCCESS'
 export const USER_FETCH_TOKEN_FAILURE = 'USER_FETCH_TOKEN_FAILURE'
 
 export const USER_LOGOUT_SUCCESS = 'USER_LOGOUT_SUCCESS'
+export const USER_UPDATE = 'USER_UPDATE'
 
 export const SETTINGS_FETCH_REQUEST = 'SETTINGS_FETCH_REQUEST'
 export const SETTINGS_FETCH_SUCCESS = 'SETTINGS_FETCH_SUCCESS'
@@ -71,6 +72,11 @@ export default (state = {
 				profile: action.payload
 			}
 		}
+		case USER_UPDATE:
+			return (action.payload.key === undefined || action.payload.value === undefined) ? state : {
+				...state,
+				[action.payload.key]: action.payload.value
+			}
 		
 		case SETTINGS_FETCH_SUCCESS: {
 			return {

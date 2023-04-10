@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -10,6 +10,7 @@ const Icon = ({ name, scale, hidden, rot }) => {
 	const iconName = iconAlias[name] || name
 	
 	const _svgImport = React.memo(() => {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
 		const _svgImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
 		
 		return <_svgImport />
@@ -19,7 +20,7 @@ const Icon = ({ name, scale, hidden, rot }) => {
 		className={classNames(
 			'icon',
 			`icon-${iconName}`,
-			//scale && `icon-${scale}`
+			scale && `icon-${scale}`
 		)}
 		aria-hidden="true"
 	>

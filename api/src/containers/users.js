@@ -13,10 +13,7 @@ import useFields from '../util/useFields.js'
 import {
 	deserializeProfile
 } from './profiles.js'
-
-const shortcuts = {
-	appTheme: ['light', 'dark']
-}
+import { deserializeSettings } from './settings.js'
 
 const deserializeUser = (user, settings) => ({
 	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
@@ -28,25 +25,12 @@ const deserializeUser = (user, settings) => ({
 	settings: settings || user.settings
 })
 
-const deserializeSettings = settings => ({
-	appTheme: shortcuts.appTheme[settings.appTheme || 0]
-})
-
 const getUserFromUserId = async userId => {
 	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!user) throw new Error('User does not exist')
 	
 	return deserializeUser(user)
-}
-
-const getSettingsFromUserId = async userId => {
-	console.log(userId)
-	const settings = await Setting.findOne({ userId: mongoSanitize(userId) })
-	
-	if (!settings) throw new Error('Could not get user settings')
-	
-	return deserializeSettings(settings)
 }
 
 const getUserIdFromSession = async sessionId => {
@@ -186,6 +170,106 @@ const deleteAccount = async userId => {
 	}
 }
 
+const emailIsFree = async email => {
+	if (!validateText(email, 'email')) return false
+	
+	const user = await User.findOne({ email: mongoSanitize(email) })
+		.select('email')
+	
+	if (user && typeof user.email === 'string') {
+		return false
+	}
+	
+	return true
+}
+
+const usernameIsFree = async username => {
+	if (!validateText(username, 'username')) return false
+	
+	const profile = await Profile.findOne({ username: mongoSanitize(username) })
+		.select('username')
+	
+	if (profile && typeof profile.username === 'string') {
+		return false
+	}
+	
+	return true
+}
+
+const updateEmail = async (userId, newEmail) => {
+	try {
+		if (!emailIsFree(newEmail)) throw new Error('Email already exists!')
+		
+		// TODO: Keep track of email updates
+		
+		return await mongoSession(async () => {
+			// TODO: Save to user activity logs as type: user:update_email
+			
+			await User.updateOne(
+				{ _id: mongoSanitize(userId) },
+				{ $set: { 'email': mongoSanitize(newEmail) } }
+			)
+			
+			return { updatedValue: 'email' }
+		})
+	} catch(error) {
+		throw new Error(error || 'Could not update user email')
+	}
+}
+
+const updateUsername = async (userId, newUsername) => {
+	try {
+		if (!usernameIsFree(newUsername)) throw new Error('Username already exists!')
+		
+		// TODO: Keep track of username updates, limit to once per 2 weeks
+		
+		/* if (!userCanUpdateUsername(userId)) {
+			throw new Error('You may only update once per 2 weeks')
+		}*/
+		
+		return await mongoSession(async () => {
+			// TODO: Save to user activity logs as type: profile:update_username
+			
+			await Profile.updateOne(
+				{ _id: mongoSanitize(userId) },
+				{ $set: { 'username': mongoSanitize(newUsername) } }
+			)
+			
+			return { updatedValue: 'username' }
+		})
+	} catch(error) {
+		throw new Error(error || 'Could not update profile username')
+	}
+}
+
+const updatePassword = async (userId, newPassword) => {
+	if (
+		newPassword.length > config.user.maxPasswordLength ||
+		newPassword.length < 5 ||
+		!validateText(newPassword, 'password')
+	) {
+		throw new Error('Password does not meet requirements')
+	}
+	
+	try {
+		const user = await User.findOne({ _id: mongoSanitize(userId) })
+		
+		if (!user) throw new Error('Could not find user')
+		
+		return await mongoSession(async () => {
+			// TODO: Save to user activity logs as type: user:update_email
+			
+			user.password = await user.hashString(newPassword)
+			
+			await user.save()
+			
+			return { updatedValue: 'password' }
+		})
+	} catch(error) {
+		throw new Error(error || 'Could not update user password')
+	}
+}
+
 export {
 	emailExists,
 	getUserIdFromSession,
@@ -195,7 +279,10 @@ export {
 	authenticate,
 	authenticateUserCredentials,
 	createAccount,
-	deleteAccount
+	deleteAccount,
+	updateUsername,
+	updateEmail,
+	updatePassword
 }
 
 export default server => {
@@ -215,22 +302,6 @@ export default server => {
 				req.apiResult(200, user)
 			} catch(error) {
 				req.apiResult(500)
-			}
-		}
-	)
-	
-	router.get(
-		'/user/:userId/settings',
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				const settings = await getSettingsFromUserId(req._oauth.user.userId)
-				
-				req.apiResult(200, settings)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
 			}
 		}
 	)

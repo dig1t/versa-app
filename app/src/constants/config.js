@@ -1,4 +1,4 @@
-const domain = typeof window !== 'undefined' ? window?.location?.host : 'localhost'
+/* eslint-disable no-undef */
 
 export default {
 	domain: typeof window !== 'undefined' ? window?.location?.host : 'localhost',

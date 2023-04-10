@@ -1,10 +1,12 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
 const webpack = require('webpack')
 const chokidar = require('chokidar')
 const chalk = require('chalk')
 const { spawn } = require('node:child_process')
 
-const webpackClientConfig = require('../webpack.client.config.cjs')
+//const webpackClientConfig = require('../webpack.client.config.cjs')
 const webpackServerConfig = require('../webpack.server.config.cjs')
 
 const WATCH_TIMEOUT = 1000
@@ -132,11 +134,11 @@ const serverCompiler = new Compiler({
 	useServer: true
 })
 
-const clientCompiler = new Compiler({
+/*const clientCompiler = new Compiler({
 	name: 'versa-app',
 	webpackConfig: webpackClientConfig,
 	watchDir: path.resolve(__dirname, '../src')
-})
+})*/
 
 serverCompiler.watch()
 //clientCompiler.watch()

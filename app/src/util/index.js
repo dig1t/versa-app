@@ -37,7 +37,7 @@ const binarySearch = (array, value) => {
 		} else if (array[mid] < value) {
 			min = mid + 1
 		} else {
-			end = mid -1
+			max = mid -1
 		}
 	}
 	
@@ -56,7 +56,7 @@ const binarySearchArrayChild = (array, key, value) => {
 		} else if (array[mid].key < value) {
 			min = mid + 1
 		} else {
-			end = mid -1
+			max = mid -1
 		}
 	}
 	
