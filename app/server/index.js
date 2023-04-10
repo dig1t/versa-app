@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 import session from 'express-session'
 import express from 'express'
 import compression from 'compression'
@@ -27,7 +29,7 @@ if (app.get('env') === 'development') {
 	
 	let initialCompile = true
 	
-	compiler.hooks.done.tap('VersaCompiler', stats => {
+	compiler.hooks.done.tap('VersaCompiler', () => {
 		if (initialCompile !== true) console.log('refreshing client...')
 		
 		initialCompile = false

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import classNames from 'classnames'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 
-import Layout from '../Layout.js'
 import Loading from '../Loading.js'
+import Layout from '../Layout.js'
 import { CatPills } from '../UI/index.js'
 import SettingsPage from '../../containers/SettingsPage.js'
+import { USER_UPDATE } from '../../reducers/user.js'
+import { PROFILE_UPDATE } from '../../reducers/profiles.js'
+import { useAuthenticated } from '../../context/Auth.js'
 
 const settingsConfig = [
 	/*
@@ -18,7 +20,7 @@ const settingsConfig = [
 		// Require user to re-authenticate before allowing changes
 		requireAuthToSubmit: true,
 		
-		selector: state => ({
+		selector: ({ state, userId }) => ({
 			user: state.user
 		}),
 		
@@ -32,8 +34,12 @@ const settingsConfig = [
 				},
 				preview: 'digit@gmail.com',
 				saveOnChange: false, // Shows save/cancel actions
-				handleSubmit: newData => {
+				handleSubmit: (newData, onSave) => {
 					api.post('/settings/email', { email: newData.email })
+						.then(() => onSave(newData))
+				},
+				saveAction: ({ updates, resultFromAPI, userId }) => {
+					console.log('Data saved: ', newData)
 				}
 			}
 		]
@@ -45,9 +51,9 @@ const settingsConfig = [
 		
 		requireAuthToSubmit: true,
 		
-		selector: state => ({
+		selector: ({ state, userId }) => ({
 			email: state.user.email,
-			username: state.user.profile?.username
+			username: state.profiles.profileList[userId].username
 		}),
 		
 		settings: [
@@ -61,10 +67,13 @@ const settingsConfig = [
 						autoComplete: 'false'
 					}
 				},
-				//saveOnChange: true,
-				handleSubmit: newData => {
-					console.log('SUBMIT THIS DATA:', newData)
-				}
+				saveAction: ({ updated }) => ({
+					type: USER_UPDATE,
+					payload: {
+						key: 'email',
+						value: updated.email
+					}
+				})
 			},
 			{
 				name: 'username',
@@ -77,27 +86,36 @@ const settingsConfig = [
 						autoComplete: 'false'
 					}
 				},
-				endpoint: '/v1/settings',
-				endpointMethod: 'put' // default: put
+				saveAction: ({ updated, userId }) => ({
+					type: PROFILE_UPDATE,
+					payload: {
+						key: 'username',
+						value: updated.username,
+						userId
+					}
+				})
 			},
 			{
 				name: 'password',
 				label: 'Password',
-				description: 'Choose a strong password.',
+				description: 'Choose a strong password. Minimum of 6 characters.',
 				inputOptions: {
 					type: 'password',
+					placeholder: 'New password',
 					attributes: {
 						autoComplete: 'false'
 					}
-				},
-				endpoint: '/v1/settings',
-				endpointMethod: 'put' // default: put
+				}
 			}
 		]
 	},
-	/*{
+	{
 		label: 'Privacy',
 		name: 'privacy',
+		
+		selector: ({ state, userId }) => ({
+			private: state.profiles.profileList[userId].private
+		}),
 		
 		settings: [
 			{
@@ -110,50 +128,37 @@ const settingsConfig = [
 						['Private', 'private']
 					]
 				},
-				endpoint: '/v1/user/email'
+				saveAction: ({ updated, userId }) => ({
+					type: PROFILE_UPDATE,
+					payload: {
+						key: 'private',
+						value: updated.private,
+						userId
+					}
+				})
 			}
 		]
-	}*/
+	}
 ]
 
-const useSettings = () => {
-	const preferences = useSelector(state => state.user.settings)
-	const account = useSelector(state => ({
-		email: state.user.email,
-		username: state.user.profile?.username
-	}))
-	const profile = useSelector(state => state.user.profile)
-	
-	const [settings, setSettings] = useState({
-		preferences,
-		account,
-		profile
-	})
-	
-	useEffect(() => setSettings({
-		preferences,
-		account,
-		profile
-	}), [preferences, account, profile])
-	
-	return { settings }
-}
-
 const Settings = () => {
-	//const { settings } = useSettings()
+	const { userId } = useAuthenticated()
+	
+	const profileList = useSelector(state => state.profiles.profileList)
 	const [category, setCategory] = useState()
 	
-	const handleSelection = category => setCategory(category)
+	const profile = profileList[userId]
+	
 	
 	return <Layout page="settings">
-		<div className="wrap grid">
+		{profile ? <div className="wrap grid">
 			<div className="settings-categories col-3 col-desktop-3">
 				<div className="heading">Settings</div>
 				<CatPills
 					pills={settingsConfig}
 					defaultCategory={settingsConfig[0].name}
 					squared
-					handleSelection={handleSelection}
+					handleSelection={category => setCategory(category)}
 				/>
 			</div>
 			<div className="settings-page col-9 col-desktop-9">
@@ -161,7 +166,7 @@ const Settings = () => {
 					config={category}
 				/>}
 			</div>
-		</div>
+		</div> : <Loading />}
 	</Layout>
 }
 

@@ -1,8 +1,12 @@
+export const PROFILE_ADD_ARRAY = 'PROFILE_ADD_ARRAY'
+export const PROFILE_UPDATE = 'PROFILE_UPDATE'
+
 export const PROFILE_FETCH_REQUEST = 'PROFILE_FETCH_REQUEST'
 export const PROFILE_FETCH_SUCCESS = 'PROFILE_FETCH_SUCCESS'
 export const PROFILE_FETCH_FAILURE = 'PROFILE_FETCH_FAILURE'
+
 export const PROFILE_FOLLOW_UPDATE = 'PROFILE_FOLLOW_UPDATE'
-export const PROFILE_ADD_ARRAY = 'PROFILE_ADD_ARRAY'
+
 export const PROFILE_CONNECTION_SUCCESS = 'PROFILE_CONNECTION_SUCCESS'
 
 export default (state = {
@@ -37,6 +41,20 @@ export default (state = {
 					...newUsernames
 				}
 			}
+		}
+		case PROFILE_UPDATE: {
+			const profile = state.profileList[action.payload.userId]
+			
+			return profile ? {
+				...state,
+				profileList: {
+					...state.profileList,
+					[action.payload.userId]: {
+						...profile,
+						[action.payload.key]: action.payload.value
+					}
+				}
+			} : state
 		}
 		case PROFILE_CONNECTION_SUCCESS: {
 			if (!state.profileList[action.payload.userId]) return state

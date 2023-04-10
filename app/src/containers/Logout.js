@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { userLogout } from '../actions/user.js'
-import api from '../util/api.js'
 
 const Logout = () => {
 	const dispatch = useDispatch()

@@ -25,43 +25,43 @@ const haveSameKeys = (obj1, obj2) =>
 const Input = props => {
 	const [errorText, setErrorText] = useState(null)
 	const [value, setValue] = useState(
-		props.type === 'checkboxes' ? optionsToObject(props.options) : props.value
+		props.type === 'checkboxes' ? optionsToObject(props.options) : ''
 	)
 	const [visibleValue, setVisibleValue] = useState('')
-	const [isValid, setIsValid] = useState(
-		props.optional || (!(
-			// Make text and textareas valid temporarily
-			// so they appear with no errors initially
-			props.type == 'select' || props.type == 'selectButtons'
-		) && null)
-	)
+	const [isValid, setIsValid] = useState(props.optional || (!(
+		// Make text and textareas valid temporarily
+		// so they appear with no errors initially
+		props.type == 'select' || props.type == 'selectButtons'
+	) && null))
 	const [focused, setFocused] = useState(props.autoFocus)
 	
 	useEffect(() => props.handleValueChange(value), [value])
 	
 	useEffect(() => {
 		switch(props.type) {
-			case 'text': case 'textarea': case 'selectButtons':
+			case 'text': case 'textarea': case 'selectButtons': {
 				if (typeof props.value !== 'string') return
 				
 				setValue(props.value)
 				
-				break;
-			case 'checkboxes':
+				break
+			}
+			case 'checkboxes': {
 				if (haveSameKeys(props.value, optionsToObject(props.options))) return
 				
-				setValue(
-					optionsToObject(props.options)
-				)
+				setValue(optionsToObject(props.options))
+				
 				break
-			case 'select':
-				if (!props.value instanceof Array) {
-					setValue([])
+			}
+			case 'select': {
+				if (!(props.value instanceof Array)) {
+					setValue(props.value instanceof Array ? props.array : [])
 				} else {
 					setValue(props.value)
 				}
-			case 'selectButtons':
+				
 				break
+			}
 		}
 		
 		setVisibleValue(props.value)
@@ -76,12 +76,12 @@ const Input = props => {
 	}, [])
 	
 	const validate = useCallback(newValue => {
-		if (!newValue) newValue = value
+		if (typeof newValue === 'undefined') newValue = value
 		
 		let validity = true
 		
 		switch(props.type) {
-			case 'text': case 'textarea':
+			case 'text': case 'textarea': {
 				if (props.optional || ( // optional and 1+ characters exist
 					props.optional === false &&
 					newValue.length >= (props.minLength || 0) &&
@@ -108,7 +108,8 @@ const Input = props => {
 				}
 				
 				break
-			case 'select':
+			}
+			case 'select': {
 				newValue.map(newOption => {
 					const optionExists = props.options.find(option => option[1] === newOption)
 					
@@ -119,7 +120,8 @@ const Input = props => {
 				})
 				
 				break
-			case 'selectButtons':
+			}
+			case 'selectButtons': {
 				const optionExists = props.options.find(option => option[1] === newValue)
 				
 				// Make sure user didn't manually change the value
@@ -128,10 +130,12 @@ const Input = props => {
 				}
 				
 				break
-			case 'checkboxes':
+			}
+			case 'checkboxes': {
 				// TODO
 				
 				break
+			}
 		}
 		
 		if (validity) setErrorText(null)
@@ -171,18 +175,17 @@ const Input = props => {
 		maxLength: props.maxLength,
 		autoFocus: props.autoFocus,
 		disabled: props.disabled,
-		autocomplete: props.autocomplete,
 		'aria-required': (props.optional && true) || false
 	}), [props])
 	
 	const children = useMemo(() => {
 		switch(props.type) {
-			case 'textarea':
+			case 'textarea': {
 				return <textarea {...attributes}
 					onKeyDown={handleKeyDown}
 					onInput={handleChange}
 					onChange={handleChange}
-					onKeyUp={handleChange}
+					//onKeyUp={handleChange}
 					onFocus={() => setFocused(true)}
 					onBlur={() => {
 						validate()
@@ -190,7 +193,8 @@ const Input = props => {
 					}}
 					value={visibleValue}
 				/>
-			case 'select': // [Label, Value]
+			}
+			case 'select': { // [Label, Value]
 				return <select
 					{...attributes}
 					multiple={props.multiple}
@@ -211,7 +215,8 @@ const Input = props => {
 						{option[0]}
 					</option>)}
 				</select>
-			case 'selectButtons': // [Label, Value]
+			}
+			case 'selectButtons': { // [Label, Value]
 				return <>
 					{props.options.map(option => <label
 						className={classNames(value === option[1] && 'selected')}
@@ -227,7 +232,8 @@ const Input = props => {
 						<span>{option[0]}</span>
 					</label>)}
 				</>
-			case 'checkboxes':
+			}
+			case 'checkboxes': {
 				return <>
 					{props.options.map(option => <label
 						className={classNames(
@@ -252,7 +258,8 @@ const Input = props => {
 						<span>{option[0]}</span>
 					</label>)}
 				</>
-			default:
+			}
+			default: {
 				return <input
 					{...attributes}
 					type={props.type}
@@ -260,7 +267,7 @@ const Input = props => {
 					onKeyDown={handleKeyDown}
 					onInput={handleChange}
 					onChange={handleChange}
-					onKeyUp={handleChange}
+					//onKeyUp={handleChange}
 					onFocus={() => setFocused(true)}
 					onBlur={() => {
 						validate()
@@ -268,6 +275,7 @@ const Input = props => {
 					}}
 					value={visibleValue}
 				/>
+			}
 		}
 	}, [props])
 	

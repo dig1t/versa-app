@@ -12,7 +12,7 @@ const PostEditor = () => {
 	
 	useEffect(() => setSaveReady(data.text.length > 0), [data])
 	
-	const handleSubmit = event => {
+	const handleSubmit = () => {
 		if (!saveReady) return
 		
 		const body = data.text

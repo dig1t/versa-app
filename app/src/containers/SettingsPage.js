@@ -4,19 +4,19 @@ import PropTypes from 'prop-types'
 
 import api from '../util/api.js'
 import { Icon, Input } from '../components/UI/index.js'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useAuthenticated } from '../context/Auth.js'
 
 const Setting = ({ expanded, config, data, toggleAccordion }) => {
+	const dispatch = useDispatch()
+	
 	const [initialData, setInitialData] = useState({ ...data })
 	const [inputData, setInputData] = useState({
 		[config.name]: data[config.name] || ''
 	})
 	const [saveReady, setSaveReady] = useState(false)
 	const [inputValid, setInputValid] = useState(false)
-	
-	useEffect(() => {
-		console.log('inputValid', inputValid)
-	}, [inputValid])
+	const { userId } = useAuthenticated()
 	
 	useEffect(() => {
 		if (data[config.name] !== initialData[config.name])
@@ -37,15 +37,33 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 		)
 	}, [inputData, inputValid])
 	
-	const handleSubmit = event => {
+	const handleSubmit = () => {
 		if (saveReady !== true) return
-		console.log('save to api', config.endpoint, inputData[config.name])
 		
-		const dataValue = inputData[config.name]
+		//console.log('save to api', config.endpoint, inputData[config.name])
+		
+		const inputDataDraft = { ...inputData }
 		
 		toggleAccordion()
 		
-		config.handleSubmit(inputData)
+		if (typeof config.handleSubmit === 'function') {
+			config.handleSubmit(inputDataDraft, config.onSave)
+		} else {
+			// Use default API call
+			api.post(config.endpoint || `/v1/user/${userId}/settings`, inputDataDraft)
+				.then(data => {
+					// eslint-disable-next-line no-undef
+					console.log(`Saved ${config.name}`)
+					
+					if (config.saveAction) {
+						dispatch(config.saveAction({
+							updated: inputDataDraft,
+							resultFromAPI: data,
+							userId
+						}))
+					}
+				})
+		}
 	}
 	
 	//const Component = config.component
@@ -81,10 +99,9 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 				<Input
 					{...config.inputOptions}
 					handleValueChange={value => {
-						console.log(1, value)
 						setInputData({ [config.name]: value || '' })
 					}}
-					handleValidity={setInputValid}
+					handleValidity={validity => setInputValid(validity)}
 					value={inputData[config.name]}
 				/>
 			</div>
@@ -92,7 +109,7 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 				<button
 					className="cancel btn-secondary btn-borderless"
 					onClick={() => {
-						//toggleAccordion()
+						toggleAccordion()
 						setInputData({ [config.name]: data[config.name] })
 					}}
 				>CANCEL</button>
@@ -121,7 +138,8 @@ Setting.propTypes = {
 }
 
 const SettingsPage = ({ config }) => {
-	const data = useSelector(state => config.selector(state))
+	const { userId } = useAuthenticated()
+	const data = useSelector(state => config.selector({ state, userId }))
 	
 	const [expanded, setExpanded] = useState([])
 	
@@ -135,7 +153,6 @@ const SettingsPage = ({ config }) => {
 	
 	// Clear expanded indexes once the page changes
 	useEffect(() => setExpanded([]), [config])
-	useEffect(() => console.log('DATA',data), [data])
 	
 	return <div className="settings-page">
 		<div className="header">

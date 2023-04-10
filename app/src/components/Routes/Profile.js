@@ -75,7 +75,7 @@ const Profile = () => {
 	const [fetching, setFetching] = useState(false)
 	
 	useEffect(() => {
-		const param = /\@(\w+)/.exec(username)
+		const param = /@(\w+)/.exec(username)
 		const usernameExec = param && param[1]
 		
 		usernameExec ? setUsernameQuery(usernameExec) : setRedirect('/error')

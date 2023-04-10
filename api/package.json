@@ -11,7 +11,7 @@
   "scripts": {
     "build": "swc src -D -d dist",
     "dev:compile": "set NODE_ENV=production&& swc src -w -D -d dist",
-    "dev:watch": "nodemon --watch \"dist/**/*\" -e js ./dist/index.js",
+    "dev:watch": "nodemon --watch \"dist/**/*\" --exec \"node --no-warnings ./dist/index.js\"",
     "dev": "concurrently \"npm run dev:compile\" \"npm run dev:watch\"",
     "start": "set NODE_ENV=production&& node ./dist/index.js",
     "test": "set NODE_ENV=development&& mocha",

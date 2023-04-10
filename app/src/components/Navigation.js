@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
@@ -52,12 +52,14 @@ const Shortcut = ({ redirect }) => <NavButton type="shortcut">
 
 export const Navigation = () => {
 	const hydrated = isHydrated()
-	const { loggedIn } = useAuthenticated()
+	const { loggedIn, userId } = useAuthenticated()
 	
-	const profile = useSelector(state => state.user.profile)
+	const profileList = useSelector(state => state.profiles.profileList)
+	
+	const profile = profileList[userId]
 	
 	const Menu = <ItemMenu>
-		<Item link={`/@${profile.username}`}>My Profile</Item>
+		{profile && <Item link={`/@${profile.username}`}>My Profile</Item>}
 		<ItemDivider />
 		<Item link="/settings">Settings</Item>
 		

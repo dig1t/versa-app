@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import { Input, Icon } from '../components/UI/index.js'
+import { Input } from '../components/UI/index.js'
 import api from '../util/api.js'
 
 const CommentEditor = ({ contentId, handleSuccess }) => {
@@ -13,7 +13,7 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 	
 	useEffect(() => setSaveReady(data.text.length > 0), [data])
 	
-	const handleSubmit = event => {
+	const handleSubmit = () => {
 		if (!saveReady) return
 		
 		const body = data.text

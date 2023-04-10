@@ -32,8 +32,10 @@ export const userLogout = waitForServer => dispatch => {
 	})
 		.then(() => {
 			try {
+				// eslint-disable-next-line no-undef
 				localStorage.clear()
 			} catch(error) {
+				// eslint-disable-next-line no-undef
 				console.error('Could not clear local storage', error)
 			}
 			

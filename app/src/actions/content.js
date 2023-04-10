@@ -30,7 +30,7 @@ export const getContent = contentId => (dispatch, getState) => {
 				}
 			})
 		})
-		.catch(error => dispatch({
+		.catch(() => dispatch({
 			type: CONTENT_FETCH_FAILURE,
 			payload: contentId
 		}))
@@ -61,7 +61,7 @@ export const addLike = contentId => (dispatch, getState) => {
 }
 
 export const deleteLike = contentId => (dispatch, getState) => {
-	const { content, profiles } = getState()
+	const { content } = getState()
 	
 	if (!content.contentList[contentId]) return
 	

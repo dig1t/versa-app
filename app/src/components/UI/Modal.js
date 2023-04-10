@@ -10,7 +10,7 @@ const Modal = props => {
 	const modalComponent = useMemo(() => {
 		switch(props.type) {
 			case 'image': {
-				// eslint-disable-next-line @next/next/no-img-element
+				// eslint-disable-next-line
 				return <img src={props.image} alt={props.imgAlt} />
 			}
 			default:

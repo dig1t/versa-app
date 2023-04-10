@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 import config from '../config.js'
 import api from '../../src/util/api.js'
-import authMiddleware, { privateRoute, logout } from '../util/authMiddleware.js'
+import authMiddleware, { logout } from '../util/authMiddleware.js'
 import apiMiddleware from '../util/apiMiddleware.js'
 
 const router = Router()
@@ -14,28 +15,16 @@ router.use(authMiddleware())
 
 api.setOption('withCredentials', false)
 
-// TODO: DEPRECATED
-const apiFieldMiddleware = (req, _, next) => {
-	const data = req.body?.data
-	
-	data && Object.entries(data).forEach(([key, value]) => {
-		req.body[key] = value
-	})
-	
-	next()
-}
-
 const deserializeAuthorizedUser = user => ({
 	userId: user.userId,
 	email: user.email,
 	isAdmin: user.isAdmin,
-	isAdmin: user.isMod
+	isMod: user.idMod
 })
 
 // Extract the userId and sessionId from the auth strategy
 passport.serializeUser((data, done) => done(null, {
 	userId: data.user.userId,
-	email: data.user.email,
 	sessionId: data.auth.sessionId
 }))
 
@@ -46,7 +35,7 @@ passport.deserializeUser((user, done) => {
 	})
 		.then(data => done(null, {
 			userId: user.userId,
-			email: user.email,
+			email: data.email,
 			isAdmin: data.isAdmin,
 			isMod: data.isMod,
 			sessionId: user.sessionId
@@ -69,7 +58,7 @@ passport.use('local', new LocalStrategy(
 ))
 
 /* Define Routes */
-router.post('/auth/logout', async (req, res) => {
+router.post('/auth/logout', async req => {
 	try {
 		await req.logoutUser()
 		
@@ -82,7 +71,6 @@ router.post('/auth/logout', async (req, res) => {
 router.post(
 	'/auth/login',
 	logout, // Clear session/cookie data if logged in
-	apiFieldMiddleware,
 	(req, res) => passport.authenticate('local', async (_, data) => {
 		try {
 			await req.loginUser(data)
@@ -100,7 +88,7 @@ router.post(
 
 router.post(
 	'/auth/signup',
-	async (req, res) => {
+	async req => {
 		if (req.authenticated()) return req.apiResult(400, {
 			message: 'Already logged in'
 		})
@@ -124,7 +112,7 @@ router.post(
 
 router.get(
 	'/auth/get_user',
-	async (req, res) => {
+	async req => {
 		try {
 			if (!req.authenticated()) throw new Error('Not authenticated')
 			

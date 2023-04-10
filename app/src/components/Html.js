@@ -1,7 +1,7 @@
 import React from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 
-export default ({ children, assets }) => {
+export default ({ children }) => {
 	// const [SEO, setSEO] = useState({
 	// 	lang: 'en',
 	// 	title: 'Versa',

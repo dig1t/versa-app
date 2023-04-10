@@ -134,7 +134,7 @@ class API {
 
 const api = new API()
 
-export const apiReduxMiddleware = store => next => action => {
+export const apiReduxMiddleware = () => next => action => {
 	if (action.type === USER_FETCH_TOKEN_SUCCESS) {
 		api.setKey('accessToken', action.payload.access_token)
 	}

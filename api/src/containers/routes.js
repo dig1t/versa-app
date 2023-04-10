@@ -4,6 +4,7 @@ import users from './users.js'
 import profiles from './profiles.js'
 import content from './content.js'
 import follows from './follows.js'
+import settings from './settings.js'
 
 export default server => {
 	const router = new Router()
@@ -14,6 +15,7 @@ export default server => {
 	router.use(profiles(server))
 	router.use(content(server))
 	router.use(follows(server))
+	router.use(settings(server))
 	
 	return router
 }

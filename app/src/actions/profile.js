@@ -47,7 +47,7 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 			type: PROFILE_FETCH_SUCCESS,
 			payload: data
 		}))
-		.catch(error => dispatch({
+		.catch(() => dispatch({
 			type: PROFILE_FETCH_FAILURE,
 			payload: username
 		}))

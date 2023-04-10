@@ -18,7 +18,7 @@ import api from '../util/api.js'
 // }
 
 export const getProfileFeed = userId => (dispatch, getState) => {
-	const { feed, profiles, content } = getState()
+	const { feed, content } = getState()
 	
 	if (feed.userId === userId) return
 	
@@ -63,9 +63,10 @@ export const getProfileFeed = userId => (dispatch, getState) => {
 			})
 		})
 		.catch(error => {
-		console.error(error)
-		dispatch({
-			type: PROFILE_FEED_FETCH_FAILURE
-		})
+			console.error(error)
+			
+			dispatch({
+				type: PROFILE_FEED_FETCH_FAILURE
+			})
 		})
 }
