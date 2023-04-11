@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -7,19 +7,32 @@ import { Icon, Input } from '../components/UI/index.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuthenticated } from '../context/Auth.js'
 
-const Setting = ({ expanded, config, data, toggleAccordion }) => {
-	const dispatch = useDispatch()
-	
+export const SaveActions = ({ ready, handleSave, handleCancel }) => {
+	return <div className="actions float-r">
+		<button
+			className="cancel btn-secondary btn-borderless"
+			onClick={handleCancel}
+		>CANCEL</button>
+		<button
+			className={classNames(
+				'save btn-primary btn-round',
+				!ready && 'btn-disabled'
+			)}
+			onClick={handleSave}
+		>SAVE</button>
+	</div>
+}
+
+const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave }) => {
 	const [initialData, setInitialData] = useState({ ...data })
 	const [inputData, setInputData] = useState({
 		[config.name]: data[config.name] || ''
 	})
 	const [saveReady, setSaveReady] = useState(false)
 	const [inputValid, setInputValid] = useState(false)
-	const { userId } = useAuthenticated()
 	
 	useEffect(() => {
-		if (data[config.name] !== initialData[config.name])
+		//if (data[config.name] !== initialData[config.name])
 		
 		setInitialData({ ...data })
 		setInputData({
@@ -37,32 +50,21 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 		)
 	}, [inputData, inputValid])
 	
-	const handleSubmit = () => {
+	const handleSaveAction = () => {
 		if (saveReady !== true) return
-		
-		//console.log('save to api', config.endpoint, inputData[config.name])
 		
 		const inputDataDraft = { ...inputData }
 		
 		toggleAccordion()
 		
-		if (typeof config.handleSubmit === 'function') {
-			config.handleSubmit(inputDataDraft, config.onSave)
+		if (typeof config.handleSave === 'function') {
+			config.handleSave(inputDataDraft, config.onSave)
 		} else {
 			// Use default API call
-			api.post(config.endpoint || `/v1/user/${userId}/settings`, inputDataDraft)
-				.then(data => {
-					// eslint-disable-next-line no-undef
-					console.log(`Saved ${config.name}`)
-					
-					if (config.saveAction) {
-						dispatch(config.saveAction({
-							updated: inputDataDraft,
-							resultFromAPI: data,
-							userId
-						}))
-					}
-				})
+			handleSave({
+				inputData: inputDataDraft,
+				settingConfig: config
+			})
 		}
 	}
 	
@@ -105,31 +107,23 @@ const Setting = ({ expanded, config, data, toggleAccordion }) => {
 					value={inputData[config.name]}
 				/>
 			</div>
-			{!config.saveOnChange && <div className="actions float-r">
-				<button
-					className="cancel btn-secondary btn-borderless"
-					onClick={() => {
-						toggleAccordion()
-						setInputData({ [config.name]: data[config.name] })
-					}}
-				>CANCEL</button>
-				<button
-					className={classNames(
-						'save btn-primary btn-round',
-						!saveReady && 'btn-disabled'
-					)}
-					onClick={handleSubmit}
-				>SAVE</button>
-			</div>}
+			{!config.saveOnChange && <SaveActions
+				ready={saveReady}
+				handleSave={handleSaveAction}
+				handleCancel={() => {
+					toggleAccordion()
+					setInputData({ [config.name]: data[config.name] })
+				}}
+			/>}
 		</div>
 	</div>
 }
 
-Setting.defaultProps = {
+AccordionSetting.defaultProps = {
 	Component: props => <Input {...props} />
 }
 
-Setting.propTypes = {
+AccordionSetting.propTypes = {
 	expanded: PropTypes.bool,
 	config: PropTypes.object.isRequired,
 	data: PropTypes.object, // TODO: isRequired
@@ -138,6 +132,7 @@ Setting.propTypes = {
 }
 
 const SettingsPage = ({ config }) => {
+	const dispatch = useDispatch()
 	const { userId } = useAuthenticated()
 	const data = useSelector(state => config.selector({ state, userId }))
 	
@@ -151,10 +146,30 @@ const SettingsPage = ({ config }) => {
 		setExpanded(newExpanded)
 	}
 	
+	const handleSave = ({ inputData, settingConfig }) => {
+		if (!inputData) return
+		
+		return api.post(settingConfig.endpoint || `/v1/user/${userId}/settings`, inputData)
+			.then(data => {
+				// eslint-disable-next-line no-undef
+				console.log(`Saved ${settingConfig.name}`)
+				
+				if (settingConfig.saveAction) {
+					dispatch(settingConfig.saveAction({
+						updated: inputData,
+						resultFromAPI: data,
+						userId
+					}))
+				}
+			})
+	}
+	
+	const Component = config.component
+	
 	// Clear expanded indexes once the page changes
 	useEffect(() => setExpanded([]), [config])
 	
-	return <div className="settings-page">
+	return <div className="container">
 		<div className="header">
 			<div className="title">{config.label}</div>
 			<div className="description">{config.description}</div>
@@ -162,14 +177,19 @@ const SettingsPage = ({ config }) => {
 		<ul>
 			{config.settings && config.settings.map((setting, index) => (
 				<li key={index}>
-					<Setting
+					<AccordionSetting
 						expanded={expanded[index]}
 						toggleAccordion={() => toggleAccordion(index)}
 						config={setting}
 						data={data}
+						handleSave={handleSave}
 					/>
 				</li>
 			))}
+			{config.component && <Component
+				data={data}
+				handleSave={handleSave}
+			/>}
 		</ul>
 	</div>
 }

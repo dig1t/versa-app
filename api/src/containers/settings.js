@@ -76,6 +76,8 @@ export default server => {
 		'/user/:userId/settings',
 		server.oauth.authorize(),
 		async (req) => {
+			if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
+			
 			try {
 				const settings = await getSettingsFromUserId(req._oauth.user.userId)
 				
@@ -93,6 +95,8 @@ export default server => {
 		server.oauth.authorize(),
 		useFields(),
 		async (req) => {
+			if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
+			
 			try {
 				const result = await handler.run(req.fields, req._oauth.user.userId)
 				console.log(result)

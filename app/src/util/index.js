@@ -1,10 +1,8 @@
-const version = '1.0.0'
+const version = '1.0.1'
 
 const Util = function() {
 	this.version = version
 }
-
-// SECURITY
 
 const regexMap = new Map([
 	['number', /^[0-9]+$/],
@@ -16,7 +14,8 @@ const regexMap = new Map([
 	['email', /.+@.+\..+/],
 	['password', /^[a-zA-Z0-9 ~`!@#$%^&*()_+\-=[\]\\{}|;':",./<>?]+$/],
 	['phone', /^\+?(?:\d ?)\d{6,14}$/],
-	['us-phone', /^\+?[01]?[- ]?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/]
+	['us-phone', /^\+?[01]?[- ]?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/],
+	['url', /^(?:https?:\/\/)?[^\s/$.?#]+\.[^\s]+$/]
 ])
 
 const validateText = (text, validateFor) => {
