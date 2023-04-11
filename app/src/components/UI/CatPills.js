@@ -12,10 +12,13 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) =
 		}
 	}, [defaultCategory])
 	
-	
-	useEffect(() => handleSelection(
-		pills.find(category => category.name === activeCategory)
-	), [activeCategory])
+	useEffect(() => {
+		const categorySearch = pills.find(category => category.name === activeCategory)
+		
+		if (categorySearch) {
+			handleSelection(categorySearch)
+		}
+	}, [activeCategory])
 	
 	useEffect(() => {
 		if (mounted === false) return setMounted(true)
