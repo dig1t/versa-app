@@ -9,7 +9,6 @@
 	}
 	
 	.settings-categories {
-		border-right: 1px solid var(--divider-color);
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
@@ -40,8 +39,9 @@
 	}
 	
 	.settings-page {
-		> .header {
-			padding: 0 2rem;
+		padding: 0 2rem;
+		
+		.container > .header {
 			padding-top: .3rem;
 			
 			.title {
@@ -60,8 +60,11 @@
 		ul {
 			margin-top: 1.2rem;
 			
-			.accordion {
+			li:not(:first-child) {
 				border-top: 1px solid var(--divider-color);
+			}
+			
+			.accordion {
 				padding: .4rem 0;
 				overflow: hidden;
 				

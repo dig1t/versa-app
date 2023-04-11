@@ -1,5 +1,6 @@
 import { USER_UPDATE } from '../reducers/user.js'
 import { PROFILE_UPDATE } from '../reducers/profiles.js'
+import ProfileSettings from './settings/profile.js'
 
 /*
 // Example category
@@ -25,7 +26,7 @@ import { PROFILE_UPDATE } from '../reducers/profiles.js'
 			},
 			preview: 'digit@gmail.com',
 			saveOnChange: false, // Shows save/cancel actions
-			handleSubmit: (newData, onSave) => {
+			handleSave: (newData, onSave) => {
 				api.post('/settings/email', { email: newData.email })
 					.then(() => onSave(newData))
 			},
@@ -131,5 +132,15 @@ export default [
 				})
 			}
 		]
+	},
+	{
+		label: 'Profile',
+		name: 'profile',
+		
+		selector: ({ state, userId }) => ({
+			profile: state.profiles.profileList[userId]
+		}),
+		
+		component: ProfileSettings
 	}
 ]

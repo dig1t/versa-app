@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -34,6 +34,7 @@ const Input = props => {
 		props.type == 'select' || props.type == 'selectButtons'
 	) && null))
 	const [focused, setFocused] = useState(props.autoFocus)
+	const inputRef = useRef(null)
 	
 	useEffect(() => props.handleValueChange(value), [value])
 	
@@ -156,13 +157,30 @@ const Input = props => {
 	const handleKeyDown = useCallback(event => {
 		let val = event.target.value
 		const keyPressed = event.key
+		const selectionStart = inputRef.current.selectionStart
+		const isTextAreaNewLine = keyPressed === 'Enter' && event.target.tagName.toLowerCase() === 'textarea'
+		
+		if (isTextAreaNewLine) {
+			event.preventDefault()
+			val = val.slice(0, selectionStart) + '\n' + val.slice(selectionStart)
+		}
 		
 		// TODO: Is this still needed?
 		if (!event.ctrlKey && !event.altKey && !event.shiftKey) {
-			if (keyPressed.length === 1) val += keyPressed
+			//if (keyPressed.length === 1) val += keyPressed
 		}
 		
 		setValue(val)
+		setVisibleValue(val)
+		
+		if (event.target.tagName.toLowerCase() === 'textarea') {
+			setTimeout(() => {
+				console.log('modding selection', inputRef.current.selectionStart, inputRef.current.selectionEnd)
+				inputRef.current.selectionStart = selectionStart + 1
+				inputRef.current.selectionEnd = selectionStart + 1
+			}, 1)
+		}
+		
 		validate()
 	}, [])
 	
@@ -175,7 +193,8 @@ const Input = props => {
 		maxLength: props.maxLength,
 		autoFocus: props.autoFocus,
 		disabled: props.disabled,
-		'aria-required': (props.optional && true) || false
+		'aria-required': (props.optional && true) || false,
+		ref: inputRef,
 	}), [props])
 	
 	const children = useMemo(() => {
@@ -183,7 +202,7 @@ const Input = props => {
 			case 'textarea': {
 				return <textarea {...attributes}
 					onKeyDown={handleKeyDown}
-					onInput={handleChange}
+					//onInput={handleChange}
 					onChange={handleChange}
 					//onKeyUp={handleChange}
 					onFocus={() => setFocused(true)}
@@ -191,7 +210,7 @@ const Input = props => {
 						validate()
 						setFocused(false)
 					}}
-					value={visibleValue}
+					value={value}
 				/>
 			}
 			case 'select': { // [Label, Value]
@@ -283,8 +302,8 @@ const Input = props => {
 	
 	return <div className={classNames(
 		'input', 'input-' + props.type,
-		isValid === false && 'error',
-		isValid && 'input-ok',
+		isValid === false && props.showStatusColors && 'error',
+		isValid && props.showStatusColors && 'input-ok',
 		props.inlineLabel && 'inline-label',
 		focused && 'input-focused'
 	)}>
@@ -308,6 +327,7 @@ Input.defaultProps = {
 	value: '',
 	autoFocus: false,
 	displayError: true,
+	showStatusColors: true,
 	checkboxStyle: 'box' // box or slider
 }
 

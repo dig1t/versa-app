@@ -28,6 +28,15 @@ const Settings = () => {
 		}
 	}, [categoryParam])
 	
+	useEffect(() => {
+		const path = category && `/settings/${category.name}`
+		
+		// eslint-disable-next-line no-undef
+		if (category && location.pathname !== path) {
+			navigate(path)
+		}
+	}, [category])
+	
 	const profile = profileList[userId]
 	
 	return <Layout page="settings">
