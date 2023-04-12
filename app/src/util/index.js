@@ -1,27 +1,48 @@
+import isEmail from 'validator/lib/isEmail'
+import isURL from 'validator/lib/isURL'
+import isAlphanumeric from 'validator/lib/isAlphanumeric'
+
 const version = '1.0.1'
 
 const Util = function() {
 	this.version = version
 }
 
-const regexMap = new Map([
+const validationMap = new Map([
 	['number', /^[0-9]+$/],
-	['text', /^.+$/],
 	['username', /^[a-zA-Z0-9_]+$/],
 	['id', /^[a-zA-Z0-9]+$/],
-	['textarea', /^.+$/gm],
-	['name', /^.+$/], // replace in future?
-	['email', /.+@.+\..+/],
+	['name', /^.+$/],
 	['password', /^[a-zA-Z0-9 ~`!@#$%^&*()_+\-=[\]\\{}|;':",./<>?]+$/],
 	['phone', /^\+?(?:\d ?)\d{6,14}$/],
 	['us-phone', /^\+?[01]?[- ]?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/],
-	['url', /^(?:https?:\/\/)?[^\s/$.?#]+\.[^\s]+$/]
+	['text', /^[a-zA-Z0-9 ~`!@#$%^&*()_+\-=[\]\\{}|;':",./<>?\p{Emoji_Presentation}]+$/um]
 ])
 
 const validateText = (text, validateFor) => {
-	const exp = regexMap.get(validateFor)
-	
-	return exp ? exp.test(text) : text
+	switch(validateFor) {
+		case 'email': {
+			return isEmail(text)
+		}
+		case 'text': case 'textarea': {
+			return validationMap.get('text').test(text.normalize('NFD'))
+		}
+		case 'name': {
+			return isAlphanumeric(text, 'en-US')
+		}
+		case 'url': {
+			return isURL(text, {
+				protocols: ['http', 'https'],
+				require_protocol: false
+			})
+		}
+		case (typeof validationMap.get(validateFor) === 'undefined'): {
+			return text
+		}
+		default: { // Regex
+			return validationMap.get(validateFor).test(text)
+		}
+	}
 }
 
 const binarySearch = (array, value) => {
