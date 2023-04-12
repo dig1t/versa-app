@@ -32,8 +32,7 @@ const validateText = (text, validateFor) => {
 		}
 		case 'url': {
 			return isURL(text, {
-				protocols: ['http', 'https'],
-				require_protocol: false
+				protocols: ['http', 'https']
 			})
 		}
 		case (typeof validationMap.get(validateFor) === 'undefined'): {
