@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
@@ -6,19 +6,16 @@ import { Input } from '../components/UI/index.js'
 import api from '../util/api.js'
 
 const CommentEditor = ({ contentId, handleSuccess }) => {
-	const [data, setData] = useState({
-		text: ''
-	})
+	const inputRef = useRef(null)
 	const [saveReady, setSaveReady] = useState(false)
-	
-	useEffect(() => setSaveReady(data.text.length > 0), [data])
+	const [valid, setValid] = useState(false)
 	
 	const handleSubmit = () => {
-		if (!saveReady) return
+		if (!saveReady || !valid) return
 		
-		const body = data.text
+		const body = inputRef.current.getValue()
 		
-		setData({ text: '' })
+		inputRef.current.setValue('')
 		
 		api.post(`/v1/content/${contentId}/comment`, { body })
 			.then(response => {
@@ -31,17 +28,22 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 	return <div className="post-editor simple">
 		<label className="box">
 			<Input
-				handleValueChange={value => setData({ text: value })}
-				value={data.text}
+				ref={inputRef}
+				handleValueChange={value => {
+					setSaveReady(value.length > 0 && valid)
+				}}
+				handleValidity={setValid}
 				type="textarea"
 				placeholder="Write a comment..."
 				displayError={false}
+				minLength={1}
+				maxLength={50}
 			/>
 			<div className="editor-controls float-r">
 				<button
 					className={classNames(
 						'btn btn-round btn-primary post',
-						!saveReady && 'btn-disabled'
+						!valid && !saveReady && 'btn-disabled'
 					)}
 					onClick={handleSubmit}
 				>Post</button>

@@ -51,6 +51,7 @@ export default (state = {
 					...state.profileList,
 					[action.payload.userId]: {
 						...profile,
+						...action.payload.profile,
 						[action.payload.key]: action.payload.value
 					}
 				}

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../../components/UI/index.js'
 import { SaveActions } from '../../containers/SettingsPage.js'
 
 const profileKeys = [
-	'avatar',
+	//'avatar',
 	'bio',
 	'name',
-	'private',
+	//'private',
 	'website'
 ]
 
@@ -25,6 +25,7 @@ const inputs = [
 		name: 'name',
 		label: 'Name',
 		validateFor: 'text',
+		minLength: 1,
 		maxLength: 20
 	},
 	{
@@ -33,17 +34,27 @@ const inputs = [
 		label: 'Website',
 		validateFor: 'url',
 		optional: true,
+		minLength: 1,
 		maxLength: 64
 	}
 ]
 
 export default ({ data, handleSave }) => {
-	const [initialData, setInitialData] = useState({ ...data.profile })
-	
-	const [formData, setFormData] = useState({})
+	const [inputData, setFormData] = useState({})
+	const inputRefs = useRef({})
 	
 	const [saveReady, setSaveReady] = useState(false)
 	const [validInputs, setValidInputs] = useState({})
+	
+	const setRefValues = values => {
+		for (const inputName in inputRefs.current) {
+			if (values[inputName] && inputRefs.current[inputName]) {
+				inputRefs.current[inputName].setValue(values[inputName])
+			}
+		}
+	}
+	
+	useEffect(() => setRefValues(data.profile), [data])
 	
 	useEffect(() => {
 		let allInputsValid = true
@@ -55,49 +66,49 @@ export default ({ data, handleSave }) => {
 			}
 		}
 		
-		setSaveReady(allInputsValid)
-	}, [validInputs])
-	
-	useEffect(() => {
-		setFormData(() => profileKeys.reduce((result, key) => {
-			return {
-				...result,
-				[key]: data.profile[key]
-			}
-		}, {}))
-		setValidInputs(() => profileKeys.reduce((result, key) => {
-			return {
-				...result,
-				[key]: false
-			}
-		}, {}))
-	}, [data.profile])
+		let inputsChanged = false
+		
+		for (const inputName in inputRefs.current) {
+			if (inputsChanged) break
+			
+			inputsChanged = inputData[inputName] !== data.profile[inputName]
+		}
+		
+		setSaveReady(allInputsValid && inputsChanged)
+	}, [validInputs, inputData])
 	
 	return <div>
 		{inputs.map(input => <Input
 			{...input}
 			key={input.name}
-			value={formData[input.name]}
-			showStatusColors={false}
-			handleValueChange={value => {
-				setFormData(prev => ({
-					...prev,
-					// Update form data as the user is making changes
-					[input.name]: value
-				}))
+			ref={ref => {
+				inputRefs.current[input.name] = ref
 			}}
-			handleValidity={value => setValidInputs({
-				...validInputs,
+			showStatusColors={false}
+			handleValueChange={value => setFormData(prevState => ({
+				...prevState,
+				// Update form data as the user is making changes
 				[input.name]: value
-			})}
+			}))}
+			handleValidity={value => setValidInputs(prevState => ({
+				...prevState,
+				[input.name]: value
+			}))}
 		/>)}
 		<SaveActions
 			ready={saveReady}
-			handleSave={handleSave}
-			handleCancel={() => {
-				//toggleAccordion()
-				setInputData({ [config.name]: data[config.name] })
+			handleSave={() => {
+				let inputDataDraft = {}
+				
+				for (const inputName in inputData) {
+					if (inputData[inputName] === data.profile[inputName]) continue
+					
+					inputDataDraft['profile_' + inputName] = inputData[inputName]
+				}
+				
+				handleSave(inputDataDraft)
 			}}
+			handleCancel={() => setRefValues(data.profile)}
 		/>
 	</div>
 }

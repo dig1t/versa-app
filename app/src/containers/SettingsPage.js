@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -24,57 +24,51 @@ export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 }
 
 const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave }) => {
-	const [initialData, setInitialData] = useState({ ...data })
-	const [inputData, setInputData] = useState({
-		[config.name]: data[config.name] || ''
-	})
+	const inputRef = useRef(null)
 	const [saveReady, setSaveReady] = useState(false)
-	const [inputValid, setInputValid] = useState(false)
+	const [valid, setValid] = useState(false)
+	const [value, setValue] = useState()
 	
 	useEffect(() => {
-		//if (data[config.name] !== initialData[config.name])
-		
-		setInitialData({ ...data })
-		setInputData({
-			[config.name]: data[config.name] || ''
-		})
+		if (data[config.name] !== undefined) {
+			inputRef.current.setValue(data[config.name])
+		}
 	}, [data, config])
 	
 	useEffect(() => {
-		if (typeof config.readyCondition === 'function') {
-			if (config.readyCondition(inputData) !== true) return
-		}
+		let readyConditionCheck = typeof config.readyCondition === 'function' ?
+			config.readyCondition(value) :
+			true
 		
+		console.log('value for:', config.name, value)
 		setSaveReady(
-			inputValid == true && inputData[config.name] !== data[config.name]
+			readyConditionCheck === true &&
+			valid == true &&
+			value !== data[config.name]
 		)
-	}, [inputData, inputValid])
+	}, [value, valid])
 	
 	const handleSaveAction = () => {
 		if (saveReady !== true) return
 		
-		const inputDataDraft = { ...inputData }
-		
 		toggleAccordion()
 		
 		if (typeof config.handleSave === 'function') {
-			config.handleSave(inputDataDraft, config.onSave)
+			config.handleSave({ [config.name]: value }, config.onSave)
 		} else {
 			// Use default API call
 			handleSave({
-				inputData: inputDataDraft,
+				inputData: { [config.name]: value },
 				settingConfig: config
 			})
 		}
 	}
 	
-	//const Component = config.component
-	
 	const isTextOption = config.inputOptions && (
-			config.inputOptions.type === 'text' ||
-			config.inputOptions.type === 'textarea' ||
-			config.inputOptions.type === undefined
-		)
+		config.inputOptions.type === 'text' ||
+		config.inputOptions.type === 'textarea' ||
+		config.inputOptions.type === undefined
+	)
 	
 	return <div className={classNames(
 		'accordion',
@@ -85,7 +79,7 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 				<span className="name">{config.label || config.name}</span>
 			</span>
 			<span>
-				{ (config.preview || isTextOption) && <span
+				{(config.preview !== undefined ? config.preview : isTextOption) && <span
 					className="preview"
 				>
 					{config.preview || data[config.name]}
@@ -100,11 +94,9 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 			<div className="inputs">
 				<Input
 					{...config.inputOptions}
-					handleValueChange={value => {
-						setInputData({ [config.name]: value || '' })
-					}}
-					handleValidity={validity => setInputValid(validity)}
-					value={inputData[config.name]}
+					ref={inputRef}
+					handleValueChange={setValue}
+					handleValidity={setValid}
 				/>
 			</div>
 			{!config.saveOnChange && <SaveActions
@@ -112,15 +104,11 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 				handleSave={handleSaveAction}
 				handleCancel={() => {
 					toggleAccordion()
-					setInputData({ [config.name]: data[config.name] })
+					inputRef.current.setValue('')
 				}}
 			/>}
 		</div>
 	</div>
-}
-
-AccordionSetting.defaultProps = {
-	Component: props => <Input {...props} />
 }
 
 AccordionSetting.propTypes = {
@@ -188,7 +176,10 @@ const SettingsPage = ({ config }) => {
 			))}
 			{config.component && <Component
 				data={data}
-				handleSave={handleSave}
+				handleSave={data => handleSave({
+					data,
+					settingConfig: config
+				})}
 			/>}
 		</ul>
 	</div>

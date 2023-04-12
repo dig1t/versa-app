@@ -118,9 +118,11 @@ export default [
 				default: '0',
 				inputOptions: {
 					type: 'checkboxes',
-					options: [
-						['Private', 'private']
-					]
+					options: {
+						checkboxes: [
+							['Private', 'private']
+						]
+					}
 				},
 				saveAction: ({ updated, userId }) => ({
 					type: PROFILE_UPDATE,

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, forwardRef, useImperativeHandle, useRef } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -17,33 +17,160 @@ const haveSameKeys = (obj1, obj2) =>
 	// eslint-disable-next-line no-prototype-builtins
 	Object.keys(obj1).every(key => obj2.hasOwnProperty(key))
 
+const LabelComponent = props => <label {...props} />
+
+const TextInput = forwardRef((props, ref) => {
+	return <input
+		{...props.attributes}
+		ref={ref}
+		type={props.type}
+		className={classNames(!props.inlineLabel && 'input-text')}
+		onKeyDown={props.handleKeyDown}
+		onInput={props.handleChange}
+		onChange={props.handleChange}
+		onKeyUp={props.handleChange}
+		onFocus={() => props.setFocused(true)}
+		onBlur={() => {
+			props.validate()
+			props.setFocused(false)
+		}}
+		value={props.value}
+	/>
+})
+
+const TextAreaInput = forwardRef((props, ref) => {
+	return <textarea
+		{...props.attributes}
+		ref={ref}
+		onKeyDown={props.handleKeyDown}
+		//onInput={props.handleChange}
+		onChange={props.handleChange}
+		//onKeyUp={props.handleChange}
+		onFocus={() => props.setFocused(true)}
+		onBlur={() => {
+			props.validate()
+			props.setFocused(false)
+		}}
+		value={props.value}
+	/>
+})
+
+const CheckboxInput = forwardRef((props, ref) => {
+	return <>
+		{props.componentOptions.checkboxes.map(option => <label
+			className={classNames(
+				props.value === option[1] && 'selected',
+				`input-checkbox-${props.checkboxStyle}`
+			)}
+			key={option[1]}
+		>
+			<input {...props.attributes}
+				type="checkbox"
+				value={option[1]}
+				onChange={event => props.setValue({
+					...props.value,
+					[option[1]]: event.target.checked
+				})}
+				checked={props.visibleValue[option[1]] === true}
+				defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+			/>
+			<span>{option[0]}</span>
+		</label>)}
+	</>
+})
+
+const SelectButtonsInput = forwardRef((props, ref) => {
+	return <>
+		{props.componentOptions.buttons.map(option => <label
+			className={classNames(props.value === option[1] && 'selected')}
+			key={option[1]}
+		>
+			<input {...props.attributes}
+				type="radio"
+				value={option[1]}
+				onChange={props.handleChange}
+				checked={props.value === option[1]}
+				defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+			/>
+			<span>{option[0]}</span>
+		</label>)}
+	</>
+})
+
+const SelectInput = forwardRef((props, ref) => {
+	return <select
+		{...props.attributes}
+		ref={ref}
+		multiple={props.componentOptions.multiple}
+		value={props.value}
+		onChange={event => props.setValue(
+			[...event.target.selectedOptions].map(option => {
+				return option.value
+			})
+		)}
+	>
+		{props.componentOptions.buttons.map(option => <option
+			key={option[1]}
+			value={option[1]}
+		>
+			{option[0]}
+		</option>)}
+	</select>
+})
+
+const componentMap = {
+	text: TextInput,
+	textarea: TextAreaInput,
+	checkbox: CheckboxInput,
+	checkboxes: CheckboxInput,
+	selectButtons: SelectButtonsInput,
+	select: SelectInput
+}
+
 /* use Input for easy validation
 ** boolean optional - by default all inputs are required unless specified as optional
 ** array options
 ** > array [value, description] - option
 ** string validateFor - type of text to validate (util/validateText) */
-const Input = props => {
+const Input = forwardRef((props, ref) => {
 	const [errorText, setErrorText] = useState(null)
 	const [value, setValue] = useState(
 		props.type === 'checkboxes' ? optionsToObject(props.options) : ''
 	)
-	const [visibleValue, setVisibleValue] = useState('')
 	const [isValid, setIsValid] = useState(props.optional || (!(
 		// Make text and textareas valid temporarily
 		// so they appear with no errors initially
 		props.type == 'select' || props.type == 'selectButtons'
 	) && null))
 	const [focused, setFocused] = useState(props.autoFocus)
-	const inputRef = useRef(null)
+	const inputRef = useRef()
 	
-	useEffect(() => props.handleValueChange(value), [value])
+	useImperativeHandle(ref, () => ({
+		setValue: newValue => {
+			inputRef.current.value = newValue
+			setValue(newValue)
+		},
+		
+		getValue: () => {
+			return inputRef.current.value
+		}
+	}))
 	
 	useEffect(() => {
+		props.handleValueChange(value)
+		validate(value)
+	}, [value])
+	
+	useEffect(() => props.handleValidity(isValid), [isValid])
+	
+	useEffect(() => {
+		if (props.type === undefined) return
+		
 		switch(props.type) {
 			case 'text': case 'textarea': case 'selectButtons': {
 				if (typeof props.value !== 'string') return
 				
-				setValue(props.value)
+				inputRef.current.value = props.value
 				
 				break
 			}
@@ -56,16 +183,15 @@ const Input = props => {
 			}
 			case 'select': {
 				if (!(props.value instanceof Array)) {
-					setValue(props.value instanceof Array ? props.array : [])
+					inputRef.current.value = props.value instanceof Array ? props.array : []
 				} else {
-					setValue(props.value)
+					inputRef.current.value = props.value
 				}
 				
 				break
 			}
 		}
 		
-		setVisibleValue(props.value)
 		validate(props.value)
 	}, [props.value])
 	
@@ -77,7 +203,7 @@ const Input = props => {
 	}, [])
 	
 	const validate = useCallback(newValue => {
-		if (typeof newValue === 'undefined') newValue = value
+		if (typeof newValue === 'undefined') newValue = inputRef.current.value
 		
 		let validity = true
 		
@@ -85,14 +211,16 @@ const Input = props => {
 			case 'text': case 'textarea': {
 				if (props.optional || ( // optional and 1+ characters exist
 					props.optional === false &&
-					newValue.length >= (props.minLength || 0) &&
+					newValue.length >= props.minLength &&
 					newValue.length <= (props.maxLength || -Math.max()) &&
 					newValue !== '' // not optional and is in between given min/max length
 				)) {
 					if (newValue.length > 0) {
 						validity = validateText(newValue, props.validateFor)
 						
-						if (!validity) setErrorText(`${props.validateFor} required`)
+						if (validity === false) setErrorText(
+							`${props.label || props.validateFor} is not a valid ${props.validateFor}`
+						)
 					}
 				} else {
 					validity = false
@@ -101,7 +229,7 @@ const Input = props => {
 						`${props.validateFor} is too short (${props.minLength} characters)`
 					)
 					
-					if (newValue.length === 0) setErrorText(`missing ${props.validateFor}`)
+					if (newValue.length === 0) setErrorText(`Missing ${props.label || props.validateFor}`)
 					
 					if (props.maxLength && newValue.length >= (props.maxLength + 1 || 0)) setErrorText(
 						`${props.validateFor} is too long (${props.maxLength} characters)`
@@ -141,48 +269,17 @@ const Input = props => {
 		
 		if (validity) setErrorText(null)
 		
-		if (typeof props.handleValidity !== 'undefined' && validity !== isValid) {
-			props.handleValidity(validity)
-			setIsValid(validity)
-		}
+		setIsValid(validity)
 	}, [value, props.value, props.type])
 	
-	const handleChange = event => {
-		setValue(event.target.value)
-		setVisibleValue(event.target.value)
-		validate()
+	const handleChange = () => {
+		setValue(inputRef.current.value)
 	}
 	
 	// TODO: Swap this with handleChange?
-	const handleKeyDown = useCallback(event => {
-		let val = event.target.value
-		const keyPressed = event.key
-		const selectionStart = inputRef.current.selectionStart
-		const isTextAreaNewLine = keyPressed === 'Enter' && event.target.tagName.toLowerCase() === 'textarea'
-		
-		if (isTextAreaNewLine) {
-			event.preventDefault()
-			val = val.slice(0, selectionStart) + '\n' + val.slice(selectionStart)
-		}
-		
-		// TODO: Is this still needed?
-		if (!event.ctrlKey && !event.altKey && !event.shiftKey) {
-			//if (keyPressed.length === 1) val += keyPressed
-		}
-		
-		setValue(val)
-		setVisibleValue(val)
-		
-		if (event.target.tagName.toLowerCase() === 'textarea') {
-			setTimeout(() => {
-				console.log('modding selection', inputRef.current.selectionStart, inputRef.current.selectionEnd)
-				inputRef.current.selectionStart = selectionStart + 1
-				inputRef.current.selectionEnd = selectionStart + 1
-			}, 1)
-		}
-		
-		validate()
-	}, [])
+	const handleKeyDown = () => {
+		setValue(inputRef.current.value)
+	}
 	
 	const attributes = useMemo(() => ({
 		...props.attributes,
@@ -193,112 +290,12 @@ const Input = props => {
 		maxLength: props.maxLength,
 		autoFocus: props.autoFocus,
 		disabled: props.disabled,
-		'aria-required': (props.optional && true) || false,
-		ref: inputRef,
+		'aria-required': (props.optional && true) || false
 	}), [props])
 	
-	const children = useMemo(() => {
-		switch(props.type) {
-			case 'textarea': {
-				return <textarea {...attributes}
-					onKeyDown={handleKeyDown}
-					//onInput={handleChange}
-					onChange={handleChange}
-					//onKeyUp={handleChange}
-					onFocus={() => setFocused(true)}
-					onBlur={() => {
-						validate()
-						setFocused(false)
-					}}
-					value={value}
-				/>
-			}
-			case 'select': { // [Label, Value]
-				return <select
-					{...attributes}
-					multiple={props.multiple}
-					value={value}
-					onChange={event => {
-						setValue(
-							[...event.target.selectedOptions].map(option => {
-								return option.value
-							})
-						)
-						validate()
-					}}
-				>
-					{props.options.map(option => <option
-						key={option[1]}
-						value={option[1]}
-					>
-						{option[0]}
-					</option>)}
-				</select>
-			}
-			case 'selectButtons': { // [Label, Value]
-				return <>
-					{props.options.map(option => <label
-						className={classNames(value === option[1] && 'selected')}
-						key={option[1]}
-					>
-						<input {...attributes}
-							type="radio"
-							value={option[1]}
-							onChange={handleChange}
-							checked={value === option[1]}
-							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
-						/>
-						<span>{option[0]}</span>
-					</label>)}
-				</>
-			}
-			case 'checkboxes': {
-				return <>
-					{props.options.map(option => <label
-						className={classNames(
-							value === option[1] && 'selected',
-							`input-checkbox-${props.checkboxStyle}`
-						)}
-						key={option[1]}
-					>
-						<input {...attributes}
-							type="checkbox"
-							value={option[1]}
-							onChange={event => {
-								setValue({
-									...value,
-									[option[1]]: event.target.checked
-								})
-								validate()
-							}}
-							checked={value[option[1]] === true}
-							defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
-						/>
-						<span>{option[0]}</span>
-					</label>)}
-				</>
-			}
-			default: {
-				return <input
-					{...attributes}
-					type={props.type}
-					className={classNames(!props.inlineLabel && 'input-text')}
-					onKeyDown={handleKeyDown}
-					onInput={handleChange}
-					onChange={handleChange}
-					//onKeyUp={handleChange}
-					onFocus={() => setFocused(true)}
-					onBlur={() => {
-						validate()
-						setFocused(false)
-					}}
-					value={visibleValue}
-				/>
-			}
-		}
-	}, [props])
-	
 	const wrapInput = props.type === 'selectButtons' ? true : (props.label || props.wrap)
+	const InputComponent = componentMap[props.type] || componentMap.text
+	const WrapComponent = wrapInput ? LabelComponent : React.Fragment
 	
 	return <div className={classNames(
 		'input', 'input-' + props.type,
@@ -307,16 +304,27 @@ const Input = props => {
 		props.inlineLabel && 'inline-label',
 		focused && 'input-focused'
 	)}>
-		{wrapInput ? <label>
+		<WrapComponent>
 			{props.label && <span>{props.label}</span>}
-			{children}
-		</label> : children}
+			<InputComponent
+				ref={inputRef}
+				attributes={attributes}
+				componentOptions={props.options}
+				visibleValue={value}
+				defaultValue={props.defaultValue}
+				setFocused={setFocused}
+				setValue={setValue}
+				validate={validate}
+				handleChange={handleChange}
+				onKeyDown={handleKeyDown}
+			/>
+		</WrapComponent>
 		
 		{props.displayError && errorText && <div className="error-text">
 			{errorText}
 		</div>}
 	</div>
-}
+})
 
 Input.defaultProps = {
 	type: 'text',
