@@ -4,6 +4,9 @@
   "description": "social media app",
   "main": "compiler/index.js",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build:client": "set NODE_ENV=production&& webpack --config webpack.client.config.cjs",
     "build:server": "webpack --config webpack.server.config.cjs",
@@ -86,5 +89,17 @@
     "webpack-dev-middleware": "^6.0.2",
     "webpack-hot-middleware": "^2.25.3",
     "webpack-node-externals": "^3.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "chokidar": "^3.5.3",
+    "concurrently": "^7.6.0",
+    "eslint": "^8.36.0",
+    "mocha": "^10.2.0",
+    "mongodb-memory-server": "^8.12.1",
+    "nodemon": "^2.0.22"
   }
 }
