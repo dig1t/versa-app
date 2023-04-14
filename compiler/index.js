@@ -7,7 +7,7 @@ const ColorfulConsole = require('./util/ColorfulConsole.cjs')
 const { spawn } = require('node:child_process')
 
 //const webpackClientConfig = require('../webpack.client.config.cjs')
-const webpackServerConfig = require('../webpack.server.config.cjs')
+const webpackServerConfig = require('../app/webpack.server.config.cjs')
 
 const WATCH_TIMEOUT = 1000
 
@@ -130,7 +130,7 @@ class Compiler {
 const serverCompiler = new Compiler({
 	name: 'versa-server',
 	webpackConfig: webpackServerConfig,
-	watchDir: path.resolve(__dirname, '../server'),
+	watchDir: path.resolve(__dirname, '../app/server'),
 	useServer: true
 })
 

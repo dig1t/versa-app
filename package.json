@@ -1,7 +1,8 @@
 {
   "name": "versa-app",
-  "version": "1.0.0",
-  "description": "Social Network",
+  "version": "0.0.1",
+  "description": "social media app",
+  "main": "compiler/index.js",
   "private": true,
   "scripts": {
     "build:client": "set NODE_ENV=production&& webpack --config webpack.client.config.cjs",
@@ -14,34 +15,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dig1t/versa-app.git"
+    "url": "git+https://github.com/dig1t/versa-app.git"
   },
+  "keywords": [
+    "social",
+    "media",
+    "network"
+  ],
   "author": "dig1t",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/dig1t/versa-app/issues"
   },
   "homepage": "https://github.com/dig1t/versa-app#readme",
-  "nodemonConfig": {
-    "ignore": [
-      "dist/*"
-    ]
-  },
   "globalDependencies": {
     "concurrently": "^7.1.0"
   },
   "dependencies": {
-    "compression": "^1.7.4",
-    "concurrently": "^8.0.1",
-    "connect-mongo": "^5.0.0",
-    "express": "^4.18.2",
-    "express-session": "^1.17.3",
-    "helmet": "^6.1.5",
-    "mongoose": "^7.0.3",
-    "passport": "^0.6.0",
-    "passport-local": "^1.0.0"
-  },
-  "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@reduxjs/toolkit": "^1.9.3",
     "@svgr/webpack": "^7.0.0",
@@ -58,16 +48,24 @@
     "chai-http": "^4.3.0",
     "chokidar": "^3.5.3",
     "classnames": "^2.3.2",
+    "compression": "^1.7.4",
+    "connect-mongo": "^5.0.0",
     "cookie-parser": "^1.4.6",
     "css-loader": "^6.7.3",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "eslint": "^8.38.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "helmet": "^6.1.5",
     "history": "^5.3.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.5",
     "mocha": "^10.2.0",
+    "mongoose": "^7.0.3",
     "node-sass": "^8.0.0",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
