@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 const webpack = require('webpack')
 const path = require('path')
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-const dotenv = require('dotenv').config({ path: '../.env' })
+const dotenv = require('dotenv').config({
+	path: path.resolve(__dirname, '../../.env')
+})
+
 const dev = dotenv.parsed.NODE_ENV === 'development'
 
 const swcOptions = {
@@ -39,12 +44,12 @@ module.exports = {
 	entry: {
 		main: [
 			dev && 'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
-			path.resolve(__dirname, dev ? '../../src' : 'src', 'client.js')
+			path.resolve(__dirname, dev ? '../../app/src' : 'src', 'client.js')
 		].filter(Boolean)
 	},
 	
 	output: {
-		path: path.join(__dirname, dev ? '../public/assets/client' : 'dist/public/assets/client'),
+		path: path.join(__dirname, dev ? '../../app/public/assets/client' : '../app/public/assets/client'),
 		filename: 'bundle.js',
 		publicPath: '/assets/client',
 		clean: true

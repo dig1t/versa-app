@@ -6,9 +6,16 @@ yarn-debug.log*
 yarn-error.log*
 
 # Config
+app/server/config.js
 package-lock.json
 *.code-workspace
 .env
 
 # Dependency directories
 node_modules/
+
+# Compiled
+dist
+dist/*
+app/public/assets/client
+app/public/assets/client/*

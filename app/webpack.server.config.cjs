@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 const path = require('path')
 const webpackNodeExternals = require('webpack-node-externals')
 
-const dotenv = require('dotenv').config({ path: '../.env' })
+const dotenv = require('dotenv').config({
+	path: path.resolve(__dirname, '../.env')
+})
+
 const dev = dotenv.parsed.NODE_ENV === 'development'
 
 module.exports = {
@@ -16,7 +21,7 @@ module.exports = {
 	externals: [ webpackNodeExternals() ],
 	
 	output: {
-		path: path.join(__dirname, 'dist/server'),
+		path: path.join(__dirname, '../dist/server'),
 		filename: 'server.bundle.js'
 	},
 	

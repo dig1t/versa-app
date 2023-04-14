@@ -11,7 +11,7 @@ const Icon = ({ name, scale, hidden, rot }) => {
 	
 	const _svgImport = React.memo(() => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-		const _svgImport = require(`../../../dist/public/assets/i/sprites/${name}.svg`).default
+		const _svgImport = require(`../../../public/assets/i/sprites/${name}.svg`).default
 		
 		return <_svgImport />
 	}, [])

@@ -2,6 +2,8 @@ import express from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import apiMiddleware from './util/apiMiddleware.js'
@@ -10,12 +12,15 @@ import useAPI from './containers/routes.js'
 import config from '../config.js'
 import oauth from './services/auth/oauth.js'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 const app = express()
 
 app.disable('etag')
 app.disable('x-powered-by')
 app.use(express.json())
-app.use(express.static('dist/public'))
+app.use(express.static(path.resolve(__dirname, '../public')))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
@@ -69,6 +74,8 @@ if (config.dev) app.use((req, res, next) => {
 	console.log(req.url, req.fields)
 	next()
 })
+
+app.get
 
 app.get('*', (req, res) => res.status(404).send())
 

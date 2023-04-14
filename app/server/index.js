@@ -54,7 +54,7 @@ if (app.get('env') === 'development') {
 
 app.disable('x-powered-by')
 app.use(express.json())
-app.use(express.static(path.resolve(__dirname, '../public')))
+app.use(express.static(path.resolve(__dirname, '../../app/public')))
 app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
@@ -111,7 +111,7 @@ db.instance.once('open', () => {
 	app.use('/', auth)
 	
 	/* PWA manifest file */
-	app.get('/manifest.json', (_, res) => res.send({
+	app.get('/manifest.json', (_, res) => res.json({
 		name: config.appName,
 		short_name: config.appName,
 		description: config.appDescription,
@@ -131,6 +131,8 @@ db.instance.once('open', () => {
 			}
 		}
 	}))
+	
+	app.get('/robots.txt', (_, res) => res.send('Disallow: *'))
 	
 	/* Route all other traffic to React Renderer */
 	app.get(/^\/(?!auth).*/, async (req, res) => {
