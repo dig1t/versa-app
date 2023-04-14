@@ -22,6 +22,7 @@ import ProfileSettings from './settings/profile.js'
 			label: 'Email',
 			inputOptions: {
 				type: 'text',
+				defaultValue: 'test' || {profile_private: true},
 				validateFor: 'email'
 			},
 			preview: 'digit@gmail.com',
@@ -113,14 +114,14 @@ export default [
 		
 		settings: [
 			{
-				name: 'Private Profile',
+				name: 'profile_private',
+				label: 'Private Profile',
 				description: 'Your profile will only be visible to mutual followers.',
-				default: '0',
 				inputOptions: {
 					type: 'checkboxes',
 					options: {
 						checkboxes: [
-							['Private', 'private']
+							['Private', 'profile_private']
 						]
 					}
 				},

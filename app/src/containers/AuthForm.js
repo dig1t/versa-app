@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -16,14 +16,13 @@ const AuthForm = ({
 }) => {
 	const hydrated = isHydrated()
 	
-	const [formData, setFormData] = useState({})
-	// All required inputs must be valid to enable submit button
+	const [inputData, setFormData] = useState({})
+	const inputRefs = useRef({})
+	
+	const [saveReady, setSaveReady] = useState(false)
 	const [validInputs, setValidInputs] = useState({})
 	
-	//const [inputs, setInputs] = useState({})
-	
 	const [canRedirect, setCanRedirect] = useState(false)
-	const [canSubmit, setCanSubmit] = useState(false)
 	const [authMessage, setAuthMessage] = useState('')
 	
 	useEffect(() => {
@@ -36,82 +35,83 @@ const AuthForm = ({
 			}
 		}
 		
-		setCanSubmit(allInputsValid)
-	}, [validInputs])
+		setSaveReady(allInputsValid)
+	}, [validInputs, inputData])
 	
 	useEffect(() => {
-		inputs.map(input => {
-			setFormData({
-				...formData,
+		setFormData(inputs.reduce((result, input) => {
+			return {
+				...result,
 				[input.name]: ''
-			})
-			setValidInputs({
-				...validInputs,
+			}
+		}, {}))
+		setValidInputs(inputs.reduce((result, input) => {
+			return {
+				...result,
 				[input.name]: input.optional || false
-			})
-		})
+			}
+		}, {}))
 	}, [])
 	
 	return <form onSubmit={event => {
 		event.preventDefault()
 		
-		// Only post if all inputs are valid
-		if (canSubmit) {
-			api.call({
-				method: 'post',
-				url: apiUrl,
-				data: {
-					...formData
-				}
+		if (!saveReady) return
+		
+		api.call({
+			method: 'post',
+			url: apiUrl,
+			data: {
+				...inputData
+			}
+		})
+			.then(data => {
+				if (!hydrated) return
+				if (handleResult) handleResult(true, data)
+				
+				setCanRedirect(true)
 			})
-				.then(data => {
-					if (!hydrated) return
-					if (handleResult) handleResult(true, data)
+			.catch(error => {
+				if (hydrated) {
+					if (handleResult) handleResult(false)
 					
-					setCanRedirect(true)
-				})
-				.catch(error => {
-					if (hydrated) {
-						if (handleResult) handleResult(false)
-						
-						setCanRedirect(false)
-					}
-					
-					setAuthMessage(error)
-					setCanSubmit(false)
-					
-					// Clear the password field
-					if (formData.password) setFormData({
-						...formData,
-						password: ''
-					})
-				})
-		}
+					setCanRedirect(false)
+				}
+				
+				setAuthMessage(error)
+				
+				// Clear the password field
+				setFormData(prevState => ({
+					...prevState,
+					password: ''
+				}))
+			})
 	}}>
 		{canRedirect && redirect ? <Navigate to={redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>
 		
-		{inputs.map(input => <Input {...input}
-			key={'auth-form-' + input.name}
-			inlineLabel={true}
-			value={formData[input.name]}
-			handleValueChange={value => {
-				setFormData(prev => ({
-					...prev,
-					// Update form data as the user is making changes
-					[input.name]: value
-				}))
+		{inputs.map(input => <Input
+			{...input}
+			key={input.name}
+			ref={ref => {
+				inputRefs.current[input.name] = ref
 			}}
-			handleValidity={value => setValidInputs({
-				...validInputs,
+			inlineLabel={true}
+			handleValueChange={value => setFormData(prevState => ({
+				...prevState,
+				// Update form data as the user is making changes
 				[input.name]: value
-			})}
+			}))}
+			handleValidity={value => setValidInputs(prevState => ({
+				...prevState,
+				[input.name]: value
+			}))}
 		/>)}
 		
 		<button
 			className="btn-full-width btn-round btn-primary"
 			type="submit"
-			disabled={!canSubmit}
+			disabled={!saveReady}
 		>
 			{buttonText}
 		</button>

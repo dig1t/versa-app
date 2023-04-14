@@ -21,7 +21,6 @@ const inputs = [
 		maxLength: 60
 	},
 	{
-		type: 'text',
 		name: 'name',
 		label: 'Name',
 		validateFor: 'text',
@@ -29,7 +28,6 @@ const inputs = [
 		maxLength: 20
 	},
 	{
-		type: 'text',
 		name: 'website',
 		label: 'Website',
 		validateFor: 'url',
