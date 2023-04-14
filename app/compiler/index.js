@@ -3,7 +3,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const chokidar = require('chokidar')
-const chalk = require('chalk')
+const ColorfulConsole = require('./util/ColorfulConsole.cjs')
 const { spawn } = require('node:child_process')
 
 //const webpackClientConfig = require('../webpack.client.config.cjs')
@@ -50,7 +50,7 @@ class Compiler {
 			this.watchTimeout = undefined
 		}, WATCH_TIMEOUT)
 		
-		console.log(chalk.magenta(`[${this.name}]`), 'detected file change', chalk.bold(path))
+		console.log(ColorfulConsole.magenta(`[${this.name}]`), 'detected file change', ColorfulConsole.bold(path))
 		
 		this.run()
 	}
@@ -62,16 +62,16 @@ class Compiler {
 		
 		const compileStart = Date.now()
 		
-		console.log(chalk.magenta(`[${this.name}]`), `compiling`)
+		console.log(ColorfulConsole.magenta(`[${this.name}]`), `compiling`)
 		
 		this.compiler.run((err, stats) => {
 			const compileTime = Date.now() - compileStart
 			
 			if (err || stats.hasErrors()) {
-				console.log(chalk.red(`[${this.name}]`), chalk.bold('error occured during build!'))
-				console.log(chalk.red(`[${this.name}]`), err || stats)
+				console.log(ColorfulConsole.red(`[${this.name}]`), ColorfulConsole.bold('error occured during build!'))
+				console.log(ColorfulConsole.red(`[${this.name}]`), err || stats)
 			} else {
-				console.log(chalk.magenta(`[${this.name}]`), 'compiled in', chalk.bold(`${compileTime}ms`))
+				console.log(ColorfulConsole.magenta(`[${this.name}]`), 'compiled in', ColorfulConsole.bold(`${compileTime}ms`))
 				
 				if (this.options.useServer) this.startServer()
 			}
@@ -79,7 +79,7 @@ class Compiler {
 	}
 	
 	startServer() {
-		console.log(chalk.yellow(`[${this.name}]`), `starting server`)
+		console.log(ColorfulConsole.yellow(`[${this.name}]`), `starting server`)
 		
 		const filePath = path.resolve(
 			this.webpackConfig.output.path,
@@ -97,19 +97,19 @@ class Compiler {
 		)
 		
 		this.process.stdout.on('data', data => {
-			console.log(chalk.yellow(`[${this.name}]`), data.toString())
+			console.log(ColorfulConsole.yellow(`[${this.name}]`), data.toString())
 		})
 		
 		this.process.on('error', error => {
-			console.log(chalk.red(`[${this.name}]`), 'encountered an error')
-			console.log(chalk.red(`[${this.name}]`), error)
+			console.log(ColorfulConsole.red(`[${this.name}]`), 'encountered an error')
+			console.log(ColorfulConsole.red(`[${this.name}]`), error)
 		})
 	}
 	
 	async stopServer() {
 		if (typeof this.process === 'undefined') return
 		
-		console.log(chalk.yellow(`[${this.name}]`), 'restarting server...')
+		console.log(ColorfulConsole.yellow(`[${this.name}]`), 'restarting server...')
 		
 		return new Promise((resolve, reject) => {
 			if (this.process.killed) return resolve()
