@@ -15,7 +15,8 @@ const inputs = [
 		placeholder: 'email@example.com',
 		autoFocus: true,
 		validateFor: 'email',
-		maxLength: 320
+		maxLength: 320,
+		minLength: 1
 	},
 	{
 		type: 'password',
@@ -23,7 +24,7 @@ const inputs = [
 		label: 'Password',
 		placeholder: '••••••••',
 		validateFor: 'password',
-		minLength: 4,
+		minLength: 6,
 		maxLength: 999
 	}
 ]

@@ -32,6 +32,8 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 	useEffect(() => {
 		if (data[config.name] !== undefined) {
 			inputRef.current.setValue(data[config.name])
+		} else if (config.default) {
+			//inputRef.current.setValue(config.default)
 		}
 	}, [data, config])
 	
@@ -40,7 +42,6 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 			config.readyCondition(value) :
 			true
 		
-		console.log('value for:', config.name, value)
 		setSaveReady(
 			readyConditionCheck === true &&
 			valid == true &&
@@ -58,7 +59,7 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 		} else {
 			// Use default API call
 			handleSave({
-				inputData: { [config.name]: value },
+				inputData: typeof value === 'object' ? value : { [config.name]: value },
 				settingConfig: config
 			})
 		}
@@ -87,7 +88,7 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 				<Icon name="chevron" rot={expanded && 90} />
 			</span>
 		</div>
-		<div className="accordion-content">
+		<div className="accordion-content" key={config.name}>
 			{config.description && <div className="description">
 				{config.description}
 			</div>}
@@ -104,7 +105,7 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 				handleSave={handleSaveAction}
 				handleCancel={() => {
 					toggleAccordion()
-					inputRef.current.setValue('')
+					inputRef.current.setValue(config.defaultValue || data[config.name])
 				}}
 			/>}
 		</div>

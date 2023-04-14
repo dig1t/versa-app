@@ -57,6 +57,13 @@ handler.register(
 	async (value, userId) => updatePassword(userId, value)
 )
 
+handler.register(
+	'profile_private',
+	async (value, userId) => {
+		console.log(value)
+	}
+)
+
 export const deserializeSettings = settings => ({
 	appTheme: shortcuts.appTheme[settings.appTheme || 0]
 })

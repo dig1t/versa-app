@@ -33,8 +33,9 @@ const TextInput = forwardRef((props, ref) => {
 		onBlur={() => {
 			props.validate()
 			props.setFocused(false)
+			props.setInitialInteraction(true)
 		}}
-		value={props.value}
+		//value={props.value}
 	/>
 })
 
@@ -50,8 +51,9 @@ const TextAreaInput = forwardRef((props, ref) => {
 		onBlur={() => {
 			props.validate()
 			props.setFocused(false)
+			props.setInitialInteraction(true)
 		}}
-		value={props.value}
+		//value={props.value}
 	/>
 })
 
@@ -67,12 +69,15 @@ const CheckboxInput = forwardRef((props, ref) => {
 			<input {...props.attributes}
 				type="checkbox"
 				value={option[1]}
-				onChange={event => props.setValue({
-					...props.value,
-					[option[1]]: event.target.checked
-				})}
-				checked={props.visibleValue[option[1]] === true}
-				defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+				onChange={event => {
+					props.setValue({
+						...props.value,
+						[option[1]]: event.target.checked
+					})
+					props.setInitialInteraction(true)
+				}}
+				checked={props.value[option[1]] === true}
+				defaultChecked={props.componentOptions?.default && props.componentOptions.default[option[1]]}
 			/>
 			<span>{option[0]}</span>
 		</label>)}
@@ -88,9 +93,12 @@ const SelectButtonsInput = forwardRef((props, ref) => {
 			<input {...props.attributes}
 				type="radio"
 				value={option[1]}
-				onChange={props.handleChange}
+				onChange={() => {
+					props.handleChange()
+					props.setInitialInteraction(true)
+				}}
 				checked={props.value === option[1]}
-				defaultChecked={props.defaultValue && props.defaultValue === option[1] && props.defaultValue}
+				defaultChecked={props.componentOptions?.default && props.componentOptions.default[option[1]]}
 			/>
 			<span>{option[0]}</span>
 		</label>)}
@@ -133,26 +141,51 @@ const componentMap = {
 ** > array [value, description] - option
 ** string validateFor - type of text to validate (util/validateText) */
 const Input = forwardRef((props, ref) => {
+	const getDefaultValue = () => {
+		switch(props.type) {
+			case 'checkboxes': {
+				return props.defaultValue || optionsToObject(props.options.checkboxes)
+			}
+			default: {
+				return props.defaultValue || ''
+			}
+		}
+	}
+	
 	const [errorText, setErrorText] = useState(null)
-	const [value, setValue] = useState(
-		props.type === 'checkboxes' ? optionsToObject(props.options) : ''
-	)
-	const [isValid, setIsValid] = useState(props.optional || (!(
-		// Make text and textareas valid temporarily
-		// so they appear with no errors initially
-		props.type == 'select' || props.type == 'selectButtons'
-	) && null))
+	const [value, setValue] = useState(getDefaultValue)
+	const [isValid, setIsValid] = useState(true)
+	const [initialInteraction, setInitialInteraction] = useState(false)
 	const [focused, setFocused] = useState(props.autoFocus)
 	const inputRef = useRef()
 	
 	useImperativeHandle(ref, () => ({
-		setValue: newValue => {
-			inputRef.current.value = newValue
+		setValue: (newValue, validate) => {
+			switch(props.type) {
+				case 'checkboxes': {
+					if (typeof newValue !== 'object') newValue = getDefaultValue()
+					
+					break
+				}
+				default: {
+					inputRef.current.value = newValue
+				}
+			}
+			
 			setValue(newValue)
+			
+			if (validate === true) validate()
 		},
 		
 		getValue: () => {
-			return inputRef.current.value
+			switch(props.type) {
+				case 'checkboxes': {
+					return optionsToObject(props.options.checkboxes)
+				}
+				default: {
+					return inputRef.current.value
+				}
+			}
 		}
 	}))
 	
@@ -164,35 +197,42 @@ const Input = forwardRef((props, ref) => {
 	useEffect(() => props.handleValidity(isValid), [isValid])
 	
 	useEffect(() => {
-		if (props.type === undefined) return
+		const newValue = props.value || getDefaultValue()
 		
 		switch(props.type) {
-			case 'text': case 'textarea': case 'selectButtons': {
-				if (typeof props.value !== 'string') return
-				
-				inputRef.current.value = props.value
-				
-				break
-			}
 			case 'checkboxes': {
-				if (haveSameKeys(props.value, optionsToObject(props.options))) return
+				if (haveSameKeys(
+					newValue,
+					optionsToObject(props.options.checkboxes)
+				)) return
 				
-				setValue(optionsToObject(props.options))
-				
-				break
-			}
-			case 'select': {
-				if (!(props.value instanceof Array)) {
-					inputRef.current.value = props.value instanceof Array ? props.array : []
+				if (typeof newValuee !== 'object') {
+					setValue(
+						props.options.default || optionsToObject(props.options.checkboxes)
+					)
 				} else {
-					inputRef.current.value = props.value
+					setValue(newValue)
 				}
 				
 				break
 			}
+			case 'select': {
+				if (!(newValue instanceof Array)) {
+					inputRef.current.value = newValue instanceof Array ? props.array : []
+				} else {
+					inputRef.current.value = newValue
+				}
+				
+				break
+			}
+			default: {
+				if (typeof newValue !== 'string') return
+				
+				inputRef.current.value = newValue
+			}
 		}
 		
-		validate(props.value)
+		//validate(newValue)
 	}, [props.value])
 	
 	useEffect(() => {
@@ -200,44 +240,16 @@ const Input = forwardRef((props, ref) => {
 			// Validate optional inputs
 			props.handleValidity(true)
 		}
+		
+		setValue(getDefaultValue)
 	}, [])
 	
 	const validate = useCallback(newValue => {
-		if (typeof newValue === 'undefined') newValue = inputRef.current.value
+		if (typeof newValue === 'undefined') newValue = inputRef.current?.value
 		
 		let validity = true
 		
 		switch(props.type) {
-			case 'text': case 'textarea': {
-				if (props.optional || ( // optional and 1+ characters exist
-					props.optional === false &&
-					newValue.length >= props.minLength &&
-					newValue.length <= (props.maxLength || -Math.max()) &&
-					newValue !== '' // not optional and is in between given min/max length
-				)) {
-					if (newValue.length > 0) {
-						validity = validateText(newValue, props.validateFor)
-						
-						if (validity === false) setErrorText(
-							`${props.label || props.validateFor} is not a valid ${props.validateFor}`
-						)
-					}
-				} else {
-					validity = false
-					
-					if (newValue.length !== 0 && newValue.length <= (props.minLength - 1 || 0)) setErrorText(
-						`${props.validateFor} is too short (${props.minLength} characters)`
-					)
-					
-					if (newValue.length === 0) setErrorText(`Missing ${props.label || props.validateFor}`)
-					
-					if (props.maxLength && newValue.length >= (props.maxLength + 1 || 0)) setErrorText(
-						`${props.validateFor} is too long (${props.maxLength} characters)`
-					)
-				}
-				
-				break
-			}
 			case 'select': {
 				newValue.map(newOption => {
 					const optionExists = props.options.find(option => option[1] === newOption)
@@ -265,6 +277,34 @@ const Input = forwardRef((props, ref) => {
 				
 				break
 			}
+			default: {
+				if (props.optional || ( // optional and 1+ characters exist
+					props.optional === false &&
+					newValue.length >= props.minLength &&
+					newValue.length <= (props.maxLength || -Math.max()) &&
+					newValue !== '' // not optional and is in between given min/max length
+				)) {
+					if (newValue.length > 0) {
+						validity = validateText(newValue, props.validateFor)
+						
+						if (validity === false) setErrorText(
+							`${props.label || props.validateFor} is not a valid ${props.validateFor}`
+						)
+					}
+				} else {
+					validity = false
+					
+					if (newValue.length !== 0 && newValue.length <= (props.minLength - 1 || 0)) setErrorText(
+						`${props.validateFor} is too short (${props.minLength} characters)`
+					)
+					
+					if (newValue.length === 0) setErrorText(`Missing ${props.label || props.validateFor}`)
+					
+					if (props.maxLength && newValue.length >= (props.maxLength + 1 || 0)) setErrorText(
+						`${props.validateFor} is too long (${props.maxLength} characters)`
+					)
+				}
+			}
 		}
 		
 		if (validity) setErrorText(null)
@@ -274,11 +314,13 @@ const Input = forwardRef((props, ref) => {
 	
 	const handleChange = () => {
 		setValue(inputRef.current.value)
+		//validate(inputRef.current.value)
 	}
 	
 	// TODO: Swap this with handleChange?
 	const handleKeyDown = () => {
 		setValue(inputRef.current.value)
+		//validate(inputRef.current.value)
 	}
 	
 	const attributes = useMemo(() => ({
@@ -299,10 +341,10 @@ const Input = forwardRef((props, ref) => {
 	
 	return <div className={classNames(
 		'input', 'input-' + props.type,
-		isValid === false && props.showStatusColors && 'error',
-		isValid && props.showStatusColors && 'input-ok',
+		initialInteraction === true && isValid === false && props.showStatusColors && 'error',
+		initialInteraction === true && isValid && props.showStatusColors && 'input-ok',
 		props.inlineLabel && 'inline-label',
-		focused && 'input-focused'
+		(focused || (props.inlineLabel && value.length > 0)) && 'input-focused'
 	)}>
 		<WrapComponent>
 			{props.label && <span>{props.label}</span>}
@@ -310,17 +352,19 @@ const Input = forwardRef((props, ref) => {
 				ref={inputRef}
 				attributes={attributes}
 				componentOptions={props.options}
-				visibleValue={value}
-				defaultValue={props.defaultValue}
+				type={props.type}
+				inlineLabel={props.inlineLabel}
+				value={value}
 				setFocused={setFocused}
 				setValue={setValue}
 				validate={validate}
 				handleChange={handleChange}
 				onKeyDown={handleKeyDown}
+				setInitialInteraction={setInitialInteraction}
 			/>
 		</WrapComponent>
 		
-		{props.displayError && errorText && <div className="error-text">
+		{props.displayError && initialInteraction === true && errorText && <div className="error-text">
 			{errorText}
 		</div>}
 	</div>
@@ -332,10 +376,10 @@ Input.defaultProps = {
 	optional: false,
 	validateFor: 'text',
 	wrap: false,
-	value: '',
+	//value: '',
 	autoFocus: false,
 	displayError: true,
-	showStatusColors: true,
+	showStatusColors: false,
 	checkboxStyle: 'box' // box or slider
 }
 
@@ -347,7 +391,6 @@ Input.propTypes = {
 	maxLength: PropTypes.number,
 	optional: PropTypes.bool,
 	validateFor: PropTypes.string,
-	defaultValue: PropTypes.string,
 	wrap: PropTypes.bool,
 	displayError: PropTypes.bool,
 	checkboxStyle: PropTypes.string
