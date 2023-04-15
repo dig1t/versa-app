@@ -29,7 +29,7 @@ app.use(oauth.inject(app))
 
 if (config.dev) {
 	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', config.domain)
+		res.header('Access-Control-Allow-Origin', req.headers.origin)
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
 		next()
 	})
@@ -39,6 +39,8 @@ if (config.dev) {
 	app.use((req, res, next) => {
 		req.secure ? next() : res.sendStatus(505)
 	})
+	
+	//res.header('Access-Control-Allow-Origin', config.domain)
 	
 	/* Setup helmet */
 	app.use(helmet.contentSecurityPolicy({

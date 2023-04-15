@@ -7,12 +7,9 @@ import api from '../util/api.js'
 
 const CommentEditor = ({ contentId, handleSuccess }) => {
 	const inputRef = useRef(null)
-	const [saveReady, setSaveReady] = useState(false)
 	const [valid, setValid] = useState(false)
 	
 	const handleSubmit = () => {
-		if (!saveReady || !valid) return
-		
 		const body = inputRef.current.getValue()
 		
 		inputRef.current.setValue('')
@@ -29,21 +26,18 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 		<label className="box">
 			<Input
 				ref={inputRef}
-				handleValueChange={value => {
-					setSaveReady(value.length > 0 && valid)
-				}}
 				handleValidity={setValid}
 				type="textarea"
 				placeholder="Write a comment..."
 				displayError={false}
 				minLength={1}
-				maxLength={50}
+				maxLength={512}
 			/>
 			<div className="editor-controls float-r">
 				<button
 					className={classNames(
 						'btn btn-round btn-primary post',
-						!valid && !saveReady && 'btn-disabled'
+						!valid && 'btn-disabled'
 					)}
 					onClick={handleSubmit}
 				>Post</button>

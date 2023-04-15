@@ -69,7 +69,7 @@ export const deserializeSettings = settings => ({
 })
 
 const getSettingsFromUserId = async userId => {
-	const settings = await Setting.findOne({ userId: mongoSanitize(userId) })
+	const settings = await Setting.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!settings) throw new Error('Could not get user settings')
 	

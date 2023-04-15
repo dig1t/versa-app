@@ -22,7 +22,7 @@ const POST_TYPES = {
 // }
 
 const deserializeContent = (content, profile) => ({
-	contentId: content._id.toHexString(),
+	contentId: content.contentId || content._id.toHexString(),
 	userId: content.userId.toHexString(),
 	body: content.body,
 	created: content.created,
@@ -86,7 +86,7 @@ const createContent = async data => {
 	try {
 		await content.save()
 		
-		return deserializeContent(content)
+		return deserializeContent(content, data.profile)
 	} catch(error) {
 		throw new Error('Could not create content')
 	}
@@ -100,11 +100,14 @@ const createPost = async (userId, query) => {
 	}
 	
 	try {
+		const profile = await getProfileFromUserId(userId)
+		
 		return await mongoSession(async () => {
 			const content = await createContent({
 				userId,
-				body: query.body
-			})
+				body: query.body,
+				profile
+			}, profile)
 			
 			const postId = new mongoose.Types.ObjectId()
 			const post = new Post({
@@ -118,7 +121,7 @@ const createPost = async (userId, query) => {
 			return deserializePost(
 				post,
 				content,
-				await getProfileFromUserId(userId)
+				profile
 			)
 		})
 	} catch(error) {

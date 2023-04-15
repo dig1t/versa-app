@@ -3,15 +3,15 @@ import dotenv from 'dotenv'
 const domain = 'https://versaapp.co'
 const apiDomain = 'https://api.versaapp.co'
 
-const devDomain = 'http://localhost'
-const devApiDomain = 'http://localhost:81'
+const devDomain = 'http://localhost:8080'
+const devApiDomain = 'http://localhost:8888'
 
 const env = dotenv.config({ path: '../.env' }).parsed
 const dev = env.NODE_ENV
 
 export default {
-	port: 80,
-	apiPort: 81,
+	port: 8080,
+	apiPort: 8888,
 	
 	appName: 'Versa',
 	appDescription: 'Universal Social Identity',
