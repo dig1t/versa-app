@@ -23,7 +23,6 @@ const Home = () => <Layout page="home">
 			<div className="main">
 				<StoriesList />
 				<PostEditor />
-				
 				<div className="feed">
 					<CatPills
 						pills={feedCategories}

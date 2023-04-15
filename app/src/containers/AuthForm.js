@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import api from '../util/api.js'
@@ -16,6 +16,7 @@ const AuthForm = ({
 }) => {
 	const hydrated = isHydrated()
 	
+	const navigate = useNavigate()
 	const [inputData, setFormData] = useState({})
 	const inputRefs = useRef({})
 	
@@ -75,7 +76,8 @@ const AuthForm = ({
 				if (hydrated) {
 					if (handleResult) handleResult(false)
 					
-					setCanRedirect(false)
+					navigate(redirectUrl)
+					//setCanRedirect(false)
 				}
 				
 				setAuthMessage(error)

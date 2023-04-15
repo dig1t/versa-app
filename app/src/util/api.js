@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // @version 1.0.0
 
 import { useEffect, useState } from 'react';

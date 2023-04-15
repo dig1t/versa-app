@@ -147,7 +147,7 @@ const createAccount = async req => {
 		// Issue user an oauth grant and refresh token
 		const grant = await req.oauth.ROPCGrant(email, password)
 		const auth = await authenticate(req, userId, grant.grantId)
-		
+		console.log(auth)
 		return {
 			auth,
 			user: deserializeUser(user, deserializeSettings(settings)),
@@ -352,7 +352,7 @@ export default server => {
 		async req => {
 			try {
 				const account = await createAccount(req)
-				
+				console.log(account)
 				req.apiResult(200, account)
 			} catch(error) {
 				console.log(error)

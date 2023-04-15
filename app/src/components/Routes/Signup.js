@@ -41,7 +41,8 @@ const Signup = () => {
 	
 	const handleResult = (success, data) => {
 		if (success) {
-			dispatch(setAuthenticatedUser(data.user))
+			console.log(data)
+			dispatch(setAuthenticatedUser(data))
 			dispatch(setUserProfile(data.profile)) // replace with bottom function
 			dispatch(addProfile(data.profile)) // add profile to cached profiles
 		} else {
@@ -59,7 +60,7 @@ const Signup = () => {
 						inputs={inputs}
 						apiUrl='/auth/signup'
 						redirect={true}
-						redirectUrl='/'
+						redirectUrl='/home'
 						buttonText='REGISTER'
 						handleResult={handleResult}
 					/>

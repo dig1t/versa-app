@@ -46,7 +46,7 @@ if (app.get('env') === 'development') {
 	
 	// Socket server
 	app.use(require('webpack-hot-middleware')(compiler, {
-		log: false,
+		//log: false,
 		path: '/__hot-reload',
 		heartbeat: 1 * 1000
 	}))
@@ -66,12 +66,13 @@ app.use((_, res, next) => {
 
 if (config.dev) {
 	app.use((req, res, next) => {
-		res.header('Access-Control-Allow-Origin', config.domain)
+		res.header('Access-Control-Allow-Origin', req.headers.origin)
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 		next()
 	})
 } else {
 	app.use(rateLimiterMiddleware)
+	//res.header('Access-Control-Allow-Origin', config.domain)
 	
 	/* Setup helmet */
 	app.use(helmet.contentSecurityPolicy({

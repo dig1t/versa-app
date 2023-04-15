@@ -190,7 +190,10 @@ const Input = forwardRef((props, ref) => {
 	}))
 	
 	useEffect(() => {
-		props.handleValueChange(value)
+		if (props.handleValueChange !== undefined) {
+			props.handleValueChange(value)
+		}
+		
 		validate(value)
 	}, [value])
 	
@@ -384,7 +387,7 @@ Input.defaultProps = {
 }
 
 Input.propTypes = {
-	handleValueChange: PropTypes.func.isRequired,
+	handleValueChange: PropTypes.func,
 	handleValidity: PropTypes.func,
 	type: PropTypes.string,
 	minLength: PropTypes.number,

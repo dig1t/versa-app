@@ -99,6 +99,7 @@ router.post(
 			await req.loginUser(data)
 			
 			req.apiResult(200, {
+				access_token: await req.getAccessToken(data.auth.refreshTokenId),
 				user: deserializeAuthorizedUser(data.user),
 				profile: data.profile
 			})

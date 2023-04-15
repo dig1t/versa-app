@@ -1,8 +1,8 @@
 export const FEED_FETCH_REQUEST = 'FEED_FETCH_REQUEST'
 export const FEED_FETCH_SUCCESS = 'FEED_FETCH_SUCCESS'
 export const FEED_FETCH_FAILURE = 'FEED_FETCH_FAILURE'
-export const FEED_NEW_POST = 'FEED_NEW_POST'
 export const FEED_NEW_PAGE = 'FEED_NEW_PAGE'
+export const FEED_ADD_ARRAY = 'FEED_ADD_ARRAY'
 
 export const PROFILE_FEED_FETCH_REQUEST = 'PROFILE_FEED_FETCH_REQUES'
 export const PROFILE_FEED_FETCH_SUCCESS = 'PROFILE_FEED_FETCH_SUCCESS'
@@ -28,10 +28,11 @@ export default (state = {
 				posts: action.payload
 			}
 		}
-		case FEED_NEW_POST: {
+		case FEED_ADD_ARRAY: {
+			const posts = state.posts
 			return {
 				...state,
-				posts: [action.payload].concat(state.posts)
+				posts: action.payload.concat(posts)
 			}
 		}
 		case FEED_NEW_PAGE: {

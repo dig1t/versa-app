@@ -3,13 +3,10 @@ import mongoose, { Schema } from 'mongoose'
 const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
-		alias: 'settingId'
+		alias: 'userId',
+		ref: 'User'
 	},
-	userId: {
-		type: Schema.Types.ObjectId,
-		ref: 'User',
-		required: true
-	},
+	
 	appTheme: {
 		/* {
 			0: 'light',
