@@ -41,7 +41,6 @@ const Signup = () => {
 	
 	const handleResult = (success, data) => {
 		if (success) {
-			console.log(data)
 			dispatch(setAuthenticatedUser(data))
 			dispatch(setUserProfile(data.profile)) // replace with bottom function
 			dispatch(addProfile(data.profile)) // add profile to cached profiles
@@ -50,7 +49,7 @@ const Signup = () => {
 		}
 	}
 	
-	return <Layout page="landing">
+	return <Layout page="landing" disableNav={true} fullWidth={true}>
 		<section className="auth">
 			<div className="box center-wrap">
 				<div className="form-wrap">

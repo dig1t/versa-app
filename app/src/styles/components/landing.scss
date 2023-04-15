@@ -16,6 +16,11 @@ main .content > section.landing {
 		width: 100%;
 	}
 	
+	// TODO: Remove after introducing themes
+	.box {
+		background-color: transparent;
+	}
+	
 	.hero, .auth {
 		background: linear-gradient(
 			rgb(255 255 255 / .1) 0%,
@@ -36,11 +41,18 @@ main .content > section.landing {
 			> * {
 				flex: 1;
 				margin: 0 2rem;
+				position: relative;
 				
 				> *:not(:first-child) {
 					margin-top: 1rem;
 				}
 			}
+		}
+		
+		.icon-logo {
+			height: 4rem;
+			position: absolute;
+			top: -4rem;
 		}
 		
 		p {
