@@ -148,6 +148,32 @@ main {
 	position: fixed;
 	overflow-y: scroll;
 	
+	> .content {
+		width: 100%;
+		padding: var(--box-spacing);
+		position: relative;
+		display: flex;
+		justify-content: center;
+		flex: 1;
+		
+		&.full-width {
+			display: block;
+		}
+		
+		> .wrap {
+			max-width: var(--max-box-size);
+			display: flex;
+			//gap: var(--box-spacing);
+			align-content: flex-start;
+		}
+	}
+	
+	.box {
+		background-color: var(--box-color);
+		border-radius: var(--box-corner);
+		overflow: hidden;
+	}
+	
 	nav {
 		width: 4.2rem;
 		height: 100%;
@@ -279,28 +305,6 @@ main {
 				}
 			}
 		}
-	}
-	
-	> .content {
-		width: 100%;
-		padding: var(--box-spacing);
-		position: relative;
-		display: flex;
-		justify-content: center;
-		flex: 1;
-		
-		> .wrap {
-			max-width: var(--max-box-size);
-			display: flex;
-			//gap: var(--box-spacing);
-			align-content: flex-start;
-		}
-	}
-	
-	.box {
-		background-color: var(--box-color);
-		border-radius: var(--box-corner);
-		overflow: hidden;
 	}
 }
 
