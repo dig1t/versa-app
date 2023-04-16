@@ -1,70 +1,5 @@
-ui {
-	display: block;
-	
-	&.hamburger {
-		width: 50px;
-		height: 50px;
-		cursor: pointer;
-		
-		$burger-width: 20px;
-		$burger-height: 2px;
-		$burger-spacing: 6px;
-		
-		&.active {
-			i {
-				background-color: transparent;
-				
-				&:before, &:after {
-					top: 0;
-				}
-				
-				&:before {
-					transform: rotate(135deg);
-				}
-				
-				&:after {
-					transform: rotate(-135deg);
-				}
-			}
-		}
-		
-		&:hover i,
-		&:hover i:before,
-		&:hover i:after,
-		&.active i,
-		&.active i:before,
-		&.active i:after {
-			background-color: lighten($black, 10%);
-		}
-		
-		i {
-			margin: calc((100% - 2px) / 2) calc((100% - #{$burger-width}) / 2);
-			position: relative;
-			
-			&:before {
-				top: -$burger-spacing;
-			}
-			
-			&:after {
-				top: $burger-spacing;
-			}
-			
-			&, &:before, &:after {
-				content: '';
-				background-color: $black;
-				width: $burger-width;
-				height: $burger-height;
-				border-radius: 3px;
-				transition: transform .2s ease-in-out;
-				display: block;
-				position: absolute;
-			}
-		}
-	}
-	
-	.hidden {
-		display: none;
-	}
+.ui-action {
+	display: inline-flex;
 }
 
 #ui-root {
@@ -426,5 +361,74 @@ $tooltip-padding: .4rem;
 		opacity: .3;
 		//opacity: 0;
 		// TODO: uncomment opacity
+	}
+}
+
+ui {
+	display: block;
+	
+	&.hamburger {
+		width: 50px;
+		height: 50px;
+		cursor: pointer;
+		
+		$burger-width: 20px;
+		$burger-height: 2px;
+		$burger-spacing: 6px;
+		
+		&.active {
+			i {
+				background-color: transparent;
+				
+				&:before, &:after {
+					top: 0;
+				}
+				
+				&:before {
+					transform: rotate(135deg);
+				}
+				
+				&:after {
+					transform: rotate(-135deg);
+				}
+			}
+		}
+		
+		&:hover i,
+		&:hover i:before,
+		&:hover i:after,
+		&.active i,
+		&.active i:before,
+		&.active i:after {
+			background-color: lighten($black, 10%);
+		}
+		
+		i {
+			margin: calc((100% - 2px) / 2) calc((100% - #{$burger-width}) / 2);
+			position: relative;
+			
+			&:before {
+				top: -$burger-spacing;
+			}
+			
+			&:after {
+				top: $burger-spacing;
+			}
+			
+			&, &:before, &:after {
+				content: '';
+				background-color: $black;
+				width: $burger-width;
+				height: $burger-height;
+				border-radius: 3px;
+				transition: transform .2s ease-in-out;
+				display: block;
+				position: absolute;
+			}
+		}
+	}
+	
+	.hidden {
+		display: none;
 	}
 }

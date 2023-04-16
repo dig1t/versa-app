@@ -107,7 +107,7 @@ const Profile = () => {
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}
 		{profileData === null ? <Loading /> : <div className="wrap grid-g">
-			<div className="col-12 col-desktop-4">
+			<div className="col-12">
 				<div className="info box">
 					<div className="banner">
 						<Modal type="image" image={profileData.banner || defaultAssets.banner}>
@@ -159,7 +159,7 @@ const Profile = () => {
 					</div>
 				</div>
 			</div>
-			<div className="col-12 col-desktop-8">
+			<div className="col-12">
 				<div className="feed box">
 					<CatPills
 						pills={feedCategories}

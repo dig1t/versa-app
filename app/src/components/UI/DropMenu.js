@@ -102,7 +102,7 @@ const DropMenu = props => {
 	
 	return <>
 		<span
-			className="drop-menu-trigger"
+			className="ui-action drop-menu-trigger"
 			ref={ref}
 			onClick={() => setOpen(true)}
 		>{props.children}</span>

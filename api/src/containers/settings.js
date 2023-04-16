@@ -2,9 +2,9 @@ import { Router } from 'express'
 
 import Setting from '../models/Setting.js'
 
-import { mongoSanitize } from '../util/index.js'
+import { mongoSanitize, validateText } from '../util/index.js'
 import useFields from '../util/useFields.js'
-import { updateEmail, updatePassword, updateUsername } from './users.js'
+import { updateEmail, updatePassword, updateProfile, updateUsername } from './users.js'
 
 const shortcuts = {
 	appTheme: ['light', 'dark']
@@ -19,11 +19,11 @@ class ActionHandler {
 		this.actions[name] = callback
 	}
 	
-	fire(type, value, userId) {
+	async fire(type, value, userId) {
 		if (this.actions[type] === 'undefined') throw new Error('Missing action')
 		
 		try {
-			return this.actions[type].apply(null, [value, userId])
+			return await this.actions[type].apply(null, [value, userId])
 		} catch(error) {
 			console.log(error)
 			
@@ -32,11 +32,20 @@ class ActionHandler {
 	}
 	
 	async run(data, userId) {
+		const promises = []
+		
 		for (const type in data) {
 			if (typeof this.actions[type] === 'function') {
-				return this.fire(type, data[type], userId)
+				promises.push(this.fire(type, data[type], userId))
 			}
 		}
+		
+		const res = await Promise.allSettled(promises)
+		
+		return res.reduce((result, promise) => ({
+			...result,
+			...promise.value
+		}), {})
 	}
 }
 
@@ -59,9 +68,42 @@ handler.register(
 
 handler.register(
 	'profile_private',
-	async (value, userId) => {
-		console.log(value)
-	}
+	async (value, userId) => updateProfile({
+		userId,
+		key: 'private',
+		value,
+		validateFor: 'bool'
+	})
+)
+
+handler.register(
+	'profile_name',
+	async (value, userId) => updateProfile({
+		userId,
+		key: 'name',
+		value,
+		validateFor: 'name'
+	})
+)
+
+handler.register(
+	'profile_bio',
+	async (value, userId) => updateProfile({
+		userId,
+		key: 'bio',
+		value,
+		validateFor: 'text'
+	})
+)
+
+handler.register(
+	'profile_website',
+	async (value, userId) => updateProfile({
+		userId,
+		key: 'website',
+		value,
+		validateFor: 'website'
+	})
 )
 
 export const deserializeSettings = settings => ({
@@ -104,10 +146,19 @@ export default server => {
 		async (req) => {
 			if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
 			
+			if (Object.keys(req.fields).length === 0) {
+				throw new Error('No settings given')
+			}
+			
 			try {
-				const result = await handler.run(req.fields, req._oauth.user.userId)
-				console.log(result)
-				req.apiResult(200, result)
+				const updatedValues = await handler.run(
+					req.fields,
+					req._oauth.user.userId
+				)
+				
+				req.apiResult(200, {
+					updatedValues
+				})
 			} catch(error) {
 				req.apiResult(500, {
 					message: error

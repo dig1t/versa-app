@@ -51,7 +51,10 @@ export default (state = {
 					...state.profileList,
 					[action.payload.userId]: {
 						...profile,
+						// You can pass a profile object to update the current state
+						// (ex. profile: { name: 'bob', age: 21, })
 						...action.payload.profile,
+						// Or just use a key/value (ex. { key: 'name', value: 'bob' })
 						[action.payload.key]: action.payload.value
 					}
 				}

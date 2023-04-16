@@ -290,6 +290,10 @@ main {
 					
 					&.avatar {
 						padding: .6rem;
+						
+						.ui-action {
+							display: block;
+						}
 					}
 				}
 				

@@ -18,12 +18,14 @@ export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 				'save btn-primary btn-round',
 				!ready && 'btn-disabled'
 			)}
-			onClick={handleSave}
+			onClick={event => {
+				if (ready) handleSave(event)
+			}}
 		>SAVE</button>
 	</div>
 }
 
-const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave }) => {
+export const AccordionInput = ({ expanded, config, data, toggleAccordion, handleSave }) => {
 	const inputRef = useRef(null)
 	const [saveReady, setSaveReady] = useState(false)
 	const [valid, setValid] = useState(false)
@@ -112,7 +114,7 @@ const AccordionSetting = ({ expanded, config, data, toggleAccordion, handleSave 
 	</div>
 }
 
-AccordionSetting.propTypes = {
+AccordionInput.propTypes = {
 	expanded: PropTypes.bool,
 	config: PropTypes.object.isRequired,
 	data: PropTypes.object, // TODO: isRequired
@@ -135,18 +137,18 @@ const SettingsPage = ({ config }) => {
 		setExpanded(newExpanded)
 	}
 	
-	const handleSave = ({ inputData, settingConfig }) => {
+	const handleSave = ({ inputData, settingConfig = config }) => {
 		if (!inputData) return
 		
 		return api.post(settingConfig.endpoint || `/v1/user/${userId}/settings`, inputData)
-			.then(data => {
+			.then(apiResult => {
 				// eslint-disable-next-line no-undef
 				console.log(`Saved ${settingConfig.name}`)
 				
 				if (settingConfig.saveAction) {
 					dispatch(settingConfig.saveAction({
 						updated: inputData,
-						resultFromAPI: data,
+						apiResult,
 						userId
 					}))
 				}
@@ -166,7 +168,7 @@ const SettingsPage = ({ config }) => {
 		<ul>
 			{config.settings && config.settings.map((setting, index) => (
 				<li key={index}>
-					<AccordionSetting
+					<AccordionInput
 						expanded={expanded[index]}
 						toggleAccordion={() => toggleAccordion(index)}
 						config={setting}
@@ -177,10 +179,8 @@ const SettingsPage = ({ config }) => {
 			))}
 			{config.component && <Component
 				data={data}
-				handleSave={data => handleSave({
-					data,
-					settingConfig: config
-				})}
+				handleSave={handleSave}
+				config={config}
 			/>}
 		</ul>
 	</div>
