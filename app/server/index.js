@@ -155,7 +155,7 @@ db.instance.once('open', () => {
 
 app.on('ready', () => app.listen(
 	config.port,
-	() => console.log(`server started on port ${config.port}`)
+	() => console.log(`server started at http://localhost:${config.port}`)
 ))
 
 app.on('error', error => console.error(error))

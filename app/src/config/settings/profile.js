@@ -37,7 +37,7 @@ const inputs = [
 	}
 ]
 
-export default ({ data, handleSave }) => {
+export default ({ data, handleSave, config }) => {
 	const [inputData, setFormData] = useState({})
 	const inputRefs = useRef({})
 	
@@ -73,7 +73,7 @@ export default ({ data, handleSave }) => {
 		}
 		
 		setSaveReady(allInputsValid && inputsChanged)
-	}, [validInputs, inputData])
+	}, [validInputs, inputData, data])
 	
 	return <div>
 		{inputs.map(input => <Input
@@ -104,7 +104,10 @@ export default ({ data, handleSave }) => {
 					inputDataDraft['profile_' + inputName] = inputData[inputName]
 				}
 				
-				handleSave(inputDataDraft)
+				handleSave({
+					inputData: inputDataDraft,
+					settingConfig: config
+				})
 			}}
 			handleCancel={() => setRefValues(data.profile)}
 		/>

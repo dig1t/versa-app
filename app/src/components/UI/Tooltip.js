@@ -83,6 +83,7 @@ const TooltipWrap = props => {
 		ref={ref}
 		onMouseEnter={() => setOpen(true)}
 		onMouseLeave={() => setOpen(false)}
+		className="ui-action"
 	>
 		<Tooltip
 			{...props}

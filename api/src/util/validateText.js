@@ -1,8 +1,6 @@
 // @version 1.0.1
 
-import isEmail from 'validator/lib/isEmail.js'
-import isURL from 'validator/lib/isURL.js'
-import isAlphanumeric from 'validator/lib/isAlphanumeric.js'
+import validator from 'validator'
 
 const validationMap = new Map([
 	['number', /^[0-9]+$/],
@@ -18,7 +16,7 @@ const validationMap = new Map([
 const validateText = (text, validateFor) => {
 	switch(validateFor) {
 		case 'email': {
-			return isEmail(text)
+			return validator.isEmail(text)
 		}
 		case 'text': case 'textarea': {
 			return validationMap.get('text').test(
@@ -27,10 +25,10 @@ const validateText = (text, validateFor) => {
 			)
 		}
 		/*case 'name': {
-			return isAlphanumeric(text, 'en-US')
+			return validator.isAlphanumeric(text, 'en-US')
 		}*/
 		case 'url': {
-			return isURL(text, {
+			return validator.isURL(text, {
 				protocols: ['http', 'https']
 			})
 		}

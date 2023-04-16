@@ -147,7 +147,7 @@ const createAccount = async req => {
 		// Issue user an oauth grant and refresh token
 		const grant = await req.oauth.ROPCGrant(email, password)
 		const auth = await authenticate(req, userId, grant.grantId)
-		console.log(auth)
+		
 		return {
 			auth,
 			user: deserializeUser(user, deserializeSettings(settings)),
@@ -270,6 +270,39 @@ const updatePassword = async (userId, newPassword) => {
 	}
 }
 
+const updateProfile = async options => {
+	if (typeof options.userId !== 'string') throw new Error('Missing userId')
+	if (typeof options.key !== 'string') throw new Error('Missing key')
+	if (options.value === undefined) throw new Error('Missing value')
+	if (typeof options.validateFor !== 'string') throw new Error('Missing validation type')
+	
+	const isValid = validateText(
+		options.value,
+		options.validateFor || 'text'
+	)
+	
+	if (!isValid) {
+		throw new Error(`Text is not a valid ${options.validateFor}`)
+	}
+	
+	try {
+		// TODO: Keep track of updates
+		
+		return await mongoSession(async () => {
+			// TODO: Save to user activity logs as type: profile:update_${key}
+			
+			await Profile.updateOne(
+				{ _id: mongoSanitize(options.userId) },
+				{ $set: { [options.key]: mongoSanitize(options.value) } }
+			)
+			
+			return { [options.key]: options.value }
+		})
+	} catch(error) {
+		throw new Error(error || 'Could not update profile')
+	}
+}
+
 export {
 	emailExists,
 	getUserIdFromSession,
@@ -282,7 +315,8 @@ export {
 	deleteAccount,
 	updateUsername,
 	updateEmail,
-	updatePassword
+	updatePassword,
+	updateProfile
 }
 
 export default server => {
@@ -352,7 +386,7 @@ export default server => {
 		async req => {
 			try {
 				const account = await createAccount(req)
-				console.log(account)
+				
 				req.apiResult(200, account)
 			} catch(error) {
 				console.log(error)

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import Post from './Post.js'
 import Loading from '../components/Loading.js'
-import { getProfileFeed } from '../actions/feed.js'
+import { getProfileFeed, getHomeFeed } from '../actions/feed.js'
 
 const Feed = ({ type, userId }) => {
 	const dispatch = useDispatch()
@@ -20,7 +20,7 @@ const Feed = ({ type, userId }) => {
 			switch(type) {
 				case 'home':
 					// TODO: GET HOME FEED
-					//dispatch()
+					dispatch(getHomeFeed())
 					break
 				case 'profile':
 					dispatch(getProfileFeed(userId, type))

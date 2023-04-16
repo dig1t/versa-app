@@ -66,7 +66,12 @@ const ModalWrap = props => {
 			}}
 			open={open}
 		/>
-		<span onClick={() => setOpen(true)} >{props.children}</span>
+		<span
+			className="ui-action"
+			onClick={() => setOpen(true)}
+		>
+			{props.children}
+		</span>
 	</> : props.children
 }
 

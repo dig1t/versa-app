@@ -31,7 +31,7 @@ import ProfileSettings from './settings/profile.js'
 				api.post('/settings/email', { email: newData.email })
 					.then(() => onSave(newData))
 			},
-			saveAction: ({ updates, resultFromAPI, userId }) => {
+			saveAction: ({ updates, apiResult, userId }) => {
 				console.log('Data saved: ', newData)
 			}
 		}
@@ -84,8 +84,7 @@ export default [
 				saveAction: ({ updated, userId }) => ({
 					type: PROFILE_UPDATE,
 					payload: {
-						key: 'username',
-						value: updated.username,
+						profile: { username: updated.username },
 						userId
 					}
 				})
@@ -128,8 +127,7 @@ export default [
 				saveAction: ({ updated, userId }) => ({
 					type: PROFILE_UPDATE,
 					payload: {
-						key: 'private',
-						value: updated.private,
+						profile: { private: updated.private },
 						userId
 					}
 				})
@@ -142,6 +140,14 @@ export default [
 		
 		selector: ({ state, userId }) => ({
 			profile: state.profiles.profileList[userId]
+		}),
+		
+		saveAction: ({ apiResult, userId }) => ({
+			type: PROFILE_UPDATE,
+			payload: {
+				profile: apiResult.updatedValues,
+				userId
+			}
 		}),
 		
 		component: ProfileSettings
