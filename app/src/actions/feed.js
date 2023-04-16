@@ -83,3 +83,18 @@ export const getProfileFeed = userId => (dispatch, getState) => {
 			})
 		})
 }
+
+export const getHomeFeed = () => (dispatch, getState) => {
+	dispatch({ type: PROFILE_FEED_FETCH_REQUEST })
+	
+	api.get(`/v1/feed/home`)
+		.then(data => dispatch(addPosts(data, true)))
+		.catch(error => {
+			// eslint-disable-next-line no-undef
+			console.error(error)
+			
+			dispatch({
+				type: PROFILE_FEED_FETCH_FAILURE
+			})
+		})
+}
