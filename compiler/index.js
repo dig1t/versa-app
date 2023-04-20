@@ -86,13 +86,12 @@ class Compiler {
 			this.webpackConfig.output.filename
 		)
 		
+		console.log(process.env.NODE_ENV)
 		this.process = spawn(
 			'node',
 			[filePath],
 			{
-				env: {
-					...process.env
-				}
+				env: process.env
 			}
 		)
 		
@@ -100,9 +99,8 @@ class Compiler {
 			console.log(ColorfulConsole.yellow(`[${this.name}]`), data.toString())
 		})
 		
-		this.process.on('error', error => {
-			console.log(ColorfulConsole.red(`[${this.name}]`), 'encountered an error')
-			console.log(ColorfulConsole.red(`[${this.name}]`), error)
+		this.process.stderr.on('data', data => {
+			console.log(ColorfulConsole.red(`[${this.name}]`), data.toString())
 		})
 	}
 	

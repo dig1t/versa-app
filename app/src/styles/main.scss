@@ -83,7 +83,7 @@ button, a.btn {
 				border-color: $btn-primary-hover;
 			}
 			
-			&:active {
+			&:active, &:focus-visible {
 				color: $btn-primary-active;
 				border-color: $btn-primary-active;
 			}
@@ -97,7 +97,7 @@ button, a.btn {
 				text-decoration: none;
 			}
 			
-			&:not(.btn-disabled):active {
+			&:not(.btn-disabled):active, &:not(.btn-disabled):focus-visible {
 				background-color: $btn-primary-active;
 			}
 		}
@@ -113,7 +113,7 @@ button, a.btn {
 				text-decoration: none;
 			}
 			
-			&:active {
+			&:active, &:focus-visible {
 				color: $btn-secondary-active;
 				border-color: $btn-secondary-active;
 			}
@@ -132,7 +132,8 @@ button, a.btn {
 	&[disabled],
 	&.btn-primary[disabled],
 	&.btn-primary[disabled]:hover,
-	&.btn-primary[disabled]:active {
+	&.btn-primary[disabled]:active,
+	&.btn-primary[disabled]:focus-visible {
 		color: var(--light-gray-200);
 		background-color: var(--light-gray);
 		cursor: default;
@@ -322,14 +323,14 @@ main {
 	$inputErrorColor: var(--red);
 	$inputValidColor: var(--green-600);
 	
-	input {
-		border: 1px solid var(--blue-gray-600);
+	input, textarea {
+		border: 1px solid var(--blue-gray-100);
 		padding: $paddingY $paddingX;
 		font-size: $fontSize;
 		line-height: $fontSize;
 	}
 	
-	div, input, &.inline-label {
+	div, input, textarea, &.inline-label {
 		border-radius: .2rem;
 	}
 	
@@ -344,9 +345,10 @@ main {
 	}
 	
 	.error-text {
-		color: var(--red);
+		color: var(--red-600);
 		margin-top: .4rem;
 		font-size: .8rem;
+		font-weight: $font-semibold;
 	}
 	
 	&.input-focused span {

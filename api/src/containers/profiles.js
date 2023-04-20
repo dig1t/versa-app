@@ -118,7 +118,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 		}
 	}
 	
-	/*/
+	/*
 	// Post
 	{
 		...post,

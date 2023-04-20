@@ -6,6 +6,7 @@ import content from './content.js'
 import follows from './follows.js'
 import settings from './settings.js'
 import feed from './feed.js'
+import upload from './upload.js'
 
 export default server => {
 	const router = new Router()
@@ -18,6 +19,7 @@ export default server => {
 	router.use(follows(server))
 	router.use(settings(server))
 	router.use(feed(server))
+	router.use(upload(server))
 	
 	return router
 }

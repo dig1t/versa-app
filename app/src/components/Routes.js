@@ -12,6 +12,7 @@ const Settings = React.lazy(() => import('./Routes/Settings'))
 const Home = React.lazy(() => import('./Routes/Home'))
 const Profile = React.lazy(() => import('./Routes/Profile'))
 const Content = React.lazy(() => import('./Routes/Content'))
+const Upload = React.lazy(() => import('./Routes/Upload'))
 
 const AppRoutes = () => <Routes>
 	<Route element={<PrivateRoute requireNoAuth={true} redirectTo="/home" />}>
@@ -25,6 +26,7 @@ const AppRoutes = () => <Routes>
 		<Route path="/settings" element={<Settings />} />
 		<Route path="/settings/:categoryParam" element={<Settings />} />
 		<Route path="/home" element={<Home />} />
+		<Route path="/upload" element={<Upload />} />
 	</Route>
 	
 	<Route path="/:username" element={<Profile />} />

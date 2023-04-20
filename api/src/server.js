@@ -77,8 +77,6 @@ if (config.dev) app.use((req, res, next) => {
 	next()
 })
 
-app.get
-
 app.get('*', (req, res) => res.status(404).send())
 
 app.use((error, req, res) => {

@@ -1,6 +1,6 @@
 import { USER_UPDATE } from '../reducers/user.js'
 import { PROFILE_UPDATE } from '../reducers/profiles.js'
-import ProfileSettings from './settings/profile.js'
+import ProfileSettingPage from './settings/profile.js'
 
 /*
 // Example category
@@ -150,6 +150,6 @@ export default [
 			}
 		}),
 		
-		component: ProfileSettings
+		component: ProfileSettingPage
 	}
 ]

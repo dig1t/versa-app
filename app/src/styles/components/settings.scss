@@ -43,6 +43,7 @@
 		
 		.container > .header {
 			padding-top: .3rem;
+			margin-bottom: 1.2rem;
 			
 			.title {
 				font-size: 1.4rem;
@@ -57,9 +58,28 @@
 			}
 		}
 		
-		ul {
-			margin-top: 1.2rem;
+		.label-name, .input label > span {
+			font-weight: $font-bold;
+			font-size: 1rem;
+		}
+		
+		.profile-settings {
+			.input {
+				&:not(:first-child) {
+					margin-top: 1rem;
+				}
+				
+				.label > span {
+					margin-bottom: .6rem;
+				}
+			}
 			
+			.actions {
+				margin-top: 1rem;
+			}
+		}
+		
+		ul.accordion-list {
 			li:not(:first-child) {
 				border-top: 1px solid var(--divider-color);
 			}
@@ -88,11 +108,7 @@
 						align-items: center;
 					}
 					
-					.name {
-						font-weight: $font-bold;
-					}
-					
-					.preview {
+					.label-preview {
 						color: var(--blue-gray-200);
 						margin-right: .4rem;
 						font-weight: $font-regular;
