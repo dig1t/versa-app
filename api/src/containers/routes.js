@@ -8,7 +8,7 @@ import settings from './settings.js'
 import feed from './feed.js'
 import upload from './upload.js'
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get('/ping', (_req, res) => res.json({ pong: true }))

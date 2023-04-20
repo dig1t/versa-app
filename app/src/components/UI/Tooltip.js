@@ -71,7 +71,7 @@ Tooltip.propTypes = {
 	offset: PropTypes.number
 }
 
-const TooltipWrap = props => {
+const TooltipWrap = (props) => {
 	if (props.inlineTrigger === false && typeof props.open !== Boolean) {
 		throw new Error('TooltipWrap - Custom triggers must include an "open" prop')
 	}

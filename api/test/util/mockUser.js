@@ -40,5 +40,5 @@ export default {
 		return account
 	},
 	
-	delete: async userId => await deleteAccount(userId)
+	delete: async (userId) => await deleteAccount(userId)
 }

@@ -8,7 +8,7 @@ const Logout = () => {
 	
 	const [clicked, setClicked] = useState(false)
 	
-	const handleClick = event => {
+	const handleClick = (event) => {
 		event.preventDefault()
 		
 		!clicked && dispatch(userLogout(true))

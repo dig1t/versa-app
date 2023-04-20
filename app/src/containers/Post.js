@@ -12,7 +12,7 @@ import ContentActions from './ContentActions.js'
 import linkInjector from '../util/linkInjector.js'
 
 const Post = ({ data }) => {
-	const { profileList, contentList } = useSelector(state => ({
+	const { profileList, contentList } = useSelector((state) => ({
 		profileList: state.profiles.profileList,
 		contentList: state.content.contentList
 	}))

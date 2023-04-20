@@ -18,7 +18,7 @@ const PostEditor = () => {
 		inputRef.current.setValue('')
 		
 		api.post('/v1/post/new', { body })
-			.then(response => dispatch(newFeedPost(response)))
+			.then((response) => dispatch(newFeedPost(response)))
 	}
 	
 	return <div className="post-editor">

@@ -27,7 +27,7 @@ const Home = () => <Layout page="home">
 					<CatPills
 						pills={feedCategories}
 						defaultCategory="all"
-						handleSelection={category => {
+						handleSelection={(category) => {
 							console.log('selected pill of type:', category.name)
 						}}
 					/>

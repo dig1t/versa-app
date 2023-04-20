@@ -49,7 +49,7 @@ class Carousel extends React.Component {
 	}
 	
 	toggleClassState(i, key) {
-		this.setState(state => (state.slides[i][key] = !state.slides[i][key], state))
+		this.setState((state) => (state.slides[i][key] = !state.slides[i][key], state))
 	}
 	
 	move(newIndex, direction) {

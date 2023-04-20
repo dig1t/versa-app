@@ -17,7 +17,7 @@ export default {
 		await mongoServer.stop()
 	},
 	
-	dropCollections: async connection => {
+	dropCollections: async (connection) => {
 		const collections = await connection.db.collections()
 		
 		for (let collection of collections) {

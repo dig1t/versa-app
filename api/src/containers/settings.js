@@ -106,11 +106,11 @@ handler.register(
 	})
 )
 
-export const deserializeSettings = settings => ({
+export const deserializeSettings = (settings) => ({
 	appTheme: shortcuts.appTheme[settings.appTheme || 0]
 })
 
-const getSettingsFromUserId = async userId => {
+const getSettingsFromUserId = async (userId) => {
 	const settings = await Setting.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!settings) throw new Error('Could not get user settings')
@@ -118,7 +118,7 @@ const getSettingsFromUserId = async userId => {
 	return deserializeSettings(settings)
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get(

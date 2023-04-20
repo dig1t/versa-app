@@ -21,7 +21,7 @@ const RenderLink = ({ clickRedirect, profile, children }) => <>
 
 const Avatar = ({ avatar, status, hasStory, userId, clickRedirect, useModal }) => {
 	const dispatch = useDispatch()
-	const { profileList } = useSelector(state => ({
+	const { profileList } = useSelector((state) => ({
 		profileList: state.profiles.profileList
 	}))
 	

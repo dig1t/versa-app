@@ -44,7 +44,7 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 	const [saveReady, setSaveReady] = useState(false)
 	const [validInputs, setValidInputs] = useState({})
 	
-	const setRefValues = values => {
+	const setRefValues = (values) => {
 		for (const inputName in inputRefs.current) {
 			if (values[inputName] && inputRefs.current[inputName]) {
 				inputRefs.current[inputName].setValue(values[inputName])
@@ -76,19 +76,19 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 	}, [validInputs, inputData, data])
 	
 	return <div className="profile-settings">
-		{inputs.map(input => <Input
+		{inputs.map((input) => <Input
 			{...input}
 			key={input.name}
-			ref={ref => {
+			ref={(ref) => {
 				inputRefs.current[input.name] = ref
 			}}
 			showStatusColors={false}
-			handleValueChange={value => setFormData(prevState => ({
+			handleValueChange={(value) => setFormData((prevState) => ({
 				...prevState,
 				// Update form data as the user is making changes
 				[input.name]: value
 			}))}
-			handleValidity={value => setValidInputs(prevState => ({
+			handleValidity={(value) => setValidInputs((prevState) => ({
 				...prevState,
 				[input.name]: value
 			}))}

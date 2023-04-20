@@ -54,7 +54,7 @@ const deserializePost = (post, content, profile) => ({
 	content: content || post.content
 })
 
-const deserializeComment = comment => ({
+const deserializeComment = (comment) => ({
 	commentId: comment._id.toHexString(),
 	contentId: comment.contentId.toHexString(),
 	userId: comment.userId.toHexString(),
@@ -62,13 +62,13 @@ const deserializeComment = comment => ({
 	created: comment.created
 })
 
-const deserializeLike = like => ({
+const deserializeLike = (like) => ({
 	likeId: like._id.toHexString(),
 	contentId: like.contentId.toHexString(),
 	userId: like.userId.toHexString()
 })
 
-const createContent = async data => {
+const createContent = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.body) throw new Error('Missing body')
 	
@@ -129,7 +129,7 @@ const createPost = async (userId, query) => {
 	}
 }
 
-const deletePost = async postId => {
+const deletePost = async (postId) => {
 	const post = await Post.findOne({ _id: mongoSanitize(postId) })
 	
 	if (!post) throw new Error('Could not find post')
@@ -179,7 +179,7 @@ const getContent = async (contentId, requesterUserId) => {
 	return deserializeContent(content, profile)
 }
 
-const contentPipeline = async _options => {
+const contentPipeline = async (_options) => {
 	const options = {
 		..._options
 	}
@@ -209,7 +209,7 @@ const contentPipeline = async _options => {
 	return pipeline
 }
 
-const profileFeedPipeline = async _options => {
+const profileFeedPipeline = async (_options) => {
 	const options = {
 		canViewContent: false,
 		requesterUserId: '0',
@@ -288,7 +288,7 @@ const getPost = async (postId, requesterUserId) => {
 	)
 }
 
-const createComment = async data => {
+const createComment = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.contentId) throw new Error('Missing contentId')
 	if (!data.body) throw new Error('Missing body')
@@ -324,7 +324,7 @@ const createComment = async data => {
 	}
 }
 
-const deleteComment = async commentId => {
+const deleteComment = async (commentId) => {
 	const comment = await Comment.findOne({ _id: mongoSanitize(commentId) })
 	
 	if (!comment) throw new Error('Could not find comment')
@@ -354,13 +354,13 @@ const getComments = async (contentId, requesterUserId) => {
 			.sort({ created: -1 })
 			.limit(10)
 		
-		return comments.map(comment => deserializeComment(comment))
+		return comments.map((comment) => deserializeComment(comment))
 	} catch(error) {
 		throw new Error('Could not get comments')
 	}
 }
 
-const createLike = async data => {
+const createLike = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.contentId) throw new Error('Missing contentId')
 	
@@ -392,7 +392,7 @@ const createLike = async data => {
 	}
 }
 
-const deleteLike = async data => {
+const deleteLike = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.contentId) throw new Error('Missing contentId')
 	
@@ -413,7 +413,7 @@ const deleteLike = async data => {
 	}
 }
 
-const getUserLike = async data => {
+const getUserLike = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.contentId) throw new Error('Missing contentId')
 	
@@ -425,7 +425,7 @@ const getUserLike = async data => {
 	return like ? deserializeLike(like) : null
 }
 
-const userLikesContent = async data => {
+const userLikesContent = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.contentId) throw new Error('Missing contentId')
 	
@@ -450,13 +450,13 @@ export {
 	userLikesContent
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get(
 		'/content/:contentId',
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			try {
 				const content = await getContent(req.params.contentId, req._oauth?.user?.userId)
 				
@@ -475,7 +475,7 @@ export default server => {
 		'/content/:contentId/comment',
 		useFields({ fields: ['body'] }),
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			try {
 				const post = await createComment({
 					userId: req._oauth.user.userId,
@@ -495,7 +495,7 @@ export default server => {
 	router.delete(
 		'/content/:contentId/comment',
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			try {
 				const res = await deleteComment({
 					userId: req._oauth.user.userId,
@@ -514,7 +514,7 @@ export default server => {
 	router.post(
 		'/content/:contentId/like',
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			try {
 				const like = await createLike({
 					userId: req._oauth.user.userId,
@@ -533,7 +533,7 @@ export default server => {
 	router.delete(
 		'/content/:contentId/like',
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			try {
 				const res = await deleteLike({
 					userId: req._oauth.user.userId,
@@ -552,7 +552,7 @@ export default server => {
 	router.get(
 		'/content/:contentId/comments',
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			try {
 				const comments = await getComments(req.params.contentId, req._oauth?.user?.userId)
 				
@@ -571,7 +571,7 @@ export default server => {
 		'/post/new',
 		useFields({ fields: ['body'] }),
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			try {
 				const post = await createPost(req._oauth.user.userId, req.fields)
 				
@@ -587,7 +587,7 @@ export default server => {
 	router.get(
 		'/post/:postId',
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			try {
 				const post = await getPost(req.params.postId, req._oauth.user.userId)
 				

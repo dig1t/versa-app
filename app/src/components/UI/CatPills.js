@@ -7,13 +7,13 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) =
 	const [mounted, setMounted] = useState(false)
 	
 	useEffect(() => {
-		if (pills.find(category => category.name === defaultCategory)) {
+		if (pills.find((category) => category.name === defaultCategory)) {
 			setActiveCategory(defaultCategory)
 		}
 	}, [defaultCategory])
 	
 	useEffect(() => {
-		const categorySearch = pills.find(category => category.name === activeCategory)
+		const categorySearch = pills.find((category) => category.name === activeCategory)
 		
 		if (categorySearch) {
 			handleSelection(categorySearch)
@@ -29,7 +29,7 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) =
 	return <div className={classNames(
 		'cat-pills'
 	)}>
-		{pills.map(data => <button
+		{pills.map((data) => <button
 			className={classNames(
 				'pill',
 				activeCategory === data.name && 'active',

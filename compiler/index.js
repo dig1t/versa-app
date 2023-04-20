@@ -95,11 +95,11 @@ class Compiler {
 			}
 		)
 		
-		this.process.stdout.on('data', data => {
+		this.process.stdout.on('data', (data) => {
 			console.log(ColorfulConsole.yellow(`[${this.name}]`), data.toString())
 		})
 		
-		this.process.stderr.on('data', data => {
+		this.process.stderr.on('data', (data) => {
 			console.log(ColorfulConsole.red(`[${this.name}]`), data.toString())
 		})
 	}
@@ -112,7 +112,7 @@ class Compiler {
 		return new Promise((resolve, reject) => {
 			if (this.process.killed) return resolve()
 			
-			this.process.on('close', code => {
+			this.process.on('close', (code) => {
 				if (code && code > 0) reject(`unexpected error occured during server restart. Exit code: ${code}`)
 				
 				this.process = undefined

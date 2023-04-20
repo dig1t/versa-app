@@ -86,11 +86,11 @@ class Compiler {
 			[filePath]
 		)
 		
-		this.process.stdout.on('data', data => {
+		this.process.stdout.on('data', (data) => {
 			console.log(chalk.yellow(`[${this.name}]`), data.toString())
 		})
 		
-		this.process.on('error', error => {
+		this.process.on('error', (error) => {
 			console.log(chalk.red(`[${this.name}]`), 'encountered an error')
 			console.log(chalk.red(`[${this.name}]`), error)
 		})
@@ -102,7 +102,7 @@ class Compiler {
 		console.log(chalk.yellow(`[${this.name}]`), 'restarting server...')
 		
 		return new Promise((resolve, reject) => {
-			this.process.on('close', code => {
+			this.process.on('close', (code) => {
 				if (code && code > 0) reject(`unexpected error occured during server restart. Exit code: ${code}`)
 				
 				this.process = undefined

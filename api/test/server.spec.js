@@ -13,7 +13,7 @@ server.use(apiMiddleware())
 server.get(
 	'/ping',
 	useFields({ fields: ['userId'] }),
-	req => {
+	(req) => {
 		req.apiResult(200, req.fields)
 	}
 )

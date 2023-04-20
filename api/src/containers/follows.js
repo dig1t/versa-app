@@ -8,7 +8,7 @@ import Follower from '../models/Follower.js'
 import Profile from '../models/Profile.js'
 import { canViewProfile, getProfileFromUserId } from './profiles.js'
 
-const deserializeFollow = follow => ({
+const deserializeFollow = (follow) => ({
 	followId: follow._id.toHexString(),
 	userId: follow.userId.toHexString(),
 	followerUserId: follow.followerUserId.toHexString(),
@@ -109,7 +109,7 @@ const isMutualFollower = async (userId, followerUserId) => {
 	}
 }
 
-const getFollowCount = async userId => {
+const getFollowCount = async (userId) => {
 	const profile = await Profile.findOne({ _id: mongoSanitize(userId) })
 		.select('followers')
 	
@@ -118,7 +118,7 @@ const getFollowCount = async userId => {
 	return profile.followers
 }
 
-const getFollowingCount = async userId => {
+const getFollowingCount = async (userId) => {
 	const profile = await Profile.findOne({ _id: mongoSanitize(userId) })
 		.select('following')
 	
@@ -221,7 +221,7 @@ export {
 	deleteFollow
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get(
@@ -230,7 +230,7 @@ export default server => {
 			fields: ['userId']
 		}),
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			req.apiResult(200, {
 				connection: await getConnection(req.fields.userId, req._oauth.user.userId),
 				userId: mongoSanitize(req.fields.userId)
@@ -245,7 +245,7 @@ export default server => {
 			optionalFields: ['page']
 		}),
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			const userCanViewProfile = await canViewProfile(req.fields.userId, req._oauth?.user?.userId)
 			
 			if (!userCanViewProfile) return req.apiResult(500, {
@@ -266,7 +266,7 @@ export default server => {
 			optionalFields: ['page']
 		}),
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			const userCanViewProfile = await canViewProfile(req.fields.userId, req._oauth?.user?.userId)
 			
 			if (!userCanViewProfile) return req.apiResult(500, {
@@ -284,7 +284,7 @@ export default server => {
 		'/follow/new',
 		useFields({ fields: ['userId'] }),
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			// TODO: Add private profile follow requests
 			
 			try {
@@ -304,7 +304,7 @@ export default server => {
 		'/follow/unfollow',
 		useFields({ fields: ['userId'] }),
 		server.oauth.authorize(),
-		async req => {
+		async (req) => {
 			try {
 				req.apiResult(
 					200,

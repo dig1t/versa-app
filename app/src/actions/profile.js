@@ -8,12 +8,12 @@ import {
 
 import api from '../util/api.js'
 
-export const addProfile = data => dispatch => dispatch({
+export const addProfile = (data) => (dispatch) => dispatch({
 	type: PROFILE_FETCH_SUCCESS,
 	payload: data
 })
 
-export const getProfile = userId => (dispatch, getState) => {
+export const getProfile = (userId) => (dispatch, getState) => {
 	const { profiles } = getState()
 	
 	//if (profiles.requestingUserIds[userId]) return // TODO: IMPLEMENT
@@ -23,17 +23,17 @@ export const getProfile = userId => (dispatch, getState) => {
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	
 	api.get(`/v1/profile/${userId}`)
-		.then(data => dispatch({
+		.then((data) => dispatch({
 			type: PROFILE_FETCH_SUCCESS,
 			payload: data
 		}))
-		.catch(error => dispatch({
+		.catch((error) => dispatch({
 			type: PROFILE_FETCH_FAILURE,
 			payload: error
 		}))
 }
 
-export const getProfileFromUsername = username => (dispatch, getState) => {
+export const getProfileFromUsername = (username) => (dispatch, getState) => {
 	const { profiles } = getState()
 	
 	//if (profiles.requestingUsernames[username]) return // TODO: IMPLEMENT
@@ -43,7 +43,7 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 	dispatch({ type: PROFILE_FETCH_REQUEST })
 	
 	api.get(`/v1/profile/username/${username}`)
-		.then(data => dispatch({
+		.then((data) => dispatch({
 			type: PROFILE_FETCH_SUCCESS,
 			payload: data
 		}))
@@ -53,31 +53,31 @@ export const getProfileFromUsername = username => (dispatch, getState) => {
 		}))
 }
 
-export const getProfileConnection = userId => (dispatch, getState) => {
+export const getProfileConnection = (userId) => (dispatch, getState) => {
 	const { user } = getState()
 	
 	if (user.authenticated !== true) return
 	
 	api.get('/v1/follow/connection', { userId })
-		.then(data => dispatch({
+		.then((data) => dispatch({
 			type: PROFILE_CONNECTION_SUCCESS,
 			payload: data
 		}))
 }
 
-export const followProfile = (userId, newFollow) => dispatch => {
+export const followProfile = (userId, newFollow) => (dispatch) => {
 	api.post(
 		`/v1/follow/${newFollow ? 'new' : 'unfollow'}`,
 		{ userId }
 	)
-		.then(data => dispatch({
+		.then((data) => dispatch({
 			type: PROFILE_FOLLOW_UPDATE,
 			payload: {
 				following: data.following,
 				userId
 			}
 		}))
-		.catch(error => {
+		.catch((error) => {
 			console.log('FOLLOW ERR', error)
 		})
 }

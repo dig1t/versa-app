@@ -12,7 +12,7 @@ const ContentActions = ({ data, noRedirect }) => {
 	const dispatch = useDispatch()
 	const { loggedIn } = useAuthenticated()
 	const [redirect, setRedirect] = useState(null)
-	const profileList = useSelector(state => state.profiles.profileList)
+	const profileList = useSelector((state) => state.profiles.profileList)
 	const contentProfile = profileList[data.userId]
 	
 	return <div className="actions">
@@ -23,7 +23,7 @@ const ContentActions = ({ data, noRedirect }) => {
 				data.liked && 'selected',
 				loggedIn !== true && 'disabled'
 			)}
-			onClick={input => {
+			onClick={(input) => {
 				input.preventDefault()
 				
 				if (loggedIn !== true) return
@@ -38,7 +38,7 @@ const ContentActions = ({ data, noRedirect }) => {
 		</div>
 		<div
 			className="action comment align-center-wrap"
-			onClick={input => {
+			onClick={(input) => {
 				if (!contentProfile || noRedirect) return
 				
 				input.preventDefault()
@@ -53,7 +53,7 @@ const ContentActions = ({ data, noRedirect }) => {
 				'action repost align-center-wrap',
 				loggedIn !== true && 'disabled'
 			)}
-			onClick={input => {
+			onClick={(input) => {
 				input.preventDefault()
 				
 				if (loggedIn !== true) return

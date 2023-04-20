@@ -18,7 +18,7 @@ export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 				'save btn-primary btn-round',
 				!ready && 'btn-disabled'
 			)}
-			onClick={event => {
+			onClick={(event) => {
 				if (ready) handleSave(event)
 			}}
 		>SAVE</button>
@@ -28,13 +28,13 @@ export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 const SettingsPage = ({ config }) => {
 	const dispatch = useDispatch()
 	const { userId } = useAuthenticated()
-	const data = useSelector(state => config.selector({ state, userId }))
+	const data = useSelector((state) => config.selector({ state, userId }))
 	
 	const handleSave = ({ inputData, settingConfig = config }) => {
 		if (!inputData) return
 		
 		return api.post(settingConfig.endpoint || `/v1/user/${userId}/settings`, inputData)
-			.then(apiResult => {
+			.then((apiResult) => {
 				// eslint-disable-next-line no-undef
 				console.log(`Saved ${settingConfig.name}`)
 				

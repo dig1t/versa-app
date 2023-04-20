@@ -20,7 +20,7 @@ import ContentMedia from '../../containers/ContentMedia.js'
 import linkInjector from '../../util/linkInjector.js'
 
 const Comment = ({ data }) => {
-	const profileList = useSelector(state => state.profiles.profileList)
+	const profileList = useSelector((state) => state.profiles.profileList)
 	
 	const profile = profileList[data.userId]
 	
@@ -82,7 +82,7 @@ Comment.propTypes = {
 
 const Content = () => {
 	const dispatch = useDispatch()
-	const { profileList, contentList, invalidContentIds } = useSelector(state => ({
+	const { profileList, contentList, invalidContentIds } = useSelector((state) => ({
 		profileList: state.profiles.profileList,
 		contentList: state.content.contentList,
 		invalidContentIds: state.content.invalidContentIds
@@ -199,15 +199,15 @@ const Content = () => {
 					</div>
 					{canComment && <CommentEditor
 						contentId={contentId}
-						handleSuccess={comment => {
+						handleSuccess={(comment) => {
 							dispatch(addContentStat(comment.contentId, 'comments', 1))
-							setComments(state => [comment, ...state])
+							setComments((state) => [comment, ...state])
 						}}
 					/>}
 					<div className="comments">
 						{commentsLoading && <Loading />}
 						{commentError && <div>{commentError}</div>}
-						{comments.map(comment => <Comment key={comment.commentId} data={comment} />)}
+						{comments.map((comment) => <Comment key={comment.commentId} data={comment} />)}
 					</div>
 				</div>
 			</div>

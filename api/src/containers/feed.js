@@ -7,7 +7,7 @@ import Post from '../models/Post.js'
 import { getProfileFromUserId } from './profiles.js'
 import { deserializePost, getContent } from './content.js'
 
-const homeFeedPipeline = async _options => {
+const homeFeedPipeline = async (_options) => {
 	const options = {
 		canViewContent: false,
 		requesterUserId: '0',
@@ -36,7 +36,7 @@ const homeFeedPipeline = async _options => {
 	]
 }
 
-const getHomeFeed = async requesterUserId => {
+const getHomeFeed = async (requesterUserId) => {
 	const posts = await Post.aggregate(
 		await homeFeedPipeline({
 			userId: requesterUserId
@@ -53,7 +53,7 @@ const getHomeFeed = async requesterUserId => {
 	for (const post of posts) {
 		try {
 			const profileFind = profileCache.find(
-				data => data.userId === post.userId
+				(data) => data.userId === post.userId
 			)
 			
 			post.content = await getContent(post.contentId, requesterUserId)
@@ -68,7 +68,7 @@ const getHomeFeed = async requesterUserId => {
 			
 			if (post.content.userId !== post.userId) {
 				const contentProfileFind = profileCache.find(
-					data => data.userId === post.content.userId
+					(data) => data.userId === post.content.userId
 				)
 				
 				if (!contentProfileFind) profileCache.push(post.content.profile)
@@ -90,15 +90,15 @@ const getHomeFeed = async requesterUserId => {
 			profile
 		},
 	}*/
-	return posts.map(post => ({
+	return posts.map((post) => ({
 		...deserializePost(post),
 		profile: profileCache.find(
-			data => data.userId === post.userId.toHexString()
+			(data) => data.userId === post.userId.toHexString()
 		)
 	}))
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get(

@@ -134,13 +134,13 @@ export {
 	deleteMedia
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	//const img = fs.createReadStream(path.resolve(__dirname, './testimg.jpg'))
 	
 	/*const testUpload = cdn.uploadFile('test.png', img)
-		.then(res => {
+		.then((res) => {
 			//console.log('UPLOAD RES', res)
 		})*/
 	

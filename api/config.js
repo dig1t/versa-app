@@ -18,7 +18,7 @@ export default {
 	brandColor: '#4e85fb',
 	
 	cdn: {
-		getEndpoint: accountId => `https://${accountId}.r2.cloudflarestorage.com`,
+		getEndpoint: (accountId) => `https://${accountId}.r2.cloudflarestorage.com`,
 		accountId: env.CDN_ACCOUNT_ID,
 		bucketName: env.CDN_BUCKET_NAME,
 		accessKeyId: env.CDN_ACCESS_KEY_ID,

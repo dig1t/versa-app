@@ -15,7 +15,7 @@ export default (state = {
 			const keys = Object.keys(action.payload)
 			const newContent = {}
 			
-			keys.map(contentId => {
+			keys.map((contentId) => {
 				if (!state.contentList[contentId]) newContent[contentId] = action.payload[contentId]
 			})
 			

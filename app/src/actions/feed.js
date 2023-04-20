@@ -14,7 +14,7 @@ import {
 
 import api from '../util/api.js'
 
-// export const getHomeFeed = category => (dispatch, getState) => {
+// export const getHomeFeed = (category) => (dispatch, getState) => {
 	
 // }
 
@@ -25,7 +25,7 @@ const addPosts = (posts, clearFeed) => (dispatch, getState) => {
 	const profileList = {}
 	const contentList = {}
 	
-	posts.map(post => {
+	posts.map((post) => {
 		const { profile: postProfile, content: _contentData, ...postData } = post
 		const { profile: contentProfile, ...contentData } = _contentData
 		
@@ -61,11 +61,11 @@ const addPosts = (posts, clearFeed) => (dispatch, getState) => {
 	})
 }
 
-export const newFeedPost = post => dispatch => {
+export const newFeedPost = (post) => (dispatch) => {
 	dispatch(addPosts([post]))
 }
 
-export const getProfileFeed = userId => (dispatch, getState) => {
+export const getProfileFeed = (userId) => (dispatch, getState) => {
 	const { feed } = getState()
 	
 	if (feed.userId === userId) return
@@ -73,8 +73,8 @@ export const getProfileFeed = userId => (dispatch, getState) => {
 	dispatch({ type: PROFILE_FEED_FETCH_REQUEST })
 	
 	api.get(`/v1/profile/${userId}/feed`)
-		.then(data => dispatch(addPosts(data, true)))
-		.catch(error => {
+		.then((data) => dispatch(addPosts(data, true)))
+		.catch((error) => {
 			// eslint-disable-next-line no-undef
 			console.error(error)
 			
@@ -88,8 +88,8 @@ export const getHomeFeed = () => (dispatch, getState) => {
 	dispatch({ type: PROFILE_FEED_FETCH_REQUEST })
 	
 	api.get(`/v1/feed/home`)
-		.then(data => dispatch(addPosts(data, true)))
-		.catch(error => {
+		.then((data) => dispatch(addPosts(data, true)))
+		.catch((error) => {
 			// eslint-disable-next-line no-undef
 			console.error(error)
 			

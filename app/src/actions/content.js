@@ -8,13 +8,13 @@ import { PROFILE_FETCH_SUCCESS } from '../reducers/profiles.js'
 
 import api from '../util/api.js'
 
-export const getContent = contentId => (dispatch, getState) => {
+export const getContent = (contentId) => (dispatch, getState) => {
 	const { content, profiles } = getState()
 	
 	if (content.contentList[contentId]) return
 	
 	api.get(`/v1/content/${contentId}`)
-		.then(data => {
+		.then((data) => {
 			const { profile, ...content } = data
 			
 			if (!profiles.profileList[profile.userId]) dispatch({
@@ -36,20 +36,20 @@ export const getContent = contentId => (dispatch, getState) => {
 		}))
 }
 
-export const addContentStat = (contentId, stat, value) => dispatch => {
+export const addContentStat = (contentId, stat, value) => (dispatch) => {
 	dispatch({
 		type: CONTENT_STAT_UPDATE,
 		payload: { contentId, stat, value }
 	})
 }
 
-export const addLike = contentId => (dispatch, getState) => {
+export const addLike = (contentId) => (dispatch, getState) => {
 	const { content } = getState()
 	
 	if (!content.contentList[contentId]) return
 	
 	api.post(`/v1/content/${contentId}/like`, { contentId })
-		.then(data => {
+		.then((data) => {
 			dispatch({
 				type: CONTENT_LIKE_UPDATE_SUCCESS,
 				payload: {
@@ -60,13 +60,13 @@ export const addLike = contentId => (dispatch, getState) => {
 		})
 }
 
-export const deleteLike = contentId => (dispatch, getState) => {
+export const deleteLike = (contentId) => (dispatch, getState) => {
 	const { content } = getState()
 	
 	if (!content.contentList[contentId]) return
 	
 	api.delete(`/v1/content/${contentId}/like`, { contentId })
-		.then(data => {
+		.then((data) => {
 			dispatch({
 				type: CONTENT_LIKE_UPDATE_SUCCESS,
 				payload: {

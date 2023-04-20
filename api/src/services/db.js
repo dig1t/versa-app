@@ -11,6 +11,6 @@ db.on('error', console.error.bind(console, 'MongoDB Error:'))
 
 export default {
 	instance: db,
-	connect: uri => mongoose.connect(uri || config.appDB, { useNewUrlParser: true }),
+	connect: (uri) => mongoose.connect(uri || config.appDB, { useNewUrlParser: true }),
 	disconnect: () => db.close()
 }

@@ -30,7 +30,7 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
-schema.methods.hashString = async password => {
+schema.methods.hashString = async (password) => {
 	try {
 		const salt = await bcrypt.genSalt(8)
 		return bcrypt.hashSync(password, salt, null)

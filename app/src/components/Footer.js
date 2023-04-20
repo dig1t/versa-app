@@ -20,7 +20,7 @@ const links = [
 ]
 
 const LinksContainer = () => <div className="grid text-center">
-	{links.map(link => <div key={link[0]} className="col-12 p-y-1">
+	{links.map((link) => <div key={link[0]} className="col-12 p-y-1">
 		<Link to={link[0]}>{link[1]}</Link>
 	</div>)}
 </div>

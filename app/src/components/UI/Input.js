@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { validateText } from '../../util/index.js'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const optionsToObject = options => options.reduce((result, [label, value]) => {
+const optionsToObject = (options) => options.reduce((result, [label, value]) => {
 	return {
 		...result,
 		[value]: false
@@ -15,9 +15,9 @@ const optionsToObject = options => options.reduce((result, [label, value]) => {
 const haveSameKeys = (obj1, obj2) =>
 	Object.keys(obj1).length === Object.keys(obj2).length &&
 	// eslint-disable-next-line no-prototype-builtins
-	Object.keys(obj1).every(key => obj2.hasOwnProperty(key))
+	Object.keys(obj1).every((key) => obj2.hasOwnProperty(key))
 
-const LabelComponent = props => <label {...props} />
+const LabelComponent = (props) => <label {...props} />
 
 const TextInput = forwardRef((props, ref) => {
 	return <input
@@ -46,7 +46,7 @@ const TextAreaInput = forwardRef((props, ref) => {
 		ref={ref}
 		onKeyDown={props.handleKeyDown}
 		//onInput={props.handleChange}
-		onChange={event => {
+		onChange={(event) => {
 			props.handleChange(event)
 			
 			event.target.height = 'auto'
@@ -65,7 +65,7 @@ const TextAreaInput = forwardRef((props, ref) => {
 
 const CheckboxInput = forwardRef((props, ref) => {
 	return <>
-		{props.componentOptions.checkboxes.map(option => <label
+		{props.componentOptions.checkboxes.map((option) => <label
 			className={classNames(
 				props.value === option[1] && 'selected',
 				`input-checkbox-${props.checkboxStyle}`
@@ -75,7 +75,7 @@ const CheckboxInput = forwardRef((props, ref) => {
 			<input {...props.attributes}
 				type="checkbox"
 				value={option[1]}
-				onChange={event => {
+				onChange={(event) => {
 					props.setValue({
 						...props.value,
 						[option[1]]: event.target.checked
@@ -92,7 +92,7 @@ const CheckboxInput = forwardRef((props, ref) => {
 
 const SelectButtonsInput = forwardRef((props, ref) => {
 	return <>
-		{props.componentOptions.buttons.map(option => <label
+		{props.componentOptions.buttons.map((option) => <label
 			className={classNames(props.value === option[1] && 'selected')}
 			key={option[1]}
 		>
@@ -117,13 +117,13 @@ const SelectInput = forwardRef((props, ref) => {
 		ref={ref}
 		multiple={props.componentOptions.multiple}
 		value={props.value}
-		onChange={event => props.setValue(
-			[...event.target.selectedOptions].map(option => {
+		onChange={(event) => props.setValue(
+			[...event.target.selectedOptions].map((option) => {
 				return option.value
 			})
 		)}
 	>
-		{props.componentOptions.buttons.map(option => <option
+		{props.componentOptions.buttons.map((option) => <option
 			key={option[1]}
 			value={option[1]}
 		>
@@ -253,15 +253,15 @@ const Input = forwardRef((props, ref) => {
 		setValue(getDefaultValue)
 	}, [])
 	
-	const validate = useCallback(newValue => {
+	const validate = useCallback((newValue) => {
 		if (typeof newValue === 'undefined') newValue = inputRef.current?.value
 		
 		let validity = true
 		
 		switch(props.type) {
 			case 'select': {
-				newValue.map(newOption => {
-					const optionExists = props.options.find(option => option[1] === newOption)
+				newValue.map((newOption) => {
+					const optionExists = props.options.find((option) => option[1] === newOption)
 					
 					// Make sure user didn't manually change the value
 					if (!optionExists) {
@@ -272,7 +272,7 @@ const Input = forwardRef((props, ref) => {
 				break
 			}
 			case 'selectButtons': {
-				const optionExists = props.options.find(option => option[1] === newValue)
+				const optionExists = props.options.find((option) => option[1] === newValue)
 				
 				// Make sure user didn't manually change the value
 				if (!optionExists) {

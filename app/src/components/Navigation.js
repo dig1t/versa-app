@@ -54,7 +54,7 @@ export const Navigation = () => {
 	const hydrated = isHydrated()
 	const { loggedIn, userId } = useAuthenticated()
 	
-	const profileList = useSelector(state => state.profiles.profileList)
+	const profileList = useSelector((state) => state.profiles.profileList)
 	
 	const profile = profileList[userId]
 	
@@ -83,7 +83,7 @@ export const Navigation = () => {
 				
 				<li className="divider" />
 				
-				{appLinks.map(link => <AppLink
+				{appLinks.map((link) => <AppLink
 					icon={link[2]}
 					redirect={link[0]}
 					key={`nav-app-link-${link[1]}`}

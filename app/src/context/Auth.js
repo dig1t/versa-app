@@ -10,7 +10,7 @@ export const useAuthenticated = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
 	const [loggedIn, setLoggedIn] = useState(null)
-	const { authenticated, userId, accessToken } = useSelector(state => ({
+	const { authenticated, userId, accessToken } = useSelector((state) => ({
 		authenticated: state.user.authenticated,
 		userId: state.user.userId,
 		accessToken: state.user.accessToken
