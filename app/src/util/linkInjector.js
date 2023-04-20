@@ -1,23 +1,37 @@
-import { Link } from 'react-router-dom'
-
+import React from 'react'
 import isURL from 'validator/lib/isURL'
 import isAlphanumeric from 'validator/lib/isAlphanumeric'
+import { Link } from 'react-router-dom'
 
 const expression = /(\s+)/
 
 const linkInjector = (str) => {
-	const words = str.split(expression).map(word => {
+	let i = 0
+	
+	return str.split(expression).map(word => {
+		const index = `li-${i++}`
+		
 		if (word.startsWith('@') && isAlphanumeric(word.substr(1))) {
-			return <Link to={`/@${word.substr(1)}`}>{word}</Link>
+			return <Link to={`/@${word.substr(1)}`} key={index}>
+				{word}
+			</Link>
 		} else if (word.startsWith('#') && isAlphanumeric(word.substr(1))) {
-			return <Link to={`/tag/${word.substr(1)}`}>{word}</Link>
+			return <Link to={`/tag/${word.substr(1)}`} key={index}>
+				{word}
+			</Link>
 		} else if (isURL(word)) {
-			return <a href={word} target="_blank" rel="noopener noreferrer">{word}</a>
+			return <a
+				key={index}
+				href={word}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{word}
+			</a>
 		} else {
-			return word
+			return <span key={index}>{word}</span>
 		}
 	})
-	return words
 }
 
 export default linkInjector
