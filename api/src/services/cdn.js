@@ -7,11 +7,12 @@ import {
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import axios from 'axios'
+import crypto from 'crypto'
 
 import Media from '../models/Media.js'
 import cdnConfig from '../../config/cdn.js'
 
-const createMedia = (userId, )
+//const createMedia = (userId, )
 
 class CDN {
 	constructor(options) {
@@ -42,37 +43,72 @@ class CDN {
 		})
 	}
 	
-	async uploadFile(mediaId, file) {
-		const s3Key = fileName
-		const path = file.path ? `${file.path}/` : ''
+	async getFileHash(file) {
+		const fileStream = fs.createReadStream(file.path)
+		const hash = crypto.createHash('md5')
+		
+		hash.setEncoding('hex')
+		
+		return new Promise((resolve, reject) => {
+			fileStream.on('error', (err) => reject(err))
+			fileStream.on('end', () => {
+				hash.end()
+				resolve(hash.read())
+			})
+			
+			fileStream.pipe(hash)
+		})
+	}
+	
+	async uploadFile(options) {
+		if (options.file === undefined) {
+			throw new Error('file is required')
+		}
+		
+		if (options.mediaId === undefined) {
+			throw new Error('mediaId is required')
+		}
+		
+		if (options.mediaId === undefined) {
+			throw new Error('mediaId is required')
+		}
+		
+		if (options.extension === undefined) {
+			throw new Error('extension is required')
+		}
+		
+		if (options.buffer === undefined) {
+			throw new Error('buffer is required')
+		}
 		
 		try {
 			const s3PutUrl = await getSignedUrl(
 				this.s3Client,
 				new PutObjectCommand({
 					Bucket: this.bucketName,
-					Key: `${path}${s3Key}`,
+					Key: `${options.mediaId}.${options.extension}`,
 					//ContentType: 'application/octet-stream'
-				}), { expiresIn: 3600 }
+				}),
+				{ expiresIn: 3600 }
 			)
 			
 			const response = await axios.put(
 				s3PutUrl,
-				file.stream || Buffer.from(file.buffer, 'binary'),
+				options.file.stream || Buffer.from(options.file.buffer, 'binary'),
 				{ headers: {
-					'Content-Type': file.mime
+					'Content-Type': options.mime
 				} }
 			)
 			
 			if (response.status !== 200) {
-				throw new Error(`Failed to upload file ${fileName}`)
+				throw new Error(`Failed to upload file ${options.file.name}`)
 			}
 			
 			return {
-				publicUrl: `https://cdn.versaapp.co/${path}${s3Key}`
+				publicUrl: `https://cdn.versaapp.co/${options.mediaId}.${options.extension}`,
 			}
 		} catch(error) {
-			console.log(error, 'error')
+			throw new Error('Could not upload file')
 		}
 	}
 	

@@ -25,7 +25,7 @@ const deserializeUser = (user, settings) => ({
 	settings: settings || user.settings
 })
 
-const getUserFromUserId = async userId => {
+const getUserFromUserId = async (userId) => {
 	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!user) throw new Error('User does not exist')
@@ -33,7 +33,7 @@ const getUserFromUserId = async userId => {
 	return deserializeUser(user)
 }
 
-const getUserIdFromSession = async sessionId => {
+const getUserIdFromSession = async (sessionId) => {
 	const user = await UserSession.findOne({ _id: mongoSanitize(sessionId) })
 	
 	if (!user) throw new Error('Could not find session')
@@ -42,20 +42,20 @@ const getUserIdFromSession = async sessionId => {
 	return user.userId.toHexString()
 }
 
-const getUserFromSession = async sessionId => {
+const getUserFromSession = async (sessionId) => {
 	const userId = await getUserIdFromSession(sessionId)
 	const user = await getUserFromUserId(userId)
 	
 	return user
 }
 
-const emailExists = async email => {
+const emailExists = async (email) => {
 	const count = await User.countDocuments({ email: mongoSanitize(email) })
 	
 	return count > 0 ? true : false
 }
 
-const userIdExists = async userId => {
+const userIdExists = async (userId) => {
 	const count = await User.countDocuments({ _id: userId })
 	
 	return count > 0 ? true : false
@@ -108,7 +108,7 @@ const authenticateUserCredentials = async (email, password) => {
 	return deserializeUser(user)
 }
 
-const createAccount = async req => {
+const createAccount = async (req) => {
 	const { name, email, password } = req.fields
 	
 	if (name.length > config.user.maxNameLength || !validateText(name, 'name')) {
@@ -156,7 +156,7 @@ const createAccount = async req => {
 	})
 }
 
-const deleteAccount = async userId => {
+const deleteAccount = async (userId) => {
 	const user = await User.findOne({ _id: mongoSanitize(userId) })
 	
 	if (!user) throw new Error('Could not find user')
@@ -170,7 +170,7 @@ const deleteAccount = async userId => {
 	}
 }
 
-const emailIsFree = async email => {
+const emailIsFree = async (email) => {
 	if (!validateText(email, 'email')) return false
 	
 	const user = await User.findOne({ email: mongoSanitize(email) })
@@ -183,7 +183,7 @@ const emailIsFree = async email => {
 	return true
 }
 
-const usernameIsFree = async username => {
+const usernameIsFree = async (username) => {
 	if (!validateText(username, 'username')) return false
 	
 	const profile = await Profile.findOne({ username: mongoSanitize(username) })
@@ -270,7 +270,7 @@ const updatePassword = async (userId, newPassword) => {
 	}
 }
 
-const updateProfile = async options => {
+const updateProfile = async (options) => {
 	if (typeof options.userId !== 'string') throw new Error('Missing userId')
 	if (typeof options.key !== 'string') throw new Error('Missing key')
 	if (options.value === undefined) throw new Error('Missing value')
@@ -319,7 +319,7 @@ export {
 	updateProfile
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get(
@@ -344,7 +344,7 @@ export default server => {
 		'/user/authenticate',
 		useFields({ fields: ['email', 'password'] }),
 		server.oauth.useROPCGrant(),
-		async req => {
+		async (req) => {
 			try {
 				const auth = await authenticate(
 					req,
@@ -383,7 +383,7 @@ export default server => {
 	router.post(
 		'/user/new',
 		useFields({ fields: ['name', 'email', 'password'] }),
-		async req => {
+		async (req) => {
 			try {
 				const account = await createAccount(req)
 				

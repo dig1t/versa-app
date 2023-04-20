@@ -1,15 +1,33 @@
 /* eslint-disable no-undef */
 import classNames from 'classnames'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import PropTypes from 'prop-types'
+
+import api from '../../util/api'
 
 const MAX_FILE_SIZE_MB = 20
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime']
 const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/wav']
 
+const useFileUpload = ({ file }) => {
+	const [media, setMedia] = useState({})
+	
+	const data = new FormData()
+	
+	data.append('file', file)
+	
+	api.post('/upload', data)
+		.then((res) => {
+			
+		})
+	
+	return { media }
+}
+
 function PreviewImage({ file, onRemove }) {
 	const [rawImage, setRawImage] = useState(null)
-	const [fileType, setFileType] = useState('unknown')
+	//const [fileType, setFileType] = useState('unknown')
 	
 	const handleRemove = () => {
 		onRemove(file)
@@ -60,9 +78,11 @@ function PreviewImage({ file, onRemove }) {
 	)
 }
 
-const FileUploader = ({ acceptedTypes }) => {
+const FileUploader = ({ acceptedTypes, handleChange }) => {
 	const [files, setFiles] = useState([])
 	const inputRef = useRef(null)
+	
+	useEffect(() => handleChange(files), [files])
 	
 	const handleFileChange = (newFiles) => {
 		console.log(inputRef.current.value)
@@ -144,10 +164,26 @@ FileUploader.defaultProps = {
 	]
 }
 
+FileUploader.propTypes = {
+	handleChange: PropTypes.func.isRequired
+}
+
+const handleUpload = (files) => {
+	
+}
+
 export default function App() {
+	const [files, setFiles] = useState([])
+	
 	return (
 		<div className="app">
-			<FileUploader />
+			<FileUploader
+				handleChange={(newFiles) => setFiles(newFiles)}
+			/>
+			
+			<button onClick={() => {
+				console.log('clicked Upload')
+			}}>Upload</button>
 		</div>
 	)
 }
