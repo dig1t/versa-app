@@ -37,7 +37,7 @@ const inputs = [
 	}
 ]
 
-export default ({ data, handleSave, config }) => {
+const ProfileSettingPage = ({ data, handleSave, config }) => {
 	const [inputData, setFormData] = useState({})
 	const inputRefs = useRef({})
 	
@@ -75,7 +75,7 @@ export default ({ data, handleSave, config }) => {
 		setSaveReady(allInputsValid && inputsChanged)
 	}, [validInputs, inputData, data])
 	
-	return <div>
+	return <div className="profile-settings">
 		{inputs.map(input => <Input
 			{...input}
 			key={input.name}
@@ -113,3 +113,5 @@ export default ({ data, handleSave, config }) => {
 		/>
 	</div>
 }
+
+export default ProfileSettingPage

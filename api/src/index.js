@@ -5,7 +5,9 @@ import server from './server.js'
 import db from './services/db.js'
 import config from '../config.js'
 
-if (cluster.isPrimary) {
+const USE_CLUSTERS = false
+
+if (cluster.isPrimary && USE_CLUSTERS) {
 	console.log(`[versa-api] primary ${process.pid} is running`)
 	
 	const availableCPUs = availableParallelism()

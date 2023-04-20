@@ -17,6 +17,14 @@ export default {
 	appDescription: 'Universal Social Identity',
 	brandColor: '#4e85fb',
 	
+	cdn: {
+		getEndpoint: accountId => `https://${accountId}.r2.cloudflarestorage.com`,
+		accountId: env.CDN_ACCOUNT_ID,
+		bucketName: env.CDN_BUCKET_NAME,
+		accessKeyId: env.CDN_ACCESS_KEY_ID,
+		accessKeySecret: env.CDN_ACCESS_KEY_SECRET
+	},
+	
 	// short names for token cookies
 	shortName: {
 		session: 'vsi',
@@ -25,8 +33,8 @@ export default {
 	
 	expressSecret: env.EXPRESS_SECRET,
 	
-	db: dev ? env.DEV_DB_URI : env.DB_URI,
-	appDB: dev ? env.DEV_APP_DB_URI : env.APP_DB_URI,
+	db: env.DB_URI,
+	appDB:env.APP_DB_URI,
 	
 	client_id: env.CLIENT_ID,
 	client_secret: env.CLIENT_SECRET,

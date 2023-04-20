@@ -24,10 +24,10 @@ const schema = new Schema({
 	type: {
 		type: Number,
 		maxlength: 1,
-		default: 1
+		default: 1 // TODO: switch to 0
 		/* {
-			1: 'content',
-			2: 'collab' (someone added you as a collaborator)
+			0: 'content',
+			1: 'collab' (someone added you as a collaborator)
 		} */
 	}
 }, { _id: false })

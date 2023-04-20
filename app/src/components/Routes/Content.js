@@ -17,21 +17,7 @@ import CommentEditor from '../../containers/CommentEditor.js'
 import ContentActions from '../../containers/ContentActions.js'
 import { useAuthenticated } from '../../context/Auth.js'
 import ContentMedia from '../../containers/ContentMedia.js'
-
-const feedCategories = [
-	{
-		label: 'Posts',
-		name: 'posts'
-	},
-	{
-		label: 'Photos',
-		name: 'photos'
-	},
-	{
-		label: 'Videos',
-		name: 'videos'
-	}
-]
+import linkInjector from '../../util/linkInjector.js'
 
 const Comment = ({ data }) => {
 	const profileList = useSelector(state => state.profiles.profileList)
@@ -52,6 +38,8 @@ const Comment = ({ data }) => {
 			)
 		}
 	}, [data.created])
+	
+	const commentBody = useMemo(() => linkInjector(data.body), [data])
 	
 	return <div className="post comment">
 		<div className="container">
@@ -81,7 +69,7 @@ const Comment = ({ data }) => {
 					</span>
 				</div>
 				<div className="content">
-					<div className="text">{data.body}</div>
+					<div className="text">{commentBody}</div>
 				</div>
 			</div>
 		</div>
@@ -164,6 +152,10 @@ const Content = () => {
 		}
 	}, [contentData])
 	
+	const contentBody = useMemo(() => {
+		return contentData?.body ? linkInjector(contentData.body) : null
+	}, [contentData])
+	
 	return <Layout page="content">
 		{redirect && <Navigate to={redirect} />}
 		{contentData === null ? <Loading /> : <div className="wrap grid-g">
@@ -198,7 +190,7 @@ const Content = () => {
 									<div className="options"><Icon name="ellipsis" /></div>
 								</div>
 								<div className="content">
-									{contentData.body && <div className="text">{contentData.body}</div>}
+									<div className="text">{contentBody}</div>
 									{contentData.media && <ContentMedia {...contentData.media} />}
 								</div>
 								<ContentActions data={contentData} noRedirect={true} />

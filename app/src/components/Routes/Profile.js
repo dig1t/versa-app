@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
@@ -18,6 +18,7 @@ import { binarySearch } from '../../util/index.js'
 import { defaultAssets } from '../../constants/assets.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import { useAuthenticated } from '../../context/Auth.js'
+import linkInjector from '../../util/linkInjector.js'
 
 const feedCategories = [
 	{
@@ -67,6 +68,7 @@ const Profile = () => {
 		invalidUsernames: state.profiles.invalidUsernames
 	}))
 	
+	const navigate = useNavigate()
 	const { loggedIn } = useAuthenticated()
 	const { username } = useParams()
 	const [profileData, setProfileData] = useState(null)
@@ -104,6 +106,10 @@ const Profile = () => {
 		}
 	}, [usernameQuery, profileList, invalidUsernames])
 	
+	const profileBio = useMemo(() => {
+		return profileData?.bio ? linkInjector(profileData.bio) : null
+	}, [profileData])
+	
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}
 		{profileData === null ? <Loading /> : <div className="wrap grid-g">
@@ -129,14 +135,17 @@ const Profile = () => {
 								<VerifiedBadge verificationLevel={profileData.verificationLevel} />
 							</div>
 							<div className="username">@{profileData.username}</div>
-							{profileData.bio && <div className="bio">{profileData.bio}</div>}
+							<div className="bio">{profileBio}</div>
 							{profileData.website && <div className="website">
 								<a href={'//' + profileData.website} target="_blank">
 									{profileData.website}
 								</a>
 							</div>}
 						</div>
-						{profileData.connection && (profileData.connection.isSelf ? <button className="cta edit-profile btn-round btn-outline">
+						{profileData.connection && (profileData.connection.isSelf ? <button
+							className="cta edit-profile btn-round btn-outline"
+							onClick={() => navigate('/settings/profile')}
+						>
 							Edit Profile
 						</button> : <FollowButton
 							following={profileData.connection.following}

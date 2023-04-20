@@ -40,12 +40,18 @@ const TextInput = forwardRef((props, ref) => {
 })
 
 const TextAreaInput = forwardRef((props, ref) => {
+	
 	return <textarea
 		{...props.attributes}
 		ref={ref}
 		onKeyDown={props.handleKeyDown}
 		//onInput={props.handleChange}
-		onChange={props.handleChange}
+		onChange={event => {
+			props.handleChange(event)
+			
+			event.target.height = 'auto'
+			event.target.height = `${event.target.scrollHeight}px`
+		}}
 		//onKeyUp={props.handleChange}
 		onFocus={() => props.setFocused(true)}
 		onBlur={() => {

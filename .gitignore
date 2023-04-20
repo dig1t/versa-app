@@ -10,13 +10,13 @@ yarn-error.log*
 app/server/config.js
 *.code-workspace
 !versa.code-workspace
+secure/
 
 # Dependency directories
 node_modules
 
 # Compiled
 package-lock.json
-dist
-dist/*
+dist/
 app/public/assets/client
 app/public/assets/client/*

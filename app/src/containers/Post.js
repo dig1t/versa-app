@@ -9,6 +9,7 @@ import { Icon, Tooltip } from '../components/UI/index.js'
 import { VerifiedBadge } from './VerifiedBadge.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
+import linkInjector from '../util/linkInjector.js'
 
 const Post = ({ data }) => {
 	const { profileList, contentList } = useSelector(state => ({
@@ -33,6 +34,8 @@ const Post = ({ data }) => {
 			)
 		}
 	}, [data.created])
+	
+	const contentBody = useMemo(() => linkInjector(content.body), [content])
 	
 	return <div className="post" data-id={data.postId}>
 		<div className="container">
@@ -66,7 +69,7 @@ const Post = ({ data }) => {
 					<div className="options"><Icon name="ellipsis" /></div>
 				</div>
 				<div className="content">
-					{content.body && <div className="text">{content.body}</div>}
+					{content.body && <div className="text">{contentBody}</div>}
 					{content.media && <ContentMedia {...content.media} />}
 				</div>
 				<ContentActions data={content} />

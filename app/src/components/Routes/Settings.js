@@ -20,7 +20,11 @@ const Settings = () => {
 	
 	useEffect(() => {
 		if (categoryParam) {
-			if (settingsPageConfig.find(category => category.name === categoryParam)) {
+			const categoryExists = settingsPageConfig.find(category => category.name === categoryParam) !== undefined
+			
+			console.log(categoryParam, categoryExists)
+			
+			if (categoryExists) {
 				setInitialCategory(categoryParam)
 			} else {
 				navigate('/settings')
@@ -33,7 +37,7 @@ const Settings = () => {
 		
 		// eslint-disable-next-line no-undef
 		if (category && location.pathname !== path) {
-			navigate(path)
+			navigate(path, { replace: true })
 		}
 	}, [category])
 	
