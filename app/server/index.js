@@ -29,7 +29,7 @@ if (cluster.isPrimary && USE_CLUSTERS) {
 		server.listen(config.devPort)
 	})
 	
-	server.on('error', error => console.error(error))
+	server.on('error', (error) => console.error(error))
 } else {
 	const httpServerOptions = {
 		key: readFileSync(path.resolve(__dirname, process.env.APP_SSL_KEY)),
@@ -52,5 +52,5 @@ if (cluster.isPrimary && USE_CLUSTERS) {
 		httpsServer.listen(443)
 	})
 	
-	server.on('error', error => console.error(error))
+	server.on('error', (error) => console.error(error))
 }

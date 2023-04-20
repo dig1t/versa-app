@@ -8,7 +8,7 @@ const expression = /(\s+)/
 const linkInjector = (str) => {
 	let i = 0
 	
-	return str.split(expression).map(word => {
+	return str.split(expression).map((word) => {
 		const index = `li-${i++}`
 		
 		if (word.startsWith('@') && isAlphanumeric(word.substr(1))) {

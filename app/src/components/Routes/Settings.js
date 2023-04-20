@@ -15,12 +15,12 @@ const Settings = () => {
 	
 	const navigate = useNavigate()
 	const [initialCategory, setInitialCategory] = useState(settingsPageConfig[0].name)
-	const profileList = useSelector(state => state.profiles.profileList)
+	const profileList = useSelector((state) => state.profiles.profileList)
 	const [category, setCategory] = useState()
 	
 	useEffect(() => {
 		if (categoryParam) {
-			const categoryExists = settingsPageConfig.find(category => category.name === categoryParam) !== undefined
+			const categoryExists = settingsPageConfig.find((category) => category.name === categoryParam) !== undefined
 			
 			console.log(categoryParam, categoryExists)
 			
@@ -51,7 +51,7 @@ const Settings = () => {
 					pills={settingsPageConfig}
 					defaultCategory={initialCategory}
 					squared
-					handleSelection={category => setCategory(category)}
+					handleSelection={(category) => setCategory(category)}
 				/>
 			</div>
 			<div className="settings-page col-9 col-desktop-9">

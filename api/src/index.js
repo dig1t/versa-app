@@ -26,5 +26,5 @@ if (cluster.isPrimary && USE_CLUSTERS) {
 	})
 	
 	server.on('ready', () => server.listen(config.apiPort))
-	server.on('error', error => console.error(error))
+	server.on('error', (error) => console.error(error))
 }

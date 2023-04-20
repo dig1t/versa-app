@@ -34,7 +34,7 @@ const storiesData = [ // TODO: REPLACE PSUEDO DATA
 const StoriesList = () => {
 	return <div className="box stories">
 		<ul>
-			{storiesData.map(story => {
+			{storiesData.map((story) => {
 				return <li className="story" key={Math.random().toString()}>
 					<Avatar avatar={story.avatar} />
 				</li>

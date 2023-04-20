@@ -11,7 +11,7 @@ import Post from '../models/Post.js'
 import Profile from '../models/Profile.js'
 import { isFollowing, getConnection } from './follows.js'
 
-const deserializeProfile = profile => ({
+const deserializeProfile = (profile) => ({
 	userId: profile.userId.toHexString(),
 	username: profile.username,
 	name: profile.name,
@@ -26,7 +26,7 @@ const deserializeProfile = profile => ({
 	following: profile.following || 0
 })
 
-const _getProfile = async match => {
+const _getProfile = async (match) => {
 	const profile = await Profile.findOne(match)
 	
 	if (!profile) throw new Error('Profile does not exist')
@@ -34,7 +34,7 @@ const _getProfile = async match => {
 	return deserializeProfile(profile)
 }
 
-const getProfileFromUserId = async userId => {
+const getProfileFromUserId = async (userId) => {
 	if (!mongoValidate(userId, 'id')) throw new Error('profiles.getProfileFromUserId(): Invalid type of id')
 	
 	return await _getProfile(
@@ -42,7 +42,7 @@ const getProfileFromUserId = async userId => {
 	)
 }
 
-const getProfileFromUsername = async username => {
+const getProfileFromUsername = async (username) => {
 	if (!validateText(username, 'username')) throw new Error('profiles.getProfileFromUsername(): Invalid type of username')
 	
 	return await _getProfile(
@@ -61,7 +61,7 @@ const canViewProfile = async (userId, requesterUserId) => {
 	return isFollowing(userId, requesterUserId)
 }
 
-const isProfilePrivate = async userId => {
+const isProfilePrivate = async (userId) => {
 	const profile = await Profile.findOne({ _id: mongoSanitize(userId) })
 		.select('private')
 	
@@ -90,7 +90,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 	for (const post of posts) {
 		try {
 			const profileFind = profileCache.find(
-				data => data.userId === post.userId
+				(data) => data.userId === post.userId
 			)
 			
 			post.content = await getContent(post.contentId, requesterUserId)
@@ -105,7 +105,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 			
 			if (post.content.userId !== post.userId) {
 				const contentProfileFind = profileCache.find(
-					data => data.userId === post.content.userId
+					(data) => data.userId === post.content.userId
 				)
 				
 				if (!contentProfileFind) profileCache.push(post.content.profile)
@@ -127,10 +127,10 @@ const getProfilePosts = async (userId, requesterUserId) => {
 			profile
 		},
 	}*/
-	return posts.map(post => ({
+	return posts.map((post) => ({
 		...deserializePost(post),
 		profile: profileCache.find(
-			data => data.userId === post.userId.toHexString()
+			(data) => data.userId === post.userId.toHexString()
 		)
 	}))
 }
@@ -143,7 +143,7 @@ export {
 	getProfilePosts
 }
 
-export default server => {
+export default (server) => {
 	const router = new Router()
 	
 	router.get(
@@ -152,7 +152,7 @@ export default server => {
 			'/profile/username/:username'
 		],
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			try {
 				if (!req.params.userId && !req.params.username) {
 					throw new Error('Missing fields: userId or username')
@@ -186,7 +186,7 @@ export default server => {
 	router.get(
 		'/profile/:userId/feed',
 		server.oauth.authorize({ optional: true }),
-		async req => {
+		async (req) => {
 			try {
 				const userCanViewProfile = await canViewProfile(req.params.userId, req._oauth?.user?.userId)
 				

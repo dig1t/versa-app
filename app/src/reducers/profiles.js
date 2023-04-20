@@ -20,11 +20,11 @@ export default (state = {
 			const newProfiles = {}
 			const newUsernames = {}
 			
-			keys.map(userId => {
+			keys.map((userId) => {
 				if (!state.profileList[userId]) newProfiles[userId] = action.payload[userId]
 			})
 			
-			keys.map(userId => {
+			keys.map((userId) => {
 				const username = action.payload[userId].username
 				
 				if (!newUsernames[username]) newUsernames[username] = userId

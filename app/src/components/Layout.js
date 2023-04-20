@@ -7,7 +7,7 @@ import { useAuthenticated } from '../context/Auth.js'
 
 const Layout = ({ children, page, disableNav, stickyNav, fullWidth }) => {
 	const { loggedIn } = useAuthenticated()
-	const appTheme = useSelector(state => state.user.settings.appTheme)
+	const appTheme = useSelector((state) => state.user.settings.appTheme)
 	
 	return <main
 		data-theme={appTheme}

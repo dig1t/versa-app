@@ -15,7 +15,7 @@ export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 				'save btn-primary btn-round',
 				!ready && 'btn-disabled'
 			)}
-			onClick={event => {
+			onClick={(event) => {
 				if (ready) handleSave(event)
 			}}
 		>SAVE</button>
@@ -122,7 +122,7 @@ AccordionInput.propTypes = {
 const Accordion = ({ data, handleSave, config }) => {
 	const [expanded, setExpanded] = useState([])
 	
-	const toggleAccordion = index => {
+	const toggleAccordion = (index) => {
 		const newExpanded = [...expanded]
 		
 		newExpanded[index] = !newExpanded[index]

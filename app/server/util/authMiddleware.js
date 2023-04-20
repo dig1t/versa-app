@@ -30,7 +30,7 @@ export default () => (req, res, next) => {
 	
 	req._using.auth = '1.0.0'
 	
-	req.getAccessToken = async refreshToken => {
+	req.getAccessToken = async (refreshToken) => {
 		if (!refreshToken) throw new Error('authMiddleware.getAccessToken(): Missing refresh token')
 		
 		const response = await api.get('/oauth/token', null, {
@@ -43,11 +43,11 @@ export default () => (req, res, next) => {
 		return response.data.access_token
 	}
 	
-	req.loginUser = data => new Promise((resolve, reject) => {
+	req.loginUser = (data) => new Promise((resolve, reject) => {
 		if (!data) throw new Error('Missing user data')
 		if (!data.auth.refreshTokenId) throw new Error('Missing internal data')
 		
-		req.login(data, error => {
+		req.login(data, (error) => {
 			// Set httpOnly RefreshToken cookie
 			res.cookie(
 				config.shortName.refreshToken,
@@ -66,7 +66,7 @@ export default () => (req, res, next) => {
 	req.authenticated = () => typeof req.user !== 'undefined'
 	
 	req.logoutUser = () => new Promise((resolve, reject) => {
-		req.authenticated() ? req.logout(error => {
+		req.authenticated() ? req.logout((error) => {
 			if (error) return reject(error)
 			
 			req.loggedUserOut = true

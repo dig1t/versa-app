@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import Portal from './Portal.js'
 
-const Modal = props => {
+const Modal = (props) => {
 	const { open, type, toggleModal } = props
 	
 	const modalComponent = useMemo(() => {
@@ -48,7 +48,7 @@ Modal.propTypes = {
 	toggleModal: PropTypes.func.isRequired
 }
 
-const ModalWrap = props => {
+const ModalWrap = (props) => {
 	if (props.inlineTrigger === false && typeof props.open !== Boolean) {
 		throw new Error('ModalWrap - Custom triggers must include an "open" prop')
 	}
@@ -58,7 +58,7 @@ const ModalWrap = props => {
 	return props.inlineTrigger ? <>
 		<Modal
 			{...props}
-			toggleModal={input => {
+			toggleModal={(input) => {
 				input.preventDefault()
 				input.stopPropagation()
 				

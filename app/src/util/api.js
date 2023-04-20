@@ -49,12 +49,12 @@ class API {
 					},
 					withCredentials: options.withCredentials
 			})
-				.then(response => {
+				.then((response) => {
 					if (options.customErrorHandler) return resolve(response)
 					
 					response.data.success ? resolve(response.data.data) : reject(response.data.message)
 				})
-				.catch(error => { // HTTP Response not 200
+				.catch((error) => { // HTTP Response not 200
 					if (options.customErrorHandler) reject(error)
 					
 					console.error(options.url, error.response && error.response.data)
@@ -135,7 +135,7 @@ class API {
 
 const api = new API()
 
-export const apiReduxMiddleware = () => next => action => {
+export const apiReduxMiddleware = () => (next) => (action) => {
 	if (action.type === USER_FETCH_TOKEN_SUCCESS) {
 		api.setKey('accessToken', action.payload.access_token)
 	}

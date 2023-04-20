@@ -65,7 +65,7 @@ const Menu = (props, ref) => {
 			<div
 				className="background-close"
 				role="button"
-				onClick={input => props.toggleMenu(input)}
+				onClick={(input) => props.toggleMenu(input)}
 			/>
 			<div
 				ref={menuElement}
@@ -92,7 +92,7 @@ Menu.propTypes = {
 	offset: PropTypes.number
 }
 
-const DropMenu = props => {
+const DropMenu = (props) => {
 	if (props.inlineTrigger === false && typeof props.open !== Boolean) {
 		throw new Error('TooltipWrap - Custom triggers must include an "open" prop')
 	}
@@ -109,7 +109,7 @@ const DropMenu = props => {
 		<Menu
 			{...props}
 			parentRef={ref}
-			toggleMenu={input => {
+			toggleMenu={(input) => {
 				input.preventDefault()
 				input.stopPropagation()
 				

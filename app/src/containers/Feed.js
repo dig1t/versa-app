@@ -8,7 +8,7 @@ import { getProfileFeed, getHomeFeed } from '../actions/feed.js'
 
 const Feed = ({ type, userId }) => {
 	const dispatch = useDispatch()
-	const feed = useSelector(state => state.feed.posts)
+	const feed = useSelector((state) => state.feed.posts)
 	
 	const [posts, setPosts] = useState([])
 	const [fetching, setFetching] = useState(false)
@@ -36,7 +36,7 @@ const Feed = ({ type, userId }) => {
 	}, [feed])
 	
 	return <div className="list">
-		{posts.map(post => <Post key={post.postId} data={post} />)}
+		{posts.map((post) => <Post key={post.postId} data={post} />)}
 		{fetching && <Loading />}
 	</div>
 }

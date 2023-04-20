@@ -54,7 +54,7 @@ const AuthForm = ({
 		}, {}))
 	}, [])
 	
-	return <form onSubmit={event => {
+	return <form onSubmit={(event) => {
 		event.preventDefault()
 		
 		if (!saveReady) return
@@ -66,13 +66,13 @@ const AuthForm = ({
 				...inputData
 			}
 		})
-			.then(data => {
+			.then((data) => {
 				if (!hydrated) return
 				if (handleResult) handleResult(true, data)
 				
 				setCanRedirect(true)
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (hydrated) {
 					if (handleResult) handleResult(false)
 					
@@ -83,7 +83,7 @@ const AuthForm = ({
 				setAuthMessage(error)
 				
 				// Clear the password field
-				setFormData(prevState => ({
+				setFormData((prevState) => ({
 					...prevState,
 					password: ''
 				}))
@@ -92,19 +92,19 @@ const AuthForm = ({
 		{canRedirect && redirect ? <Navigate to={redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>
 		
-		{inputs.map(input => <Input
+		{inputs.map((input) => <Input
 			{...input}
 			key={input.name}
-			ref={ref => {
+			ref={(ref) => {
 				inputRefs.current[input.name] = ref
 			}}
 			inlineLabel={true}
-			handleValueChange={value => setFormData(prevState => ({
+			handleValueChange={(value) => setFormData((prevState) => ({
 				...prevState,
 				// Update form data as the user is making changes
 				[input.name]: value
 			}))}
-			handleValidity={value => setValidInputs(prevState => ({
+			handleValidity={(value) => setValidInputs((prevState) => ({
 				...prevState,
 				[input.name]: value
 			}))}

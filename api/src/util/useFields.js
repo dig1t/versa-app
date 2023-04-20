@@ -2,7 +2,7 @@ const defaultOptions = {
 	allowObjects: false
 }
 
-export default _options => (req, res, next) => {
+export default (_options) => (req, res, next) => {
 	const options = {
 		...defaultOptions,
 		..._options

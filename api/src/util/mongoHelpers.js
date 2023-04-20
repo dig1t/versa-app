@@ -14,7 +14,7 @@ export const mongoValidate = (input, type) => {
 	}
 }
 
-export const mongoSanitize = input => {
+export const mongoSanitize = (input) => {
 	if (typeof input === 'undefined') throw new Error('Util.mongoSanitize(): No input to sanitize')
 	
 	if (mongoValidate(input, 'isObjectId')) {
@@ -40,7 +40,7 @@ export const mongoSanitize = input => {
 // Functions with 2+ MongoDB operations must be wrapped in mongoSession.
 // If one operation fails, all the operations are rolled back.
 // mongoSession resolves with whatever fn returns
-export const mongoSession = async fn => {
+export const mongoSession = async (fn) => {
 	if (typeof fn !== 'function') throw new Error('Util.mongoSession(): Missing function argument')
 	
 	const session = await mongoose.startSession()

@@ -38,7 +38,7 @@ const feedCategories = [
 const FollowButton = ({ userId, following }) => {
 	const dispatch = useDispatch()
 	
-	const handleClick = input => {
+	const handleClick = (input) => {
 		input.preventDefault()
 		
 		dispatch(followProfile(userId, !following))
@@ -62,7 +62,7 @@ FollowButton.propTypes = {
 
 const Profile = () => {
 	const dispatch = useDispatch()
-	const { profileList, idsByUsername, invalidUsernames } = useSelector(state => ({
+	const { profileList, idsByUsername, invalidUsernames } = useSelector((state) => ({
 		profileList: state.profiles.profileList,
 		idsByUsername: state.profiles.idsByUsername,
 		invalidUsernames: state.profiles.invalidUsernames
@@ -174,7 +174,7 @@ const Profile = () => {
 						pills={feedCategories}
 						defaultCategory={profileData.defaultCategory || 'posts'}
 						squared
-						handleSelection={category => {
+						handleSelection={(category) => {
 							console.log('selected pill of type:', category.name)
 						}}
 					/>

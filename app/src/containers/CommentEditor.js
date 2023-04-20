@@ -15,7 +15,7 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 		inputRef.current.setValue('')
 		
 		api.post(`/v1/content/${contentId}/comment`, { body })
-			.then(response => {
+			.then((response) => {
 				if (!handleSuccess) return
 				
 				handleSuccess(response)
