@@ -180,7 +180,7 @@ const createFollow = async (userId, followerUserId) => {
 			following: true
 		}
 	} catch(error) {
-		throw new Error('Could follow the target user')
+		throw new Error('Could not follow the target user')
 	}
 }
 

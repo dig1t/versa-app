@@ -23,6 +23,11 @@ const schema = new Schema({
 		ref: 'User',
 		required: true
 	},
+	md5Hash: {
+		type: String,
+		maxlength: 32,
+		required: true
+	},
 	mime: {
 		type: String,
 		required: true
@@ -34,7 +39,9 @@ const schema = new Schema({
 			0: 'cloudflare'
 		}*/
 	},
-	nsfw: Boolean,
+	isContentNSFW: Boolean,
+	isContentSensitive: Boolean,
+	isContentViolent: Boolean,
 	created: {
 		type: Date,
 		maxlength: 27,
