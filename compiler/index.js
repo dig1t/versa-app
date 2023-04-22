@@ -86,7 +86,6 @@ class Compiler {
 			this.webpackConfig.output.filename
 		)
 		
-		console.log(process.env.NODE_ENV)
 		this.process = spawn(
 			'node',
 			[filePath],
