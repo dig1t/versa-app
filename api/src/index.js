@@ -22,6 +22,7 @@ if (cluster.isPrimary && USE_CLUSTERS) {
 } else {
 	db.connect()
 	db.instance.once('open', async () => {
+		console.log('db connection success')
 		server.emit('ready')
 	})
 	
