@@ -10,24 +10,35 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime']
 const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/wav']
 
-const useFileUpload = ({ file }) => {
+const useFileUpload = (file) => {
 	const [media, setMedia] = useState({})
 	
 	const data = new FormData()
 	
 	data.append('file', file)
 	
-	api.post('/upload', data)
-		.then((res) => {
-			
+	api.post('/v1/media/upload', data, {
+		headers: {
+			'Content-Type': `multipart/form-data; boundary=${data._boudary}`
+		}
+	})
+		.then((media) => {
+			console.log(media)
 		})
-	
+		.catch((error) => {
+			console.error(error)
+		})
 	return { media }
 }
 
-function PreviewImage({ file, onRemove }) {
+const PreviewImage = ({ file, onRemove }) => {
 	const [rawImage, setRawImage] = useState(null)
-	//const [fileType, setFileType] = useState('unknown')
+	const [fileType, setFileType] = useState('unknown')
+	const { mediaData } = useFileUpload(file)
+	
+	useEffect(() => {
+		console.log('upload file')
+	}, [])
 	
 	const handleRemove = () => {
 		onRemove(file)
@@ -113,7 +124,6 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 		)
 		
 		setFiles((prevFiles) => {
-			console.log('handleFileChange')
 			const updatedFilesList = [...prevFiles, ...filteredFiles]
 			
 			if (updatedFilesList.length === 0) {
@@ -149,7 +159,7 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 			/>
 			{files.map((file, index) => <PreviewImage
 				file={file}
-				key={index}
+				key={file.path}
 				onRemove={handleRemove}
 			/>)}
 		</div>

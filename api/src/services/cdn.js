@@ -8,6 +8,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import axios from 'axios'
 import crypto from 'crypto'
+import fs from 'fs'
 
 import Media from '../models/Media.js'
 import cdnConfig from '../../config/cdn.js'
@@ -43,8 +44,7 @@ class CDN {
 		})
 	}
 	
-	async getFileHash(file) {
-		const fileStream = fs.createReadStream(file.path)
+	async getFileHash(fileStream) {
 		const hash = crypto.createHash('md5')
 		
 		hash.setEncoding('hex')
@@ -61,8 +61,12 @@ class CDN {
 	}
 	
 	async uploadFile(options) {
-		if (options.file === undefined) {
-			throw new Error('file is required')
+		if (options.fileStream === undefined) {
+			throw new Error('fileStream is required')
+		}
+		
+		if (options.fileName === undefined) {
+			throw new Error('fileName is required')
 		}
 		
 		if (options.mediaId === undefined) {
@@ -75,10 +79,6 @@ class CDN {
 		
 		if (options.extension === undefined) {
 			throw new Error('extension is required')
-		}
-		
-		if (options.buffer === undefined) {
-			throw new Error('buffer is required')
 		}
 		
 		try {
@@ -94,14 +94,14 @@ class CDN {
 			
 			const response = await axios.put(
 				s3PutUrl,
-				options.file.stream || Buffer.from(options.file.buffer, 'binary'),
+				options.fileStream,
 				{ headers: {
 					'Content-Type': options.mime
 				} }
 			)
 			
 			if (response.status !== 200) {
-				throw new Error(`Failed to upload file ${options.file.name}`)
+				throw new Error(`Failed to upload file ${options.fileName}`)
 			}
 			
 			return {

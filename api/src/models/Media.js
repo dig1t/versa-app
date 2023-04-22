@@ -11,12 +11,6 @@ const schema = new Schema({
 		type: Number,
 		maxlength: 1,
 		required: true
-		/* {
-			0: 'image',
-			1: 'video',
-			2: 'live',
-			3: 'audio'
-		} */
 	},
 	userId: {
 		type: Schema.Types.ObjectId,
@@ -35,9 +29,7 @@ const schema = new Schema({
 	cdn: {
 		type: Number,
 		required: true,
-		default: 0 /* {
-			0: 'cloudflare'
-		}*/
+		default: 0
 	},
 	isContentNSFW: Boolean,
 	isContentSensitive: Boolean,
