@@ -16,7 +16,6 @@ secure/
 node_modules
 
 # Compiled
-package-lock.json
 dist/
 app/public/assets/client
 app/public/assets/client/*
