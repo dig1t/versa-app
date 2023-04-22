@@ -10,7 +10,7 @@ import config from './config.js'
 
 const USE_CLUSTERS = false
 
-console.log(`starting HTTP server at http://localhost:${config.devPort}`)
+console.log(`starting server at http://localhost:${config.devPort}`)
 
 if (cluster.isPrimary && USE_CLUSTERS) {
 	console.log(`primary ${process.pid} is running`)
