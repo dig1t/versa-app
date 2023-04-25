@@ -115,7 +115,8 @@ const createMedia = async (options) => {
 	const hash = await cdn.getFileHash(fileStream)
 	const mediaResult = await getMediaFromHash(hash)
 	
-	if (typeof mediaResult === 'object') {
+	if (mediaResult) {
+		console.log('has result, returning saved media obj')
 		return mediaResult
 	}
 	
@@ -128,7 +129,7 @@ const createMedia = async (options) => {
 		extension: fileExtension,
 		fileStream,
 		fileName: options.file.originalname,
-		mime: options.file.mimetype
+		mimeType: options.file.mimetype
 	})
 	
 	const media = new Media({
@@ -136,7 +137,7 @@ const createMedia = async (options) => {
 		userId: mongoSanitize(options.userId),
 		md5Hash: mongoSanitize(hash),
 		mime: mongoSanitize(options.file.mimetype),
-		type: getMediaType(options.file.mimetype),
+		type: mediaType,
 		cdn: 0,
 		isContentNSFW: options.isContentNSFW || false,
 		isContentSensitive: options.isContentSensitive || false,

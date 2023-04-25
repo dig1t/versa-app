@@ -40,12 +40,17 @@ class ActionHandler {
 			}
 		}
 		
-		const res = await Promise.allSettled(promises)
-		
-		return res.reduce((result, promise) => ({
-			...result,
-			...promise.value
-		}), {})
+		try {
+			const res = await Promise.allSettled(promises)
+			
+			return res.reduce((result, promise) => ({
+				...result,
+				...promise.value
+			}), {})
+		} catch(error) {
+			console.log('error while changing settings')
+			console.error(error)
+		}
 	}
 }
 

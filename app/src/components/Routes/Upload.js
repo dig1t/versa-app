@@ -15,36 +15,54 @@ const useFileUpload = (file) => {
 	
 	const data = new FormData()
 	
+	console.log('FILE UPLAOD CALLFILE UPLAOD CALLFILE UPLAOD CALL')
 	data.append('file', file)
 	
-	api.post('/v1/media/upload', data, {
-		headers: {
-			'Content-Type': `multipart/form-data; boundary=${data._boudary}`
-		}
-	})
-		.then((media) => {
-			console.log(media)
-		})
-		.catch((error) => {
-			console.error(error)
-		})
+	// api.post('/v1/media/upload', data, {
+	// 	headers: {
+	// 		'Content-Type': `multipart/form-data; boundary=${data._boudary}`
+	// 	}
+	// })
+	// 	.then((media) => {
+	// 		console.log(media)
+	// 	})
+	// 	.catch((error) => {
+	// 		console.error(error)
+	// 	})
+	
 	return { media }
 }
 
 const PreviewImage = ({ file, onRemove }) => {
 	const [rawImage, setRawImage] = useState(null)
 	const [fileType, setFileType] = useState('unknown')
-	const { mediaData } = useFileUpload(file)
 	
 	useEffect(() => {
 		console.log('upload file')
+		
+		const data = new FormData()
+		
+		console.log('FILE UPLAOD CALLFILE UPLAOD CALLFILE UPLAOD CALL')
+		data.append('file', file)
+		
+		api.post('/v1/media/upload', data, {
+			headers: {
+				'Content-Type': `multipart/form-data; boundary=${data._boudary}`
+			}
+		})
+			.then((media) => {
+				console.log(media)
+			})
+			.catch((error) => {
+				console.error(error)
+			})
 	}, [])
 	
 	const handleRemove = () => {
 		onRemove(file)
 	}
 	
-	const previewImage = (file) => {
+	const loadImagePreview = (file) => {
 		const reader = new FileReader()
 		
 		reader.onload = (event) => {
@@ -56,7 +74,7 @@ const PreviewImage = ({ file, onRemove }) => {
 	
 	const renderPreview = () => {
 		if (ALLOWED_IMAGE_TYPES.includes(file.type)) {
-			previewImage(file)
+			loadImagePreview(file)
 			//setFileType('image')
 			
 			return <img src={rawImage} alt={file.name} onClick={handleRemove} />
@@ -93,7 +111,7 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 	const [files, setFiles] = useState([])
 	const inputRef = useRef(null)
 	
-	useEffect(() => handleChange(files), [files])
+	//useEffect(() => handleChange(files), [files])
 	
 	const handleFileChange = (newFiles) => {
 		console.log(inputRef.current.value)
@@ -155,8 +173,19 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				onChange={(event) => {
 					handleFileChange(event.target.files)
 				}}
+				style={{
+					opacity: 0,
+					width: 0,
+					height: 0
+				}}
 				multiple
 			/>
+			<button
+				className="file-input-trigger"
+				onClick={() => {
+					inputRef.current.click()
+				}}
+			>select file(s)</button>
 			{files.map((file, index) => <PreviewImage
 				file={file}
 				key={file.path}
