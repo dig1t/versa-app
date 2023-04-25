@@ -86,8 +86,7 @@ class CDN {
 				this.s3Client,
 				new PutObjectCommand({
 					Bucket: this.bucketName,
-					Key: `${options.mediaId}.${options.extension}`,
-					//ContentType: 'application/octet-stream'
+					Key: `${options.mediaId}.${options.extension}`
 				}),
 				{ expiresIn: 3600 }
 			)
@@ -96,7 +95,7 @@ class CDN {
 				s3PutUrl,
 				options.fileStream,
 				{ headers: {
-					'Content-Type': options.mime
+					'Content-Type': options.mimeType
 				} }
 			)
 			
@@ -117,7 +116,10 @@ class CDN {
 		const s3Key = fileName
 		
 		const response = await this.s3Client.send(
-			new DeleteObjectCommand({ Bucket: s3Bucket, Key: s3Key })
+			new DeleteObjectCommand({
+				Bucket: s3Bucket,
+				Key: s3Key
+			})
 		)
 		
 		if (!response.$metadata.httpStatusCode === 204) {

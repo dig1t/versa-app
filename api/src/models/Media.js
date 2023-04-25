@@ -20,7 +20,8 @@ const schema = new Schema({
 	md5Hash: {
 		type: String,
 		maxlength: 32,
-		required: true
+		required: true,
+		unique: true
 	},
 	mime: {
 		type: String,
