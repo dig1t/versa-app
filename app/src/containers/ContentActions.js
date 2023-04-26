@@ -58,7 +58,7 @@ const ContentActions = ({ data, noRedirect }) => {
 				
 				if (loggedIn !== true) return
 				
-				console.log('TODO: implement reposts')
+				// TODO: implement reposts
 			}}
 		>
 			<Icon name="repost" />

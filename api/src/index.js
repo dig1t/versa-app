@@ -1,31 +1,21 @@
-import cluster from 'node:cluster'
-import { availableParallelism } from 'node:os'
+import http2 from 'node:http2'
 
 import server from './server.js'
 import db from './services/db.js'
 import config from '../config.js'
+import useClusters from './util/useClusters.js'
 
-const USE_CLUSTERS = false
-
-if (cluster.isPrimary && USE_CLUSTERS) {
-	console.log(`[versa-api] primary ${process.pid} is running`)
-	
-	const availableCPUs = availableParallelism()
-	
-	for (let i = 0; i < availableCPUs; i++) {
-		cluster.fork()
-	}
-	
-	cluster.on('exit', (worker, code) => {
-		console.log(`[versa-api] worker ${worker.process.pid} died with code ${code}`)
-	})
-} else {
+useClusters(() => {
 	db.connect()
 	db.instance.once('open', async () => {
 		console.log('db connection success')
 		server.emit('ready')
 	})
 	
-	server.on('ready', () => server.listen(config.apiPort))
+	const httpServer = http2.createServer(server)
+	
+	server.on('ready', () => {
+		httpServer.listen(config.apiPort)
+	})
 	server.on('error', (error) => console.error(error))
-}
+})
