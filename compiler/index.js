@@ -5,11 +5,9 @@ const webpack = require('webpack')
 const chokidar = require('chokidar')
 const ColorfulConsole = require('./util/ColorfulConsole.cjs')
 const { spawn } = require('node:child_process')
-const pm2 = require('pm2')
 
 //const webpackClientConfig = require('../webpack.client.config.cjs')
 const webpackServerConfig = require('../app/webpack.server.config.cjs')
-const webpackAPIServerConfig = require('../config/webpack.api.server.config.js')
 
 const WATCH_TIMEOUT = 1000
 
@@ -45,7 +43,6 @@ class Compiler {
 	}
 	
 	handleWatchChange(event, path) {
-		console.log('handle watch change')
 		if (this.watchTimeout) return
 		
 		this.watchTimeout = setTimeout(() => {
@@ -89,37 +86,20 @@ class Compiler {
 			this.webpackConfig.output.filename
 		)
 		
-		pm2.start(
+		this.process = spawn(
+			'node',
+			[filePath],
 			{
-				name: this.name,
-				script: filePath,
-				//exec_mode: 'cluster',
-				//instances: 'max'
-			},
-			(error, apps) => {
-				if (error) {
-					console.error(err)
-				} else {
-					console.log(
-						ColorfulConsole.yellow(`[${this.name}]`),
-						'server started'
-					)
-				}
+				env: process.env
 			}
 		)
 		
-		pm2.logs(this.name, (err, logs) => {
-			if (err) {
-				console.log(
-					ColorfulConsole.red(`[${this.name}]`), err
-				)
-				process.exit(1)
-			}
-			
-			// Log the logs to the console
-			console.log(
-				ColorfulConsole.yellow(`[${this.name}]`), logs
-			)
+		this.process.stdout.on('data', (data) => {
+			console.log(ColorfulConsole.yellow(`[${this.name}]`), data.toString())
+		})
+		
+		this.process.stderr.on('data', (data) => {
+			console.log(ColorfulConsole.red(`[${this.name}]`), data.toString())
 		})
 	}
 	
@@ -144,22 +124,18 @@ class Compiler {
 	}
 }
 
-pm2.connect(true, (error) => {
-	const serverCompiler = new Compiler({
-		name: 'versa-server',
-		webpackConfig: webpackServerConfig,
-		watchDir: path.resolve(__dirname, '../app/server'),
-		useServer: true
-	})
-	
-	const apiCompiler = new Compiler({
-		name: 'versa-api',
-		webpackConfig: webpackAPIServerConfig,
-		watchDir: path.resolve(__dirname, '../api/server/src'),
-		useServer: true
-	})
-	
-	//apiCompiler.watch()
-	//apiCompiler.run()
-	serverCompiler.watch()
+const serverCompiler = new Compiler({
+	name: 'versa-server',
+	webpackConfig: webpackServerConfig,
+	watchDir: path.resolve(__dirname, '../app/server'),
+	useServer: true
 })
+
+/*const clientCompiler = new Compiler({
+	name: 'versa-app',
+	webpackConfig: webpackClientConfig,
+	watchDir: path.resolve(__dirname, '../src')
+})*/
+
+serverCompiler.watch()
+//clientCompiler.watch()
