@@ -3,16 +3,16 @@ import { Routes, Route } from 'react-router-dom'
 
 import PrivateRoute from './PrivateRoute.js'
 
-const Error = React.lazy(() => import('./Routes/Error'))
-const Landing = React.lazy(() => import('./Routes/Landing'))
-const Login = React.lazy(() => import('./Routes/Login'))
-const Signup = React.lazy(() => import('./Routes/Signup'))
-const Logout = React.lazy(() => import('./Routes/Logout'))
-const Settings = React.lazy(() => import('./Routes/Settings'))
-const Home = React.lazy(() => import('./Routes/Home'))
-const Profile = React.lazy(() => import('./Routes/Profile'))
-const Content = React.lazy(() => import('./Routes/Content'))
-const Upload = React.lazy(() => import('./Routes/Upload'))
+const Error = React.lazy(() => import('./Routes/Error.js'))
+const Landing = React.lazy(() => import('./Routes/Landing.js'))
+const Login = React.lazy(() => import('./Routes/Login.js'))
+const Signup = React.lazy(() => import('./Routes/Signup.js'))
+const Logout = React.lazy(() => import('./Routes/Logout.js'))
+const Settings = React.lazy(() => import('./Routes/Settings.js'))
+const Home = React.lazy(() => import('./Routes/Home.js'))
+const Profile = React.lazy(() => import('./Routes/Profile.js'))
+const Content = React.lazy(() => import('./Routes/Content.js'))
+const Upload = React.lazy(() => import('./Routes/Upload.js'))
 
 const AppRoutes = () => <Routes>
 	<Route element={<PrivateRoute requireNoAuth={true} redirectTo="/home" />}>

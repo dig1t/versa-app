@@ -1,9 +1,7 @@
 import { Router } from 'express'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
-import Provider from 'oidc-provider'
 import { Buffer } from 'node:buffer'
-
 import config from '../../../config.js'
 import Adapter from './adapter.js'
 import oauth2Config from '../../constants/oauth2Config.js'
@@ -15,6 +13,15 @@ class OAuth2 {
 			client_id: config.client_id,
 			client_secret: config.client_secret
 		}
+	}
+	
+	async getProvider() {
+		if (this.provider) return this.provider
+		
+		const Provider = await new Promise((resolve) => {
+			import('oidc-provider')
+				.then((result) => resolve(result.default))
+		})
 		
 		const issuer = `${config._apiDomain}:${config.apiPort}`
 		
@@ -22,6 +29,8 @@ class OAuth2 {
 			adapter: Adapter,
 			...oauth2Config
 		})
+		
+		return this.provider
 	}
 	
 	generateString(length) {
@@ -69,9 +78,10 @@ class OAuth2 {
 	// ROPC Grant is ONLY for 1st party authentication
 	async ROPCGrant(email, password) {
 		try {
+			const provider = await this.getProvider()
 			const user = await authenticateUserCredentials(email, password)
 			
-			const grant = new this.provider.Grant({
+			const grant = new provider.Grant({
 				clientId: this.appCreds.client_id,
 				accountId: user.userId
 			})
@@ -84,12 +94,14 @@ class OAuth2 {
 			
 			return grant
 		} catch(error) {
+			console.error(error)
 			throw new Error('Internal server error')
 		}
 	}
 	
 	async getClient(clientId) {
-		const client = await this.provider.Client.find(clientId)
+		const provider = await this.getProvider()
+		const client = await provider.Client.find(clientId)
 		
 		if (!client) return
 		
@@ -97,7 +109,8 @@ class OAuth2 {
 	}
 	
 	async getGrant(grantId) {
-		const grant = await this.provider.Grant.find(grantId)
+		const provider = await this.getProvider()
+		const grant = await provider.Grant.find(grantId)
 		
 		if (!grant) return
 		
@@ -105,7 +118,8 @@ class OAuth2 {
 	}
 	
 	async getRefreshToken(refreshTokenId) {
-		const refreshToken = await this.provider.RefreshToken.find(refreshTokenId)
+		const provider = await this.getProvider()
+		const refreshToken = await provider.RefreshToken.find(refreshTokenId)
 		
 		if (!refreshToken) return
 		
@@ -133,7 +147,8 @@ class OAuth2 {
 		
 		if (!client) throw new Error('Client not found')
 		
-		const refreshToken = new this.provider.RefreshToken({
+		const provider = await this.getProvider()
+		const refreshToken = new provider.RefreshToken({
 			accountId: grant.accountId,
 			grantId: grant.jti,
 			client: client,
@@ -150,14 +165,15 @@ class OAuth2 {
 	}
 	
 	async issueAccessToken(refreshTokenId, clientId) {
-		const client = await this.provider.Client.find(
+		const provider = await this.getProvider()
+		const client = await provider.Client.find(
 			clientId || this.appCreds.client_id
 		)
 		const refreshToken = await this.getRefreshToken(refreshTokenId)
 		
 		if (!client || !refreshToken || this.isExpired(refreshToken.exp)) return
 		
-		const accessToken = new this.provider.AccessToken({
+		const accessToken = new provider.AccessToken({
 			accountId: refreshToken.accountId,
 			refreshTokenId: refreshToken,
 			client,
@@ -175,7 +191,8 @@ class OAuth2 {
 	
 	async verifyAccessToken(accessToken) {
 		try {
-			const token = await this.provider.AccessToken.find(accessToken)
+			const provider = await this.getProvider()
+			const token = await provider.AccessToken.find(accessToken)
 			
 			if (!token || this.isExpired(token.exp)) throw new Error('Invalid token')
 			

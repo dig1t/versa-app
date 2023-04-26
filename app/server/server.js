@@ -1,14 +1,17 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
 import session from 'express-session'
 import express from 'express'
 import compression from 'compression'
 import helmet from 'helmet'
-import { webpack } from 'webpack'
+import webpack from 'webpack'
+import WebpackHotMiddleware from 'webpack-hot-middleware'
+import WebpackDevMiddleware from 'webpack-dev-middleware'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import webpackClientConfig from '../webpack.client.config.cjs'
 
@@ -38,14 +41,14 @@ if (app.get('env') === 'development') {
 	})
 	
 	// Webpack watcher
-	app.use(require('webpack-dev-middleware')(compiler, {
+	app.use(WebpackDevMiddleware(compiler, {
 		publicPath: webpackClientConfig.output.publicPath,
 		writeToDisk: true,
 		stats: 'none'
 	}))
 	
 	// Socket server
-	app.use(require('webpack-hot-middleware')(compiler, {
+	app.use(WebpackHotMiddleware(compiler, {
 		log: false,
 		path: '/__hot-reload',
 		heartbeat: 1 * 1000

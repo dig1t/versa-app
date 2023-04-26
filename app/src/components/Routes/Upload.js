@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
-import api from '../../util/api'
+import api from '../../util/api.js'
 
 const MAX_FILE_SIZE_MB = 20
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']

@@ -67,4 +67,4 @@ class ColorfulConsole {
 	}
 }
 
-module.exports = ColorfulConsole
+export default ColorfulConsole

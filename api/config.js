@@ -1,4 +1,6 @@
 import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const domain = 'https://versaapp.co'
 const apiDomain = 'https://api.versaapp.co'
@@ -6,7 +8,13 @@ const apiDomain = 'https://api.versaapp.co'
 const devDomain = 'http://localhost:8080'
 const devApiDomain = 'http://localhost:8888'
 
-const env = dotenv.config({ path: '../.env' }).parsed
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const env = dotenv.config({
+	// eslint-disable-next-line no-undef
+	path: path.resolve(__dirname, '../.env')
+}).parsed
 const dev = env.NODE_ENV
 
 export default {
