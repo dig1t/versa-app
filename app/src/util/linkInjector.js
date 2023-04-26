@@ -1,6 +1,6 @@
 import React from 'react'
-import isURL from 'validator/lib/isURL'
-import isAlphanumeric from 'validator/lib/isAlphanumeric'
+import isURL from 'validator/lib/isURL.js'
+import isAlphanumeric from 'validator/lib/isAlphanumeric.js'
 import { Link } from 'react-router-dom'
 
 const expression = /(\s+)/

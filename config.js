@@ -2,6 +2,7 @@
 // INCLUDED IN ANY CLIENT CODE
 
 import dotenv from 'dotenv'
+import path from 'path'
 
 const domain = 'https://versaapp.co'
 const apiDomain = 'https://api.versaapp.co'
@@ -9,7 +10,10 @@ const apiDomain = 'https://api.versaapp.co'
 const devDomain = 'http://localhost'
 const devApiDomain = 'http://localhost'
 
-const env = dotenv.config({ path: '.env' }).parsed
+const env = dotenv.config({
+	// eslint-disable-next-line no-undef
+	path: path.resolve(__dirname, '.env')
+}).parsed
 const dev = env.NODE_ENV
 
 export default {
