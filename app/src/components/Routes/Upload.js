@@ -2,6 +2,7 @@
 import classNames from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
+import { v4 as uuidv4 } from 'uuid'
 
 import api from '../../util/api.js'
 
@@ -10,56 +11,12 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime']
 const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/wav']
 
-const useFileUpload = (file) => {
-	const [media, setMedia] = useState({})
-	
-	const data = new FormData()
-	
-	console.log('FILE UPLAOD CALLFILE UPLAOD CALLFILE UPLAOD CALL')
-	data.append('file', file)
-	
-	// api.post('/v1/media/upload', data, {
-	// 	headers: {
-	// 		'Content-Type': `multipart/form-data; boundary=${data._boudary}`
-	// 	}
-	// })
-	// 	.then((media) => {
-	// 		console.log(media)
-	// 	})
-	// 	.catch((error) => {
-	// 		console.error(error)
-	// 	})
-	
-	return { media }
-}
-
-const PreviewImage = ({ file, onRemove }) => {
+const PreviewImage = ({ fileData, onRemove }) => {
 	const [rawImage, setRawImage] = useState(null)
 	const [fileType, setFileType] = useState('unknown')
 	
-	useEffect(() => {
-		console.log('upload file')
-		
-		const data = new FormData()
-		
-		console.log('FILE UPLAOD CALLFILE UPLAOD CALLFILE UPLAOD CALL')
-		data.append('file', file)
-		
-		api.post('/v1/media/upload', data, {
-			headers: {
-				'Content-Type': `multipart/form-data; boundary=${data._boudary}`
-			}
-		})
-			.then((media) => {
-				console.log(media)
-			})
-			.catch((error) => {
-				console.error(error)
-			})
-	}, [])
-	
 	const handleRemove = () => {
-		onRemove(file)
+		onRemove(fileData)
 	}
 	
 	const loadImagePreview = (file) => {
@@ -73,24 +30,25 @@ const PreviewImage = ({ file, onRemove }) => {
 	}
 	
 	const renderPreview = () => {
-		if (ALLOWED_IMAGE_TYPES.includes(file.type)) {
-			loadImagePreview(file)
+		console.log(fileData)
+		if (ALLOWED_IMAGE_TYPES.includes(fileData.file.type)) {
+			loadImagePreview(fileData.file)
 			//setFileType('image')
 			
-			return <img src={rawImage} alt={file.name} onClick={handleRemove} />
-		} else if (ALLOWED_VIDEO_TYPES.includes(file.type)) {
+			return <img src={rawImage} alt={fileData.file.name} onClick={handleRemove} />
+		} else if (ALLOWED_VIDEO_TYPES.includes(fileData.file.type)) {
 			//setFileType('video')
 			
 			return (
-				<video controls>
-					<source src={URL.createObjectURL(file)} type={file.type} />
+				<video onClick={handleRemove}>
+					<source src={URL.createObjectURL(fileData.file)} type={fileData.file.type} />
 					Your browser does not support the video tag.
 				</video>
 			)
-		} else if (ALLOWED_AUDIO_TYPES.includes(file.type)) {
+		} else if (ALLOWED_AUDIO_TYPES.includes(fileData.file.type)) {
 			//setFileType('audio')
 			
-			return <img src="/i/audio.png" alt={file.name} onClick={handleRemove} />
+			return <img src="/i/audio.png" alt={fileData.file.name} onClick={handleRemove} />
 		} else {
 			return null
 		}
@@ -101,6 +59,7 @@ const PreviewImage = ({ file, onRemove }) => {
 			'upload-preview',
 			`upload-type-${fileType}`
 		)}>
+			<div>is ready? {fileData.ready ? 'yes' : 'no'}</div>
 			{renderPreview()}
 			<button onClick={handleRemove}>Remove</button>
 		</div>
@@ -113,7 +72,44 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 	
 	//useEffect(() => handleChange(files), [files])
 	
+	useEffect(() => {
+		console.log('files list changes', files)
+	}, [files])
+	
+	const useFileUpload = (fileData) => {
+		console.log('UPLOADING FILE, data:', fileData)
+		
+		const data = new FormData()
+		
+		data.append('file', fileData.file)
+		
+		api.post('/v1/media/upload', data, {
+			headers: {
+				'Content-Type': `multipart/form-data; boundary=${data._boudary}`
+			}
+		})
+			.then((media) => {
+				console.log(media)
+				
+				setFiles((prevState) => prevState.map(file => {
+					if (file.fileId === fileData.fileId) {
+						return {
+							...file,
+							media,
+							ready: true
+						}
+					}
+					
+					return file
+				}))
+			})
+			.catch((error) => {
+				console.error(error)
+			})
+	}
+	
 	const handleFileChange = (newFiles) => {
+		console.log(newFiles)
 		console.log(inputRef.current.value)
 		
 		const filteredFiles = Array.from(newFiles).filter(
@@ -137,24 +133,45 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 					return false
 				}
 				
+				if (!isSelected) {
+					setFiles((prevFiles) => {
+						const fileId = uuidv4()
+						const fileData = {
+							fileId,
+							file,
+							ready: false
+						}
+						const updatedFilesList = [...prevFiles, fileData]
+						
+						useFileUpload(fileData)
+						
+						if (updatedFilesList.length === 0) {
+							inputRef.current.value = ''
+						}
+						
+						return updatedFilesList
+					})
+				}
+				
 				return !isSelected
 			}
 		)
 		
-		setFiles((prevFiles) => {
-			const updatedFilesList = [...prevFiles, ...filteredFiles]
+		console.log('setFiles 0')
+		// setFiles((prevFiles) => {
+		// 	const updatedFilesList = [...prevFiles, ...filteredFiles]
 			
-			if (updatedFilesList.length === 0) {
-				inputRef.current.value = ''
-			}
+		// 	if (updatedFilesList.length === 0) {
+		// 		inputRef.current.value = ''
+		// 	}
 			
-			return updatedFilesList
-		})
+		// 	return updatedFilesList
+		// })
 	}
 	
-	const handleRemove = (file) => {
+	const handleRemove = (fileData) => {
 		setFiles((prevFiles) => {
-			const newFiles = prevFiles.filter((prevFile) => prevFile !== file)
+			const newFiles = prevFiles.filter((prevFile) => prevFile.file !== fileData.file)
 			
 			if (newFiles.length === 0) {
 				inputRef.current.value = ''
@@ -187,8 +204,8 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				}}
 			>select file(s)</button>
 			{files.map((file, index) => <PreviewImage
-				file={file}
-				key={file.path}
+				fileData={file}
+				key={file.name + index}
 				onRemove={handleRemove}
 			/>)}
 		</div>
