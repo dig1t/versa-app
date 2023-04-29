@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -7,14 +7,24 @@ const iconAlias = {
 }
 
 const Icon = ({ name, scale, hidden, rot }) => {
+	const [SvgModule, setSvgModule] = useState({})
+	
 	const iconName = iconAlias[name] || name
 	
-	const _svgImport = React.memo(() => {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-		const _svgImport = require(`../../../public/assets/i/sprites/${name}.svg`).default
+	useEffect(() => {
+		async function loadSvg() {
+			const _svgImport = await new Promise((resolve, reject) => {
+				import(`../../../public/assets/i/sprites/${name}.svg`)
+					.then((result) => resolve(result.default))
+					.catch((error) => reject(error))
+			})
+			setSvgModule({
+				Element: _svgImport
+			})
+		}
 		
-		return <_svgImport />
-	}, [])
+		loadSvg()
+	}, [name])
 	
 	return !hidden && <i
 		className={classNames(
@@ -24,11 +34,11 @@ const Icon = ({ name, scale, hidden, rot }) => {
 		)}
 		aria-hidden="true"
 	>
-		<_svgImport
+		{ SvgModule.Element && <SvgModule.Element
 			style={{
 				transform: typeof rot === 'number' && `rotate(${rot}deg)`
 			}}
-		/>
+		/>}
 	</i>
 }
 

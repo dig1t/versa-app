@@ -124,27 +124,27 @@ const createMedia = async (options) => {
 	
 	const mediaId = new mongoose.Types.ObjectId()
 	
-	const { publicUrl } = await cdn.uploadFile({
-		mediaId,
-		extension: fileExtension,
-		fileStream,
-		fileName: options.file.originalname,
-		mimeType: options.file.mimetype
-	})
-	
-	const media = new Media({
-		mediaId,
-		userId: mongoSanitize(options.userId),
-		md5Hash: mongoSanitize(hash),
-		mime: mongoSanitize(options.file.mimetype),
-		type: mediaType,
-		cdn: 0,
-		isContentNSFW: options.isContentNSFW || false,
-		isContentSensitive: options.isContentSensitive || false,
-		isContentViolent: options.isContentViolent || false
-	})
-	
 	try {
+		const { publicUrl } = await cdn.uploadFile({
+			mediaId,
+			extension: fileExtension,
+			fileStream,
+			fileName: options.file.originalname,
+			mimeType: options.file.mimetype
+		})
+		
+		const media = new Media({
+			mediaId,
+			userId: mongoSanitize(options.userId),
+			md5Hash: mongoSanitize(hash),
+			mime: mongoSanitize(options.file.mimetype),
+			type: mediaType,
+			cdn: 0,
+			isContentNSFW: options.isContentNSFW || false,
+			isContentSensitive: options.isContentSensitive || false,
+			isContentViolent: options.isContentViolent || false
+		})
+		
 		await media.save()
 		
 		return {

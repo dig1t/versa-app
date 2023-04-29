@@ -94,7 +94,7 @@ class Runner {
 		
 		this.process = spawn(
 			'node',
-			[this.entryPath],
+			['--no-warnings', this.entryPath],
 			{
 				env: process.env
 			}
