@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import classNames from 'classnames'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -29,30 +29,38 @@ const PreviewImage = ({ fileData, onRemove }) => {
 		reader.readAsDataURL(file)
 	}
 	
-	const renderPreview = () => {
-		console.log(fileData)
+	useEffect(() => {
 		if (ALLOWED_IMAGE_TYPES.includes(fileData.file.type)) {
 			loadImagePreview(fileData.file)
-			//setFileType('image')
-			
-			return <img src={rawImage} alt={fileData.file.name} onClick={handleRemove} />
+			setFileType('image')
 		} else if (ALLOWED_VIDEO_TYPES.includes(fileData.file.type)) {
-			//setFileType('video')
-			
-			return (
-				<video onClick={handleRemove}>
-					<source src={URL.createObjectURL(fileData.file)} type={fileData.file.type} />
-					Your browser does not support the video tag.
-				</video>
-			)
+			setFileType('video')
 		} else if (ALLOWED_AUDIO_TYPES.includes(fileData.file.type)) {
-			//setFileType('audio')
-			
-			return <img src="/i/audio.png" alt={fileData.file.name} onClick={handleRemove} />
+			setFileType('audio')
 		} else {
-			return null
+			setFileType('unknown')
 		}
-	}
+	}, [fileData])
+	
+	const renderPreview = useCallback(() => {
+		console.log(fileData)
+		switch(fileType) {
+			case 'image': {
+				return <img src={rawImage} alt={fileData.file.name} onClick={handleRemove} />
+			}
+			case 'video': {
+				return (
+					<video onClick={handleRemove}>
+						<source src={URL.createObjectURL(fileData.file)} type={fileData.file.type} />
+						Your browser does not support the video tag.
+					</video>
+				)
+			}
+			case 'audio': {
+				return <img src="/i/audio.png" alt={fileData.file.name} onClick={handleRemove} />
+			}
+		}
+	}, [fileData, fileType, handleRemove, rawImage])
 	
 	return (
 		<div className={classNames(
@@ -69,21 +77,29 @@ const PreviewImage = ({ fileData, onRemove }) => {
 const FileUploader = ({ acceptedTypes, handleChange }) => {
 	const [files, setFiles] = useState([])
 	const inputRef = useRef(null)
+	const abortController = new AbortController()
 	
 	//useEffect(() => handleChange(files), [files])
+	
+	useEffect(() => {
+		// Abort if there is an upload in progress
+		return () => abortController.abort()
+	}, [])
 	
 	useEffect(() => {
 		console.log('files list changes', files)
 	}, [files])
 	
-	const useFileUpload = (fileData) => {
-		console.log('UPLOADING FILE, data:', fileData)
+	const useFileUpload = (file) => {
+		console.log('UPLOADING FILE, data:', file)
 		
+		const fileId = uuidv4()
 		const data = new FormData()
 		
-		data.append('file', fileData.file)
+		data.append('file', file)
 		
-		api.post('/v1/media/upload', data, {
+		const request = api.post('/v1/media/upload', data, {
+			signal: abortController.signal,
 			headers: {
 				'Content-Type': `multipart/form-data; boundary=${data._boudary}`
 			}
@@ -92,7 +108,7 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				console.log(media)
 				
 				setFiles((prevState) => prevState.map(file => {
-					if (file.fileId === fileData.fileId) {
+					if (file.fileId === fileId) {
 						return {
 							...file,
 							media,
@@ -104,72 +120,72 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				}))
 			})
 			.catch((error) => {
+				// Check if the error was caused by aborting the request
+				if (error.name === 'AbortError') return
+				
 				console.error(error)
+				
+				setFiles((prevState) => prevState.map(file => {
+					if (file.fileId === fileId) {
+						return {
+							...file,
+							error: true
+						}
+					}
+					
+					return file
+				}))
 			})
+		
+		setFiles((prevFiles) => {
+			const fileData = {
+				fileId,
+				file,
+				ready: false,
+				request
+			}
+			const updatedFilesList = [...prevFiles, fileData]
+			
+			if (updatedFilesList.length === 0) {
+				inputRef.current.value = ''
+			}
+			
+			return updatedFilesList
+		})
 	}
 	
 	const handleFileChange = (newFiles) => {
-		console.log(newFiles)
-		console.log(inputRef.current.value)
-		
-		const filteredFiles = Array.from(newFiles).filter(
-			(file) => {
-				const isUnderLimit = file.size / 1024 / 1024 <= MAX_FILE_SIZE_MB
-				const isAllowedMime = acceptedTypes.includes(file.type)
-				
-				const isSelected = files.find(
-					(selectedFile) => file.name === selectedFile.name
-				)
-				
-				if (!isAllowedMime) {
-					// TODO: Switch to a toast notification
-					console.log(`File ${file.name} is not allowed`)
-					return false
-				}
-				
-				if (!isUnderLimit) {
-					// TODO: Switch to a toast notification
-					console.log(`File ${file.name} is too big. Max file size: ${MAX_FILE_SIZE_MB}mb`)
-					return false
-				}
-				
-				if (!isSelected) {
-					setFiles((prevFiles) => {
-						const fileId = uuidv4()
-						const fileData = {
-							fileId,
-							file,
-							ready: false
-						}
-						const updatedFilesList = [...prevFiles, fileData]
-						
-						useFileUpload(fileData)
-						
-						if (updatedFilesList.length === 0) {
-							inputRef.current.value = ''
-						}
-						
-						return updatedFilesList
-					})
-				}
-				
-				return !isSelected
+		Array.from(newFiles).filter((file) => {
+			const isUnderLimit = file.size / 1024 / 1024 <= MAX_FILE_SIZE_MB
+			const isAllowedMime = acceptedTypes.includes(file.type)
+			
+			const isSelected = files.find(
+				(selectedFile) => file.name === selectedFile.name
+			)
+			
+			if (!isAllowedMime) {
+				// TODO: Switch to a toast notification
+				console.log(`File ${file.name} is not allowed`)
+				return false
 			}
-		)
-		
-		console.log('setFiles 0')
-		// setFiles((prevFiles) => {
-		// 	const updatedFilesList = [...prevFiles, ...filteredFiles]
 			
-		// 	if (updatedFilesList.length === 0) {
-		// 		inputRef.current.value = ''
-		// 	}
+			if (!isUnderLimit) {
+				// TODO: Switch to a toast notification
+				console.log(`File ${file.name} is too big. Max file size: ${MAX_FILE_SIZE_MB}mb`)
+				return false
+			}
 			
-		// 	return updatedFilesList
-		// })
+			if (!isSelected) {
+				useFileUpload(file)
+			}
+		})
 	}
 	
 	const handleRemove = (fileData) => {
+		// Abort any ongoing requests for removed files
+		const ongoingRequest = files.find(file => file.fileId === fileData.fildId)?.request
+		ongoingRequest?.abort()
+		
 		setFiles((prevFiles) => {
 			const newFiles = prevFiles.filter((prevFile) => prevFile.file !== fileData.file)
 			
@@ -225,7 +241,7 @@ FileUploader.propTypes = {
 }
 
 const handleUpload = (files) => {
-	
+	console.log('finally, upload this:', files)
 }
 
 export default function App() {
@@ -239,6 +255,7 @@ export default function App() {
 			
 			<button onClick={() => {
 				console.log('clicked Upload')
+				handleUpload(files)
 			}}>Upload</button>
 		</div>
 	)

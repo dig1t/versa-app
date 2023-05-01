@@ -94,7 +94,7 @@ class OAuth2 {
 			
 			return grant
 		} catch(error) {
-			console.error(error)
+			console.log(error)
 			throw new Error('Internal server error')
 		}
 	}

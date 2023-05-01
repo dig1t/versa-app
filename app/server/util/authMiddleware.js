@@ -33,14 +33,18 @@ export default () => (req, res, next) => {
 	req.getAccessToken = async (refreshToken) => {
 		if (!refreshToken) throw new Error('authMiddleware.getAccessToken(): Missing refresh token')
 		
-		const response = await api.get('/oauth/token', null, {
-			headers: {
-				cookie: `${config.shortName.refreshToken}=${refreshToken}`
-			},
-			customErrorHandler: true
-		})
-		
-		return response.data.access_token
+		try {
+			const response = await api.get('/oauth/token', null, {
+				headers: {
+					cookie: `${config.shortName.refreshToken}=${refreshToken}`
+				},
+				customErrorHandler: true
+			})
+			
+			return response.data.access_token
+		} catch(error) {
+			throw new Error('Could not fetch access token')
+		}
 	}
 	
 	req.loginUser = (data) => new Promise((resolve, reject) => {

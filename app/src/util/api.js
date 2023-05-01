@@ -37,7 +37,8 @@ class API {
 		const includeAT = !options.excludeToken && this._keys.accessToken
 		
 		const promiseFactory = async (resolve, reject) => {
-			axios({
+			try {
+				const response = await axios({
 					method,
 					url: options.url,
 					[method === 'get' ? 'params' : 'data']: options.data,
@@ -47,19 +48,21 @@ class API {
 						'Content-Type' : 'application/x-www-form-urlencoded',
 						...options.headers
 					},
-					withCredentials: options.withCredentials
-			})
-				.then((response) => {
-					if (options.customErrorHandler) return resolve(response)
-					
-					response.data.success ? resolve(response.data.data) : reject(response.data.message)
+					withCredentials: options.withCredentials,
+					signal: options.signal,
+					onUploadProgress: options.onUploadProgress,
+					...options.options
 				})
-				.catch((error) => { // HTTP Response not 200
-					if (options.customErrorHandler) reject(error)
-					
-					console.error(options.url, error.response && error.response.data)
-					reject('Server error, try again later')
-				})
+				
+				if (options.customErrorHandler) return resolve(response)
+				
+				response.data.success ? resolve(response.data.data) : reject(response.data.message)
+			} catch(error) { // Axios throws an error if the HTTP Response not 200
+				if (options.customErrorHandler) reject(error)
+				
+				console.error(options.url, error.response && error.response.data)
+				reject(error.response ? error.response.data : 'Server error, try again later')
+			}
 		}
 		
 		return options.useHook === true ? this.createHook(
