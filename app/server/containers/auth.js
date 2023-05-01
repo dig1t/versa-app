@@ -29,18 +29,24 @@ passport.serializeUser((data, done) => done(null, {
 }))
 
 // Call the API to retrieve basic info about the user
-passport.deserializeUser((user, done) => {
-	api.get(`/v1/user/${user.userId}`, {
-		sessionId: user.sessionId
-	})
-		.then((data) => done(null, {
-			userId: user.userId,
-			email: data.email,
-			isAdmin: data.isAdmin,
-			isMod: data.isMod,
+passport.deserializeUser(async (user, done) => {
+	try {
+		const userData = await api.get(`/v1/user/${user.userId}`, {
 			sessionId: user.sessionId
-		}))
-		.catch((error) => done(error, {}))
+		})
+		
+		done(null, {
+			userId: user.userId,
+			email: userData.email,
+			isAdmin: userData.isAdmin,
+			isMod: userData.isMod,
+			sessionId: user.sessionId
+		})
+	} catch(error) {
+		if (config.dev) console.error(error)
+		
+		done(error, {})
+	}
 })
 
 /* Define Authentication Methods */

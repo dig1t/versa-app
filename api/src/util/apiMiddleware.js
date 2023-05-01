@@ -24,12 +24,14 @@ const statusMessage = {
 	505: 'HTTP Version Not Supported'
 }
 
-export default () => (req, res, next) => {
+const apiMiddleware = () => (req, res, next) => {
 	if (!req._using) req._using = {}
 	
 	req._using.api = '1.0.0'
 	
 	req.apiResult = (status, data) => {
+		if (res.headersSent) return
+		
 		const success = status == 200
 		const message = data?.message
 		
@@ -47,3 +49,5 @@ export default () => (req, res, next) => {
 	
 	next()
 }
+
+export default apiMiddleware

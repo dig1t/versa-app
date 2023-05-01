@@ -15,6 +15,7 @@ const __dirname = path.dirname(__filename)
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import webpackClientConfig from '../webpack.client.config.cjs'
 
+import { APIError, errorMiddleware } from './util/apiError.js'
 import serverConfig from './serverConfig.js'
 import config from './config.js'
 import auth from './containers/auth.js'
@@ -62,8 +63,20 @@ app.use(express.urlencoded({extended: true}))
 app.use(compression())
 app.use(cookieParser())
 app.disable('x-powered-by')
-app.use((_, res, next) => {
+app.use((req, res, next) => {
+	res.header('Access-Control-Allow-Methods', 'GET, POST')
 	res.header('Access-Control-Allow-Credentials', 'true')
+	res.header('Access-Control-Max-Age', 86400)
+	
+	// Chrome preflight request
+	if (req.method === 'OPTIONS') return res.sendStatus(200)
+	
+	req.on('aborted', () => {
+		next(new APIError('Request aborted by the client', 400, {
+			requestAborted: true
+		}))
+	})
+	
 	next()
 })
 
@@ -152,6 +165,9 @@ db.instance.once('open', () => {
 </body>`)
 		res.end()
 	})
+	
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	app.use(errorMiddleware)
 	
 	app.emit('ready')
 })

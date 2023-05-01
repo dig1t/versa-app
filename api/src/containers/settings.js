@@ -49,7 +49,7 @@ class ActionHandler {
 			}), {})
 		} catch(error) {
 			console.log('error while changing settings')
-			console.error(error)
+			console.log(error)
 		}
 	}
 }
@@ -128,6 +128,7 @@ export default (server) => {
 	
 	router.get(
 		'/user/:userId/settings',
+		useFields({ params: ['userId'] }),
 		server.oauth.authorize(),
 		async (req) => {
 			if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
@@ -146,8 +147,8 @@ export default (server) => {
 	
 	router.post(
 		'/user/:userId/settings',
+		useFields({ params: ['userId'] }),
 		server.oauth.authorize(),
-		useFields(),
 		async (req) => {
 			if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
 			

@@ -41,6 +41,16 @@ export default (_options) => (req, res, next) => {
 		}
 	}
 	
+	if (options.params) {
+		for (let field in options.params) {
+			if (req.params[options.fields[field]] === undefined)
+				return res.status(400).json({
+					success: false,
+					message: `Missing parameter: ${options.fields[field]}`
+				})
+		}
+	}
+	
 	req.fields = data
 	
 	next()

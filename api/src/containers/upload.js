@@ -153,7 +153,7 @@ const createMedia = async (options) => {
 			uploaded: true
 		}
 	} catch(error) {
-		console.error(error)
+		console.log(error)
 		throw new Error('Could not upload file')
 	}
 }
@@ -182,13 +182,6 @@ export {
 
 export default (server) => {
 	const router = new Router()
-	
-	//const img = fs.createReadStream(path.resolve(__dirname, './testimg.jpg'))
-	
-	/*const testUpload = cdn.uploadFile('test.png', img)
-		.then((res) => {
-			//console.log('UPLOAD RES', res)
-		})*/
 	
 	router.post(
 		'/media/upload',
@@ -221,7 +214,7 @@ export default (server) => {
 				
 				req.apiResult(200, res)
 			} catch(error) {
-				console.error(error)
+				console.log(error)
 				req.apiResult(401, {
 					message: error
 				})
@@ -231,14 +224,9 @@ export default (server) => {
 	
 	router.get(
 		'/media/:mediaId',
+		useFields({ params: ['mediaId'] }),
 		server.oauth.authorize(),
 		async (req) => {
-			if (req.params?.mediaId === undefined) {
-				return req.apiResult(500, {
-					message: 'Missing mediaId'
-				})
-			}
-			
 			try {
 				const res = await getMedia(req.params.mediaId)
 				
@@ -253,14 +241,9 @@ export default (server) => {
 	
 	router.delete(
 		'/media/:mediaId',
+		useFields({ params: ['mediaId'] }),
 		server.oauth.authorize(),
 		async (req) => {
-			if (req.params?.mediaId === undefined) {
-				return req.apiResult(500, {
-					message: 'Missing mediaId'
-				})
-			}
-			
 			try {
 				const res = await deleteMedia(req.params.mediaId)
 				

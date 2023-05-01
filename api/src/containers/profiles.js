@@ -10,6 +10,7 @@ import { validateText, mongoSanitize, mongoValidate } from '../util/index.js'
 import Post from '../models/Post.js'
 import Profile from '../models/Profile.js'
 import { isFollowing, getConnection } from './follows.js'
+import useFields from '../util/useFields.js'
 
 const deserializeProfile = (profile) => ({
 	userId: profile.userId.toHexString(),
@@ -51,6 +52,8 @@ const getProfileFromUsername = async (username) => {
 }
 
 const canViewProfile = async (userId, requesterUserId) => {
+	if (!userId) throw new Error('Missing userId')
+	
 	const profile = await getProfileFromUserId(userId)
 	
 	if (!profile.private) return true
@@ -154,7 +157,7 @@ export default (server) => {
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {
-				if (!req.params.userId && !req.params.username) {
+				if (!req.params?.userId && !req.params?.username) {
 					throw new Error('Missing fields: userId or username')
 				} else if (req.params.username && !validateText(req.params.username, 'username')) {
 					throw new Error('Invalid username')
@@ -185,10 +188,13 @@ export default (server) => {
 	
 	router.get(
 		'/profile/:userId/feed',
+		useFields({ params: ['userId'] }),
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {
-				const userCanViewProfile = await canViewProfile(req.params.userId, req._oauth?.user?.userId)
+				const userCanViewProfile = await canViewProfile(
+					req.params.userId, req._oauth?.user?.userId
+				)
 				
 				if (!userCanViewProfile) return req.apiResult(500, {
 					message: 'Not authorized to view profile'

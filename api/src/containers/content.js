@@ -157,6 +157,8 @@ const deletePost = async (postId) => {
 }
 
 const getContent = async (contentId, requesterUserId) => {
+	if (!contentId) throw new Error('Missing contentId')
+	
 	const content = await Content.findOne({ _id: contentId })
 	
 	if (!content) throw new Error('Content not found')
@@ -253,6 +255,8 @@ const profileFeedPipeline = async (_options) => {
 }
 
 const getPost = async (postId, requesterUserId) => {
+	if (!postId) throw new Error('Missing postId')
+	
 	const post = await Post.findOne({ _id: mongoSanitize(postId) })
 		.select('contentId userId created type')
 	
@@ -325,6 +329,8 @@ const createComment = async (data) => {
 }
 
 const deleteComment = async (commentId) => {
+	if (!commentId) throw new Error('Missing commentId')
+	
 	const comment = await Comment.findOne({ _id: mongoSanitize(commentId) })
 	
 	if (!comment) throw new Error('Could not find comment')
@@ -345,6 +351,8 @@ const deleteComment = async (commentId) => {
 }
 
 const getComments = async (contentId, requesterUserId) => {
+	if (!contentId) throw new Error('Missing contentId')
+	
 	const content = await getContent(contentId, requesterUserId)
 	
 	if (content.hidden) throw new Error('Could not create comment')
@@ -455,6 +463,7 @@ export default (server) => {
 	
 	router.get(
 		'/content/:contentId',
+		useFields({ params: ['contentId'] }),
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {
@@ -473,7 +482,7 @@ export default (server) => {
 	
 	router.post(
 		'/content/:contentId/comment',
-		useFields({ fields: ['body'] }),
+		useFields({ fields: ['body'], params: ['contentId'] }),
 		server.oauth.authorize(),
 		async (req) => {
 			try {
@@ -494,6 +503,7 @@ export default (server) => {
 	
 	router.delete(
 		'/content/:contentId/comment',
+		useFields({ params: ['contentId'] }),
 		server.oauth.authorize(),
 		async (req) => {
 			try {
@@ -513,6 +523,7 @@ export default (server) => {
 	
 	router.post(
 		'/content/:contentId/like',
+		useFields({ params: ['contentId'] }),
 		server.oauth.authorize(),
 		async (req) => {
 			try {
@@ -532,6 +543,7 @@ export default (server) => {
 	
 	router.delete(
 		'/content/:contentId/like',
+		useFields({ params: ['contentId'] }),
 		server.oauth.authorize(),
 		async (req) => {
 			try {
@@ -551,6 +563,7 @@ export default (server) => {
 	
 	router.get(
 		'/content/:contentId/comments',
+		useFields({ params: ['contentId'] }),
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {
@@ -586,6 +599,7 @@ export default (server) => {
 	
 	router.get(
 		'/post/:postId',
+		useFields({ params: ['postId'] }),
 		server.oauth.authorize({ optional: true }),
 		async (req) => {
 			try {

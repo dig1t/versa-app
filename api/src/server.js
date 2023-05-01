@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 
 import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
 import apiMiddleware from './util/apiMiddleware.js'
+import { APIError, errorMiddleware } from './util/apiError.js'
 
 import useAPI from './containers/routes.js'
 import config from '../config.js'
@@ -65,6 +66,12 @@ app.use((req, res, next) => {
 	// Chrome preflight request
 	if (req.method === 'OPTIONS') return res.sendStatus(200)
 	
+	req.on('aborted', () => {
+		next(new APIError('Request aborted by the client', 400, {
+			requestAborted: true
+		}))
+	})
+	
 	next()
 })
 
@@ -79,13 +86,6 @@ if (config.dev) app.use((req, res, next) => {
 
 app.get('*', (req, res) => res.status(404).send())
 
-app.use((error, req, res, next) => {
-	if (error) {
-		if (config.dev) console.error(error.stack)
-		return res.status(500).send()
-	}
-	
-	next()
-})
+app.use(errorMiddleware)
 
 export default app
