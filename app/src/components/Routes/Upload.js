@@ -68,6 +68,7 @@ const PreviewImage = ({ fileData, onRemove }) => {
 			`upload-type-${fileType}`
 		)}>
 			<div>is ready? {fileData.ready ? 'yes' : 'no'}</div>
+			<div>progress {fileData.progress}</div>
 			{renderPreview()}
 			<button onClick={handleRemove}>Remove</button>
 		</div>
@@ -102,6 +103,23 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 			signal: abortController.signal,
 			headers: {
 				'Content-Type': `multipart/form-data; boundary=${data._boudary}`
+			},
+			onUploadProgress: (progressEvent) => {
+				console.log('UPLOAD PROGRESS', progressEvent)
+				const progress = Math.round(
+					(progressEvent.loaded / progressEvent.total) * 100
+				)
+				console.log('progress',progress)
+				setFiles((prevState) => prevState.map(file => {
+					if (file.fileId === fileId) {
+						return {
+							...file,
+							progress
+						}
+					}
+					
+					return file
+				}))
 			}
 		})
 			.then((media) => {
@@ -120,9 +138,6 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				}))
 			})
 			.catch((error) => {
-				// Check if the error was caused by aborting the request
-				if (error.name === 'AbortError') return
-				
 				console.error(error)
 				
 				setFiles((prevState) => prevState.map(file => {
@@ -142,7 +157,8 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				fileId,
 				file,
 				ready: false,
-				request
+				request,
+				progress: 0
 			}
 			const updatedFilesList = [...prevFiles, fileData]
 			
@@ -175,6 +191,7 @@ const FileUploader = ({ acceptedTypes, handleChange }) => {
 				return false
 			}
 			
+			console.log(isSelected)
 			if (!isSelected) {
 				useFileUpload(file)
 			}

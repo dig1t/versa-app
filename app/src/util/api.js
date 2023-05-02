@@ -54,10 +54,18 @@ class API {
 					...options.options
 				})
 				
-				if (options.customErrorHandler) return resolve(response)
+				let responseData = response
 				
-				response.data.success ? resolve(response.data.data) : reject(response.data.message)
+				if (typeof response === 'string') {
+					responseData = JSON.parse(response)
+				}
+				
+				if (options.customErrorHandler) return resolve(responseData)
+				
+				responseData.data.success ? resolve(responseData.data.data) : reject(responseData.data.message)
 			} catch(error) { // Axios throws an error if the HTTP Response not 200
+				if (error?.code === 'ERR_CANCELED') reject('Request canceled')
+				
 				if (options.customErrorHandler) reject(error)
 				
 				console.error(options.url, error.response && error.response.data)

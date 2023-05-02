@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
+import busboy from 'busboy'
 
 import { fileURLToPath } from 'url'
 
@@ -17,7 +18,7 @@ import useFields from '../util/useFields.js'
 import CDN from '../services/cdn.js'
 import config from '../../config.js'
 
-const MAX_FILE_SIZE_MB = 20
+const MAX_FILE_SIZE = 20 * 1000000 // 20MB
 
 const mediaTypes = {
 	image: {
@@ -60,22 +61,18 @@ const getMediaTypeName = (typeId) => {
 	return null
 }
 
-const upload = multer({
-	storage: multer.memoryStorage()
-})
-
 const cdn = new CDN(config.cdn)
 
 const deserializeMedia = (media) => ({
-	mediaId: media.mediaId,
+	mediaId: media.mediaId.toHexString(),
 	type: getMediaTypeName(media.type),
-	userId: media.userId,
+	userId: media.userId.toHexString(),
 	mimeType: media.mime,
 	md5: media.md5Hash,
 	cdn: media.cdn,
-	isContentNSFW: media.isContentNSFW,
-	isContentSensitive: media.isContentSensitive,
-	isContentViolent: media.isContentViolent,
+	isMediaNSFW: media.isMediaNSFW,
+	isMediaSensitive: media.isMediaSensitive,
+	isMediaViolent: media.isMediaViolent,
 	created: media.created
 })
 
@@ -98,60 +95,62 @@ const getMediaFromHash = async (hash) => {
 const createMedia = async (options) => {
 	if (typeof options !== 'object') throw new Error('Missing media options')
 	if (options.userId === undefined) throw new Error('Missing userId')
-	if (options.file === undefined) throw new Error('Missing file')
+	if (options.fileStream === undefined) throw new Error('Missing file stream')
+	if (options.metadata === undefined) throw new Error('Missing file metadata')
 	
 	if (!mongoValidate(options.userId, 'id')) {
 		throw new Error(`Invalid userId`)
 	}
 	
-	const fileExtension = path.extname(options.file.originalname)
+	const fileExtension = path.extname(options.metadata.filename)
 	
 	if (typeof fileExtension !== 'string') {
 		throw new Error('File does not have an extension')
 	}
 	
-	// Use a hash to avoid duplicates
-	const fileStream = Readable.from(options.file.buffer)
-	const hash = await cdn.getFileHash(fileStream)
-	const mediaResult = await getMediaFromHash(hash)
-	
-	if (mediaResult) {
-		console.log('has result, returning saved media obj')
-		return mediaResult
-	}
-	
-	const mediaType = getMediaType(options.file.mimetype)
+	const mediaType = getMediaType(options.metadata.mimeType)
 	
 	const mediaId = new mongoose.Types.ObjectId()
 	
 	try {
-		const { publicUrl } = await cdn.uploadFile({
-			mediaId,
-			extension: fileExtension,
-			fileStream,
-			fileName: options.file.originalname,
-			mimeType: options.file.mimetype
-		})
+		const promises = [
+			cdn.uploadFile({
+				mediaId,
+				extension: fileExtension,
+				fileStream: options.fileStream,
+				fileName: options.metadata.filename,
+				mimeType: options.metadata.mimeType,
+				onUploadProgress: (progress) => options.onUploadProgress(progress)
+			}),
+			cdn.getFileHash(options.fileStream)
+		]
+		
+		const res = await Promise.allSettled(promises)
+		
+		const { publicUrl, md5Hash } = res.reduce((result, promise) => ({
+			...result,
+			...promise.value
+		}), {})
 		
 		const media = new Media({
 			mediaId,
 			userId: mongoSanitize(options.userId),
-			md5Hash: mongoSanitize(hash),
-			mime: mongoSanitize(options.file.mimetype),
+			md5Hash: mongoSanitize(md5Hash),
+			mime: mongoSanitize(options.metadata.mimeType),
 			type: mediaType,
 			cdn: 0,
-			isContentNSFW: options.isContentNSFW || false,
-			isContentSensitive: options.isContentSensitive || false,
-			isContentViolent: options.isContentViolent || false
+			isMediaNSFW: options.isMediaNSFW || false,
+			isMediaSensitive: options.isMediaSensitive || false,
+			isMediaViolent: options.isMediaViolent || false
 		})
 		
 		await media.save()
 		
-		return {
+		return new Promise((resolve) => resolve({
 			...deserializeMedia(media),
 			publicUrl,
 			uploaded: true
-		}
+		}))
 	} catch(error) {
 		console.log(error)
 		throw new Error('Could not upload file')
@@ -186,33 +185,66 @@ export default (server) => {
 	router.post(
 		'/media/upload',
 		server.oauth.authorize(),
-		upload.single('file'),
-		async (req) => {
-			if (req.file === undefined) {
+		async (req, res) => {
+			if (!req.is('multipart/form-data')) {
 				return req.apiResult(500, {
-					message: 'Missing file'
-				})
-			}
-			
-			if (!allowedMediaTypes.includes(req.file.mimetype)) {
-				return req.apiResult(500, {
-					message: 'File type is not allowed'
-				})
-			}
-			
-			if (req.file.size / Math.pow(1024, 2) > MAX_FILE_SIZE_MB) {
-				return req.apiResult(500, {
-					message: 'File is too large'
+					message: 'Request must be multipart/form-data'
 				})
 			}
 			
 			try {
-				const res = await createMedia({
-					userId: req._oauth.user.userId,
-					file: req.file // File from multer
+				const bb = busboy({
+					headers: req.headers,
+					limits: {
+						fileSize: MAX_FILE_SIZE
+					}
+				})
+				let mediaPromise
+				
+				bb.on('file', (name, fileStream, metadata) => {
+					if (!allowedMediaTypes.includes(metadata.mimeType)) {
+						return req.apiResult(500, {
+							message: 'File type is not allowed'
+						})
+					}
+					
+					res.set('Content-Type', 'application/json')
+					
+					mediaPromise = createMedia({
+						fileStream,
+						metadata, // { filename, encoding, mimeType }
+						userId: req._oauth.user.userId,
+						onUploadProgress: (progressEvent) => {
+							const progress = Math.round(
+								(progressEvent.loaded / progressEvent.total) * 100
+							)
+							
+							console.log('PROGRESS', progress)
+							res.write(JSON.stringify({ progress }))
+							res.flush()
+						}
+					})
 				})
 				
-				req.apiResult(200, res)
+				bb.on('close', () => {
+					const apiResultOptions = {
+						forceSend: true,
+						setStatus: false,
+						setHeader: false
+					}
+					
+					mediaPromise
+						.then((mediaData) => req.apiResult(
+							mediaData ? 200 : 401,
+							mediaData,
+							apiResultOptions
+						))
+						.catch((error) => req.apiResult(401, {
+							message: error
+						}, apiResultOptions))
+				})
+				
+				req.pipe(bb)
 			} catch(error) {
 				console.log(error)
 				req.apiResult(401, {

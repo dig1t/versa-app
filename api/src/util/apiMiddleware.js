@@ -24,27 +24,45 @@ const statusMessage = {
 	505: 'HTTP Version Not Supported'
 }
 
+const defaultOptions = {
+	writeToHead: false,
+	setStatus: true
+}
+
 const apiMiddleware = () => (req, res, next) => {
 	if (!req._using) req._using = {}
 	
 	req._using.api = '1.0.0'
 	
-	req.apiResult = (status, data) => {
-		if (res.headersSent) return
+	req.apiResult = (status, data, _options) => {
+		const options = {
+			...defaultOptions,
+			..._options
+		}
+		
+		if (!options.forceSend && res.headersSent) return
 		
 		const success = status == 200
 		const message = data?.message
 		
 		if (message) data.message = undefined
 		
-		res.status(status || 200).json({
+		const draft = {
 			success,
 			data: success ? data : undefined,
 			message: message ? (
 				// if resulting message is a thrown error, convert it to a string
 				(typeof(message) === 'string') ? message : message.toString()
 			) : statusMessage[status] // if no message, give a status message
-		})
+		}
+		
+		if (options.setStatus === true) res.status(status || 200)
+		if (options.setHeader) res.set('Content-Type', 'application/json')
+		
+		setTimeout(() => {
+			res.write(JSON.stringify(draft))
+			res.end()
+		}, 1000)
 	}
 	
 	next()
