@@ -3,17 +3,13 @@ import {
 	//ListBucketsCommand,
 	//ListObjectsV2Command,
 	//GetObjectCommand,
-	PutObjectCommand
+	DeleteObjectCommand,
+	//PutObjectCommand
 } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import axios from 'axios'
+import { Upload } from '@aws-sdk/lib-storage'
 import crypto from 'crypto'
-import fs from 'fs'
 
-import Media from '../models/Media.js'
 import cdnConfig from '../../config/cdn.js'
-
-//const createMedia = (userId, )
 
 class CDN {
 	constructor(options) {
@@ -53,7 +49,7 @@ class CDN {
 			fileStream.on('error', (err) => reject(err))
 			fileStream.on('end', () => {
 				hash.end()
-				resolve(hash.read())
+				resolve({ md5Hash: hash.read() })
 			})
 			
 			fileStream.pipe(hash)
@@ -73,40 +69,37 @@ class CDN {
 			throw new Error('mediaId is required')
 		}
 		
-		if (options.mediaId === undefined) {
-			throw new Error('mediaId is required')
-		}
-		
 		if (options.extension === undefined) {
 			throw new Error('extension is required')
 		}
 		
+		if (options.mimeType === undefined) {
+			throw new Error('mimeType is required')
+		}
+		
 		try {
-			const s3PutUrl = await getSignedUrl(
-				this.s3Client,
-				new PutObjectCommand({
+			const s3Upload = new Upload({
+				client: this.s3Client,
+				params: {
 					Bucket: this.bucketName,
-					Key: `${options.mediaId}.${options.extension}`
-				}),
-				{ expiresIn: 3600 }
+					Key: `${options.mediaId}${options.extension}`,
+					Body: options.fileStream,
+					ContentType: options.mimeType
+				}
+			})
+			
+			if (options.onUploadProgress) s3Upload.on(
+				'httpUploadProgress',
+				(progress) => options.onUploadProgress(progress)
 			)
 			
-			const response = await axios.put(
-				s3PutUrl,
-				options.fileStream,
-				{ headers: {
-					'Content-Type': options.mimeType
-				} }
-			)
-			
-			if (response.status !== 200) {
-				throw new Error(`Failed to upload file ${options.fileName}`)
-			}
+			await s3Upload.done()
 			
 			return {
-				publicUrl: `https://cdn.versaapp.co/${options.mediaId}.${options.extension}`,
+				publicUrl: `https://cdn.versaapp.co/${options.mediaId}${options.extension}`,
 			}
 		} catch(error) {
+			console.log(error)
 			throw new Error('Could not upload file')
 		}
 	}

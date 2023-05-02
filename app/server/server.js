@@ -128,26 +128,7 @@ db.instance.once('open', () => {
 	app.use('/', auth)
 	
 	/* PWA manifest file */
-	app.get('/manifest.json', (_, res) => res.json({
-		name: config.appName,
-		short_name: config.appName,
-		description: config.appDescription,
-		start_url: '/login',
-		display: 'standalone',
-		orientation: 'portrait',
-		theme_color: config.brandColor,
-		background_color: '#ffffff',
-		share_target: {
-			action: '/share',
-			method: 'GET',
-			enctype: 'application/x-www-form-urlencoded',
-			params: {
-				title: 'title',
-				text: 'text',
-				url: 'url'
-			}
-		}
-	}))
+	app.get('/manifest.json', (_, res) => res.json(serverConfig.manifest))
 	
 	app.get('/robots.txt', (_, res) => res.send('Disallow: *'))
 	

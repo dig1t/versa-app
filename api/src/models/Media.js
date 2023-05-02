@@ -31,9 +31,9 @@ const schema = new Schema({
 		required: true,
 		default: 0
 	},
-	isContentNSFW: Boolean,
-	isContentSensitive: Boolean,
-	isContentViolent: Boolean,
+	isMediaNSFW: Boolean,
+	isMediaSensitive: Boolean,
+	isMediaViolent: Boolean,
 	created: {
 		type: Date,
 		maxlength: 27,

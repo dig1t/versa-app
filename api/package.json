@@ -28,6 +28,7 @@
   "homepage": "https://github.com/dig1t/versa-app#readme",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.319.0",
+    "@aws-sdk/lib-storage": "^3.321.1",
     "@aws-sdk/s3-request-presigner": "^3.319.0",
     "@swc-node/register": "^1.6.5",
     "@swc/cli": "^0.1.62",
@@ -36,6 +37,7 @@
     "@swc/register": "^0.1.10",
     "bcrypt": "^5.1.0",
     "bottleneck": "^2.19.5",
+    "busboy": "^1.6.0",
     "compression": "^1.7.4",
     "connect-mongo": "^5.0.0",
     "cookie-parser": "^1.4.6",
