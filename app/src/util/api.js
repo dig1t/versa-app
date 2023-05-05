@@ -54,15 +54,26 @@ class API {
 					...options.options
 				})
 				
-				let responseData = response
+				let responseData = response?.data
 				
-				if (typeof response === 'string') {
-					responseData = JSON.parse(response)
+				if (!responseData) {
+					console.log(response)
+					return reject('Server error, try again later')
+				}
+				
+				if (typeof responseData === 'string') {
+					const jsonArrayString = `[${responseData.replace(/}\s*{/g, '},{')}]`;
+					
+					// Parse the JSON array string to an array of objects
+					const jsonArray = JSON.parse(jsonArrayString)
+					
+					// Get the last object in the array
+					responseData = jsonArray[jsonArray.length - 1]
 				}
 				
 				if (options.customErrorHandler) return resolve(responseData)
 				
-				responseData.data.success ? resolve(responseData.data.data) : reject(responseData.data.message)
+				responseData.success ? resolve(responseData.data) : reject(responseData.message)
 			} catch(error) { // Axios throws an error if the HTTP Response not 200
 				if (error?.code === 'ERR_CANCELED') reject('Request canceled')
 				

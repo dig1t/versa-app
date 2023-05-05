@@ -40,7 +40,6 @@ const TextInput = forwardRef((props, ref) => {
 })
 
 const TextAreaInput = forwardRef((props, ref) => {
-	
 	return <textarea
 		{...props.attributes}
 		ref={ref}
