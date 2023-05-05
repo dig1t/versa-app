@@ -1,15 +1,7 @@
 import { Router } from 'express'
-import { Readable } from 'stream'
 import mongoose from 'mongoose'
-import multer from 'multer'
-import fs from 'fs'
 import path from 'path'
 import busboy from 'busboy'
-
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 import Media from '../models/Media.js'
 
