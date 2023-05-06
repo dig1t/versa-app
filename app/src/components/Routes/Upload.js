@@ -10,7 +10,7 @@ const handleUpload = (files) => {
 export default function App() {
 	const [files, setFiles] = useState([])
 	const [filesReady, setFilesReady] = useState()
-	const uploaderRef = useRef(null)
+	const uploaderRef = useRef()
 	
 	useRef(() => console.log(files), [files])
 	
@@ -33,8 +33,8 @@ export default function App() {
 			{uploaderRef && <FilePreviewer
 				files={files}
 				handleRemove={(fileId) => {
-					console.log('remove fileid', fileId)
-					uploaderRef.current.removeFile(fileId)
+					console.log('remove fileid', fileId, uploaderRef.current)
+					uploaderRef.current.removeFileId(fileId)
 				}}
 			/>}
 			

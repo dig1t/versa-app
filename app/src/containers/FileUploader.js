@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { useCallback, useEffect, forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { v4 as uuidv4 } from 'uuid'
 
 import api from '../util/api.js'
-import { forwardRef } from 'react'
+import Icon from '../components/UI/Icon.js'
 
 const MAX_FILE_SIZE_MB = 20
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
@@ -57,7 +57,12 @@ const FilePreview = ({ fileData, onRemove }) => {
 				)
 			}
 			case 'audio': {
-				return <img src="/i/audio.png" alt={fileData.file.name} onClick={handleRemove} />
+				return <div className="audio-preview" onClick={handleRemove}>
+					<div className="wrap">
+						<Icon name="waveform" />
+						<div className="file-name">{fileData.file.name}</div>
+					</div>
+				</div>
 			}
 		}
 	}, [fileData, fileType, handleRemove, rawImage])
@@ -72,7 +77,7 @@ const FilePreview = ({ fileData, onRemove }) => {
 	)
 }
 
-const FilePreviewer = ({ files, handleRemove }) => <div className="media-upload-previews">
+const FilePreviewer = ({ files, handleRemove }) => <div className="media-upload media-upload-previews">
 	{files.map((fileData, index) => <FilePreview
 		fileData={fileData}
 		key={fileData.file.name + index}
@@ -226,7 +231,7 @@ const FileUploader = forwardRef(({
 		})
 	}
 	return (
-		<div className="file-uploader">
+		<div className="media-upload file-uploader">
 			<input
 				ref={inputRef}
 				type="file"
