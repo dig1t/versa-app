@@ -360,71 +360,74 @@ $tooltip-padding: .4rem;
 	}
 }
 
-ui {
-	display: block;
+.media-upload {
+	//&.file-uploader {
+		//
+	//}
 	
-	&.hamburger {
-		width: 50px;
-		height: 50px;
-		cursor: pointer;
+	&-previews {
+		$max-height: 40rem;
+		margin-top: var(--box-spacing);
+		display: flex;
+		gap: .5rem;
+		flex-direction: column;
 		
-		$burger-width: 20px;
-		$burger-height: 2px;
-		$burger-spacing: 6px;
-		
-		&.active {
-			i {
-				background-color: transparent;
-				
-				&:before, &:after {
-					top: 0;
-				}
-				
-				&:before {
-					transform: rotate(135deg);
-				}
-				
-				&:after {
-					transform: rotate(-135deg);
-				}
-			}
-		}
-		
-		&:hover i,
-		&:hover i:before,
-		&:hover i:after,
-		&.active i,
-		&.active i:before,
-		&.active i:after {
-			background-color: lighten($black, 10%);
-		}
-		
-		i {
-			margin: calc((100% - 2px) / 2) calc((100% - #{$burger-width}) / 2);
+		.upload-preview {
+			background-color: var(--white);
+			width: 100%;
+			height: 0;
+			border-radius: .5rem;
+			justify-content: center;
+			overflow: hidden;
 			position: relative;
+			display: flex;
+			cursor: pointer;
 			
-			&:before {
-				top: -$burger-spacing;
+			&.upload-type {
+				&-image, &-audio {
+					padding-bottom: 100%;
+				}
+				
+				&-video {
+					padding-bottom: 133%;
+				}
+				
+				&-audio {
+					.audio-preview {
+						width: 100%;
+						height: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						
+						.wrap {
+							width: 40%;
+							display: flex;
+							flex-direction: column;
+							align-items: center;
+						}
+						
+						.icon {
+							color: var(--blue-gray-400);
+							width: 100%;
+							height: 100%
+						}
+						
+						.file-name {
+							color: var(--blue-gray-200);
+							font-weight: $font-semibold;
+							font-size: 1.2rem;
+							text-align: center;
+							letter-spacing: .03em;
+						}
+					}
+				}
 			}
 			
-			&:after {
-				top: $burger-spacing;
-			}
-			
-			&, &:before, &:after {
-				content: '';
-				background-color: $black;
-				width: $burger-width;
-				height: $burger-height;
-				border-radius: 3px;
-				transition: transform .2s ease-in-out;
-				display: block;
+			> * {
+				height: 100%;
 				position: absolute;
 			}
 		}
-	}
-	
-	.hidden {
-		display: none;
 	}
 }

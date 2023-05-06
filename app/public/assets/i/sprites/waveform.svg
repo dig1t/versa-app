@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g id="Waveform">
+    <g id="Waveform-2" data-name="Waveform">
+      <rect x="38" y="19.5" width="3" height="25" rx="1.5" ry="1.5"/>
+      <rect x="23" y="24" width="3" height="16" rx="1.5" ry="1.5"/>
+      <rect x="33" y="24.5" width="3" height="15" rx="1.5" ry="1.5"/>
+      <rect x="28" y="27.5" width="3" height="9" rx="1.5" ry="1.5"/>
+      <rect x="48" y="27.5" width="3" height="9" rx="1.5" ry="1.5"/>
+      <rect x="18" y="29" width="3" height="6" rx="1.5" ry="1.5"/>
+      <rect x="43" y="29" width="3" height="6" rx="1.5" ry="1.5"/>
+      <rect x="13" y="30.5" width="3" height="3" rx="1.5" ry="1.5"/>
+    </g>
+  </g>
+</svg>
