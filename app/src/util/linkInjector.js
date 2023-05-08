@@ -3,6 +3,8 @@ import isURL from 'validator/es/lib/isURL.js'
 import isAlphanumeric from 'validator/es/lib/isAlphanumeric.js'
 import { Link } from 'react-router-dom'
 
+import Emojify from '../containers/Emojify.js'
+
 const expression = /(\s+)/
 
 const linkInjector = (str) => {
@@ -29,7 +31,9 @@ const linkInjector = (str) => {
 				{word}
 			</a>
 		} else {
-			return <span key={index}>{word}</span>
+			return <Emojify>
+				<span key={index}>{word}</span>
+			</Emojify>
 		}
 	})
 }

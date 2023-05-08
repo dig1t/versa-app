@@ -6,7 +6,18 @@ const iconAlias = {
 	like: 'heart'
 }
 
-const Icon = ({ name, scale, hidden, rot }) => {
+const IconWrap = ({ children }) => <div className="icon-wrap">
+	{children}
+</div>
+
+const Icon = ({
+	name,
+	scale,
+	hidden,
+	rot,
+	wrap,
+	...props
+}) => {
 	const [SvgModule, setSvgModule] = useState({})
 	
 	const iconName = iconAlias[name] || name
@@ -26,19 +37,22 @@ const Icon = ({ name, scale, hidden, rot }) => {
 		loadSvg()
 	}, [name])
 	
-	return !hidden && <i
+	const Wrap = wrap === true ? IconWrap : React.Fragment
+	
+	return !hidden && SvgModule.Element && <i
 		className={classNames(
 			'icon',
 			`icon-${iconName}`,
 			scale && `icon-${scale}`
 		)}
 		aria-hidden="true"
+		{ ...props }
 	>
-		{ SvgModule.Element && <SvgModule.Element
-			style={{
+		<Wrap>
+			<SvgModule.Element style={{
 				transform: typeof rot === 'number' && `rotate(${rot}deg)`
-			}}
-		/>}
+			}} />
+		</Wrap>
 	</i>
 }
 
@@ -49,5 +63,7 @@ Icon.propTypes = {
 Icon.defaultProps = {
 	scale: '1x'
 }
+
+export { IconWrap }
 
 export default Icon

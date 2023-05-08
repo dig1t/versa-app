@@ -10,6 +10,7 @@ import { Upload } from '@aws-sdk/lib-storage'
 import crypto from 'crypto'
 
 import cdnConfig from '../../config/cdn.js'
+import validateText from '../util/validateText.js'
 
 class CDN {
 	constructor(options) {
@@ -75,6 +76,10 @@ class CDN {
 		
 		if (options.mimeType === undefined) {
 			throw new Error('mimeType is required')
+		}
+		
+		if (!validateText(options.mimeType, 'mime-type')) {
+			throw new Error('Mime type is not valid')
 		}
 		
 		try {
