@@ -37,7 +37,7 @@ const getUserIdFromSession = async (sessionId) => {
 	const user = await UserSession.findOne({ _id: mongoSanitize(sessionId) })
 	
 	if (!user) throw new Error('Could not find session')
-	if (user.isDeleted) throw new Error('Session is invalid')
+	if (user.isDeleted) throw new Error('Session is not valid')
 	
 	return user.userId.toHexString()
 }
@@ -112,9 +112,9 @@ const createAccount = async (req) => {
 	const { name, email, password } = req.fields
 	
 	if (name.length > config.user.maxNameLength || !validateText(name, 'name')) {
-		throw new Error('Name is invalid')
+		throw new Error('Name is not valid')
 	} else if (email.length > config.user.maxEmailLength || !validateText(email, 'email')) {
-		throw new Error('Email is invalid')
+		throw new Error('Email is not valid')
 	} else if (password.length > config.user.maxPasswordLength || !validateText(password, 'password')) {
 		throw new Error('Password does not meet requirements')
 	} else if (await emailExists(email)) {

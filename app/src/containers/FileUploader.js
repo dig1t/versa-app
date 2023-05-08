@@ -73,6 +73,11 @@ const FilePreview = ({ fileData, onRemove }) => {
 			`upload-type-${fileType}`
 		)}>
 			{renderPreview()}
+			<Icon
+				name="close"
+				wrap={true}
+				onClick={handleRemove}
+			/>
 		</div>
 	)
 }

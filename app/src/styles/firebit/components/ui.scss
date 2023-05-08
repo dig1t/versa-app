@@ -360,74 +360,69 @@ $tooltip-padding: .4rem;
 	}
 }
 
-.media-upload {
-	//&.file-uploader {
-		//
-	//}
+// SVG icons
+svg {
+	height: inherit;
+	fill: currentColor;
+	display: block;
+	overflow: hidden;
+}
+
+.icon {
+	height: 1rem;
+	//line-height: 1; // fixes size issues for .icon object
+	background-repeat: no-repeat;
+	background-size: contain;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-content: center;
 	
-	&-previews {
-		$max-height: 40rem;
-		margin-top: var(--box-spacing);
-		display: flex;
-		gap: .5rem;
-		flex-direction: column;
+	// DEBUG
+	/*background-color: red;
+	opacity: .5;
+	
+	svg {
+		background-color: blue;
+		opacity: .5;
+	}*/
+	
+	&-full-width {
+		width: 100%;
+	}
+	
+	&-full-height {
+		height: 100%;
+	}
+	
+	&-logo {
+		color: #e6e6e6;
+		aspect-ratio: calc(165 / 50);
+	}
+	
+	&-wrap {
+		background-color: var(--color-white);
+		height: inherit;
+		border-radius: 99rem;
+		padding: 10%;
 		
-		.upload-preview {
-			background-color: var(--white);
-			width: 100%;
-			height: 0;
-			border-radius: .5rem;
-			justify-content: center;
-			overflow: hidden;
-			position: relative;
-			display: flex;
-			cursor: pointer;
-			
-			&.upload-type {
-				&-image, &-audio {
-					padding-bottom: 100%;
-				}
-				
-				&-video {
-					padding-bottom: 133%;
-				}
-				
-				&-audio {
-					.audio-preview {
-						width: 100%;
-						height: 100%;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						
-						.wrap {
-							width: 40%;
-							display: flex;
-							flex-direction: column;
-							align-items: center;
-						}
-						
-						.icon {
-							color: var(--blue-gray-400);
-							width: 100%;
-							height: 100%
-						}
-						
-						.file-name {
-							color: var(--blue-gray-200);
-							font-weight: $font-semibold;
-							font-size: 1.2rem;
-							text-align: center;
-							letter-spacing: .03em;
-						}
-					}
-				}
-			}
-			
-			> * {
-				height: 100%;
-				position: absolute;
-			}
+		svg {
+			height: 100%;
 		}
+	}
+}
+
+.icon-verified {
+	color: var(--primary-color);
+	margin-left: .2rem;
+	cursor: pointer;
+}
+
+.loading-indicator {
+	width: 100%;
+	height: 100%;
+	opacity: .5;
+	
+	svg {
+		width: 3rem;
 	}
 }

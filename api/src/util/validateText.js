@@ -10,7 +10,8 @@ const validationMap = new Map([
 	['password', /^[a-zA-Z0-9 ~`!@#$%^&*()_+\-=[\]\\{}|;':",./<>?]+$/],
 	['phone', /^\+?(?:\d ?)\d{6,14}$/],
 	['us-phone', /^\+?[01]?[- ]?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/],
-	['text', /^[a-zA-Z0-9 ~`!@#$%^&*()_+\-=[\]\\{}|;':",./<>?\p{Emoji_Presentation}]+$/um]
+	['text', /^[a-zA-Z0-9 ~`!@#$%^&*()_+\-=[\]\\{}|;':",./<>?\p{Emoji_Presentation}]+$/um],
+	['mime-type', /^[-\w.+]+\/[-\w.+]+$/]
 ])
 
 const validateText = (text, validateFor) => {

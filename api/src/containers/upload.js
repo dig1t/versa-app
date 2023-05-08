@@ -5,7 +5,7 @@ import busboy from 'busboy'
 
 import Media from '../models/Media.js'
 
-import { mongoSanitize, mongoValidate } from '../util/index.js'
+import { mongoSanitize, mongoValidate, validateText } from '../util/index.js'
 import useFields from '../util/useFields.js'
 import CDN from '../services/cdn.js'
 import config from '../../config.js'
@@ -98,6 +98,10 @@ const createMedia = async (options) => {
 	
 	if (typeof fileExtension !== 'string') {
 		throw new Error('File does not have an extension')
+	}
+	
+	if (!validateText(options.metadata.mimeType, 'mime-type')) {
+		throw new Error('Mime type is not valid')
 	}
 	
 	const mediaType = getMediaType(options.metadata.mimeType)
