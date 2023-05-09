@@ -80,7 +80,7 @@ app.use('/v1', useAPI(app))
 
 // Log all requests and their fields
 if (config.dev) app.use((req, res, next) => {
-	console.log(req.url, req.fields)
+	console.log(req.url, req.fields, req.method)
 	next()
 })
 

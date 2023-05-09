@@ -19,7 +19,8 @@ import { APIError, errorMiddleware } from './util/apiError.js'
 import serverConfig from './serverConfig.js'
 import config from './config.js'
 import auth from './containers/auth.js'
-import db from './containers/db.js'
+//import db from './containers/db.js'
+import RestStore from './containers/RestStore.js'
 
 const assets = {
 	bundle: '/assets/client/bundle.js',
@@ -105,36 +106,37 @@ if (config.dev) {
 	app.set('trust proxy', 1) // trust first proxy
 }
 
-db.connect()
-db.instance.once('open', () => {
-	app.use(session({
-		name: config.shortName.session,
-		secret: config.expressSecret,
-		cookie: {
-			maxAge: serverConfig.maxTokenAge,
-			// serve secure cookies in production
-			secure: !config.dev,
-			sameSite: 'strict'
-		},
-		httpOnly: true,
-		resave: false,
-		saveUninitialized: false,
-		store: db.getStore() // TODO: Convert to REST API store (https://www.npmjs.com/package/restsession)
-	}))
-	
-	app.use(passport.initialize())
-	app.use(passport.session())
-	
-	app.use('/', auth)
-	
-	/* PWA manifest file */
-	app.get('/manifest.json', (_, res) => res.json(serverConfig.manifest))
-	
-	app.get('/robots.txt', (_, res) => res.send('Disallow: *'))
-	
-	/* Route all other traffic to React Renderer */
-	app.get(/^\/(?!auth).*/, async (req, res) => {
-		res.write(
+//db.connect()
+//db.instance.once('open', () => {
+
+app.use(session({
+	name: config.shortName.session,
+	secret: config.expressSecret,
+	cookie: {
+		maxAge: serverConfig.maxTokenAge,
+		// serve secure cookies in production
+		secure: !config.dev,
+		sameSite: 'strict'
+	},
+	httpOnly: true,
+	resave: false,
+	saveUninitialized: false,
+	store: new RestStore(`${config.apiDomain}/v1/sessions`)
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use('/', auth)
+
+/* PWA manifest file */
+app.get('/manifest.json', (_, res) => res.json(serverConfig.manifest))
+
+app.get('/robots.txt', (_, res) => res.send('Disallow: *'))
+
+/* Route all other traffic to React Renderer */
+app.get(/^\/(?!auth).*/, async (req, res) => {
+	res.write(
 `<!DOCTYPE html>
 <head>
 <link href="${assets.styles}" rel="stylesheet">
@@ -144,13 +146,10 @@ db.instance.once('open', () => {
 	<script>assetManifest=${JSON.stringify(assets)};</script>
 	<script src="${assets.bundle}"></script>
 </body>`)
-		res.end()
-	})
-	
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	app.use(errorMiddleware)
-	
-	app.emit('ready')
+	res.end()
 })
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use(errorMiddleware)
 
 export default app
