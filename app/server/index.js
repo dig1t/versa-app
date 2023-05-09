@@ -12,10 +12,8 @@ const httpOptions = {
 
 useClusters(() => {
 	if (process.env.APP_ENV === 'development') {
-		server.on('ready', () => {
-			console.log(`starting server at http://localhost:${config.devPort}`)
-			server.listen(config.devPort)
-		})
+		console.log(`starting server at http://localhost:${config.devPort}`)
+		server.listen(config.devPort)
 	} else {
 		const httpServerOptions = {
 			...httpOptions,

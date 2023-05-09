@@ -130,17 +130,6 @@ class Runner {
 	}
 }
 
-/*const clientCompiler = new Compiler({
-	name: 'versa-app',
-	webpackConfig: webpackClientConfig,
-	watchDir: path.resolve(__dirname, '../src')
-})*/
-
-//serverCompiler.watch()
-//apiCompiler.watch()
-//apiCompiler.run()
-//clientCompiler.watch()
-
 pm2.killDaemon()
 
 pm2.connect((error) => {
