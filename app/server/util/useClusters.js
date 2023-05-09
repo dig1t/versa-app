@@ -4,12 +4,8 @@ import { availableParallelism } from 'node:os'
 const USE_CLUSTERS = false
 
 const useClusters = (callback) => {
-	if (cluster.isPrimary) {
+	if (cluster.isPrimary || !USE_CLUSTERS) {
 		return callback()
-	}
-	
-	if (!USE_CLUSTERS) {
-		return
 	}
 	
 	console.log(`primary ${process.pid} is running`)
