@@ -10,8 +10,8 @@ import { authenticateUserCredentials, getUserFromUserId } from '../../containers
 class OAuth2 {
 	constructor() {
 		this.appCreds = {
-			client_id: config.client_id,
-			client_secret: config.client_secret
+			client_id: config.oauth_client_id,
+			client_secret: config.oauth_client_secret
 		}
 	}
 	
@@ -73,6 +73,32 @@ class OAuth2 {
 		const expiryDate = new Date(timestamp * 1000)
 		
 		return (expiryDate - new Date()) < 0
+	}
+	
+	getAdapter(name) {
+		return new Adapter(name)
+	}
+	
+	async issueClientCredentials() {
+		const credentials = this.generateClientCredentials()
+		const provider = await this.getProvider()
+		
+		const client = await new provider.Client({
+			client_id: credentials.client_id,
+			client_secret: credentials.client_secret,
+			redirect_uris: [`${config._apiDomain}:${config.apiPort}/auth/callback`],
+			response_types: ['code'],
+			grant_types: ['authorization_code'],
+			token_endpoint_auth_method: 'client_secret_post',
+		})
+		
+		try {
+			await this.getAdapter('Client').upsert(client.clientId, client.metadata())
+			
+			return credentials
+		} catch(error) {
+			throw new Error(error)
+		}
 	}
 	
 	// ROPC Grant is ONLY for 1st party authentication

@@ -1,27 +1,11 @@
 import config from '../../config.js'
 import jwks from '../../config/jwks.json' assert { type: 'json' };
 
-/*
-import fs from 'fs'
-import path from 'path'
-import jose from 'node-jose'
-
-const keyStore = new jose.JWK.createKeyStore()
-
-Promise.all([
-	keyStore.generate('RSA', 2048, { use: 'sig' }),
-	keyStore.generate('EC', 'P-256', { use: 'sig', alg: 'ES256' }),
-	//keystore.generate('OKP', 'Ed25519', { use: 'sig', alg: 'EdDSA' }),
-]).then(() => {
-	fs.writeFileSync(path.resolve('src/jwks.json'), JSON.stringify(keyStore.toJSON(true), null, 2))
-})
-*/
-
 export default {
 	clients: [
 		{
-			client_id: config.client_id,
-			client_secret: config.client_secret,
+			client_id: config.oauth_client_id,
+			client_secret: config.oauth_client_secret,
 			
 			redirect_uris: [config._domain],
 			grant_types: ['authorization_code'],
