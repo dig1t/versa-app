@@ -6,7 +6,7 @@ import useClusters from './util/useClusters.js'
 useClusters(() => {
 	db.connect()
 	db.instance.once('open', async () => {
-		console.log('db connection success')
+		console.log('database connection success')
 		server.emit('ready')
 	})
 	

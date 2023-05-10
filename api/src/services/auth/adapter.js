@@ -13,7 +13,9 @@ const grantable = new Set([
 class CollectionSet extends Set {
 	add(name) {
 		const nu = this.has(name)
+		
 		super.add(name)
+		
 		if (!nu) {
 			DB.collection(name).createIndexes([
 				...(grantable.has(name)
@@ -34,7 +36,7 @@ class CollectionSet extends Set {
 					key: { expiresAt: 1 },
 					expireAfterSeconds: 0,
 				},
-			]).catch(console.error) // eslint-disable-line no-console
+			]).catch(console.error)
 		}
 	}
 }
@@ -45,11 +47,12 @@ class MongoAdapter {
 	constructor(name) {
 		this.name = name
 		
-		DB = mongoose.connection
+		DB = mongoose.connection.useDb('oauth', { useCache: true })
 		
 		// NOTE: you should never be creating indexes at runtime in production, the following is in
 		// place just for demonstration purposes of the indexes required
-		if (process.env.NODE_ENV === 'development') collections.add(this.name)
+		//if (process.env.NODE_ENV === 'development') collections.add(this.name)
+		collections.add(this.name)
 	}
 	
 	// NOTE: the payload for Session model may contain client_id as keys, make sure you do not use

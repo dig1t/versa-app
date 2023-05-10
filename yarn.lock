@@ -3721,7 +3721,7 @@ configstore@^6.0.0:
 
 connect-mongo@^5.0.0:
   version "5.0.0"
-  resolved "https://registry.npmjs.org/connect-mongo/-/connect-mongo-5.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/connect-mongo/-/connect-mongo-5.0.0.tgz#2a902d293d369a4baff2e988634cda6f8c0bf721"
   integrity sha512-s93jiP6GkRApn5duComx6RLwtP23YrulPxShz+8peX7svd6Q+MS8nKLhKCCazbP92C13eTVaIOxgeLt0ezIiCg==
   dependencies:
     debug "^4.3.1"

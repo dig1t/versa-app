@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser'
 import passport from 'passport'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import MongoStore from 'connect-mongo'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -18,9 +19,7 @@ import webpackClientConfig from '../webpack.client.config.cjs'
 import { APIError, errorMiddleware } from './util/apiError.js'
 import serverConfig from './serverConfig.js'
 import config from './config.js'
-import auth from './containers/auth.js'
-//import db from './containers/db.js'
-import RestStore from './containers/RestStore.js'
+import auth from './services/auth.js'
 
 const assets = {
 	bundle: '/assets/client/bundle.js',
@@ -106,9 +105,6 @@ if (config.dev) {
 	app.set('trust proxy', 1) // trust first proxy
 }
 
-//db.connect()
-//db.instance.once('open', () => {
-
 app.use(session({
 	name: config.shortName.session,
 	secret: config.expressSecret,
@@ -121,7 +117,10 @@ app.use(session({
 	httpOnly: true,
 	resave: false,
 	saveUninitialized: false,
-	store: new RestStore(`${config.apiDomain}/v1/sessions`)
+	store: MongoStore.create({
+		mongoUrl: config.sessionDatabaseURI,
+		dbName: 'sessions'
+	})
 }))
 
 app.use(passport.initialize())
@@ -149,7 +148,6 @@ app.get(/^\/(?!auth).*/, async (req, res) => {
 	res.end()
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use(errorMiddleware)
 
 export default app

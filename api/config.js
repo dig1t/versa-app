@@ -39,14 +39,17 @@ export default {
 		refreshToken: 'vrt'
 	},
 	
-	expressSecret: env.EXPRESS_SECRET,
+	expressSecret: env.EXPRESS_SESSION_SECRET,
+	sessionSecret: env.SESSION_STORE_SECRET,
 	
-	db: env.DB_URI,
-	appDB:env.APP_DB_URI,
+	appDatabaseURI: env.APP_DB_URI,
+	sessionDatabaseURI: env.SESSION_DB_URI,
+	oauthDatabaseURI: env.OAUTH_DB_URI,
 	
-	client_id: env.CLIENT_ID,
-	client_secret: env.CLIENT_SECRET,
-	client_secret_original: env.CLIENT_SECRET_ORIGINAL,
+	appDatabaseName: env.APP_DB_NAME,
+	
+	oauth_client_id: env.OAUTH_CLIENT_ID,
+	oauth_client_secret: env.OAUTH_CLIENT_SECRET,
 	
 	_domain: domain,
 	_apiDomain: apiDomain,
