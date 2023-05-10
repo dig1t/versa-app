@@ -38,8 +38,8 @@ describe('oauth', async () => {
 	
 	it('validates a client', async () => {
 		const isClientValid = await oauth.validateClient(
-			config.client_id,
-			config.client_secret_original
+			config.oauth_client_id,
+			config.oauth_client_secret
 		)
 		
 		assert.equal(isClientValid, true)
