@@ -4,12 +4,9 @@ import chokidar from 'chokidar'
 import ColorfulConsole from './util/ColorfulConsole.js'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'url'
-import pm2 from 'pm2'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-//import webpackClientConfig from '../webpack.client.config.cjs'
 
 const WATCH_TIMEOUT = 800
 
@@ -130,27 +127,17 @@ class Runner {
 	}
 }
 
-pm2.killDaemon()
-
-pm2.connect((error) => {
-	if (error) {
-		console.error(error)
-		
-		process.exit(2)
-	}
-	
-	const appRunner = new Runner({
-		name: 'versa-app',
-		entryPath: './app/server/index.js',
-		watchDir: path.resolve(__dirname, '../app/server')
-	})
-	
-	const apiRunner = new Runner({
-		name: 'versa-api',
-		entryPath: './api/src/index.js',
-		watchDir: path.resolve(__dirname, '../api/src')
-	})
-	
-	appRunner.watch()
-	apiRunner.watch()
+const appRunner = new Runner({
+	name: 'versa-app',
+	entryPath: './app/server/index.js',
+	watchDir: path.resolve(__dirname, '../app/server')
 })
+
+const apiRunner = new Runner({
+	name: 'versa-api',
+	entryPath: './api/src/index.js',
+	watchDir: path.resolve(__dirname, '../api/src')
+})
+
+appRunner.watch()
+apiRunner.watch()
