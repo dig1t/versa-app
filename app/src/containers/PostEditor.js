@@ -26,6 +26,7 @@ const PostEditor = () => {
 		
 		api.post('/v1/post/new', { body })
 			.then((response) => dispatch(newFeedPost(response)))
+			.catch((error) => console.log(error)) // TODO: CONVERT TO TOAST NOTIFICATION
 	}
 	
 	return <div className="post-editor">
