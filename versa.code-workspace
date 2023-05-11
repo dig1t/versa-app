@@ -2,10 +2,6 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"name": "restsession",
-			"path": "../restsession"
 		}
 	]
 }
