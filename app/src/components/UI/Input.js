@@ -202,7 +202,9 @@ const Input = forwardRef((props, ref) => {
 		validate(value)
 	}, [value])
 	
-	useEffect(() => props.handleValidity(isValid), [isValid])
+	useEffect(() => {
+		props.handleValidity(isValid)
+	}, [isValid])
 	
 	useEffect(() => {
 		const newValue = props.value || getDefaultValue()

@@ -21,9 +21,11 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) =
 	}, [activeCategory])
 	
 	useEffect(() => {
-		if (mounted === false) return setMounted(true)
-		
-		setActiveCategory(value)
+		if (mounted === false) {
+			setMounted(true)
+		} else {
+			setActiveCategory(value)
+		}
 	}, [value])
 	
 	return <div className={classNames(
