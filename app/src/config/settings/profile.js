@@ -52,7 +52,9 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 		}
 	}
 	
-	useEffect(() => setRefValues(data.profile), [data])
+	useEffect(() => {
+		setRefValues(data.profile)
+	}, [data])
 	
 	useEffect(() => {
 		let allInputsValid = true
