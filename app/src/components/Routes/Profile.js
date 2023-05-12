@@ -18,7 +18,7 @@ import { binarySearch } from '../../util/index.js'
 import { defaultAssets } from '../../constants/assets.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import { useAuthenticated } from '../../context/Auth.js'
-import linkInjector from '../../util/linkInjector.js'
+import LinkInjector from '../../containers/LinkInjector.js'
 
 const feedCategories = [
 	{
@@ -104,11 +104,7 @@ const Profile = () => {
 			setFetching(true)
 			dispatch(getProfileFromUsername(usernameQuery))
 		}
-	}, [usernameQuery, profileList, invalidUsernames])
-	
-	const profileBio = useMemo(() => {
-		return profileData?.bio ? linkInjector(profileData.bio) : null
-	}, [profileData])
+	}, [usernameQuery, profileList, invalidUsernames, profileData])
 	
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}
@@ -135,7 +131,9 @@ const Profile = () => {
 								<VerifiedBadge verificationLevel={profileData.verificationLevel} />
 							</div>
 							<div className="username">@{profileData.username}</div>
-							<div className="bio">{profileBio}</div>
+							<div className="bio">
+								<LinkInjector text={profileData?.bio} />
+							</div>
 							{profileData.website && <div className="website">
 								<a href={'//' + profileData.website} target="_blank">
 									{profileData.website}

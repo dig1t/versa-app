@@ -14,21 +14,16 @@ const Emojify = ({ children }) => {
 	const childrenRefs = useRef([])
 	
 	useEffect(() => {
-		const parseTwemoji = () => {
-			Object.values(childrenRefs.current).forEach((ref) => {
-				const node = ref.current
-				
-				twemoji.parse(node, options)
-			})
-		}
-		
-		parseTwemoji()
+		Object.values(childrenRefs.current).forEach((ref) => {
+			const node = ref.current
+			console.log(node)
+			//twemoji.parse(node, options)
+		})
 	}, [])
 	
 	return <>
 		{Children.map(children, (child, index) => {
 			if (typeof child === 'string') {
-				console.warn(`Twemoji can't parse string child when noWrapper is set. Skipping child "${child}"`)
 				return child
 			}
 			
