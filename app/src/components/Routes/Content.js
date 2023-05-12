@@ -3,82 +3,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { format, formatDistanceToNowStrict } from 'date-fns'
-import PropTypes from 'prop-types'
 
 import api from '../../util/api.js'
 import { binarySearch } from '../../util/index.js'
 import Layout from '../Layout.js'
 import Loading from '../Loading.js'
 import { addContentStat, getContent } from '../../actions/content.js'
-import { Icon, Tooltip } from '../UI/index.js'
 import Avatar from '../../containers/Avatar.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import CommentEditor from '../../containers/CommentEditor.js'
 import ContentActions from '../../containers/ContentActions.js'
 import { useAuthenticated } from '../../context/Auth.js'
 import ContentMedia from '../../containers/ContentMedia.js'
-import linkInjector from '../../util/linkInjector.js'
-
-const Comment = ({ data }) => {
-	const profileList = useSelector((state) => state.profiles.profileList)
-	
-	const profile = profileList[data.userId]
-	
-	const { timeAgoCreated, dateCreated } = useMemo(() => {
-		const dateInstance = new Date(data.created)
-		
-		return {
-			timeAgoCreated: formatDistanceToNowStrict(
-				dateInstance,
-				{ addSuffix: true, includeSeconds: true }
-			),
-			dateCreated: format(
-				dateInstance,
-				'PPpp'
-			)
-		}
-	}, [data.created])
-	
-	const commentBody = useMemo(() => linkInjector(data.body), [data])
-	
-	return <div className="post comment">
-		<div className="container">
-			<div className="post-avatar">
-				<Avatar avatar={profile.avatar} />
-			</div>
-			<div className="main">
-				<div className="details">
-					<span className="name align-center-wrap">
-						<Link
-							to={`/@${profile.username}`}
-							className="unstyled-link"
-						>
-							{profile.name}
-						</Link>
-						<VerifiedBadge verificationLevel={profile.verificationLevel} />
-					</span>
-					<span className="username"><Link
-						to={`/@${profile.username}`}
-						className="unstyled-link"
-					>
-						@{profile.username}
-					</Link></span>
-					<span>&bull;</span>
-					<span className="time">
-						<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
-					</span>
-				</div>
-				<div className="content">
-					<div className="text">{commentBody}</div>
-				</div>
-			</div>
-		</div>
-	</div>
-}
-
-Comment.propTypes = {
-	data: PropTypes.object.isRequired
-}
+import LinkInjector from '../../containers/LinkInjector.js'
+import Comment from '../../containers/Comment.js'
+import { Icon, Tooltip } from '../UI/index.js'
 
 const Content = () => {
 	const dispatch = useDispatch()
@@ -152,10 +91,6 @@ const Content = () => {
 		}
 	}, [contentData])
 	
-	const contentBody = useMemo(() => {
-		return contentData?.body ? linkInjector(contentData.body) : null
-	}, [contentData])
-	
 	return <Layout page="content">
 		{redirect && <Navigate to={redirect} />}
 		{contentData === null ? <Loading /> : <div className="wrap grid-g">
@@ -190,7 +125,9 @@ const Content = () => {
 									<div className="options"><Icon name="ellipsis" /></div>
 								</div>
 								<div className="content">
-									<div className="text">{contentBody}</div>
+									<div className="text">
+										<LinkInjector text={contentData?.body} />
+									</div>
 									{contentData.media && <ContentMedia {...contentData.media} />}
 								</div>
 								<ContentActions data={contentData} noRedirect={true} />

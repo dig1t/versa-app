@@ -19,7 +19,14 @@ const RenderLink = ({ clickRedirect, profile, children }) => <>
 	</Link> : children}
 </>
 
-const Avatar = ({ avatar, status, hasStory, userId, clickRedirect, useModal }) => {
+const Avatar = ({
+	avatar,
+	status,
+	hasStory,
+	userId,
+	clickRedirect,
+	useModal
+}) => {
 	const dispatch = useDispatch()
 	const { profileList } = useSelector((state) => ({
 		profileList: state.profiles.profileList
@@ -70,7 +77,7 @@ const Avatar = ({ avatar, status, hasStory, userId, clickRedirect, useModal }) =
 						{status && <div className={classNames(
 							'activity-status', status
 						)} />}
-						<ActivityCircle />
+						{hasStory && <ActivityCircle />}
 					</RenderLink>
 				</div>
 			</ModalComponent>

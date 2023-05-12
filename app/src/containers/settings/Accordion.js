@@ -131,7 +131,9 @@ const Accordion = ({ data, handleSave, config }) => {
 	}
 	
 	// Clear expanded indexes once the page changes
-	useEffect(() => setExpanded([]), [config])
+	useEffect(() => {
+		setExpanded([])
+	}, [config])
 	
 	return <ul className="accordion-list">
 		{config.settings.map((setting, index) => (
