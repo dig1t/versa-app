@@ -4,9 +4,9 @@ import {
 	PROFILE_FETCH_FAILURE,
 	PROFILE_FOLLOW_UPDATE,
 	PROFILE_CONNECTION_SUCCESS
-} from '../reducers/profiles.js'
+} from '../reducers/profileReducers.js'
 
-import api from '../util/api.js'
+import api from '../../../../util/api.js'
 
 export const addProfile = (data) => (dispatch) => dispatch({
 	type: PROFILE_FETCH_SUCCESS,
