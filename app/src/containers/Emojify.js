@@ -14,11 +14,9 @@ const Emojify = ({ children }) => {
 	const childrenRefs = useRef([])
 	
 	useEffect(() => {
-		Object.values(childrenRefs.current).forEach((ref) => {
-			const node = ref.current
-			console.log(node)
-			//twemoji.parse(node, options)
-		})
+		Object.values(childrenRefs.current).forEach(
+			(ref) => twemoji.parse(ref.current, options)
+		)
 	}, [])
 	
 	return <>

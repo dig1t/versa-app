@@ -58,6 +58,9 @@ export const addLike = (contentId) => (dispatch, getState) => {
 				}
 			})
 		})
+		.catch((error) => {
+			// TODO: add toast notification for error
+		})
 }
 
 export const deleteLike = (contentId) => (dispatch, getState) => {
@@ -74,5 +77,8 @@ export const deleteLike = (contentId) => (dispatch, getState) => {
 					contentId
 				}
 			})
+		})
+		.catch((error) => {
+			// TODO: add toast notification for error
 		})
 }

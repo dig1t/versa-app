@@ -11,7 +11,7 @@ useClusters(() => {
 	})
 	
 	server.on('ready', () => {
-		console.log(`starting server at http://localhost:${config.apiPort}`)
+		console.log(`starting API at http://localhost:${config.apiPort}`)
 		server.listen(config.apiPort)
 	})
 	server.on('error', (error) => console.log(error))

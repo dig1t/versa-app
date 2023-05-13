@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../../components/UI/index.js'
 import { SaveActions } from '../../containers/SettingsPage.js'
+import ProfileCard from '../../containers/ProfileCard.js'
 
 const profileKeys = [
 	//'avatar',
@@ -78,6 +79,10 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 	}, [validInputs, inputData, data])
 	
 	return <div className="profile-settings">
+		<ProfileCard profileData={{
+			...data.profile,
+			...inputData
+		}} />
 		{inputs.map((input) => <Input
 			{...input}
 			key={input.name}
