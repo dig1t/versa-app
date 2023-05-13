@@ -8,8 +8,6 @@ import Emojify from './Emojify.js'
 const expression = /(\s+)/
 
 const LinkInjector = ({ text }) => {
-	let i = 0
-	let wordGroup = []
 	const [result, setResult] = useState([])
 	
 	const LinkComponent = ({ word, prefix }) => {
@@ -39,57 +37,42 @@ const LinkInjector = ({ text }) => {
 		</>))
 	}
 	
-	const processWordGroup = () => {
-		if (wordGroup.length <= 0) return
-		
-		setResult(prevState => [...prevState, <WordComponent word={wordGroup.join('')} />])
-		
-		wordGroup = []
-	}
-	
 	useEffect(() => {
-		console.log('start')
+		let i = 0
+		let wordGroup = []
+		const compiled = []
+		
+		const processWordGroup = () => {
+			if (wordGroup.length <= 0) return
+			
+			compiled.push(<WordComponent word={wordGroup.join('')} />)
+			
+			wordGroup = []
+		}
 		
 		for (let word of text.split(expression)) {
 			const index = `li-${i++}`
 			
-			console.log('word', word)
-			
 			if (word.startsWith('@') && isAlphanumeric(word.substr(1))) {
 				processWordGroup(index)
-				
-				setResult(prevState => [...prevState, <LinkComponent word={word} prefix="/@" />])
+				compiled.push(<LinkComponent word={word} prefix="/@" />)
 			} else if (word.startsWith('#') && isAlphanumeric(word.substr(1))) {
 				processWordGroup(index)
-				
-				setResult(prevState => [...prevState, <LinkComponent word={word} prefix="/tag/" />])
+				compiled.push(<LinkComponent word={word} prefix="/tag/" />)
 			} else if (isURL(word)) {
 				processWordGroup(index)
-				console.log(1)
-				
-				setResult(prevState => [...prevState, <AnchorComponent word={word} />])
+				compiled.push(<AnchorComponent word={word} />)
 			} else {
 				wordGroup.push(word)
-				console.log('pushed word', word)
 				
 				if (!text.match(expression)) {
-					console.log(911)
-					setResult(prevState => [
-						...prevState,
-						<WordComponent word={wordGroup.join('')} />
-					])
+					compiled.push(<WordComponent word={wordGroup.join('')} />)
 				}
 			}
 		}
 		
 		processWordGroup()
-		setResult(prevState => {
-			console.log('prevState', prevState)
-			return prevState
-		})
-		console.log('end', result)
-		
-		return () => setResult([])
+		setResult(compiled)
 	}, [])
 	
 	return <>{result}</>

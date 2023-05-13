@@ -228,6 +228,11 @@ main[page="content"] {
 		//padding: .1rem; // disables border
 		position: relative;
 		
+		&.avatar-card {
+			background-color: var(--white);
+			padding: .25rem;
+		}
+		
 		.img {
 			background-size: cover;
 			border-radius: 100%;
@@ -266,7 +271,6 @@ main[page="content"] {
 			position: absolute;
 			top: -8%;
 			left: -8%;
-			fill: var(--blue);
 		}
 	}
 }
