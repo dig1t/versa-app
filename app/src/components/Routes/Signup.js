@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux'
 
 import AuthForm from '../../containers/AuthForm.js'
 import Layout from '../Layout.js'
-import { setAuthenticatedUser, setUserProfile, userLogout } from '../../actions/user.js'
-import { addProfile } from '../../actions/profile.js'
+import { setAuthenticatedUser, setUserProfile, userLogout } from '../../features/User/store/actions/selfActions.js'
+import { addProfile } from '../../features/User/store/actions/profileActions.js'
 
 const inputs = [
 	{

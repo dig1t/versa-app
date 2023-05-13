@@ -6,19 +6,19 @@ import classNames from 'classnames'
 
 import Layout from '../Layout.js'
 import Loading from '../Loading.js'
-import Avatar from '../../containers/Avatar.js'
+import Avatar from '../../features/User/components/Avatar.js'
 import Feed from '../../containers/Feed.js'
 import { CatPills, Modal, Tooltip } from '../UI/index.js'
 import {
 	getProfileConnection,
 	getProfileFromUsername
-} from '../../actions/profile.js'
+} from '../../features/User/store/actions/profileActions.js'
 import { binarySearch } from '../../util/index.js'
 import { defaultAssets } from '../../constants/assets.js'
-import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
+import { VerifiedBadge } from '../../features/User/components/VerifiedBadge.js'
 import { useAuthenticated } from '../../context/Auth.js'
 import LinkInjector from '../../containers/LinkInjector.js'
-import FollowButton from '../../containers/FollowButton.js'
+import FollowButton from '../../features/User/components/FollowButton.js'
 
 const feedCategories = [
 	{

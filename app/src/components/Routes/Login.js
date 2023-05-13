@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import AuthForm from '../../containers/AuthForm.js'
 import Layout from '../Layout.js'
-import { setAuthenticatedUser, userLogout } from '../../actions/user.js'
+import { setAuthenticatedUser, userLogout } from '../../features/User/store/actions/selfActions.js'
 
 const inputs = [
 	{
