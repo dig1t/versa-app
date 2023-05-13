@@ -1,10 +1,9 @@
-/* eslint-disable no-undef */
 // @version 1.0.0
 
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 
-import { USER_FETCH_TOKEN_SUCCESS } from '../reducers/user.js'
+import { USER_FETCH_TOKEN_SUCCESS } from '../features/User/store/reducers/selfReducers.js'
 
 import config from '../constants/config.js'
 

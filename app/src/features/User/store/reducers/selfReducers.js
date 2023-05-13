@@ -44,6 +44,7 @@ export default (state = {
 				profile: {}
 			}
 		}
+		
 		case USER_FETCH_SUCCESS: {
 			return {
 				...state,
@@ -54,29 +55,34 @@ export default (state = {
 				isMod: action.payload.user.isMod
 			}
 		}
+		
 		case USER_FETCH_FAILURE: {
 			return {
 				...state,
 				authenticated: false
 			}
 		}
+		
 		case USER_FETCH_TOKEN_SUCCESS: {
 			return {
 				...state,
 				accessToken: action.payload.access_token
 			}
 		}
+		
 		case USER_PROFILE_FETCH_SUCCESS: {
 			return {
 				...state,
 				profile: action.payload
 			}
 		}
-		case USER_UPDATE:
+		
+		case USER_UPDATE: {
 			return (action.payload.key === undefined || action.payload.value === undefined) ? state : {
 				...state,
 				[action.payload.key]: action.payload.value
 			}
+		}
 		
 		case SETTINGS_FETCH_SUCCESS: {
 			return {
@@ -84,7 +90,8 @@ export default (state = {
 				settings: action.payload
 			}
 		}
-		case SETTINGS_UPDATE:
+		
+		case SETTINGS_UPDATE: {
 			return (action.payload.key === undefined || action.payload.value === undefined) ? state : {
 				...state,
 				settings: {
@@ -92,6 +99,7 @@ export default (state = {
 					[action.payload.key]: action.payload.value
 				}
 			}
+		}
 		
 		default: {
 			return state

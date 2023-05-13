@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon, Tooltip } from '../components/UI/index.js'
+import { Icon, Tooltip } from '../../../components/UI/index.js'
 
 export const VerifiedBadge = ({ verificationLevel }) => <Tooltip
 	text="Verified Account"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { userLogout } from '../actions/user.js'
+import { userLogout } from '../features/User/store/actions/selfActions.js'
 
 const Logout = () => {
 	const dispatch = useDispatch()
