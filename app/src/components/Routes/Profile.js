@@ -10,7 +10,6 @@ import Avatar from '../../containers/Avatar.js'
 import Feed from '../../containers/Feed.js'
 import { CatPills, Modal, Tooltip } from '../UI/index.js'
 import {
-	followProfile,
 	getProfileConnection,
 	getProfileFromUsername
 } from '../../actions/profile.js'
@@ -19,6 +18,7 @@ import { defaultAssets } from '../../constants/assets.js'
 import { VerifiedBadge } from '../../containers/VerifiedBadge.js'
 import { useAuthenticated } from '../../context/Auth.js'
 import LinkInjector from '../../containers/LinkInjector.js'
+import FollowButton from '../../containers/FollowButton.js'
 
 const feedCategories = [
 	{
@@ -34,31 +34,6 @@ const feedCategories = [
 		name: 'videos'
 	}
 ]
-
-const FollowButton = ({ userId, following }) => {
-	const dispatch = useDispatch()
-	
-	const handleClick = (input) => {
-		input.preventDefault()
-		
-		dispatch(followProfile(userId, !following))
-	}
-	
-	return <button
-		className={classNames(
-			'cta edit-profile btn-round btn-outline',
-			following ? 'btn-secondary following' : 'not-following'
-		)}
-		onClick={handleClick}
-	>{
-		following ? 'Unfollow' : 'Follow'
-	}</button>
-}
-
-FollowButton.propTypes = {
-	following: PropTypes.bool.isRequired,
-	userId: PropTypes.string.isRequired
-}
 
 const Profile = () => {
 	const dispatch = useDispatch()
@@ -123,7 +98,11 @@ const Profile = () => {
 					</div>
 					<div className="details">
 						<div className="avatar-container">
-							<Avatar userId={profileData.userId} useModal />
+							<Avatar
+								userId={profileData.userId}
+								useModal
+								isCardAvatar
+							/>
 						</div>
 						<div className="container">
 							<div className="name align-center-wrap">

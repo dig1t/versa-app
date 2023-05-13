@@ -35,7 +35,6 @@ const SettingsPage = ({ config }) => {
 		
 		return api.post(settingConfig.endpoint || `/v1/user/${userId}/settings`, inputData)
 			.then((apiResult) => {
-				// eslint-disable-next-line no-undef
 				console.log(`Saved ${settingConfig.name}`)
 				
 				if (settingConfig.saveAction) {
