@@ -5,8 +5,8 @@ import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 
 import { Tooltip } from '../components/UI/index.js'
-import Avatar from './Avatar.js'
-import { VerifiedBadge } from './VerifiedBadge.js'
+import Avatar from '../features/User/components/Avatar.js'
+import { VerifiedBadge } from '../features/User/components/VerifiedBadge.js'
 import LinkInjector from './LinkInjector.js'
 
 const Comment = ({ data }) => {

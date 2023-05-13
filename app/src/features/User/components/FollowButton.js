@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
-import { followProfile } from '../actions/profile.js'
+import { followProfile } from '../store/actions/profileActions.js'
 
 const FollowButton = ({ userId, following }) => {
 	const dispatch = useDispatch()

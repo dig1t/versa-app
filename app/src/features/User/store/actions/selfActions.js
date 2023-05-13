@@ -1,6 +1,6 @@
 import {
 	PROFILE_FETCH_SUCCESS
-} from '../reducers/profiles.js'
+} from '../reducers/profileReducers.js'
 
 import {
 	USER_LOGOUT_SUCCESS,
@@ -17,9 +17,9 @@ import {
 	SETTINGS_UPDATE_REQUEST,
 	SETTINGS_UPDATE_SUCCESS,
 	SETTINGS_UPDATE_FAILURE
-} from '../reducers/user.js'
+} from '../reducers/selfReducers.js'
 
-import api from '../util/api.js'
+import api from '../../../../util/api.js'
 
 export const userLogout = (waitForServer) => (dispatch) => {
 	if (waitForServer !== true) return dispatch({
