@@ -1,0 +1,33 @@
+import React from 'react'
+import { useDispatch } from 'react-redux'
+import classNames from 'classnames'
+import PropTypes from 'prop-types'
+
+import { followProfile } from '../actions/profile.js'
+
+const FollowButton = ({ userId, following }) => {
+	const dispatch = useDispatch()
+	
+	const handleClick = (input) => {
+		input.preventDefault()
+		
+		dispatch(followProfile(userId, !following))
+	}
+	
+	return <button
+		className={classNames(
+			'cta edit-profile btn-round btn-outline',
+			following ? 'btn-secondary following' : 'not-following'
+		)}
+		onClick={handleClick}
+	>{
+		following ? 'Unfollow' : 'Follow'
+	}</button>
+}
+
+FollowButton.propTypes = {
+	following: PropTypes.bool.isRequired,
+	userId: PropTypes.string.isRequired
+}
+
+export default FollowButton
