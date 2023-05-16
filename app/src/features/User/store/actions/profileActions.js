@@ -63,6 +63,10 @@ export const getProfileConnection = (userId) => (dispatch, getState) => {
 			type: PROFILE_CONNECTION_SUCCESS,
 			payload: data
 		}))
+		.catch((error) => {
+			// TODO: log to telemetry service
+			console.error(error)
+		})
 }
 
 export const followProfile = (userId, newFollow) => (dispatch) => {

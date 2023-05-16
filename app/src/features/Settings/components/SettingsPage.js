@@ -45,6 +45,11 @@ const SettingsPage = ({ config }) => {
 					}))
 				}
 			})
+			.catch((error) => {
+				// TODO: add toast notification
+				console.warn(`Error saving ${settingConfig.name}`)
+				console.error(error)
+			})
 	}
 	
 	const Component = config.component

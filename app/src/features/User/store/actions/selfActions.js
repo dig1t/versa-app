@@ -43,6 +43,11 @@ export const userLogout = (waitForServer) => (dispatch) => {
 				type: USER_LOGOUT_SUCCESS
 			})
 		})
+		.catch((error) => {
+			// TODO: add toast notification
+			console.warn('Could not log out')
+			console.error(error)
+		})
 }
 
 export const setAuthenticatedUser = (data) => (dispatch) => {
