@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-let DB
+let DatabaseInstance
 
 const grantable = new Set([
 	'access_token',
@@ -11,32 +11,40 @@ const grantable = new Set([
 ])
 
 class CollectionSet extends Set {
-	add(name) {
-		const nu = this.has(name)
+	addCollection(name) {
+		const collectionExists = this.has(name)
 		
+		// Add to the set
 		super.add(name)
 		
-		if (!nu) {
-			DB.collection(name).createIndexes([
-				...(grantable.has(name)
-					? [{
-						key: { 'payload.grantId': 1 },
-					}] : []),
-				...(name === 'device_code'
-					? [{
-						key: { 'payload.userCode': 1 },
-						unique: true,
-					}] : []),
-				...(name === 'session'
-					? [{
-						key: { 'payload.uid': 1 },
-						unique: true,
-					}] : []),
-				{
-					key: { expiresAt: 1 },
-					expireAfterSeconds: 0,
-				},
-			]).catch(console.error)
+		if (!collectionExists) {
+			const indexes = []
+			
+			if (grantable.has(name)) indexes.push([{
+				key: { 'payload.grantId': 1 },
+			}])
+			
+			if (name === 'device_code') indexes.push([{
+				key: { 'payload.userCode': 1 },
+				unique: true,
+			}])
+			
+			if (name === 'session') indexes.push([{
+				key: { 'payload.uid': 1 },
+				unique: true,
+			}])
+			
+			if (indexes.length > 0) {
+				DatabaseInstance.collection(name).createIndexes([
+					...indexes,
+					{
+						key: { expiresAt: 1 },
+						expireAfterSeconds: 0,
+					}
+				])
+					.then(() => console.log(`created indexes for collection: ${name}`))
+					.catch(console.error)
+			}
 		}
 	}
 }
@@ -47,12 +55,11 @@ class MongoAdapter {
 	constructor(name) {
 		this.name = name
 		
-		DB = mongoose.connection.useDb('oauth', { useCache: true })
+		DatabaseInstance = mongoose.connection.useDb('oauth', { useCache: true })
 		
 		// NOTE: you should never be creating indexes at runtime in production, the following is in
 		// place just for demonstration purposes of the indexes required
-		//if (process.env.NODE_ENV === 'development') collections.add(this.name)
-		collections.add(this.name)
+		if (process.env.NODE_ENV === 'development') collections.addCollection(this.name)
 	}
 	
 	// NOTE: the payload for Session model may contain client_id as keys, make sure you do not use
@@ -64,7 +71,7 @@ class MongoAdapter {
 			expiresAt = new Date(Date.now() + (expiresIn * 1000))
 		}
 		
-		await this.coll().updateOne(
+		await this.getCollection().updateOne(
 			{ _id },
 			{ $set: { payload, ...(expiresAt ? { expiresAt } : undefined) } },
 			{ upsert: true },
@@ -72,7 +79,7 @@ class MongoAdapter {
 	}
 	
 	async find(_id) {
-		const result = await this.coll().find(
+		const result = await this.getCollection().find(
 			{ _id },
 			{ payload: 1 },
 		).limit(1).next()
@@ -82,7 +89,7 @@ class MongoAdapter {
 	}
 	
 	async findByUserCode(userCode) {
-		const result = await this.coll().find(
+		const result = await this.getCollection().find(
 			{ 'payload.userCode': userCode },
 			{ payload: 1 },
 		).limit(1).next()
@@ -92,7 +99,7 @@ class MongoAdapter {
 	}
 	
 	async findByUid(uid) {
-		const result = await this.coll().find(
+		const result = await this.getCollection().find(
 			{ 'payload.uid': uid },
 			{ payload: 1 },
 		).limit(1).next()
@@ -102,26 +109,26 @@ class MongoAdapter {
 	}
 	
 	async destroy(_id) {
-		await this.coll().deleteOne({ _id })
+		await this.getCollection().deleteOne({ _id })
 	}
 	
 	async revokeByGrantId(grantId) {
-		await this.coll().deleteMany({ 'payload.grantId': grantId })
+		await this.getCollection().deleteMany({ 'payload.grantId': grantId })
 	}
 	
 	async consume(_id) {
-		await this.coll().findOneAndUpdate(
+		await this.getCollection().findOneAndUpdate(
 			{ _id },
 			{ $set: { 'payload.consumed': Math.floor(Date.now() / 1000) } },
 		)
 	}
 	
-	coll(name) {
-		return this.constructor.coll(name || this.name)
+	getCollection(name) {
+		return this.constructor.getCollection(name || this.name)
 	}
 	
-	static coll(name) {
-		return DB.collection(name)
+	static getCollection(name) {
+		return DatabaseInstance.collection(name)
 	}
 }
 
