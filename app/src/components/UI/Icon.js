@@ -27,7 +27,10 @@ const Icon = ({
 			const _svgImport = await new Promise((resolve, reject) => {
 				import(`../../../public/assets/i/sprites/${name}.svg`)
 					.then((result) => resolve(result.default))
-					.catch((error) => reject(error))
+					.catch((error) => {
+						console.warn(`Could not import SVG for ${name}`)
+						reject(error)
+					})
 			})
 			setSvgModule({
 				Element: _svgImport

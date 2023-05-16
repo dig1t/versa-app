@@ -26,7 +26,11 @@ const PostEditor = () => {
 		
 		api.post('/v1/post/new', { body })
 			.then((response) => dispatch(newFeedPost(response)))
-			.catch((error) => console.log(error)) // TODO: CONVERT TO TOAST NOTIFICATION
+			.catch((error) => {
+				// TODO: CONVERT TO TOAST NOTIFICATION
+				console.log(error)
+				console.warn('Error posting comment')
+			})
 	}
 	
 	return <div className="post-editor">
