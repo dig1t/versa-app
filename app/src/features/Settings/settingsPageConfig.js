@@ -1,5 +1,5 @@
-import { USER_UPDATE } from '../features/User/store/reducers/selfReducers.js'
-import { PROFILE_UPDATE } from '../features/User/store/reducers/profileReducers.js'
+import { USER_UPDATE } from '../User/store/reducers/selfReducers.js'
+import { PROFILE_UPDATE } from '../User/store/reducers/profileReducers.js'
 import ProfileSettingPage from './settings/profile.js'
 
 /*
