@@ -30,6 +30,7 @@ import ProfileSettingPage from './settings/profile.js'
 			handleSave: (newData, onSave) => {
 				api.post('/settings/email', { email: newData.email })
 					.then(() => onSave(newData))
+					.catch((error) => console.error(error))
 			},
 			saveAction: ({ updates, apiResult, userId }) => {
 				console.log('Data saved: ', newData)

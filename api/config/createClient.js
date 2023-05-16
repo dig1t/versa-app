@@ -16,9 +16,14 @@ const makeKeys = async () => {
 		keyStore.generate('RSA', 2048, { use: 'sig' }),
 		keyStore.generate('EC', 'P-256', { use: 'sig', alg: 'ES256' }),
 		//keystore.generate('OKP', 'Ed25519', { use: 'sig', alg: 'EdDSA' }),
-	]).then(() => {
-		fs.writeFileSync(path.resolve('./jwks.json'), JSON.stringify(keyStore.toJSON(true), null, 2))
-	})
+	])
+		.then(() => {
+			fs.writeFileSync(path.resolve('./jwks.json'), JSON.stringify(keyStore.toJSON(true), null, 2))
+		})
+		.catch((error) => {
+			console.warn('error generating keys')
+			console.error(error)
+		})
 }
 
 const JWKS_PATH = path.resolve(__dirname, './jwks.json')

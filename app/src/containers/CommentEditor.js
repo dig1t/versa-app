@@ -20,6 +20,11 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 				
 				handleSuccess(response)
 			})
+			.catch((error) => {
+				// TODO: add toast notification
+				console.warn('Error posting comment')
+				console.log(error)
+			})
 	}
 	
 	return <div className="post-editor simple">

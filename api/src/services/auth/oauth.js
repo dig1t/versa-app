@@ -21,6 +21,10 @@ class OAuth2 {
 		const Provider = await new Promise((resolve) => {
 			import('oidc-provider')
 				.then((result) => resolve(result.default))
+				.catch((error) => {
+					console.error('Could not import oidc-provider')
+					console.error(error)
+				})
 		})
 		
 		const issuer = `${config._apiDomain}:${config.apiPort}`
