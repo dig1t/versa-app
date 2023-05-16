@@ -4,7 +4,7 @@ import {
 	CONTENT_STAT_UPDATE,
 	CONTENT_LIKE_UPDATE_SUCCESS
 } from '../reducers/content.js'
-import { PROFILE_FETCH_SUCCESS } from '../reducers/profiles.js'
+import { PROFILE_FETCH_SUCCESS } from '../features/User/store/reducers/profileReducers.js'
 
 import api from '../util/api.js'
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Input } from '../../components/UI/index.js'
-import { SaveActions } from '../../containers/SettingsPage.js'
-import ProfileCard from '../../features/User/components/ProfileCard.js'
+import { Input } from '../../../components/UI/index.js'
+import { SaveActions } from '../components/SettingsPage.js'
+import ProfileCard from '../../User/components/ProfileCard.js'
 
 const profileKeys = [
 	//'avatar',
