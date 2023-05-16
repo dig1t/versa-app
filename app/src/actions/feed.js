@@ -1,13 +1,12 @@
 import {
 	PROFILE_ADD_ARRAY,
-} from '../reducers/profiles.js'
+} from '../features/User/store/reducers/profileReducers.js'
 import {
 	CONTENT_ADD_ARRAY
 } from '../reducers/content.js'
 
 import {
 	PROFILE_FEED_FETCH_REQUEST,
-	PROFILE_FEED_FETCH_SUCCESS,
 	PROFILE_FEED_FETCH_FAILURE,
 	FEED_ADD_ARRAY
 } from '../reducers/feed.js'

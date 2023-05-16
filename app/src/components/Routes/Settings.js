@@ -5,9 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../Loading.js'
 import Layout from '../Layout.js'
 import { CatPills } from '../UI/index.js'
-import SettingsPage from '../../containers/SettingsPage.js'
+import SettingsPage from '../../features/Settings/components/SettingsPage.js'
 import { useAuthenticated } from '../../context/Auth.js'
-import settingsPageConfig from '../../config/settingsPageConfig.js'
+import settingsPageConfig from '../../features/Settings/settingsPageConfig.js'
 
 const Settings = () => {
 	const { categoryParam } = useParams()

@@ -3,9 +3,9 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 
-import api from '../util/api.js'
-import { useAuthenticated } from '../context/Auth.js'
-import Accordion from './settings/Accordion.js'
+import api from '../../../util/api.js'
+import { useAuthenticated } from '../../../context/Auth.js'
+import Accordion from './Accordion.js'
 
 export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 	return <div className="actions float-r">
