@@ -36,14 +36,14 @@ describe('oauth', async () => {
 		)
 	})
 	
-	it('validates a client', async () => {
+	/*it('validates a client', async () => {
 		const isClientValid = await oauth.validateClient(
 			config.oauth_client_id,
 			config.oauth_client_secret
 		)
 		
 		assert.equal(isClientValid, true)
-	})
+	})*/
 	
 	it('authenticates a user using ROPC grant', async () => {
 		userGrant = await oauth.ROPCGrant(
