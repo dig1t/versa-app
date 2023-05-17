@@ -26,7 +26,8 @@ const statusMessage = {
 
 const defaultOptions = {
 	writeToHead: false,
-	setStatus: true
+	setStatus: true,
+	setHeader: true
 }
 
 const apiMiddleware = () => (req, res, next) => {
