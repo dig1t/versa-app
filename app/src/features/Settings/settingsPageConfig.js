@@ -1,6 +1,6 @@
 import { USER_UPDATE } from '../User/store/reducers/selfReducers.js'
 import { PROFILE_UPDATE } from '../User/store/reducers/profileReducers.js'
-import ProfileSettingPage from './settings/profile.js'
+import ProfileSettingPage from './categories/profile.js'
 
 /*
 // Example category

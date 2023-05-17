@@ -9,37 +9,22 @@ import SettingsPage from '../../features/Settings/components/SettingsPage.js'
 import { useAuthenticated } from '../../context/Auth.js'
 import settingsPageConfig from '../../features/Settings/settingsPageConfig.js'
 
+const initialCategory = settingsPageConfig[0]
+
 const Settings = () => {
 	const { categoryParam } = useParams()
 	const { userId } = useAuthenticated()
 	
 	const navigate = useNavigate()
-	const [initialCategory, setInitialCategory] = useState(settingsPageConfig[0].name)
 	const profileList = useSelector((state) => state.profiles.profileList)
-	const [category, setCategory] = useState()
+	
+	const category = settingsPageConfig.find((cat) => cat.name === categoryParam) || initialCategory
 	
 	useEffect(() => {
-		if (categoryParam) {
-			const categoryExists = settingsPageConfig.find((category) => category.name === categoryParam) !== undefined
-			
-			console.log(categoryParam, categoryExists)
-			
-			if (categoryExists) {
-				setInitialCategory(categoryParam)
-			} else {
-				navigate('/settings')
-			}
+		if (!categoryParam) {
+			navigate(`/settings/${initialCategory.name}`)
 		}
 	}, [categoryParam])
-	
-	useEffect(() => {
-		const path = category && `/settings/${category.name}`
-		
-		// eslint-disable-next-line no-undef
-		if (category && location.pathname !== path) {
-			navigate(path, { replace: true })
-		}
-	}, [category])
 	
 	const profile = profileList[userId]
 	
@@ -49,9 +34,14 @@ const Settings = () => {
 				<div className="heading">Settings</div>
 				<CatPills
 					pills={settingsPageConfig}
-					defaultCategory={initialCategory}
+					defaultCategory={category?.name || initialCategory.name}
+					handleSelection={(category) => {
+						console.log('new category', category.name)
+						//setCategory(category)
+						navigate(`/settings/${category.name}`, { replace: true })
+					}}
+					autoSelect={false}
 					squared
-					handleSelection={(category) => setCategory(category)}
 				/>
 			</div>
 			<div className="settings-page col-9 col-desktop-9">
