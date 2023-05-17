@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) => {
+const CatPills = ({ pills, handleSelection, defaultCategory, value, squared, autoSelect }) => {
 	const [activeCategory, setActiveCategory] = useState(null)
-	const [mounted, setMounted] = useState(false)
+	const [isMounted, setIsMounted] = useState(false)
 	
 	useEffect(() => {
 		if (pills.find((category) => category.name === defaultCategory)) {
@@ -15,14 +15,14 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) =
 	useEffect(() => {
 		const categorySearch = pills.find((category) => category.name === activeCategory)
 		
-		if (categorySearch) {
+		if (categorySearch && (autoSelect || isMounted)) {
 			handleSelection(categorySearch)
 		}
-	}, [activeCategory])
+	}, [activeCategory, autoSelect, isMounted])
 	
 	useEffect(() => {
-		if (mounted === false) {
-			setMounted(true)
+		if (!isMounted) {
+			setIsMounted(true)
 		} else {
 			setActiveCategory(value)
 		}
@@ -44,12 +44,17 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared }) =
 	</div>
 }
 
+CatPills.defaultProps = {
+	autoSelect: true
+}
+
 CatPills.propTypes = {
 	pills: PropTypes.array.isRequired,
 	handleSelection: PropTypes.func.isRequired,
 	defaultCategory: PropTypes.string,
 	value: PropTypes.string,
-	squared: PropTypes.bool
+	squared: PropTypes.bool,
+	autoSelect: PropTypes.bool
 }
 
 export default CatPills
