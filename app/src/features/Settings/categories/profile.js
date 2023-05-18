@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Input } from '../../../components/UI/index.js'
+import { Input } from '../../../components/UI.js'
 import { SaveActions } from '../components/SettingsPage.js'
 import ProfileCard from '../../User/components/ProfileCard.js'
 
