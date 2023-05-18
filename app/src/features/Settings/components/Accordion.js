@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
-import { Icon, Input } from '../../../components/UI/index.js'
+import { Icon, Input } from '../../../components/UI.js'
 
 export const SaveActions = ({ ready, handleSave, handleCancel }) => {
 	return <div className="actions float-r">

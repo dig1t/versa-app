@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import thunk from 'redux-thunk'
 
-import reducer from './reducers/index.js'
+import reducer from './features/Core/store/reducers/coreReducers.js'
 import { apiReduxMiddleware } from './util/api.js'
 
 const logger = (store) => (next) => (action) => {
