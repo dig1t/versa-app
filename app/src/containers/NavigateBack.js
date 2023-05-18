@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/UI/index.js'
+import { Icon } from '../components/UI.js'
 
 export default () => {
 	const navigate = useNavigate()

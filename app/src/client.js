@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { createBrowserHistory } from 'history'
 
-import App from './components/App.js'
+import App from './features/Core/components/App.js'
 
 const history = createBrowserHistory()
 const container = document.getElementById('root')

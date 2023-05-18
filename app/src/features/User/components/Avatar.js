@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 
 import { getProfile } from '../store/actions/profileActions.js'
 import { defaultAssets } from '../../../constants/assets.js'
-import { Modal } from '../../../components/UI/index.js'
+import { Modal } from '../../../components/UI.js'
 
 const activityTypeColors = {
 	story: 'var(--blue)'
