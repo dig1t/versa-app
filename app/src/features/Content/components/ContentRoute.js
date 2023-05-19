@@ -10,7 +10,6 @@ import Layout from '../../Core/components/Layout.js'
 import Loading from '../../Core/components/Loading.js'
 import { addContentStat, getContent } from '../store/actions/contentActions.js'
 import Avatar from '../../User/components/Avatar.js'
-import { VerifiedBadge } from '../../User/components/VerifiedBadge.js'
 import CommentEditor from '../../Content/components/CommentEditor.js'
 import ContentActions from '../../Content/components/ContentActions.js'
 import { useAuthenticated } from '../../../context/Auth.js'
@@ -18,6 +17,7 @@ import ContentMedia from '../../Content/components/ContentMedia.js'
 import LinkInjector from '../../../containers/LinkInjector.js'
 import Comment from '../../Content/components/Comment.js'
 import { Icon, Tooltip } from '../../../components/UI.js'
+import DisplayName from '../../User/components/DisplayName.js'
 
 const Content = () => {
 	const dispatch = useDispatch()
@@ -103,15 +103,7 @@ const Content = () => {
 							</div>
 							<div className="main">
 								<div className="details">
-									<span className="name align-center-wrap">
-										<Link
-											to={`/@${profile.username}`}
-											className="unstyled-link"
-										>
-											{profile.name}
-										</Link>
-										<VerifiedBadge verificationLevel={profile.verificationLevel} />
-									</span>
+									<DisplayName profile={profile} linked />
 									<span className="username"><Link
 										to={`/@${profile.username}`}
 										className="unstyled-link"

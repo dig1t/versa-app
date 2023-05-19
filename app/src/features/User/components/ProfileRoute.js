@@ -15,10 +15,10 @@ import {
 } from '../store/actions/profileActions.js'
 import { binarySearch } from '../../../util/index.js'
 import { defaultAssets } from '../../../constants/assets.js'
-import { VerifiedBadge } from '../../User/components/VerifiedBadge.js'
 import { useAuthenticated } from '../../../context/Auth.js'
 import LinkInjector from '../../../containers/LinkInjector.js'
 import FollowButton from './FollowButton.js'
+import DisplayName from './DisplayName.js'
 
 const feedCategories = [
 	{
@@ -105,10 +105,7 @@ const Profile = () => {
 							/>
 						</div>
 						<div className="container">
-							<div className="name align-center-wrap">
-								<span>{profileData.name}</span>
-								<VerifiedBadge verificationLevel={profileData.verificationLevel} />
-							</div>
+							<DisplayName profile={profileData} />
 							<div className="username">@{profileData.username}</div>
 							<div className="bio">
 								<LinkInjector text={profileData?.bio} />
