@@ -10,6 +10,15 @@ import { VerifiedBadge } from '../../User/components/VerifiedBadge.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
 import LinkInjector from '../../../containers/LinkInjector.js'
+import classNames from 'classnames'
+
+const getTextSize = (text) => {
+	if (text.length > 20) {
+		return 'text-large'
+	} else if (text.length > 10) {
+		return 'text-medium'
+	}
+}
 
 const Post = ({ data }) => {
 	const { profileList, contentList } = useSelector((state) => ({
@@ -67,7 +76,10 @@ const Post = ({ data }) => {
 					<div className="options"><Icon name="ellipsis" /></div>
 				</div>
 				<div className="content">
-					{content.body && <div className="text">
+					{content.body && <div className={classNames(
+						'text',
+						getTextSize(content.body || ''),
+					)}>
 						<LinkInjector text={content?.body} />
 					</div>}
 					{content.media && <ContentMedia {...content.media} />}
