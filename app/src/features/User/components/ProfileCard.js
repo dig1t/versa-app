@@ -1,6 +1,7 @@
 import React from 'react'
+
 import Avatar from './Avatar.js'
-import { VerifiedBadge } from './VerifiedBadge.js'
+import DisplayName from './DisplayName.js'
 
 const ProfileCard = ({ profileData }) => {
 	return <div className="profile-card">
@@ -14,8 +15,7 @@ const ProfileCard = ({ profileData }) => {
 		<div className="profile-card-body">
 			<div className="profile-card-body-wrap">
 				<div className="profile-card-body-name">
-					<span>{profileData.name}</span>
-					<VerifiedBadge verificationLevel={profileData.verificationLevel} />
+					<DisplayName profile={profileData} />
 				</div>
 				<div className="profile-card-body-username">
 					@{profileData.username}

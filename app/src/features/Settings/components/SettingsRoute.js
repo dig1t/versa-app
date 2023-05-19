@@ -1,22 +1,19 @@
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import Loading from '../../Core/components/Loading.js'
 import Layout from '../../Core/components/Layout.js'
 import { CatPills } from '../../../components/UI.js'
 import SettingsPage from './SettingsPage.js'
-import { useAuthenticated } from '../../../context/Auth.js'
 import settingsPageConfig from '../settingsPageConfig.js'
+import useProfile from '../../User/hooks/useProfile.js'
 
 const initialCategory = settingsPageConfig[0]
 
 const Settings = () => {
 	const { categoryParam } = useParams()
-	const { userId } = useAuthenticated()
-	
 	const navigate = useNavigate()
-	const profileList = useSelector((state) => state.profiles.profileList)
+	const profile = useProfile()
 	
 	const category = settingsPageConfig.find((cat) => cat.name === categoryParam) || initialCategory
 	
@@ -25,8 +22,6 @@ const Settings = () => {
 			navigate(`/settings/${initialCategory.name}`)
 		}
 	}, [categoryParam])
-	
-	const profile = profileList[userId]
 	
 	return <Layout page="settings">
 		{profile ? <div className="wrap grid">
