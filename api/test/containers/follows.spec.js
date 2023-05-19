@@ -12,7 +12,7 @@ import {
 	isMutualFollower,
 	createFollow,
 	deleteFollow
-} from '../../src/containers/follows.js'
+} from '../../src/services/followService.js'
 import mockUser from '../util/mockUser.js'
 
 chai.config.includeStack = true

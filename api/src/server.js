@@ -5,11 +5,11 @@ import cookieParser from 'cookie-parser'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import rateLimiterMiddleware from './util/rateLimiterMiddleware.js'
-import apiMiddleware from './util/apiMiddleware.js'
+import rateLimiterMiddleware from './middleware/rateLimiterMiddleware.js'
+import apiMiddleware from './middleware/apiMiddleware.js'
 import { APIError, errorMiddleware } from './util/apiError.js'
 
-import useAPI from './containers/routes.js'
+import useRoutes from './routes/index.js'
 import config from '../config.js'
 import oauth from './services/auth/oauth.js'
 
@@ -76,7 +76,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/oauth', oauth.use(app))
-app.use('/v1', useAPI(app))
+app.use('/v1', useRoutes(app))
 
 // Log all requests and their fields
 if (config.dev) app.use((req, res, next) => {

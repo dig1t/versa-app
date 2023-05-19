@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
 
-import useFields from '../util/useFields.js'
+import useFields from '../middleware/useFields.js'
 import { mongoValidate, mongoSanitize, mongoSession } from '../util/index.js'
 
 import Follower from '../models/Follower.js'
 import Profile from '../models/Profile.js'
-import { canViewProfile, getProfileFromUserId } from './profiles.js'
+import { canViewProfile, getProfileFromUserId } from './profileService.js'
 
 const deserializeFollow = (follow) => ({
 	followId: follow._id.toHexString(),
@@ -219,104 +219,4 @@ export {
 	getConnection,
 	createFollow,
 	deleteFollow
-}
-
-export default (server) => {
-	const router = new Router()
-	
-	router.get(
-		'/follow/connection',
-		useFields({
-			fields: ['userId']
-		}),
-		server.oauth.authorize(),
-		async (req) => {
-			req.apiResult(200, {
-				connection: await getConnection(req.fields.userId, req._oauth.user.userId),
-				userId: mongoSanitize(req.fields.userId)
-			})
-		}
-	)
-	
-	router.get(
-		'/follow/list',
-		useFields({
-			fields: ['userId'],
-			optionalFields: ['page']
-		}),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			const userCanViewProfile = await canViewProfile(req.fields.userId, req._oauth?.user?.userId)
-			
-			if (!userCanViewProfile) return req.apiResult(500, {
-				message: 'Not authorized to view profile'
-			})
-			
-			req.apiResult(200, {
-				followerList: await getFollowerList(req.fields.userId, req.fields.page),
-				page: req.fields.page ? mongoSanitize(req.fields.page) : undefined
-			})
-		}
-	)
-	
-	router.get(
-		'/follow/following_list',
-		useFields({
-			fields: ['userId'],
-			optionalFields: ['page']
-		}),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			const userCanViewProfile = await canViewProfile(req.fields.userId, req._oauth?.user?.userId)
-			
-			if (!userCanViewProfile) return req.apiResult(500, {
-				message: 'Not authorized to view profile'
-			})
-			
-			req.apiResult(200, {
-				followingList: await getFollowingList(req.fields.userId, req.fields.page),
-				page: req.fields.page ? mongoSanitize(req.fields.page) : undefined
-			})
-		}
-	)
-	
-	router.post(
-		'/follow/new',
-		useFields({ fields: ['userId'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			// TODO: Add private profile follow requests
-			
-			try {
-				req.apiResult(
-					200,
-					await createFollow(req.fields.userId, req._oauth.user.userId)
-				)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.post(
-		'/follow/unfollow',
-		useFields({ fields: ['userId'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			try {
-				req.apiResult(
-					200,
-					await deleteFollow(req.fields.userId, req._oauth.user.userId)
-				)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	return router
 }

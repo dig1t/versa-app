@@ -5,7 +5,7 @@ import { Buffer } from 'node:buffer'
 import config from '../../../config.js'
 import Adapter from './adapter.js'
 import oauth2Config from '../../constants/oauth2Config.js'
-import { authenticateUserCredentials, getUserFromUserId } from '../../containers/users.js'
+import { authenticateUserCredentials, getUserFromUserId } from '../../services/userService.js'
 
 class OAuth2 {
 	constructor() {

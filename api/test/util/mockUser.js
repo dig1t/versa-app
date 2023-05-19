@@ -5,7 +5,7 @@ import crypto from 'crypto'
 import server from '../../src/server.js'
 import {
 	deleteAccount
-} from '../../src/containers/users.js'
+} from '../../src/services/userService.js'
 import { MOCK_USER } from '../data.js'
 
 chai.config.includeStack = true
