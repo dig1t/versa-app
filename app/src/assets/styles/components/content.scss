@@ -153,13 +153,27 @@ main[page="content"] {
 
 .post-editor {
 	.box {
-    	background-color: var(--light-gray-200);
-		border: 0.1rem solid transparent;
+		border: 0.1rem solid var(--divider-color);
     	padding: .8rem;
 		transition-duration: .1s;
 		
 		&:has(.input-focused) {
 			border-color: var(--primary-color);
+		}
+	}
+	
+	.post-header {
+		margin-bottom: 1rem;
+		display: flex;
+		
+		.avatar {
+			margin-right: .5rem;
+			flex-basis: 2.5rem;
+		}
+		
+		.name {
+			font-weight: $font-bold;
+			font-size: 1rem;
 		}
 	}
 	
@@ -169,7 +183,7 @@ main[page="content"] {
 		margin-bottom: .4rem;
 		border: 0;
 		padding: 0;
-		font-weight: $font-semibold;
+		//font-weight: $font-semibold;
 		
 		&::placeholder {
 			color: var(--blue-gray-200);

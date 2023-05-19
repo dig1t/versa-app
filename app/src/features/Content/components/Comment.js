@@ -1,18 +1,16 @@
 import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 
 import { Tooltip } from '../../../components/UI.js'
 import Avatar from '../../User/components/Avatar.js'
-import { VerifiedBadge } from '../../User/components/VerifiedBadge.js'
 import LinkInjector from '../../../containers/LinkInjector.js'
+import DisplayName from '../../User/components/DisplayName.js'
+import useProfile from '../../User/hooks/useProfile.js'
 
 const Comment = ({ data }) => {
-	const profileList = useSelector((state) => state.profiles.profileList)
-	
-	const profile = profileList[data.userId]
+	const profile = useProfile(data.userId)
 	
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
 		const dateInstance = new Date(data.created)
@@ -36,15 +34,7 @@ const Comment = ({ data }) => {
 			</div>
 			<div className="main">
 				<div className="details">
-					<span className="name align-center-wrap">
-						<Link
-							to={`/@${profile.username}`}
-							className="unstyled-link"
-						>
-							{profile.name}
-						</Link>
-						<VerifiedBadge verificationLevel={profile.verificationLevel} />
-					</span>
+					<DisplayName profile={profile} linked />
 					<span className="username"><Link
 						to={`/@${profile.username}`}
 						className="unstyled-link"

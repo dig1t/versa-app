@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react'
 import classNames from 'classnames'
-
-import { Input, Icon } from '../../../components/UI.js'
-import api from '../../../util/api.js'
-import { newFeedPost } from '../store/actions/feedActions.js'
 import { useDispatch } from 'react-redux'
 
+import api from '../../../util/api.js'
+import { Input, Icon } from '../../../components/UI.js'
+import { newFeedPost } from '../store/actions/feedActions.js'
+import Avatar from '../../User/components/Avatar.js'
+import DisplayName from '../../User/components/DisplayName.js'
 import FileUploader, { FilePreviewer } from './FileUploader.js'
+import useProfile from '../../User/hooks/useProfile.js'
 
 const PostEditor = () => {
 	const dispatch = useDispatch()
@@ -16,6 +18,7 @@ const PostEditor = () => {
 	const [valid, setValid] = useState(false)
 	const [files, setFiles] = useState([])
 	const [filesReady, setFilesReady] = useState(true)
+	const profile = useProfile()
 	
 	const handleSubmit = () => {
 		if (!valid || !filesReady) return
@@ -35,6 +38,12 @@ const PostEditor = () => {
 	
 	return <div className="post-editor">
 		<label className="box">
+			<div className="post-header">
+				{profile && <>
+					<Avatar userId={profile.userId} />
+					<DisplayName profile={profile} />
+				</>}
+			</div>
 			<Input
 				ref={inputRef}
 				handleValidity={setValid}

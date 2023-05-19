@@ -4,10 +4,14 @@ import classNames from 'classnames'
 
 import { Input } from '../../../components/UI.js'
 import api from '../../../util/api.js'
+import useProfile from '../../User/hooks/useProfile.js'
+import Avatar from '../../User/components/Avatar.js'
+import DisplayName from '../../User/components/DisplayName.js'
 
 const CommentEditor = ({ contentId, handleSuccess }) => {
 	const inputRef = useRef(null)
 	const [valid, setValid] = useState(false)
+	const profile = useProfile()
 	
 	const handleSubmit = () => {
 		const body = inputRef.current.getValue()
@@ -29,6 +33,12 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 	
 	return <div className="post-editor simple">
 		<label className="box">
+			<div className="post-header">
+				{profile && <>
+					<Avatar userId={profile.userId} />
+					<DisplayName profile={profile} />
+				</>}
+			</div>
 			<Input
 				ref={inputRef}
 				handleValidity={setValid}
