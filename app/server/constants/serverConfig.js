@@ -1,4 +1,4 @@
-import config from './config.js'
+import config from '../config.js'
 
 export default {
 	maxTokenAge: 24 * 60 * 60 * 365 * 1000, // 1 year
@@ -7,7 +7,7 @@ export default {
 		name: config.appName,
 		short_name: config.appName,
 		description: config.appDescription,
-		start_url: '/login',
+		start_url: '/',
 		display: 'standalone',
 		orientation: 'portrait',
 		theme_color: config.brandColor,
