@@ -7,7 +7,7 @@ import {
 	getUserIdFromSession,
 	getUserFromSession,
 	getUserFromUserId,
-} from '../../src/containers/users.js'
+} from '../../src/services/userService.js'
 import mockUser from '../util/mockUser.js'
 import { MOCK_USER } from '../data.js'
 

@@ -6,7 +6,7 @@ import {
 	canViewProfile,
 	isProfilePrivate,
 	getProfilePosts
-} from '../../src/containers/profiles.js'
+} from '../../src/services/profileService.js'
 import mockUser from '../util/mockUser.js'
 
 chai.config.includeStack = true

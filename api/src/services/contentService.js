@@ -3,12 +3,12 @@ import mongoose from 'mongoose'
 
 import config from '../constants/config.js'
 import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
-import useFields from '../util/useFields.js'
+import useFields from '../middleware/useFields.js'
 
 import Post from '../models/Post.js'
 import Content from '../models/Content.js'
-import { canViewProfile, getProfileFromUserId } from './profiles.js'
-import { isMutualFollower } from './follows.js'
+import { canViewProfile, getProfileFromUserId } from './profileService.js'
+import { isMutualFollower } from './followService.js'
 import Comment from '../models/Comment.js'
 import Like from '../models/Like.js'
 
@@ -400,7 +400,7 @@ const createLike = async (data) => {
 	}
 }
 
-const deleteLike = async (data) => {
+const removeLike = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
 	if (!data.contentId) throw new Error('Missing contentId')
 	
@@ -454,173 +454,6 @@ export {
 	deleteComment,
 	getComments,
 	createLike,
-	deleteLike,
+	removeLike,
 	userLikesContent
-}
-
-export default (server) => {
-	const router = new Router()
-	
-	router.get(
-		'/content/:contentId',
-		useFields({ params: ['contentId'] }),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				const content = await getContent(req.params.contentId, req._oauth?.user?.userId)
-				
-				if (!content) throw new Error('Content not found')
-				
-				req.apiResult(200, content)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.post(
-		'/content/:contentId/comment',
-		useFields({ fields: ['body'], params: ['contentId'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			try {
-				const post = await createComment({
-					userId: req._oauth.user.userId,
-					contentId: req.params.contentId,
-					body: req.fields.body
-				})
-				
-				req.apiResult(200, post)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.delete(
-		'/content/:contentId/comment',
-		useFields({ params: ['contentId'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			try {
-				const res = await deleteComment({
-					userId: req._oauth.user.userId,
-					contentId: req.params.contentId
-				})
-				
-				req.apiResult(200, res)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.post(
-		'/content/:contentId/like',
-		useFields({ params: ['contentId'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			try {
-				const like = await createLike({
-					userId: req._oauth.user.userId,
-					contentId: req.params.contentId
-				})
-				
-				req.apiResult(200, like)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.delete(
-		'/content/:contentId/like',
-		useFields({ params: ['contentId'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			try {
-				const res = await deleteLike({
-					userId: req._oauth.user.userId,
-					contentId: req.params.contentId
-				})
-				
-				req.apiResult(200, res)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.get(
-		'/content/:contentId/comments',
-		useFields({ params: ['contentId'] }),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				const comments = await getComments(req.params.contentId, req._oauth?.user?.userId)
-				
-				if (!comments) throw new Error('Comments not found')
-				
-				req.apiResult(200, comments)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.post(
-		'/post/new',
-		useFields({ fields: ['body'] }),
-		server.oauth.authorize(),
-		async (req) => {
-			try {
-				const post = await createPost(req._oauth.user.userId, req.fields)
-				
-				req.apiResult(200, post)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	router.get(
-		'/post/:postId',
-		useFields({ params: ['postId'] }),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				const post = await getPost(req.params.postId, req._oauth.user.userId)
-				
-				if (!post) throw new Error('Post not found')
-				
-				req.apiResult(200, post)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	/*
-	router.post('/content/:contentId/like', (req, res) => {
-		
-	})
-	*/
-	
-	return router
 }
