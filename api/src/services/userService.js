@@ -1,4 +1,3 @@
-import { Router } from 'express'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
@@ -9,11 +8,10 @@ import Setting from '../models/Setting.js'
 
 import config from '../constants/config.js'
 import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
-import useFields from '../util/useFields.js'
 import {
 	deserializeProfile
-} from './profiles.js'
-import { deserializeSettings } from './settings.js'
+} from './profileService.js'
+import { deserializeSettings } from './settingService.js'
 
 const deserializeUser = (user, settings) => ({
 	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
@@ -317,85 +315,4 @@ export {
 	updateEmail,
 	updatePassword,
 	updateProfile
-}
-
-export default (server) => {
-	const router = new Router()
-	
-	router.get(
-		'/user/:userId',
-		useFields({ fields: ['sessionId'] }),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				const user = await getUserFromSession(req.fields.sessionId)
-				
-				// Possible attack
-				if (user.userId !== req.params.userId) throw new Error('Unexpected Error')
-				
-				req.apiResult(200, user)
-			} catch(error) {
-				req.apiResult(500)
-			}
-		}
-	)
-	
-	router.post(
-		'/user/authenticate',
-		useFields({ fields: ['email', 'password'] }),
-		server.oauth.useROPCGrant(),
-		async (req) => {
-			try {
-				const auth = await authenticate(
-					req,
-					req._oauth.grant.accountId,
-					req._oauth.grant.grantId
-				)
-				
-				req.apiResult(200, {
-					auth,
-					user: await getUserFromUserId(req._oauth.grant.accountId)
-				})
-			} catch(error) {
-				req.apiResult(401, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	/* router.post(
-		'/user/authenticate_session',
-		useFields({ fields: ['sessionId'] }),
-		async (req, res) => {
-			try {
-				const user = await getUserFromSession(req.fields.sessionId)
-				
-				req.apiResult(200, user)
-			} catch(error) {
-				req.apiResult(401, {
-					message: error
-				})
-			}
-		}
-	) */
-	
-	router.post(
-		'/user/new',
-		useFields({ fields: ['name', 'email', 'password'] }),
-		async (req) => {
-			try {
-				const account = await createAccount(req)
-				
-				req.apiResult(200, account)
-			} catch(error) {
-				console.log(error)
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	return router
 }
