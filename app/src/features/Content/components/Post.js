@@ -3,14 +3,14 @@ import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import classNames from 'classnames'
 
 import Avatar from '../../User/components/Avatar.js'
 import { Icon, Tooltip } from '../../../components/UI.js'
-import { VerifiedBadge } from '../../User/components/VerifiedBadge.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
 import LinkInjector from '../../../containers/LinkInjector.js'
-import classNames from 'classnames'
+import DisplayName from '../../User/components/DisplayName.js'
 
 const getTextSize = (text) => {
 	if (text.length > 20) {
@@ -51,15 +51,7 @@ const Post = ({ data }) => {
 			</div>
 			<div className="main">
 				<div className="details">
-					<span className="name align-center-wrap">
-						<Link
-							to={`/@${contentProfile.username}`}
-							className="unstyled-link"
-						>
-							{contentProfile.name}
-						</Link>
-						<VerifiedBadge verificationLevel={contentProfile.verificationLevel} />
-					</span>
+					<DisplayName profile={contentProfile} linked />
 					<span className="username"><Link
 						to={`/@${contentProfile.username}`}
 						className="unstyled-link"
