@@ -69,6 +69,14 @@ main[page="content"] {
 				.text {
 					font-size: .9rem;
 					letter-spacing: .02rem;
+					
+					&-medium {
+						font-size: 1.2rem;
+					}
+					
+					&-large {
+						font-size: 1.4rem;
+					}
 				}
 				
 				.media {
