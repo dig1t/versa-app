@@ -1,17 +1,8 @@
-/* eslint-disable no-undef */
-import { Router } from 'express'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 import config from '../config.js'
 import api from '../../src/util/api.js'
-import authMiddleware, { logout } from '../util/authMiddleware.js'
-import apiMiddleware from '../util/apiMiddleware.js'
-
-const router = Router()
-
-router.use(apiMiddleware())
-router.use(authMiddleware())
 
 api.setOption('withCredentials', false)
 
@@ -63,21 +54,18 @@ passport.use('local', new LocalStrategy(
 	}
 ))
 
-/* Define Routes */
-router.post('/auth/logout', async (req) => {
-	try {
-		await req.logoutUser()
-		
-		req.apiResult(200)
-	} catch(error) {
-		req.apiResult(500)
-	}
-})
+export default {
+	postLogout: async (req) => {
+		try {
+			await req.logoutUser()
+			
+			req.apiResult(200)
+		} catch(error) {
+			req.apiResult(500)
+		}
+	},
 
-router.post(
-	'/auth/login',
-	logout, // Clear session/cookie data if logged in
-	(req, res) => passport.authenticate('local', async (_, data) => {
+	postLogin: (req, res) => passport.authenticate('local', async (_, data) => {
 		try {
 			await req.loginUser(data)
 			
@@ -89,12 +77,9 @@ router.post(
 			console.log(error)
 			req.apiResult(401)
 		}
-	})(req, res)
-)
+	})(req, res),
 
-router.post(
-	'/auth/signup',
-	async (req) => {
+	postSignup: async (req) => {
 		if (req.authenticated()) return req.apiResult(400, {
 			message: 'Already logged in'
 		})
@@ -114,12 +99,9 @@ router.post(
 				message: `Error while signing up ${error}`
 			})
 		}
-	}
-)
+	},
 
-router.get(
-	'/auth/get_user',
-	async (req) => {
+	getUser: async (req) => {
 		try {
 			if (!req.authenticated()) throw new Error('Not authenticated')
 			
@@ -137,6 +119,4 @@ router.get(
 			})
 		}
 	}
-)
-
-export default router
+}
