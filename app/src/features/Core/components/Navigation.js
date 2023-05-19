@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { useSelector } from 'react-redux'
 
 import { useAuthenticated } from '../../../context/Auth.js'
 import { isHydrated } from '../../../context/Hydration.js'
@@ -12,6 +11,7 @@ import DropMenu, { ItemMenu, Item, ItemDivider } from '../../../components/DropM
 import Modal from '../../../components/Modal.js'
 import PostEditor from '../../Content/components/PostEditor.js'
 import Logout from '../../Auth/components/Logout.js'
+import useProfile from '../../User/hooks/useProfile.js'
 
 //import { BurgerMenu } from './UI.js'
 
@@ -52,11 +52,8 @@ const Shortcut = ({ redirect }) => <NavButton type="shortcut">
 
 export const Navigation = () => {
 	const hydrated = isHydrated()
-	const { loggedIn, userId } = useAuthenticated()
-	
-	const profileList = useSelector((state) => state.profiles.profileList)
-	
-	const profile = profileList[userId]
+	const { loggedIn } = useAuthenticated()
+	const profile = useProfile()
 	
 	const Menu = <ItemMenu>
 		{profile && <Item link={`/@${profile.username}`}>My Profile</Item>}

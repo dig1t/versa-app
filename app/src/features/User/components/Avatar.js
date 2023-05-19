@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import { getProfile } from '../store/actions/profileActions.js'
 import { defaultAssets } from '../../../constants/assets.js'
 import { Modal } from '../../../components/UI.js'
+import useProfile from '../hooks/useProfile.js'
 
 const activityTypeColors = {
 	story: 'var(--blue)'
@@ -44,36 +45,24 @@ const Avatar = ({
 	clickRedirect,
 	useModal
 }) => {
-	const dispatch = useDispatch()
-	const { profileList } = useSelector((state) => ({
-		profileList: state.profiles.profileList
-	}))
-	
-	const [avatarImg, setAvatarImg] = useState()
-	const [fetching, setFetching] = useState(false)
-	const [profile, setProfile] = useState()
+	const [avatarImg, setAvatarImg] = useState(defaultAssets.avatar)
+	const profile = useProfile(userId)
 	
 	useEffect(() => {
-		if (profile || avatarImg) return
+		if (!profile) return
 		
 		if (avatar) {
 			setAvatarImg(avatar)
 			return
 		}
 		
-		const profileFetch = profileList[userId]
-		
-		if (profileFetch) {
-			setProfile(profileFetch)
-			setAvatarImg(profileFetch.avatar || defaultAssets.avatar)
-		} else if (typeof userId !== 'undefined' && !fetching) {
-			setFetching(true)
-			dispatch(getProfile(userId))
+		if (profile.avatar) {
+			setAvatarImg(profile.avatar)
 		}
-	}, [profileList, fetching])
+	}, [profile])
 	
 	const ModalComponent = React.memo(({ children }) => {
-		return useModal ? <Modal type="image" image={avatarImg || defaultAssets.avatar}>
+		return useModal ? <Modal type="image" image={avatarImg}>
 			{children}
 		</Modal> : <>{children}</>
 	}, [useModal])
@@ -92,7 +81,7 @@ const Avatar = ({
 				)}>
 					<RenderLink clickRedirect={clickRedirect} profile={profile}>
 						<div className="img" style={{
-							backgroundImage: `url(${avatarImg || defaultAssets.avatar})`
+							backgroundImage: `url(${avatarImg})`
 						}} />
 						{status && <div className={classNames(
 							'activity-status', status
@@ -113,17 +102,5 @@ Avatar.defaultProps = {
 Avatar.propTypes = {
 	useModal: PropTypes.bool
 }
-
-/*
-				<div className="avatar">
-					<div className="push" />
-					<div className="avatar-wrap">
-						<div className="img" style={{
-							backgroundImage: `url(${defaultAssets.avatar})`
-						}} />
-						<div className="activity-status online" />
-					</div>
-				</div>
-*/
 
 export default Avatar
