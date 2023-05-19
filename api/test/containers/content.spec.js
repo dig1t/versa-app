@@ -8,9 +8,9 @@ import {
 	deleteComment,
 	getComments,
 	createLike,
-	deleteLike,
+	removeLike,
 	userLikesContent
-} from '../../src/containers/content.js'
+} from '../../src/services/contentService.js'
 import mockUser from '../util/mockUser.js'
 
 describe('create post and content', async () => {
@@ -82,7 +82,7 @@ describe('create post and content', async () => {
 	})
 	
 	it('deletes a likes', async () => {
-		const res = await deleteLike({
+		const res = await removeLike({
 			userId: account.user.userId,
 			contentId: post.content.contentId
 		})

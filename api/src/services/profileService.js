@@ -4,13 +4,13 @@ import {
 	deserializePost,
 	profileFeedPipeline,
 	getContent
-} from './content.js'
+} from './contentService.js'
 import { validateText, mongoSanitize, mongoValidate } from '../util/index.js'
 
 import Post from '../models/Post.js'
 import Profile from '../models/Profile.js'
-import { isFollowing, getConnection } from './follows.js'
-import useFields from '../util/useFields.js'
+import { isFollowing, getConnection } from './followService.js'
+import useFields from '../middleware/useFields.js'
 
 const deserializeProfile = (profile) => ({
 	userId: profile.userId.toHexString(),
@@ -141,75 +141,8 @@ const getProfilePosts = async (userId, requesterUserId) => {
 export {
 	deserializeProfile,
 	getProfileFromUserId,
+	getProfileFromUsername,
 	canViewProfile,
 	isProfilePrivate,
 	getProfilePosts
-}
-
-export default (server) => {
-	const router = new Router()
-	
-	router.get(
-		[
-			'/profile/:userId?',
-			'/profile/username/:username'
-		],
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				if (!req.params?.userId && !req.params?.username) {
-					throw new Error('Missing fields: userId or username')
-				} else if (req.params.username && !validateText(req.params.username, 'username')) {
-					throw new Error('Invalid username')
-				}
-				
-				const profile = (
-					req.params.userId && await getProfileFromUserId(req.params.userId)
-				) || (
-					req.params.username && await getProfileFromUsername(req.params.username)
-				)
-				
-				if (!profile) throw new Error()
-				
-				const requesterUserId = req._oauth?.user?.userId
-				
-				if (requesterUserId) {
-					profile.connection = await getConnection(profile.userId, requesterUserId)
-				}
-				
-				req.apiResult(200, profile)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error || 'Could not get profile'
-				})
-			}
-		}
-	)
-	
-	router.get(
-		'/profile/:userId/feed',
-		useFields({ params: ['userId'] }),
-		server.oauth.authorize({ optional: true }),
-		async (req) => {
-			try {
-				const userCanViewProfile = await canViewProfile(
-					req.params.userId, req._oauth?.user?.userId
-				)
-				
-				if (!userCanViewProfile) return req.apiResult(500, {
-					message: 'Not authorized to view profile'
-				})
-				
-				const posts = await getProfilePosts(req.params.userId, req._oauth?.user?.userId)
-				
-				req.apiResult(200, posts)
-			} catch(error) {
-				req.apiResult(500, {
-					message: error
-				})
-			}
-		}
-	)
-	
-	return router
 }

@@ -9,8 +9,7 @@ import {
 import { Upload } from '@aws-sdk/lib-storage'
 import crypto from 'crypto'
 
-import cdnConfig from '../../config/cdn.js'
-import validateText from '../util/validateText.js'
+import validateText from './validateText.js'
 
 class CDN {
 	constructor(options) {
