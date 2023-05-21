@@ -45,18 +45,11 @@ const Avatar = ({
 	clickRedirect,
 	useModal
 }) => {
-	const [avatarImg, setAvatarImg] = useState(defaultAssets.avatar)
+	const [avatarImg, setAvatarImg] = useState(avatar || defaultAssets.avatar)
 	const profile = useProfile(userId)
 	
 	useEffect(() => {
-		if (!profile) return
-		
-		if (avatar) {
-			setAvatarImg(avatar)
-			return
-		}
-		
-		if (profile.avatar) {
+		if (profile?.avatar && avatar === undefined) {
 			setAvatarImg(profile.avatar)
 		}
 	}, [profile])
@@ -95,11 +88,19 @@ const Avatar = ({
 }
 
 Avatar.defaultProps = {
-	useModal: false,
-	isCardAvatar: false
+	hasStory: false,
+	isCardAvatar: false,
+	clickRedirect: false,
+	useModal: false
 }
 
 Avatar.propTypes = {
+	avatar: PropTypes.string,
+	status: PropTypes.string,
+	hasStory: PropTypes.bool,
+	isCardAvatar: PropTypes.bool,
+	userId: PropTypes.string,
+	clickRedirect: PropTypes.bool,
 	useModal: PropTypes.bool
 }
 

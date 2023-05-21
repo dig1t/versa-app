@@ -7,20 +7,23 @@ import classNames from 'classnames'
 
 import Avatar from '../../User/components/Avatar.js'
 import { Icon, Tooltip } from '../../../components/UI.js'
+import DropMenu, { ItemMenu, MenuLink, MenuItem, MenuDivider } from '../../../components/DropMenu.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
 import LinkInjector from '../../../containers/LinkInjector.js'
 import DisplayName from '../../User/components/DisplayName.js'
+import { useAuthenticated } from '../../../context/Auth.js'
 
 const getTextSize = (text) => {
-	if (text.length > 20) {
-		return 'text-large'
-	} else if (text.length > 10) {
+	if (text.length < 32) {
 		return 'text-medium'
+	} else if (text.length < 16) {
+		return 'text-large'
 	}
 }
 
 const Post = ({ data }) => {
+	const { userId } = useAuthenticated()
 	const { profileList, contentList } = useSelector((state) => ({
 		profileList: state.profiles.profileList,
 		contentList: state.content.contentList
@@ -44,6 +47,18 @@ const Post = ({ data }) => {
 		}
 	}, [data.created])
 	
+	const OptionsMenu = <ItemMenu>
+		{content.userId === userId && (
+			<MenuItem onClick={() => console.log('clicked')}>fsaddf</MenuItem>
+		)}
+		<MenuDivider />
+		<MenuLink link="/settings">Settings</MenuLink>
+		
+		<li>
+			dd
+		</li>
+	</ItemMenu>
+	
 	return <div className="post" data-id={data.postId}>
 		<div className="container">
 			<div className="post-avatar">
@@ -51,13 +66,7 @@ const Post = ({ data }) => {
 			</div>
 			<div className="main">
 				<div className="details">
-					<DisplayName profile={contentProfile} linked />
-					<span className="username"><Link
-						to={`/@${contentProfile.username}`}
-						className="unstyled-link"
-					>
-						@{contentProfile.username}
-					</Link></span>
+					<DisplayName profile={contentProfile} username linked />
 					<span>&bull;</span>
 					<span className="time"><Link
 						to={`/@${contentProfile.username}/${content.contentId}`}
@@ -65,7 +74,11 @@ const Post = ({ data }) => {
 					>
 						<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
 					</Link></span>
-					<div className="options"><Icon name="ellipsis" /></div>
+					<div className="options">
+						<DropMenu menu={OptionsMenu} position="left">
+							<Icon name="ellipsis" />
+						</DropMenu>
+					</div>
 				</div>
 				<div className="content">
 					{content.body && <div className={classNames(

@@ -105,19 +105,24 @@ const Profile = () => {
 							/>
 						</div>
 						<div className="container">
-							<DisplayName profile={profileData} />
-							<div className="username">@{profileData.username}</div>
+							<DisplayName profile={profileData} username wrap />
 							<div className="bio">
 								<LinkInjector text={profileData?.bio} />
 							</div>
 							{profileData.website && <div className="website">
-								<a href={'//' + profileData.website} target="_blank">
+								<a
+									href={'//' + profileData.website}
+									target="_blank"
+									rel="noopener noreferrer nofollow external"
+									referrerPolicy="no-referrer"
+								>
 									{profileData.website}
 								</a>
 							</div>}
 						</div>
 						{profileData.connection && (profileData.connection.isSelf ? <button
-							className="cta edit-profile btn-round btn-outline"
+							className="cta btn-round btn-outline"
+							data-card-action="edit-profile"
 							onClick={() => navigate('/settings/profile')}
 						>
 							Edit Profile

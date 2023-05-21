@@ -16,9 +16,10 @@ const FollowButton = ({ userId, following }) => {
 	
 	return <button
 		className={classNames(
-			'cta edit-profile btn-round btn-outline',
+			'cta btn-round btn-outline',
 			following ? 'btn-secondary following' : 'not-following'
 		)}
+		data-card-action={following ? 'unfollow' : 'follow'}
 		onClick={handleClick}
 	>{
 		following ? 'Unfollow' : 'Follow'
