@@ -18,7 +18,7 @@ const Modal = (props) => {
 		}
 	}, [props])
 	
-	return <Portal>
+	return <Portal active={props.open}>
 		{open && <div
 			className={classNames('modal', `modal-${type}`)}
 		>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import isURL from 'validator/es/lib/isURL.js'
 import isAlphanumeric from 'validator/es/lib/isAlphanumeric.js'
 import { Link } from 'react-router-dom'
@@ -20,7 +20,8 @@ const LinkInjector = ({ text }) => {
 		return (<a
 			href={word}
 			target="_blank"
-			rel="noopener noreferrer"
+			rel="noopener noreferrer nofollow external"
+			referrerPolicy="no-referrer"
 		>
 			{word}
 		</a>)

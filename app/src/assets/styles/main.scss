@@ -18,28 +18,34 @@ $primary-color-name: 'blue';
 	--box-spacing: .6rem;
 	--box-corner: .4rem;
 	--max-box-size: 40rem;
+	--box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.1);
 }
 
 main[data-theme="light"] {
 	--bg-color: #{color(blue-gray, 50)};
 	--bg-color-darker: #{color(blue-gray, 100)};
 	--box-color: #fff;
-	--box-color-dark: #{color(blue-gray, 50)};
+	--box-color-secondary: #{color(blue-gray, 50)};
 	--color-white: #fff;
 	--color-off-white: #f5f5f5;
 	--color-black: #000;
-	--divider-color: var(--blue-gray-50);
+	--divider-color: var(--black-gray-50);
 	--text-color: #{color(blue-gray, 900)};
 	--text-color-secondary: #{color(blue-gray, 400)};
 	--text-color-light: #{color(blue-gray, 200)};
 }
 
 main[data-theme="dark"] {
-	--bg-color: #000;
-	--box-color: #000;
+	--bg-color: var(--black-800);
+	--box-color: var(--black-800);
+	--box-color-secondary: #{color(black, 700)};
 	--color-white: #000;
+	--color-off-white: #f5f5f5;
 	--color-black: #fff;
+	--divider-color: var(--black-700);
 	--text-color: #fff;
+	--text-color-light: #{color(blue-gray, 800)};
+	--text-color-secondary: #{color(blue-gray, 500)};
 }
 
 body {
@@ -51,7 +57,7 @@ body {
 
 button, a.btn {
 	// Base properties for buttons
-	color: var(--color-white);
+	color: var(--white);
 	background-color: $primary-color;
 	border-radius: $border-radius;
 	padding: .5rem 1.2rem;
@@ -107,7 +113,7 @@ button, a.btn {
 		
 		&-secondary {
 			color: $btn-secondary;
-			background-color: #fff;
+			background-color: transparent;
 			border: 1px solid $btn-secondary;
 			
 			&:hover {
@@ -143,7 +149,7 @@ button, a.btn {
 	}
 }
 
-main {
+main:not(.portal) {
 	color: var(--text-color);
 	background-color: var(--box-color);
 	width: 100%;
@@ -192,6 +198,7 @@ main {
 			height: 100%;
 			width: inherit;
 			background-color: var(--box-color);
+			border-right: 1px solid var(--divider-color);
 			padding: 1rem 0;
 			display: flex;
 			flex-direction: column;
@@ -327,7 +334,7 @@ main {
 	$inputValidColor: var(--green-600);
 	
 	input, textarea {
-		border: 1px solid var(--blue-gray-100);
+		//border: 1px solid var(--blue-gray-100);
 		padding: $paddingY $paddingX;
 		font-size: $fontSize;
 		line-height: $fontSize;
