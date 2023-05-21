@@ -79,7 +79,7 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 	}, [validInputs, inputData, data])
 	
 	return <div className="profile-settings">
-		<ProfileCard profileData={{
+		<ProfileCard profile={{
 			...data.profile,
 			...inputData
 		}} />

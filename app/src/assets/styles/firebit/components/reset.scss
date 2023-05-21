@@ -53,11 +53,17 @@ button > a {
 	color: inherit;
 }
 
+main[data-theme="dark"] {
+	select, input, textarea {
+		color: var(--white);
+	}
+}
+
 select, input, textarea {
-	color: var(--black);
-	background-color: #fff;
+	color: var(--box-color);
+	background-color: var(--box-color);
 	width: 100%;
-	border: 1px solid var(--gray-200);
+	border: 1px solid var(--text-color-light);
 	padding: 6px;
 	font-size: type-scale(0);
 	display: block;

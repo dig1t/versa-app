@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
+import { useSelector } from 'react-redux'
+import PropTypes from 'prop-types'
 
 const getDOMRoot = () => {
 	const res = document.getElementById('ui-root')
@@ -14,9 +16,10 @@ const getDOMRoot = () => {
 	return root
 }
 
-const Portal = ({ children }) => {
+const Portal = ({ active, children }) => {
 	const root = useRef()
 	const [mounted, setMounted] = useState(false)
+	const appTheme = useSelector((state) => state.user.settings.appTheme)
 	
 	useEffect(() => {
 		// Mounted
@@ -25,9 +28,21 @@ const Portal = ({ children }) => {
 	}, [])
 	
 	return mounted ? ReactDOM.createPortal(
-		children,
+		<>
+			{active && <main className="portal" data-theme={appTheme}>
+				{children}
+			</main>}
+		</>,
 		root.current
 	) : <></>
+}
+
+Portal.defaultProps = {
+	active: false
+}
+
+Portal.propTypes = {
+	active: PropTypes.bool
 }
 
 export default Portal

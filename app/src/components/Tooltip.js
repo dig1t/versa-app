@@ -47,7 +47,7 @@ const Tooltip = (props, ref) => {
 		setPos({ x, y })
 	}, [props, tooltipElement, ref])
 	
-	return <Portal>
+	return <Portal active={props.open}>
 		{props.open && <div
 			ref={tooltipElement}
 			className={classNames('tooltip', nubPosition)}

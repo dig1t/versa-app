@@ -7,7 +7,7 @@ import { isHydrated } from '../../../context/Hydration.js'
 import { defaultAssets } from '../../../constants/assets.js'
 import Avatar from '../../User/components/Avatar.js'
 import { Icon } from '../../../components/UI.js'
-import DropMenu, { ItemMenu, Item, ItemDivider } from '../../../components/DropMenu.js'
+import DropMenu, { ItemMenu, MenuLink, MenuDivider } from '../../../components/DropMenu.js'
 import Modal from '../../../components/Modal.js'
 import PostEditor from '../../Content/components/PostEditor.js'
 import Logout from '../../Auth/components/Logout.js'
@@ -56,9 +56,9 @@ export const Navigation = () => {
 	const profile = useProfile()
 	
 	const Menu = <ItemMenu>
-		{profile && <Item link={`/@${profile.username}`}>My Profile</Item>}
-		<ItemDivider />
-		<Item link="/settings">Settings</Item>
+		{profile && <MenuLink link={`/@${profile.username}`}>My Profile</MenuLink>}
+		<MenuDivider />
+		<MenuLink link="/settings">Settings</MenuLink>
 		
 		<li>
 			<Logout />

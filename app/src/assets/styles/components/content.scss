@@ -45,14 +45,14 @@ main[page="content"] {
 			gap: .4rem;
 			
 			.details {
-				color: var(--text-color-light);
+				color: var(--text-color-secondary);
 				font-size: .9rem;
 				display: flex;
 				flex-wrap: wrap;
 				align-items: baseline;
 				position: relative;
 				
-				.name {
+				.display-name {
 					color: var(--text-color);
 					font-size: 1.1rem;
 					font-weight: $font-bold;
@@ -140,7 +140,7 @@ main[page="content"] {
 		}
 		
 		.details {
-			.name {
+			.display-name {
 				font-size: 1rem;
 			}
 			
@@ -171,7 +171,7 @@ main[page="content"] {
 			flex-basis: 2.5rem;
 		}
 		
-		.name {
+		.display-name {
 			font-weight: $font-bold;
 			font-size: 1rem;
 		}
@@ -226,7 +226,13 @@ main[page="content"] {
 	}
 }
 
+main[data-theme="dark"] .avatar {
+	--avatar-white: var(--black-700);
+}
+
 .avatar {
+	--avatar-white: var(--color-white);
+	
 	position: relative;
 	
 	&-wrap {
@@ -251,7 +257,7 @@ main[page="content"] {
 		position: relative;
 		
 		&.avatar-card {
-			background-color: var(--white);
+			background-color: var(--avatar-white);
 			padding: .25rem;
 		}
 		
@@ -263,7 +269,7 @@ main[page="content"] {
 		.activity-status {
 			width: 30%;
 			height: 30%;
-			border: 1px solid var(--color-white);
+			border: 1px solid var(--avatar-white);
 			border-radius: 100%;
 			position: absolute;
 			right: -.5%;

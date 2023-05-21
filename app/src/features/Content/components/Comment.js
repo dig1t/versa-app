@@ -34,13 +34,7 @@ const Comment = ({ data }) => {
 			</div>
 			<div className="main">
 				<div className="details">
-					<DisplayName profile={profile} linked />
-					<span className="username"><Link
-						to={`/@${profile.username}`}
-						className="unstyled-link"
-					>
-						@{profile.username}
-					</Link></span>
+					<DisplayName profile={profile} username linked />
 					<span>&bull;</span>
 					<span className="time">
 						<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
