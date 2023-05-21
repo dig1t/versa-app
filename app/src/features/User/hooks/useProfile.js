@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useAuthenticated } from '../../../context/Auth.js'
-import { getProfile } from '../store/actions/profileActions.js'
+import { getProfile, getProfileConnection } from '../store/actions/profileActions.js'
 
 const useProfile = (fetchingUserId) => {
 	const dispatch = useDispatch()
@@ -20,6 +20,11 @@ const useProfile = (fetchingUserId) => {
 		
 		if (profileFetch) {
 			setProfile(profileFetch)
+			
+			// Retrieve all profile data if only a summarized profile was fetched
+			if (!profileFetch.connection && profileFetch.userId !== userId && loggedIn) dispatch(
+				getProfileConnection(profileFetch.userId)
+			)
 		} else if (typeof fetchingUserId === 'string' && !fetching) {
 			setFetching(true)
 			dispatch(getProfile(fetchingUserId))

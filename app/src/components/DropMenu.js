@@ -9,17 +9,27 @@ const ItemMenu = ({ children }) => {
 	return <ul className="menu">{children}</ul>
 }
 
-const Item = ({ link, children }) => {
+const MenuLink = ({ link, children }) => {
 	return <li>
 		<Link to={link}>{children}</Link>
 	</li>
 }
 
-Item.propTypes = {
+MenuLink.propTypes = {
 	link: PropTypes.string
 }
 
-const ItemDivider = () => <li className="divider" />
+MenuLink.propTypes = {
+	link: PropTypes.string
+}
+
+const MenuItem = ({ children, ...props }) => (
+	<li {...props}>
+		{children}
+	</li>
+)
+
+const MenuDivider = () => <li className="divider" />
 
 const Menu = (props, ref) => {
 	const menuElement = useRef()
@@ -60,7 +70,7 @@ const Menu = (props, ref) => {
 		setPos({ x, y })
 	}, [props, menuElement, ref])
 	
-	return <Portal>
+	return <Portal active={props.open}>
 		{props.open && <div className={classNames('drop-menu')}>
 			<div
 				className="background-close"
@@ -128,5 +138,10 @@ DropMenu.propTypes = {
 	menu: PropTypes.object.isRequired
 }
 
-export { ItemMenu, Item, ItemDivider }
+export {
+	ItemMenu,
+	MenuLink,
+	MenuItem,
+	MenuDivider
+}
 export default DropMenu
