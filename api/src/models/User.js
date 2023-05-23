@@ -1,6 +1,10 @@
 import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcrypt'
 
+import { mongoSession } from '../util/mongoHelpers.js'
+import Profile from './Profile.js'
+import UserSession from './UserSession.js'
+
 const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
@@ -49,10 +53,14 @@ schema.methods.validPassword = async function(password) {
 
 schema.pre(
 	'deleteOne',
-	{ document: true, query: false },
-	function() {
-		this.model('Profile').deleteOne({ userId: this._id })
-		this.model('UserSession').deleteMany({ userId: this._id })
+	{ document: false, query: true },
+	async function(next) {
+		const userId = this._conditions._id
+		
+		await Profile.deleteOne({ userId })
+		await UserSession.deleteMany({ userId })
+		
+		next()
 	}
 )
 

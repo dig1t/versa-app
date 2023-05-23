@@ -55,6 +55,13 @@ export default (server) => {
 		contentController.postNewPost
 	)
 	
+	router.delete(
+		'/post/:postId',
+		useFields({ params: ['postId'] }),
+		server.oauth.authorize(),
+		contentController.deletePost
+	)
+	
 	router.get(
 		'/post/:postId',
 		useFields({ params: ['postId'] }),

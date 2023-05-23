@@ -23,8 +23,16 @@ MenuLink.propTypes = {
 	link: PropTypes.string
 }
 
-const MenuItem = ({ children, ...props }) => (
-	<li {...props}>
+const MenuItem = ({ children, className, color, caution, ...props }) => (
+	<li
+		className={classNames(
+			className,
+			'menu-btn',
+			caution && 'caution',
+			{ [`text-${color}`]: color }
+		)}
+		{...props}
+	>
 		{children}
 	</li>
 )
@@ -81,6 +89,7 @@ const Menu = (props, ref) => {
 				ref={menuElement}
 				className="menu-container"
 				style={{ left: pos.x, top: pos.y }}
+				onClick={(input) => props.toggleMenu(input)}
 			>
 				{props.menu}
 			</div>
@@ -112,7 +121,10 @@ const DropMenu = (props) => {
 	
 	return <>
 		<span
-			className="ui-action drop-menu-trigger"
+			className={classNames(
+				'ui-action drop-menu-trigger',
+				props.keepActive && open && 'active'
+			)}
 			ref={ref}
 			onClick={() => setOpen(true)}
 		>{props.children}</span>
@@ -131,11 +143,13 @@ const DropMenu = (props) => {
 }
 
 DropMenu.defaultProps = {
-	inlineTrigger: true
+	inlineTrigger: true,
+	keepActive: true
 }
 
 DropMenu.propTypes = {
-	menu: PropTypes.object.isRequired
+	menu: PropTypes.object.isRequired,
+	keepActive: PropTypes.bool,
 }
 
 export {

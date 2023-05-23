@@ -6,8 +6,8 @@ import { createStore } from '../../../store.js'
 import AppRoutes from './Routes.js'
 import Html from './Html.js'
 
-import { FetchInitialData } from '../../../containers/FetchInitialData.js'
-import { HydrationProvider } from '../../../context/Hydration.js'
+import { FetchInitialData } from './FetchInitialData.js'
+import { HydrationProvider } from '../../Core/context/Hydration.js'
 import Loading from './Loading.js'
 
 import '../../../assets/styles/main.scss'

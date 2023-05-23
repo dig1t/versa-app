@@ -6,8 +6,7 @@ main[page="content"] {
 }
 
 .post {
-	&:hover .options {
-		display: block;
+	&:hover .options .ui-action, .options .ui-action.active {
 		opacity: 1;
 	}
 	
@@ -16,11 +15,13 @@ main[page="content"] {
 		top: 0;
 		right: 0;
 		cursor: pointer;
-		display: none;
-		opacity: 0;
 		transition-duration: .2s;
 		
-		&:hover .icon {
+		.ui-action {
+			opacity: 0;
+		}
+		
+		.ui-action.active .icon, &:hover .icon &:hover .icon {
 			color: var(--text-color-secondary);
 		}
 		
@@ -269,7 +270,7 @@ main[data-theme="dark"] .avatar {
 		.activity-status {
 			width: 30%;
 			height: 30%;
-			border: 1px solid var(--avatar-white);
+			border: 2px solid var(--avatar-white);
 			border-radius: 100%;
 			position: absolute;
 			right: -.5%;

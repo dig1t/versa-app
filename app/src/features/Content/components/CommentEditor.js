@@ -11,7 +11,7 @@ import DisplayName from '../../User/components/DisplayName.js'
 const CommentEditor = ({ contentId, handleSuccess }) => {
 	const inputRef = useRef(null)
 	const [valid, setValid] = useState(false)
-	const profile = useProfile()
+	const profile = useProfile(true)
 	
 	const handleSubmit = () => {
 		const body = inputRef.current.getValue()

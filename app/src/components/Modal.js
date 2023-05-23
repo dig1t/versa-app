@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Portal from './Portal.js'
+import Icon from './Icon.js'
 
 const Modal = (props) => {
 	const { open, type, toggleModal } = props
@@ -28,9 +29,11 @@ const Modal = (props) => {
 				onClick={toggleModal}
 			/>
 			<button
-				className="close fas fa-times"
+				className="close"
 				onClick={toggleModal}
-			/>
+			>
+				<Icon name="close" />
+			</button>
 			<div className="center-wrap">
 				<div className="container">
 					<div className="main">
