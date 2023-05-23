@@ -8,7 +8,7 @@ const DisplayName = ({ profile, username, linked, wrap }) => {
 	const WrapComponent = wrap ? 'div' : React.Fragment
 	const TextComponent = wrap ? 'div' : 'span'
 	
-	return <WrapComponent className={wrap && 'display-name-wrap'}>
+	return profile && (<WrapComponent className={wrap && 'display-name-wrap'}>
 		<TextComponent className="display-name align-center-wrap">
 			{linked && <Link
 				to={`/@${profile.username}`}
@@ -33,7 +33,7 @@ const DisplayName = ({ profile, username, linked, wrap }) => {
 			
 			{!linked && <>{`@${profile.username}`}</>}
 		</TextComponent>}
-	</WrapComponent>
+	</WrapComponent>)
 }
 
 DisplayName.defaultProps = {

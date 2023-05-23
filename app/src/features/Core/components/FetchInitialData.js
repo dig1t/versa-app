@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { fetchUserAuth, fetchUserProfile, fetchUserSettings } from '../features/User/store/actions/selfActions.js'
-import { AuthProvider, useAuthenticated } from '../context/Auth.js'
+import { fetchUserAuth, fetchUserProfile, fetchUserSettings } from '../../User/store/actions/selfActions.js'
+import { AuthProvider, useAuthenticated } from '../../Auth/context/Auth.js'
 
-import Loading from '../features/Core/components/Loading.js'
+import Loading from './Loading.js'
 
 const AsyncAuthFetch = ({ children }) => {
 	const dispatch = useDispatch()

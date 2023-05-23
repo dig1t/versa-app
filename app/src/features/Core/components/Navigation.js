@@ -2,8 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 
-import { useAuthenticated } from '../../../context/Auth.js'
-import { isHydrated } from '../../../context/Hydration.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
+import { isHydrated } from '../context/Hydration.js'
 import { defaultAssets } from '../../../constants/assets.js'
 import Avatar from '../../User/components/Avatar.js'
 import { Icon } from '../../../components/UI.js'
@@ -53,7 +53,7 @@ const Shortcut = ({ redirect }) => <NavButton type="shortcut">
 export const Navigation = () => {
 	const hydrated = isHydrated()
 	const { loggedIn } = useAuthenticated()
-	const profile = useProfile()
+	const profile = useProfile(true)
 	
 	const Menu = <ItemMenu>
 		{profile && <MenuLink link={`/@${profile.username}`}>My Profile</MenuLink>}

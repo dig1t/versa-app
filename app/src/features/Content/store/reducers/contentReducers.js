@@ -4,10 +4,12 @@ export const CONTENT_FETCH_FAILURE = 'CONTENT_FETCH_FAILURE'
 export const CONTENT_LIKE_UPDATE_SUCCESS = 'CONTENT_LIKE_UPDATE_SUCCESS'
 export const CONTENT_ADD_ARRAY = 'CONTENT_ADD_ARRAY'
 export const CONTENT_STAT_UPDATE = 'CONTENT_STAT_UPDATE'
+export const CONTENT_DELETE_SUCCESS = 'CONTENT_DELETE_SUCCESS'
 
 export default (state = {
 	contentList: {},
 	invalidContentIds: [],
+	deletedContentIds: [],
 	postList: {}
 }, action) => {
 	switch(action.type) {
@@ -27,6 +29,23 @@ export default (state = {
 				}
 			}
 		}
+		
+		case CONTENT_DELETE_SUCCESS: {
+			const contentId = action.payload.contentId
+			
+			return {
+				...state,
+				deletedContentIds: state.deletedContentIds.concat(contentId),
+				contentList: {
+					...state.contentList,
+					[contentId]: {
+						...state.contentList[contentId],
+						deleted: true
+					}
+				}
+			}
+		}
+		
 		case CONTENT_FETCH_SUCCESS: {
 			return {
 				...state,

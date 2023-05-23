@@ -2,17 +2,20 @@ import React, { useMemo } from 'react'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import classNames from 'classnames'
 
 import Avatar from '../../User/components/Avatar.js'
 import { Icon, Tooltip } from '../../../components/UI.js'
-import DropMenu, { ItemMenu, MenuLink, MenuItem, MenuDivider } from '../../../components/DropMenu.js'
+import DropMenu, { ItemMenu, MenuItem, MenuDivider } from '../../../components/DropMenu.js'
 import ContentMedia from './ContentMedia.js'
 import ContentActions from './ContentActions.js'
-import LinkInjector from '../../../containers/LinkInjector.js'
+import LinkInjector from '../../../components/LinkInjector.js'
 import DisplayName from '../../User/components/DisplayName.js'
-import { useAuthenticated } from '../../../context/Auth.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
+import useClipboard from '../../Core/hooks/useClipboard.js'
+import { useShare } from '../../Core/hooks/useShare.js'
+import { deleteFeedPost } from '../store/actions/feedActions.js'
 
 const getTextSize = (text) => {
 	if (text.length < 32) {
@@ -29,6 +32,9 @@ const Post = ({ data }) => {
 		contentList: state.content.contentList
 	}))
 	
+	const dispatch = useDispatch()
+	const shareUrl = useShare()
+	const { clipboardCopy } = useClipboard()
 	const content = contentList[data.contentId]
 	const contentProfile = content ? profileList[content.userId] : {}
 	
@@ -47,16 +53,44 @@ const Post = ({ data }) => {
 		}
 	}, [data.created])
 	
+	// eslint-disable-next-line no-undef
+	const postUrl = `${window.location.origin}/@${contentProfile.username}/${content.contentId}`
+	
 	const OptionsMenu = <ItemMenu>
-		{content.userId === userId && (
-			<MenuItem onClick={() => console.log('clicked')}>fsaddf</MenuItem>
-		)}
-		<MenuDivider />
-		<MenuLink link="/settings">Settings</MenuLink>
-		
-		<li>
-			dd
-		</li>
+		<MenuItem onClick={() => {
+			clipboardCopy(postUrl)
+			
+			// TODO: show toast "Copied link to clipboard"
+		}}>Copy Link</MenuItem>
+		<MenuItem onClick={async () => {
+			try {
+				// eslint-disable-next-line no-undef
+				await shareUrl({
+					title: `Post by ${contentProfile.displayName}`,
+					text: content.text,
+					url: postUrl
+				})
+				
+				// TODO: show toast "Post shared"
+			} catch (err) {
+				console.error(err)
+				// TODO: show toast "Failed to share post"
+			}
+		}}>Share</MenuItem>
+		<MenuItem onClick={() => {
+			// TODO: Show report modal, then when finished show toast "Post reported"
+		}}>Report</MenuItem>
+		{content.userId === userId && (<>
+			<MenuDivider />
+			<MenuItem caution onClick={() => console.log('clicked')}>
+				{content.private ? 'Unprivate Post' : 'Private Post'}
+			</MenuItem>
+			<MenuItem caution onClick={() => {
+				dispatch(deleteFeedPost(data.postId))
+			}}>
+				Delete Post
+			</MenuItem>
+		</>)}
 	</ItemMenu>
 	
 	return <div className="post" data-id={data.postId}>

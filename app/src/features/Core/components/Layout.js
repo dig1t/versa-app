@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 
 import { Navigation } from './Navigation.js'
-import { useAuthenticated } from '../../../context/Auth.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
 
 const Layout = ({ children, page, disableNav, stickyNav, fullWidth }) => {
 	const { loggedIn } = useAuthenticated()

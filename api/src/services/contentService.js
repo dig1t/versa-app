@@ -129,28 +129,34 @@ const createPost = async (userId, query) => {
 	}
 }
 
-const deletePost = async (postId) => {
-	const post = await Post.findOne({ _id: mongoSanitize(postId) })
+const deletePost = async (data) => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.postId) throw new Error('Missing postId')
+	
+	const post = await Post.findOne({ _id: mongoSanitize(data.postId) })
 	
 	if (!post) throw new Error('Could not find post')
+	
+	if (post.userId.toHexString() !== data.userId) throw new Error('User not authorized to delete post')
 	
 	try {
 		if (post.type === POST_TYPES.CONTENT) {
 			// User owns content of the post
 			// Delete both the post and content
 			
-			//await Post.deleteMany({ contentId: post.contentId })
-			await Content.deleteOne({ _id: post.contentId })
-			
-			return { deleted: true }
+			await mongoSession(async () => {
+				await Content.deleteOne({ _id: post.contentId })
+			})
 		} else {
 			// Use was tagged as a collaborator or
 			// reposted another user's content
-			// Delete just the post
-			await post.deleteOne({ _id: post.postId })
 			
-			return { deleted: true }
+			// Delete just the post
+			// Middleware will remove everything attached to it
+			await Post.deleteOne({ _id: post.postId })
 		}
+		
+		return { deleted: true }
 	} catch(error) {
 		throw new Error('Could not delete post')
 	}
@@ -328,16 +334,19 @@ const createComment = async (data) => {
 	}
 }
 
-const deleteComment = async (commentId) => {
-	if (!commentId) throw new Error('Missing commentId')
+const deleteComment = async (data) => {
+	if (!data.userId) throw new Error('Missing userId')
+	if (!data.commentId) throw new Error('Missing commentId')
 	
-	const comment = await Comment.findOne({ _id: mongoSanitize(commentId) })
+	const comment = await Comment.findOne({ _id: mongoSanitize(data.commentId) })
 	
 	if (!comment) throw new Error('Could not find comment')
 	
+	if (comment.userId.toHexString() !== data.userId) throw new Error('User not authorized to delete comment')
+	
 	try {
 		await mongoSession(async () => {
-			await Comment.deleteOne({ _id: comment.commentId })
+			comment.remove()
 			await Content.updateOne(
 				{ _id: mongoSanitize(comment.contentId) },
 				{ $inc: { 'comments': -1 } }
@@ -405,6 +414,8 @@ const removeLike = async (data) => {
 	if (!data.contentId) throw new Error('Missing contentId')
 	
 	const like = await getUserLike(data)
+	
+	if (like.userId !== data.userId) throw new Error('User not authorized to delete like')
 	
 	try {
 		await mongoSession(async () => {

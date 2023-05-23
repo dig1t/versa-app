@@ -8,10 +8,12 @@ import {
 import {
 	PROFILE_FEED_FETCH_REQUEST,
 	PROFILE_FEED_FETCH_FAILURE,
+	FEED_POST_DELETE_SUCCESS,
 	FEED_ADD_ARRAY
 } from '../reducers/feedReducers.js'
 
 import api from '../../../../util/api.js'
+import { binarySearch } from '../../../../util/binarySearch.js'
 
 // export const getHomeFeed = (category) => (dispatch, getState) => {
 	
@@ -62,6 +64,29 @@ const addPosts = (posts, clearFeed) => (dispatch, getState) => {
 
 export const newFeedPost = (post) => (dispatch) => {
 	dispatch(addPosts([post]))
+}
+
+export const deleteFeedPost = (postId) => (dispatch, getState) => {
+	const { feed } = getState()
+	
+	const postIndex = binarySearch(feed.posts, postId)
+	
+	if (postIndex > -1) return
+	
+	api.delete(`/v1/post/${postId}`, { postId })
+		.then(() => {
+			dispatch({
+				type: FEED_POST_DELETE_SUCCESS,
+				payload: {
+					postId
+				}
+			})
+		})
+		.catch((error) => {
+			console.log('post delete error')
+			console.log('deleteFeedPost', error)
+			// TODO: add toast notification for error
+		})
 }
 
 export const getProfileFeed = (userId) => (dispatch, getState) => {

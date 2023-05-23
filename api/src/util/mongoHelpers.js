@@ -38,7 +38,7 @@ export const mongoSanitize = (input) => {
 }
 
 // Functions with 2+ MongoDB operations must be wrapped in mongoSession.
-// If one operation fails, all the operations are rolled back.
+// If one operation fails, all operations are rolled back.
 // mongoSession resolves with whatever fn returns
 export const mongoSession = async (fn) => {
 	if (typeof fn !== 'function') throw new Error('Util.mongoSession(): Missing function argument')
@@ -52,13 +52,13 @@ export const mongoSession = async (fn) => {
 		res = await fn()
 		
 		await session.commitTransaction()
+		await session.endSession()
 		
 		return res
 	} catch(error) {
 		await session.abortTransaction()
+		await session.endSession()
 		
 		throw error
-	} finally {
-		await session.endSession()
 	}
 }

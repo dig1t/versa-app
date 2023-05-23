@@ -2,7 +2,8 @@ import {
 	CONTENT_FETCH_SUCCESS,
 	CONTENT_FETCH_FAILURE,
 	CONTENT_STAT_UPDATE,
-	CONTENT_LIKE_UPDATE_SUCCESS
+	CONTENT_LIKE_UPDATE_SUCCESS,
+	CONTENT_DELETE_SUCCESS
 } from '../reducers/contentReducers.js'
 import { PROFILE_FETCH_SUCCESS } from '../../../User/store/reducers/profileReducers.js'
 
@@ -42,6 +43,27 @@ export const addContentStat = (contentId, stat, value) => (dispatch) => {
 		payload: { contentId, stat, value }
 	})
 }
+
+/*export const deleteContent = (contentId) => (dispatch, getState) => {
+	const { content } = getState()
+	
+	if (!content.contentList[contentId]) return
+	
+	api.delete(`/v1/content/${contentId}`, { contentId })
+		.then(() => {
+			dispatch({
+				type: CONTENT_DELETE_SUCCESS,
+				payload: {
+					contentId
+				}
+			})
+		})
+		.catch((error) => {
+			console.log('content delete error')
+			console.log('deleteContent', error)
+			// TODO: add toast notification for error
+		})
+}*/
 
 export const addLike = (contentId) => (dispatch, getState) => {
 	const { content } = getState()

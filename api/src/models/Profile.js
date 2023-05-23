@@ -1,5 +1,12 @@
 import mongoose, { Schema } from 'mongoose'
 
+import { mongoSession } from '../util/mongoHelpers.js'
+
+import Content from './Content.js'
+import Comment from './Comment.js'
+import Post from './Post.js'
+import Follower from './Follower.js'
+
 const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
@@ -69,12 +76,16 @@ schema.pre('save', function(next) {
 
 schema.pre(
 	'deleteOne',
-	{ document: true, query: false },
-	function() {
-		this.model('Content').deleteMany({ userId: this._id })
-		this.model('Comment').deleteMany({ userId: this._id })
-		this.model('Post').deleteMany({ userId: this._id })
-		this.model('Follower').deleteMany({ userId: this._id })
+	{ document: false, query: true },
+	async function(next) {
+		const userId = this._conditions._id
+		
+		await Content.deleteMany({ userId })
+		await Comment.deleteMany({ userId })
+		await Post.deleteMany({ userId })
+		await Follower.deleteMany({ userId })
+		
+		next()
 	}
 )
 

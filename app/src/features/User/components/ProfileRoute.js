@@ -15,8 +15,8 @@ import {
 } from '../store/actions/profileActions.js'
 import { binarySearch } from '../../../util/index.js'
 import { defaultAssets } from '../../../constants/assets.js'
-import { useAuthenticated } from '../../../context/Auth.js'
-import LinkInjector from '../../../containers/LinkInjector.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
+import LinkInjector from '../../../components/LinkInjector.js'
 import FollowButton from './FollowButton.js'
 import DisplayName from './DisplayName.js'
 
