@@ -1,8 +1,8 @@
 import React from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import { isHydrated } from '../../../context/Hydration.js'
-import { useAuthenticated } from '../../../context/Auth.js'
+import { isHydrated } from '../../Core/context/Hydration.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
 
 const PrivateRoute = ({ redirectTo, requireAuth, requireNoAuth }) => {
 	const hydrated = isHydrated()

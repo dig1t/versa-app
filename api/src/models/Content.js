@@ -1,5 +1,10 @@
 import mongoose, { Schema } from 'mongoose'
 
+import { mongoSession } from '../util/mongoHelpers.js'
+import Collaborator from './Collaborator.js'
+import Post from './Post.js'
+import Comment from './Comment.js'
+
 const schema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
@@ -61,11 +66,15 @@ const schema = new Schema({
 
 schema.pre(
 	['deleteOne', 'deleteMany'],
-	{ document: true, query: false },
-	function() {
-		this.model('Collaborator').deleteMany({ contentId: this._id })
-		this.model('Post').deleteMany({ contentId: this._id })
-		this.model('Comment').deleteMany({ contentId: this._id })
+	{ document: false, query: true },
+	async function(next) {
+		const contentId = this._conditions._id
+		
+		await Collaborator.deleteMany({ contentId })
+		await Post.deleteMany({ contentId })
+		await Comment.deleteMany({ contentId })
+		
+		next()
 	}
 )
 

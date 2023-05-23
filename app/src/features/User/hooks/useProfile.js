@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { useAuthenticated } from '../../../context/Auth.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
 import { getProfile, getProfileConnection } from '../store/actions/profileActions.js'
 
-const useProfile = (fetchingUserId) => {
+const useProfile = (query) => {
 	const dispatch = useDispatch()
 	const { loggedIn, userId } = useAuthenticated()
 	
@@ -12,6 +12,8 @@ const useProfile = (fetchingUserId) => {
 	
 	const [fetching, setFetching] = useState(false)
 	const [profile, setProfile] = useState(null)
+	
+	const fetchingUserId = typeof query === 'string' ? query : undefined
 	
 	useEffect(() => {
 		if (profile) return

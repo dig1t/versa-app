@@ -17,6 +17,14 @@
 			flex-direction: column;
 			gap: 0;
 			
+			@at-root main[data-theme="dark"] & {
+				.pill {
+					&:hover:not(.active) {
+						background-color: var(--black-600);
+					}
+				}
+			}
+			
 			.pill {
 				color: var(--text-color);
 				background-color: transparent;

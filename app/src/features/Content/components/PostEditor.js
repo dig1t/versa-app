@@ -18,7 +18,7 @@ const PostEditor = () => {
 	const [valid, setValid] = useState(false)
 	const [files, setFiles] = useState([])
 	const [filesReady, setFilesReady] = useState(true)
-	const profile = useProfile()
+	const profile = useProfile(true)
 	
 	const handleSubmit = () => {
 		if (!valid || !filesReady) return
