@@ -4,6 +4,7 @@
 
 #ui-root {
 	--tooltip-color: rgba(0, 25, 50, .8);
+	--modal-bg-color: rgba(0, 25, 50, .6);
 	
 	.background-close {
 		position: absolute;
@@ -105,7 +106,7 @@ $tooltip-padding: .4rem;
 }
 
 .modal {
-	background-color: transparentize($black, .4);
+	background-color: var(--modal-bg-color);
 	width: 100%;
 	height: 100%;
 	display: table;
@@ -115,18 +116,31 @@ $tooltip-padding: .4rem;
 	z-index: 999999999;
 	
 	button.close {
-		$size: 30px;
-		
-		color: $white;
+		color: color(white);
 		background-color: transparent;
-		width: $size;
-		height: $size;
-		padding: 0;
-		font-size: 3em;
-		line-height: 1em;
+		border: .15rem solid color(white);
+		border-radius: 99rem;
+		padding: .8rem;
 		position: absolute;
-		top: 20px;
-		right: 20px;
+		top: 2rem;
+		right: 2rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition-duration: .2s;
+		
+		.icon {
+			height: 2rem;
+			transition-duration: .2s;
+		}
+		
+		&:hover {
+			border-color: var(--primary-color);
+			
+			.icon {
+				color: var(--primary-color);
+			}
+		}
 	}
 	
 	.center-wrap {
@@ -139,17 +153,17 @@ $tooltip-padding: .4rem;
 	}
 	
 	.main {
-		background-color: #fff;
+		background-color: color(white);
 		overflow: hidden;
-		box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, .2);
+		box-shadow: var(--box-shadow);
 		
 		.header {
-			background-color: $white;
-			border-bottom: 1px solid $gray;
+			background-color: color(white);
+			border-bottom: 1px solid var(--divider-color);
 			padding: 14px 18px;
 			font-size: 2.4em;
 			font-weight: $font-semibold;
-			text-shadow: 0 1px 0 $white;
+			text-shadow: 0 1px 0 color(white);
 		}
 		
 		.content {
@@ -180,7 +194,7 @@ $tooltip-padding: .4rem;
 			margin: 14px 18px;
 			
 			.heading {
-				color: $primary-color;
+				color: var(--primary-color);
 				margin-bottom: 2px;
 				font-size: type-scale(1);
 				letter-spacing: .04em;
@@ -195,7 +209,7 @@ $tooltip-padding: .4rem;
 }
 
 .drop-menu {
-	--menu-color: rgba(0, 0, 0, 0.08);
+	--menu-border-color: rgba(0, 0, 0, 0.08);
 	
 	width: 100%;
 	height: 100%;
@@ -212,7 +226,8 @@ $tooltip-padding: .4rem;
 	.menu-container {
 		color: var(--color-black);
 		background-color: var(--box-color);
-		border: 1px solid var(--menu-color);
+		min-width: 10rem;
+		border: 1px solid var(--menu-border-color);
 		border-radius: $border-radius;
 		box-shadow: var(--box-shadow);
 		position: fixed;
@@ -221,28 +236,36 @@ $tooltip-padding: .4rem;
 	
 	li {
 		&.divider {
-			background-color: var(--menu-color);
+			background-color: var(--menu-border-color);
 			height: 1px;
 			margin: 0 auto;
 		}
 		
-		a {
-			color: inherit;
+		&.menu-btn, a {
 			padding: 0.6rem 0.8rem;
 			font-size: .9rem;
-			font-weight: 700;
+			font-weight: $font-semibold;
 			display: block;
 			transition-duration: .1s;
+			cursor: pointer;
+			
+			&.caution {
+				color: var(--red-600);
+			}
 			
 			&:hover {
 				background-color: var(--box-color-secondary);
 				text-decoration: none;
 			}
 		}
+		
+		a {
+			color: inherit;
+		}
 	}
 	
 	@at-root main[data-theme="dark"] & {
-		--menu-color: rgba(255, 255, 255, 0.08);
+		--menu-border-color: rgba(255, 255, 255, 0.08);
 	}
 }
 
@@ -427,7 +450,7 @@ svg {
 	overflow-wrap: anywhere;
 	
 	.icon-verified {
-		height: 1.4rem;
+		height: 1rem;
 	}
 	
 	&-wrap {
@@ -453,9 +476,11 @@ svg {
 }
 
 .loading-indicator {
+	color: var(--primary-color);
 	width: 100%;
 	height: 100%;
-	opacity: .5;
+	padding: 2rem;
+	opacity: 1;
 	
 	svg {
 		width: 3rem;

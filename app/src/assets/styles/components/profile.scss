@@ -75,10 +75,14 @@
 	$avatarSize: 6.75rem;
 	
 	width: 17.5rem;
-	background-color: var(--box-color-secondary);
+	background-color: var(--box-color);
 	border-radius: .5rem;
 	box-shadow: var(--box-shadow);
 	overflow: hidden;
+	
+	@at-root main[data-theme="dark"] & {
+		background-color: var(--box-color-secondary);
+	}
 	
 	.details {
 		$box-margin: 1rem;
@@ -133,6 +137,12 @@
 			.container {
 				margin-top: .5rem;
 				gap: .5rem;
+				
+				.display-name {
+					.icon-verified {
+						font-size: 1.25rem;
+					}
+				}
 				
 				.bio, .website {
 					font-size: 1rem;

@@ -4,9 +4,11 @@ export const FEED_FETCH_FAILURE = 'FEED_FETCH_FAILURE'
 export const FEED_NEW_PAGE = 'FEED_NEW_PAGE'
 export const FEED_ADD_ARRAY = 'FEED_ADD_ARRAY'
 
-export const PROFILE_FEED_FETCH_REQUEST = 'PROFILE_FEED_FETCH_REQUES'
+export const PROFILE_FEED_FETCH_REQUEST = 'PROFILE_FEED_FETCH_REQUEST'
 export const PROFILE_FEED_FETCH_SUCCESS = 'PROFILE_FEED_FETCH_SUCCESS'
 export const PROFILE_FEED_FETCH_FAILURE = 'PROFILE_FEED_FETCH_FAILURE'
+
+export const FEED_POST_DELETE_SUCCESS = 'FEED_POST_DELETE_SUCCESS'
 
 export default (state = {
 	posts: [],
@@ -19,6 +21,14 @@ export default (state = {
 			return {
 				...state,
 				posts: []
+			}
+		}
+		case FEED_POST_DELETE_SUCCESS: {
+			// find post index from postId
+			// remove post from posts array
+			return {
+				...state,
+				posts: state.posts.filter((post) => post.postId !== action.payload.postId)
 			}
 		}
 		case FEED_FETCH_SUCCESS:

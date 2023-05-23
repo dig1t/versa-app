@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 
 import { Tooltip } from '../../../components/UI.js'
 import Avatar from '../../User/components/Avatar.js'
-import LinkInjector from '../../../containers/LinkInjector.js'
+import LinkInjector from '../../../components/LinkInjector.js'
 import DisplayName from '../../User/components/DisplayName.js'
 import useProfile from '../../User/hooks/useProfile.js'
 
@@ -27,7 +27,7 @@ const Comment = ({ data }) => {
 		}
 	}, [data.created])
 	
-	return <div className="post comment">
+	return profile && (<div className="post comment">
 		<div className="container">
 			<div className="post-avatar">
 				<Avatar avatar={profile.avatar} />
@@ -47,7 +47,7 @@ const Comment = ({ data }) => {
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>)
 }
 
 Comment.propTypes = {

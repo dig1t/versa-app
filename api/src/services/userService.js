@@ -160,7 +160,9 @@ const deleteAccount = async (userId) => {
 	if (!user) throw new Error('Could not find user')
 	
 	try {
-		await User.deleteOne({ _id: user._id })
+		await mongoSession(async () => {
+			await User.deleteOne({ _id: user._id })
+		})
 		
 		return { deleted: true }
 	} catch(error) {

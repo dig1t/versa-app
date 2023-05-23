@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import api from '../../../util/api.js'
 import { Input } from '../../../components/UI.js'
-import { isHydrated } from '../../../context/Hydration.js'
+import { isHydrated } from '../../Core/context/Hydration.js'
 
 const AuthForm = ({
 	buttonText,

@@ -58,7 +58,10 @@ describe('create post and content', async () => {
 	})
 	
 	it('deletes a comment', async () => {
-		const res = await deleteComment(comment.commentId)
+		const res = await deleteComment({
+			userId: account.user.userId,
+			commentId: comment.commentId
+		})
 		
 		assert.equal(res.deleted, true)
 	})
@@ -91,6 +94,9 @@ describe('create post and content', async () => {
 	})
 	
 	it('deletes a post', async () => {
-		await deletePost(post.postId)
+		await deletePost({
+			userId: account.user.userId,
+			postId: post.postId
+		})
 	})
 })

@@ -2,6 +2,7 @@ import {
 	getContent,
 	getPost,
 	createPost,
+	deletePost,
 	createComment,
 	deleteComment,
 	getComments,
@@ -104,6 +105,21 @@ export default {
 			const post = await createPost(req._oauth.user.userId, req.fields)
 			
 			req.apiResult(200, post)
+		} catch(error) {
+			req.apiResult(500, {
+				message: error
+			})
+		}
+	},
+	
+	deletePost: async (req) => {
+		try {
+			const res = await deletePost({
+				userId: req._oauth.user.userId,
+				postId: req.params.postId
+			})
+			
+			req.apiResult(200, res)
 		} catch(error) {
 			req.apiResult(500, {
 				message: error

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 
 import { Icon } from '../../../components/UI.js'
 import { addLike, deleteLike } from '../store/actions/contentActions.js'
-import { useAuthenticated } from '../../../context/Auth.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
 
 const ContentActions = ({ data, noRedirect }) => {
 	const dispatch = useDispatch()

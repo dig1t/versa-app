@@ -4,7 +4,7 @@ import Avatar from './Avatar.js'
 import DisplayName from './DisplayName.js'
 import FollowButton from './FollowButton.js'
 import { defaultAssets } from '../../../constants/assets.js'
-import LinkInjector from '../../../containers/LinkInjector.js'
+import LinkInjector from '../../../components/LinkInjector.js'
 
 const ProfileCard = ({ profile, showCTA }) => {
 	const connection = profile?.connection || {}
@@ -55,12 +55,6 @@ const ProfileCard = ({ profile, showCTA }) => {
 						userId={profile.userId}
 					/>
 				))}
-				<button
-					className="cta btn-round btn-outline"
-					onClick={() => console.log('NAV TO CHAT')}
-				>
-					Message
-				</button>
 				<div className="community-stats">
 					<div className="stat">
 						<span className="value">{profile.followers}</span>

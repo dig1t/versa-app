@@ -12,19 +12,20 @@ import { addContentStat, getContent } from '../store/actions/contentActions.js'
 import Avatar from '../../User/components/Avatar.js'
 import CommentEditor from '../../Content/components/CommentEditor.js'
 import ContentActions from '../../Content/components/ContentActions.js'
-import { useAuthenticated } from '../../../context/Auth.js'
+import { useAuthenticated } from '../../Auth/context/Auth.js'
 import ContentMedia from '../../Content/components/ContentMedia.js'
-import LinkInjector from '../../../containers/LinkInjector.js'
+import LinkInjector from '../../../components/LinkInjector.js'
 import Comment from '../../Content/components/Comment.js'
 import { Icon, Tooltip } from '../../../components/UI.js'
 import DisplayName from '../../User/components/DisplayName.js'
+import useProfile from '../../User/hooks/useProfile.js'
 
 const Content = () => {
 	const dispatch = useDispatch()
-	const { profileList, contentList, invalidContentIds } = useSelector((state) => ({
-		profileList: state.profiles.profileList,
+	const { contentList, invalidContentIds, deletedContentIds } = useSelector((state) => ({
 		contentList: state.content.contentList,
-		invalidContentIds: state.content.invalidContentIds
+		invalidContentIds: state.content.invalidContentIds,
+		deletedContentIds: state.content.deletedContentIds
 	}))
 	
 	const { loggedIn } = useAuthenticated()
@@ -57,23 +58,29 @@ const Content = () => {
 	
 	useEffect(() => {
 		const invalidContentId = binarySearch(invalidContentIds, contentId) > -1
+		const deletedContentId = binarySearch(deletedContentIds, contentId) > -1
 		
-		if (invalidContentId) return setRedirect('/error?e=no-content')
+		if (invalidContentId || deletedContentId) return setRedirect('/error?e=no-content')
 		
 		if (
 			(contentData !== null && contentList[contentId] === contentData) || contentId === null
 		) return
 		
 		if (contentList[contentId]) {
-			setContentData(contentList[contentId])
-			setUserId(contentList[contentId].userId)
+			if (contentList[contentId].deleted) {
+				return setRedirect('/error?e=no-content')
+			} else {
+				setContentData(contentList[contentId])
+				setUserId(contentList[contentId].userId)
+			}
 		} else if (!fetching) {
 			setFetching(true)
 			dispatch(getContent(contentId))
 		}
 	}, [contentList, invalidContentIds])
 	
-	const profile = contentData !== null ? profileList[userId] : {}
+	const profile = useProfile(userId)
+	
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
 		if (contentData === null) return {}
 		
@@ -99,13 +106,13 @@ const Content = () => {
 					<div className="post">
 						<div className="container">
 							<div className="post-avatar">
-								<Avatar avatar={profile.avatar} />
+								<Avatar avatar={profile && profile.avatar} />
 							</div>
 							<div className="main">
 								<div className="details">
 									<DisplayName profile={profile} linked />
 									<span className="username"><Link
-										to={`/@${profile.username}`}
+										to={`/@${profile?.username}`}
 										className="unstyled-link"
 									>
 										@{profile.username}

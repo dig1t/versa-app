@@ -13,7 +13,7 @@ const initialCategory = settingsPageConfig[0]
 const Settings = () => {
 	const { categoryParam } = useParams()
 	const navigate = useNavigate()
-	const profile = useProfile()
+	const profile = useProfile(true)
 	
 	const category = settingsPageConfig.find((cat) => cat.name === categoryParam) || initialCategory
 	
