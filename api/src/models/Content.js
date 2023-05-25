@@ -78,4 +78,9 @@ schema.pre(
 	}
 )
 
+schema.index({ contentId: 1 })
+schema.index({ userId: 1 })
+schema.index({ mediaId: 1 })
+schema.index({ created: -1 })
+
 export default mongoose.models.Content || mongoose.model('Content', schema)

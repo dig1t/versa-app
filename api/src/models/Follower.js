@@ -24,4 +24,9 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
+schema.index({ followId: 1 })
+schema.index({ userId: 1 })
+schema.index({ followerUserId: 1 })
+schema.index({ created: -1 })
+
 export default mongoose.models.Follower || mongoose.model('Follower', schema)

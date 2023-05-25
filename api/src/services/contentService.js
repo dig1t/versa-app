@@ -1,9 +1,8 @@
-import { Router } from 'express'
 import mongoose from 'mongoose'
 
 import config from '../constants/config.js'
-import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
-import useFields from '../middleware/useFields.js'
+import { ObjectIdToString, mongoSanitize, mongoSession } from '../util/mongoHelpers.js'
+import validateText from '../util/validateText.js'
 
 import Post from '../models/Post.js'
 import Content from '../models/Content.js'
@@ -22,8 +21,8 @@ const POST_TYPES = {
 // }
 
 const deserializeContent = (content, profile) => ({
-	contentId: content.contentId || content._id.toHexString(),
-	userId: content.userId.toHexString(),
+	contentId: content.contentId || ObjectIdToString(content._id),
+	userId: ObjectIdToString(content.userId),
 	body: content.body,
 	created: content.created,
 	private: content.private,
@@ -35,8 +34,8 @@ const deserializeContent = (content, profile) => ({
 	reposts: content.reposts,
 	
 	media: typeof content.media === 'object' && content.media[0] ? {
-		mediaId: content.media[0]._id.toHexString(),
-		userId: content.media[0].userId.toHexString(),
+		mediaId: ObjectIdToString(content.media[0]._id),
+		userId: ObjectIdToString(content.media[0].userId),
 		source: content.media[0].source, // Direct URL
 		created: content.media[0].created
 	} : undefined,
@@ -45,8 +44,8 @@ const deserializeContent = (content, profile) => ({
 })
 
 const deserializePost = (post, content, profile) => ({
-	postId: post._id.toHexString(),
-	userId: post.userId.toHexString(),
+	postId: ObjectIdToString(post._id),
+	userId: ObjectIdToString(post.userId),
 	created: post.created,
 	
 	profile: profile || post.profile,
@@ -55,17 +54,17 @@ const deserializePost = (post, content, profile) => ({
 })
 
 const deserializeComment = (comment) => ({
-	commentId: comment._id.toHexString(),
-	contentId: comment.contentId.toHexString(),
-	userId: comment.userId.toHexString(),
+	commentId: ObjectIdToString(comment._id),
+	contentId: ObjectIdToString(comment.contentId),
+	userId: ObjectIdToString(comment.userId),
 	body: comment.body,
 	created: comment.created
 })
 
 const deserializeLike = (like) => ({
-	likeId: like._id.toHexString(),
-	contentId: like.contentId.toHexString(),
-	userId: like.userId.toHexString()
+	likeId: ObjectIdToString(like._id),
+	contentId: ObjectIdToString(like.contentId),
+	userId: ObjectIdToString(like.userId)
 })
 
 const createContent = async (data) => {
@@ -137,7 +136,7 @@ const deletePost = async (data) => {
 	
 	if (!post) throw new Error('Could not find post')
 	
-	if (post.userId.toHexString() !== data.userId) throw new Error('User not authorized to delete post')
+	if (ObjectIdToString(post.userId) !== data.userId) throw new Error('User not authorized to delete post')
 	
 	try {
 		if (post.type === POST_TYPES.CONTENT) {
@@ -162,12 +161,13 @@ const deletePost = async (data) => {
 	}
 }
 
-const getContent = async (contentId, requesterUserId) => {
+const getContent = async (contentId, requesterUserId, fields) => {
 	if (!contentId) throw new Error('Missing contentId')
 	
 	const content = await Content.findOne({ _id: contentId })
+		.select(fields)
 	
-	if (!content) throw new Error('Content not found')
+	if (!content || content.hidden) throw new Error('Content not found')
 	
 	const profile = await getProfileFromUserId(content.userId)
 	
@@ -339,14 +339,18 @@ const deleteComment = async (data) => {
 	if (!data.commentId) throw new Error('Missing commentId')
 	
 	const comment = await Comment.findOne({ _id: mongoSanitize(data.commentId) })
+		.select('contentId userId')
 	
 	if (!comment) throw new Error('Could not find comment')
 	
-	if (comment.userId.toHexString() !== data.userId) throw new Error('User not authorized to delete comment')
+	if (ObjectIdToString(comment.userId) !== data.userId) throw new Error('User not authorized to delete comment')
 	
 	try {
 		await mongoSession(async () => {
-			comment.remove()
+			await Comment.deleteOne({
+				_id: mongoSanitize(data.commentId),
+				userId: mongoSanitize(comment.userId)
+			})
 			await Content.updateOne(
 				{ _id: mongoSanitize(comment.contentId) },
 				{ $inc: { 'comments': -1 } }
@@ -385,7 +389,7 @@ const createLike = async (data) => {
 	
 	const content = await getContent(data.contentId)
 	
-	if (content.hidden) throw new Error('Could not create like')
+	if (!content) throw new Error('Could not create like')
 	
 	const likeId = new mongoose.Types.ObjectId()
 	const like = new Like({

@@ -1,8 +1,6 @@
-import { Router } from 'express'
-
 import Setting from '../models/Setting.js'
 
-import { mongoSanitize } from '../util/index.js'
+import { mongoSanitize } from '../util/mongoHelpers.js'
 
 const shortcuts = {
 	appTheme: ['light', 'dark']

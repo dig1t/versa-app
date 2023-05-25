@@ -17,6 +17,7 @@ const schema = new Schema({
 	_id: false
 })
 
+schema.index({ sessionId: 1 })
 schema.index({ expires: 1209600 })
 
 export default mongoose.models.Session || mongoose.model('Session', schema)
