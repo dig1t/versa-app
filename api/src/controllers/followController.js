@@ -1,4 +1,4 @@
-import { mongoSanitize } from '../util/index.js'
+import { mongoSanitize } from '../util/mongoHelpers.js'
 
 import { canViewProfile } from '../services/profileService.js'
 

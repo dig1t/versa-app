@@ -1,20 +1,18 @@
-import Post from '../models/Post.js'
 import { getProfileFromUserId } from '../services/profileService.js'
 import { deserializePost, getContent } from '../services/contentService.js'
 import {
 	homeFeedPipeline
 } from '../services/feedService.js'
+import { ObjectIdToString } from '../util/mongoHelpers.js'
 
 export default {
 	getHomeFeed: async (req) => {
-		try {
+		// try {
 			const requesterUserId = req._oauth.user.userId
 			
-			const posts = await Post.aggregate(
-				await homeFeedPipeline({
-					userId: requesterUserId
-				})
-			)
+			const posts = await homeFeedPipeline({
+				userId: requesterUserId
+			})
 			
 			const profile = await getProfileFromUserId(requesterUserId)
 			
@@ -66,15 +64,15 @@ export default {
 			const feed = posts.map((post) => ({
 				...deserializePost(post),
 				profile: profileCache.find(
-					(data) => data.userId === post.userId.toHexString()
+					(data) => data.userId === ObjectIdToString(post.userId)
 				)
 			}))
 			
 			req.apiResult(200, feed)
-		} catch(error) {
-			req.apiResult(500, {
-				message: error
-			})
-		}
+		// } catch(error) {
+		// 	req.apiResult(500, {
+		// 		message: error
+		// 	})
+		// }
 	}
 }

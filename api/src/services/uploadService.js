@@ -3,7 +3,8 @@ import path from 'path'
 
 import Media from '../models/Media.js'
 
-import { mongoSanitize, mongoValidate, validateText } from '../util/index.js'
+import { ObjectIdToString, mongoSanitize, mongoValidate } from '../util/mongoHelpers.js'
+import validateText from '../util/validateText.js'
 import CDN from '../util/cdn.js'
 import config from '../../config.js'
 
@@ -51,9 +52,9 @@ const getMediaTypeName = (typeId) => {
 const cdn = new CDN(config.cdn)
 
 const deserializeMedia = (media) => ({
-	mediaId: media.mediaId.toHexString(),
+	mediaId: ObjectIdToString(media.mediaId),
 	type: getMediaTypeName(media.type),
-	userId: media.userId.toHexString(),
+	userId: ObjectIdToString(media.userId),
 	mimeType: media.mime,
 	md5: media.md5Hash,
 	cdn: media.cdn,

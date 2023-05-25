@@ -1,17 +1,19 @@
-import { Router } from 'express'
 import mongoose from 'mongoose'
 
-import useFields from '../middleware/useFields.js'
-import { mongoValidate, mongoSanitize, mongoSession } from '../util/index.js'
+import {
+	mongoValidate,
+	mongoSanitize,
+	mongoSession,
+	ObjectIdToString
+} from '../util/mongoHelpers.js'
 
 import Follower from '../models/Follower.js'
 import Profile from '../models/Profile.js'
-import { canViewProfile, getProfileFromUserId } from './profileService.js'
 
 const deserializeFollow = (follow) => ({
-	followId: follow._id.toHexString(),
-	userId: follow.userId.toHexString(),
-	followerUserId: follow.followerUserId.toHexString(),
+	followId: ObjectIdToString(follow._id),
+	userId: ObjectIdToString(follow.userId),
+	followerUserId: ObjectIdToString(follow.followerUserId),
 	requested: follow.requested,
 	created: follow.created
 })
@@ -28,47 +30,38 @@ const getFollow = async (userId, followerUserId, ignoreFollowRequest) => {
 			followerUserId: mongoSanitize(followerUserId),
 			requested: ignoreFollowRequest === true ? undefined : { $ne: true }
 		})
+			.select('followId requested created')
 		
-		return follow ? deserializeFollow(follow) : undefined
+		return follow ? deserializeFollow({
+			...follow,
+			userId: mongoSanitize(userId),
+			followerUserId: mongoSanitize(followerUserId)
+		}) : undefined
 	} catch(error) {
 		throw new Error(error)
 	}
 }
 
-const getFollowerList = async (userId, page) => {
-	// TODO: Filter by page
+const getFollowerList = async (userId, page = 1, limit = 10) => {
 	const followers = await Follower.find({ userId: mongoSanitize(userId) })
+		.skip((page - 1) * limit)
+		.limit(limit)
 	
-	if (!followers) throw new Error('Could not get follower list')
+	const followerIds = followers.map(follow => follow.followerUserId)
+	const profiles = await Profile.find({ _id: { $in: followerIds }})
 	
-	const res = []
-	
-	for (let followerIndex in followers) {
-		const follow = followers[followerIndex]
-		const profile = await getProfileFromUserId(follow.followerUserId)
-		
-		res.push(profile)
-	}
-	
-	return res
+	return profiles
 }
 
-const getFollowingList = async (userId, page) => {
-	// TODO: Filter by page
+const getFollowingList = async (userId, page = 1, limit = 10) => {
 	const following = await Follower.find({ followerUserId: mongoSanitize(userId) })
+		.skip((page - 1) * limit)
+		.limit(limit)
 	
-	if (!following) throw new Error('Could not get following list')
+	const followingIds = following.map(follow => follow.userId)
+	const profiles = await Profile.find({ _id: { $in: followingIds }})
 	
-	const res = []
-	
-	for (let followerIndex in following) {
-		const follow = following[followerIndex]
-		const profile = await getProfileFromUserId(follow.userId)
-		
-		res.push(profile)
-	}
-	
-	return res
+	return profiles
 }
 
 const isFollowing = async (userId, followerUserId) => {
@@ -77,11 +70,14 @@ const isFollowing = async (userId, followerUserId) => {
 	if (userId === followerUserId) return false
 	
 	try {
-		const follows = await getFollow(followerUserId, userId)
+		const follows = await Follower.findOne({
+			userId: mongoSanitize(followerUserId),
+			followerUserId: mongoSanitize(userId),
+			requested: { $ne: true }
+		})
+			.select('followId')
 		
-		if (!follows || follows.requested) return false
-		
-		return typeof follows.followId !== 'undefined'
+		return follows && typeof follows.followId !== 'undefined'
 	} catch(error) {
 		console.log(error)
 		
@@ -95,13 +91,12 @@ const isMutualFollower = async (userId, followerUserId) => {
 	if (userId === followerUserId) return true
 	
 	try {
-		const follows = await isFollowing(followerUserId, userId)
+		const [follows, followedBy] = await Promise.all([
+			isFollowing(followerUserId, userId),
+			isFollowing(userId, followerUserId)
+		])
 		
-		if (!follows) return false
-		
-		const followsBack = await isFollowing(userId, followerUserId)
-		
-		return followsBack
+		return Boolean(follows && followedBy)
 	} catch(error) {
 		console.log(error)
 		
@@ -153,7 +148,9 @@ const createFollow = async (userId, followerUserId) => {
 	
 	const isFollowing = await getFollow(userId, followerUserId, true)
 	
-	if (isFollowing) throw new Error('User is already following the targeted user')
+	if (isFollowing) {
+		throw new Error('User is already following the targeted user')
+	}
 	
 	const followId = new mongoose.Types.ObjectId()
 	const follow = new Follower({

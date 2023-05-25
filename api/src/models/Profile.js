@@ -89,4 +89,8 @@ schema.pre(
 	}
 )
 
+schema.index({ username: 1 })
+schema.index({ userId: 1 })
+schema.index({ lastActive: -1 })
+
 export default mongoose.models.Profile || mongoose.model('Profile', schema)

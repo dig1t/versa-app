@@ -22,4 +22,9 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
+schema.index({ sessionId: 1 })
+schema.index({ userId: 1 })
+schema.index({ timestamp: -1 })
+schema.index({ isDeleted: 1 })
+
 export default mongoose.models.UserSession || mongoose.model('UserSession', schema)

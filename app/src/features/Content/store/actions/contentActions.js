@@ -44,7 +44,7 @@ export const addContentStat = (contentId, stat, value) => (dispatch) => {
 	})
 }
 
-/*export const deleteContent = (contentId) => (dispatch, getState) => {
+export const deleteContent = (contentId) => (dispatch, getState) => {
 	const { content } = getState()
 	
 	if (!content.contentList[contentId]) return
@@ -63,7 +63,7 @@ export const addContentStat = (contentId, stat, value) => (dispatch) => {
 			console.log('deleteContent', error)
 			// TODO: add toast notification for error
 		})
-}*/
+}
 
 export const addLike = (contentId) => (dispatch, getState) => {
 	const { content } = getState()

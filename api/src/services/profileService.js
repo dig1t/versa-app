@@ -1,19 +1,17 @@
-import { Router } from 'express'
-
 import {
 	deserializePost,
 	profileFeedPipeline,
 	getContent
 } from './contentService.js'
-import { validateText, mongoSanitize, mongoValidate } from '../util/index.js'
+import { ObjectIdToString, mongoSanitize, mongoValidate } from '../util/mongoHelpers.js'
+import validateText from '../util/validateText.js'
 
 import Post from '../models/Post.js'
 import Profile from '../models/Profile.js'
-import { isFollowing, getConnection } from './followService.js'
-import useFields from '../middleware/useFields.js'
+import { isFollowing } from './followService.js'
 
 const deserializeProfile = (profile) => ({
-	userId: profile.userId.toHexString(),
+	userId: ObjectIdToString(profile.userId),
 	username: profile.username,
 	name: profile.name,
 	verificationLevel: profile.verificationLevel || 0,
@@ -133,7 +131,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 	return posts.map((post) => ({
 		...deserializePost(post),
 		profile: profileCache.find(
-			(data) => data.userId === post.userId.toHexString()
+			(data) => data.userId === ObjectIdToString(post.userId)
 		)
 	}))
 }

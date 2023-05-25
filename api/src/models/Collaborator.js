@@ -17,4 +17,8 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
+schema.index({ collabId: 1 })
+schema.index({ contentId: 1 })
+schema.index({ userId: 1 })
+
 export default mongoose.models.Collaborator || mongoose.model('Collaborator', schema)
