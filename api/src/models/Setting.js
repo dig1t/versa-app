@@ -18,4 +18,6 @@ const schema = new Schema({
 	},
 }, { _id: false })
 
+schema.index({ userId: 1 })
+
 export default mongoose.models.Setting || mongoose.model('Setting', schema)

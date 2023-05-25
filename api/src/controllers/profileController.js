@@ -1,4 +1,4 @@
-import { validateText } from '../util/index.js'
+import validateText from '../util/validateText.js'
 
 import { getConnection } from '../services/followService.js'
 

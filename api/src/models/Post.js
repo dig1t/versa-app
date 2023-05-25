@@ -32,4 +32,8 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
+schema.index({ userId: 1 })
+schema.index({ created: -1 })
+schema.index({ userId: 1, created: -1 })
+
 export default mongoose.models.Post || mongoose.model('Post', schema)

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo, forwardRef, useImpera
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 
-import { validateText } from '../util/index.js'
+import validateText from '../util/validateText.js'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const optionsToObject = (options) => options.reduce((result, [label, value]) => {

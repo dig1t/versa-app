@@ -23,4 +23,7 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
+schema.index({ userId: 1, contentId: 1 })
+schema.index({ created: -1 })
+
 export default mongoose.models.Like || mongoose.model('Like', schema)

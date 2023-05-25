@@ -3,6 +3,7 @@ import {
 	PROFILE_FETCH_SUCCESS,
 	PROFILE_FETCH_FAILURE,
 	PROFILE_FOLLOW_UPDATE,
+	PROFILE_CONNECTION_REQUEST,
 	PROFILE_CONNECTION_SUCCESS
 } from '../reducers/profileReducers.js'
 
@@ -54,9 +55,22 @@ export const getProfileFromUsername = (username) => (dispatch, getState) => {
 }
 
 export const getProfileConnection = (userId) => (dispatch, getState) => {
-	const { user } = getState()
+	const { user, profiles } = getState()
 	
 	if (user.authenticated !== true) return
+	
+	const profile = profiles.profileList[userId]
+	
+	if (!profile) return dispatch(getProfile(userId))
+	
+	if (profile.fetchingConnection)	return
+	
+	if (!profile.connection) {
+		dispatch({
+			type: PROFILE_CONNECTION_REQUEST,
+			payload: { userId }
+		})
+	}
 	
 	api.get('/v1/follow/connection', { userId })
 		.then((data) => dispatch({
