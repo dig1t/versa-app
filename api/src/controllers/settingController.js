@@ -60,9 +60,11 @@ handler.register(
 
 export default {
 	getSettings: async (req) => {
-		if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
-		
 		try {
+			if (req._oauth.user.userId !== req.params.userId) {
+				throw new Error('Unexpected Error')
+			}
+			
 			const settings = await getSettingsFromUserId(req._oauth.user.userId)
 			
 			req.apiResult(200, settings)
@@ -74,13 +76,15 @@ export default {
 	},
 	
 	updateSettings: async (req) => {
-		if (req._oauth.user.userId !== req.params.userId) throw new Error('Unexpected Error')
-		
-		if (Object.keys(req.fields).length === 0) {
-			throw new Error('No settings given')
-		}
-		
 		try {
+			if (req._oauth.user.userId !== req.params.userId) {
+				throw new Error('Unexpected Error')
+			}
+			
+			if (Object.keys(req.fields).length === 0) {
+				throw new Error('No settings given')
+			}
+			
 			const updatedValues = await handler.run(
 				req.fields,
 				req._oauth.user.userId

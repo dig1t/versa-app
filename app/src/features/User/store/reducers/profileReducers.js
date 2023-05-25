@@ -7,7 +7,9 @@ export const PROFILE_FETCH_FAILURE = 'PROFILE_FETCH_FAILURE'
 
 export const PROFILE_FOLLOW_UPDATE = 'PROFILE_FOLLOW_UPDATE'
 
+export const PROFILE_CONNECTION_REQUEST = 'PROFILE_CONNECTION_REQUEST'
 export const PROFILE_CONNECTION_SUCCESS = 'PROFILE_CONNECTION_SUCCESS'
+export const PROFILE_CONNECTION_FAILURE = 'PROFILE_CONNECTION_FAILURE'
 
 export default (state = {
 	profileList: {},
@@ -62,17 +64,60 @@ export default (state = {
 			} : state
 		}
 		
-		case PROFILE_CONNECTION_SUCCESS: {
-			if (!state.profileList[action.payload.userId]) return state
+		case PROFILE_CONNECTION_REQUEST: {
+			const profile = state.profileList[action.payload.userId]
+			
+			if (!profile) return state
 			
 			return {
 				...state,
 				profileList: {
 					...state.profileList,
 					[action.payload.userId]: {
-						...state.profileList[action.payload.userId],
+						...profile,
+						fetchingConnection: true
+					}
+				}
+			}
+		}
+		
+		case PROFILE_CONNECTION_SUCCESS: {
+			const profileFetch = state.profileList[action.payload.userId]
+			
+			if (!profileFetch) return state
+			
+			const {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				fetchingConnection,
+				...profile
+			} = profileFetch
+			
+			return {
+				...state,
+				profileList: {
+					...state.profileList,
+					[action.payload.userId]: {
+						...profile,
 						connection: action.payload.connection
 					}
+				}
+			}
+		}
+		
+		case PROFILE_CONNECTION_FAILURE: {
+			if (!state.profileList[action.payload.userId]) return state
+			
+			const {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				fetchingConnection,
+				...profile
+			} = state.profileList[action.payload.userId]
+			
+			return {
+				...state,
+				profileList: {
+					...state.profileList,
+					[action.payload.userId]: profile
 				}
 			}
 		}

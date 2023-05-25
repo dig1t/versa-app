@@ -64,4 +64,6 @@ schema.pre(
 	}
 )
 
+schema.index({ email: 1 })
+
 export default mongoose.models.User || mongoose.model('User', schema)

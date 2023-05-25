@@ -1,8 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import classNames from 'classnames'
 
 import Layout from '../../Core/components/Layout.js'
 import Loading from '../../Core/components/Loading.js'
@@ -13,7 +11,7 @@ import {
 	getProfileConnection,
 	getProfileFromUsername
 } from '../store/actions/profileActions.js'
-import { binarySearch } from '../../../util/index.js'
+import { binarySearch } from '../../../util/binarySearch.js'
 import { defaultAssets } from '../../../constants/assets.js'
 import { useAuthenticated } from '../../Auth/context/Auth.js'
 import LinkInjector from '../../../components/LinkInjector.js'

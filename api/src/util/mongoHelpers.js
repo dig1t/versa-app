@@ -14,6 +14,19 @@ export const mongoValidate = (input, type) => {
 	}
 }
 
+export const ObjectIdToString = (input) => {
+	if (input instanceof mongoose.Types.ObjectId) {
+		return input.toHexString()
+	} else if (typeof(input) === 'string') {
+		return input
+	} else if (input === undefined || input === null) {
+		return
+	} else {
+		console.log(input, typeof(input))
+		throw new Error('mongoHelpers.ObjectIdToString(): Invalid input')
+	}
+}
+
 export const mongoSanitize = (input) => {
 	if (typeof input === 'undefined') throw new Error('Util.mongoSanitize(): No input to sanitize')
 	

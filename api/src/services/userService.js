@@ -7,14 +7,15 @@ import Profile from '../models/Profile.js'
 import Setting from '../models/Setting.js'
 
 import config from '../constants/config.js'
-import { validateText, mongoSanitize, mongoSession } from '../util/index.js'
+import { ObjectIdToString, mongoSanitize, mongoSession } from '../util/mongoHelpers.js'
+import validateText from '../util/validateText.js'
 import {
 	deserializeProfile
 } from './profileService.js'
 import { deserializeSettings } from './settingService.js'
 
 const deserializeUser = (user, settings) => ({
-	userId: (user.userId && user.userId.toHexString()) || (user._id && user._id.toHexString()),
+	userId: (user.userId && ObjectIdToString(user.userId)) || (user._id && ObjectIdToString(user._id)),
 	email: user.email,
 	isAdmin: user.isAdmin || false,
 	isMod: user.isMod || false,
@@ -37,7 +38,7 @@ const getUserIdFromSession = async (sessionId) => {
 	if (!user) throw new Error('Could not find session')
 	if (user.isDeleted) throw new Error('Session is not valid')
 	
-	return user.userId.toHexString()
+	return ObjectIdToString(user.userId)
 }
 
 const getUserFromSession = async (sessionId) => {
@@ -76,7 +77,7 @@ const createSession = async (req, userId) => {
 		throw new Error('Could not create session')
 	}
 	
-	return sessionId.toHexString()
+	return ObjectIdToString(sessionId)
 }
 
 const authenticate = async (req, userId, _grantId) => {

@@ -8,9 +8,8 @@ import { getProfileFeed, getHomeFeed } from '../store/actions/feedActions.js'
 
 const Feed = ({ type, userId }) => {
 	const dispatch = useDispatch()
-	const feed = useSelector((state) => state.feed.posts)
+	const feed = useSelector((state) => state.feed)
 	
-	const [posts, setPosts] = useState([])
 	const [fetching, setFetching] = useState(false)
 	
 	useEffect(() => {
@@ -30,13 +29,11 @@ const Feed = ({ type, userId }) => {
 	}, [])
 	
 	useEffect(() => {
-		setPosts(feed)
-		
 		if (fetching) setFetching(false)
-	}, [feed])
+	}, [feed.posts])
 	
 	return <div className="list">
-		{posts.map((post) => <Post key={post.postId} data={post} />)}
+		{feed.posts.map((post) => <Post key={post.postId} data={post} />)}
 		{fetching && <Loading />}
 	</div>
 }

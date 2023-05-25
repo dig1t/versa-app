@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 
 import api from '../../../util/api.js'
-import { binarySearch } from '../../../util/index.js'
+import { binarySearch } from '../../../util/binarySearch.js'
 import Layout from '../../Core/components/Layout.js'
 import Loading from '../../Core/components/Loading.js'
 import { addContentStat, getContent } from '../store/actions/contentActions.js'
@@ -19,6 +19,8 @@ import Comment from '../../Content/components/Comment.js'
 import { Icon, Tooltip } from '../../../components/UI.js'
 import DisplayName from '../../User/components/DisplayName.js'
 import useProfile from '../../User/hooks/useProfile.js'
+import PostDropMenu from './PostDropMenu.js'
+import DropMenu from '../../../components/DropMenu.js'
 
 const Content = () => {
 	const dispatch = useDispatch()
@@ -121,7 +123,19 @@ const Content = () => {
 									<span className="time">
 										<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
 									</span>
-									<div className="options"><Icon name="ellipsis" /></div>
+									<div className="options">
+										<DropMenu
+											menu={<PostDropMenu
+												contentProfile={profile}
+												content={contentData}
+												contentId={contentData.postId}
+											/>}
+											position="bottom"
+											sideOffset={60}
+										>
+											<Icon name="ellipsis" />
+										</DropMenu>
+									</div>
 								</div>
 								<div className="content">
 									<div className="text">

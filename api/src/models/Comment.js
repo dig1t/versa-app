@@ -26,4 +26,9 @@ const schema = new Schema({
 	}
 }, { _id: false })
 
+schema.index({ commentId: 1 })
+schema.index({ contentId: 1 })
+schema.index({ userId: 1 })
+schema.index({ created: -1 })
+
 export default mongoose.models.Comment || mongoose.model('Comment', schema)
