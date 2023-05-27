@@ -1,11 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from './UI.js'
+import { Icon } from '../../../components/UI.js'
 
-export default () => {
+const NavigateBack = () => {
 	const navigate = useNavigate()
 	
 	return <div onClick={() => navigate(-1)}>
 		<Icon icon='back' />
 	</div>
 }
+
+export default NavigateBack

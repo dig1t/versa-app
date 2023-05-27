@@ -9,7 +9,7 @@ import rateLimiterMiddleware from './middleware/rateLimiterMiddleware.js'
 import apiMiddleware from './middleware/apiMiddleware.js'
 import { APIError, errorMiddleware } from './util/apiError.js'
 
-import useRoutes from './routes/index.js'
+import apiRoutes from './routes/index.js'
 import config from '../config.js'
 import oauth from './services/auth/oauth.js'
 
@@ -76,7 +76,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/oauth', oauth.use(app))
-app.use('/v1', useRoutes(app))
+app.use('/v1', apiRoutes(app))
 
 // Log all requests and their fields
 if (config.dev) app.use((req, res, next) => {

@@ -15,10 +15,27 @@ import useProfile from '../../User/hooks/useProfile.js'
 
 //import { BurgerMenu } from './UI.js'
 
+const NewPostBorder = () => (<div className="new-post-border">
+	<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+		<rect
+			width="100%"
+			height="100%"
+			fill="none"
+			rx="94"
+			ry="94"
+			stroke="currentColor"
+			stroke-width="3"
+			stroke-dasharray="18 8"
+			stroke-dashoffset="0"
+			stroke-linecap="butt"
+		/>
+	</svg>
+</div>)
+
 const appLinks = [
 	['/', 'Home', 'home'],
-	['/play', 'Play', 'turntable'],
-	['/chat', 'Chat', 'users']
+	//['/play', 'Play', 'turntable'],
+	['/chat', 'Chat', 'comment'] // TODO: add chat icon
 ]
 
 const NavButton = ({ type, children }) => <li className={classNames(
@@ -100,6 +117,7 @@ export const Navigation = () => {
 							<div className="wrap">
 								<div className="center-wrap">
 									<Icon name="plus" />
+									<NewPostBorder />
 								</div>
 							</div>
 						</div>
