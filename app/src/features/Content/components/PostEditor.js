@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
 
@@ -15,19 +15,28 @@ const PostEditor = () => {
 	
 	const inputRef = useRef(null)
 	const uploaderRef = useRef(null)
-	const [valid, setValid] = useState(false)
+	const [textValid, setTextValid] = useState(false)
 	const [files, setFiles] = useState([])
 	const [filesReady, setFilesReady] = useState(true)
+	const [uploadReady, setUploadReady] = useState(false)
 	const profile = useProfile(true)
 	
+	useEffect(() => setUploadReady(
+		(filesReady && textValid) ||
+		(inputRef.current.getValue().length === 0 && filesReady && files.length > 0)
+	), [filesReady, textValid])
+	
 	const handleSubmit = () => {
-		if (!valid || !filesReady) return
+		if (!uploadReady) return
 		
 		const body = inputRef.current.getValue()
 		
 		inputRef.current.setValue('')
-		
-		api.post('/v1/post/new', { body })
+		console.log(files.map((file) => file.media.mediaId))
+		api.post('/v1/post/new', {
+			body,
+			media: files.map((file) => file.media.mediaId)
+		})
 			.then((response) => dispatch(newFeedPost(response)))
 			.catch((error) => {
 				// TODO: CONVERT TO TOAST NOTIFICATION
@@ -46,7 +55,7 @@ const PostEditor = () => {
 			</div>
 			<Input
 				ref={inputRef}
-				handleValidity={setValid}
+				handleValidity={setTextValid}
 				type="textarea"
 				placeholder="Write a new post..."
 				displayError={false}
@@ -70,7 +79,7 @@ const PostEditor = () => {
 				<button
 					className={classNames(
 						'btn btn-round btn-primary post',
-						!valid && !filesReady && 'btn-disabled'
+						!uploadReady && 'btn-disabled'
 					)}
 					onClick={handleSubmit}
 				>Post</button>

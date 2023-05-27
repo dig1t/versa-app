@@ -6,6 +6,7 @@ import {
 	mongoSession,
 	ObjectIdToString
 } from '../util/mongoHelpers.js'
+import { deserializeProfile } from './profileService.js'
 
 import Follower from '../models/Follower.js'
 import Profile from '../models/Profile.js'
@@ -50,7 +51,7 @@ const getFollowerList = async (userId, page = 1, limit = 10) => {
 	const followerIds = followers.map(follow => follow.followerUserId)
 	const profiles = await Profile.find({ _id: { $in: followerIds }})
 	
-	return profiles
+	return profiles.map((profile) => deserializeProfile(profile, userId))
 }
 
 const getFollowingList = async (userId, page = 1, limit = 10) => {
@@ -61,7 +62,7 @@ const getFollowingList = async (userId, page = 1, limit = 10) => {
 	const followingIds = following.map(follow => follow.userId)
 	const profiles = await Profile.find({ _id: { $in: followingIds }})
 	
-	return profiles
+	return profiles.map((profile) => deserializeProfile(profile, userId))
 }
 
 const isFollowing = async (userId, followerUserId) => {

@@ -70,10 +70,10 @@ class OAuth2 {
 	}
 	
 	async validateString(plainString, hashedString) {
-		console.log(plainString)
-		console.log(hashedString)
-		console.log(await bcrypt.compareSync(plainString, hashedString))
-		return await bcrypt.compareSync(plainString, hashedString)
+		return await bcrypt.compareSync(
+			plainString,
+			hashedString
+		)
 	}
 	
 	isExpired(timestamp) {

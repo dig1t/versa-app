@@ -1,7 +1,7 @@
-import { getProfileFromUserId } from './profileService.js'
+import mongoose from 'mongoose'
+
 import Follower from '../models/Follower.js'
 import Post from '../models/Post.js'
-import mongoose, { ObjectId } from 'mongoose'
 
 const postLimitPerUser = 10
 const feedLimit = 50

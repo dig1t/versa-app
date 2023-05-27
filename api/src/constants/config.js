@@ -1,5 +1,6 @@
 const post = {
-	maxBodyLength: 50
+	maxBodyLength: 50,
+	maxMediaCount: 5
 }
 
 const user = {

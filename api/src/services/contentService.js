@@ -6,6 +6,7 @@ import validateText from '../util/validateText.js'
 
 import Post from '../models/Post.js'
 import Content from '../models/Content.js'
+import { deserializeMedia } from './uploadService.js'
 import { canViewProfile, getProfileFromUserId } from './profileService.js'
 import { isMutualFollower } from './followService.js'
 import Comment from '../models/Comment.js'
@@ -33,12 +34,9 @@ const deserializeContent = (content, profile) => ({
 	comments: content.comments,
 	reposts: content.reposts,
 	
-	media: typeof content.media === 'object' && content.media[0] ? {
-		mediaId: ObjectIdToString(content.media[0]._id),
-		userId: ObjectIdToString(content.media[0].userId),
-		source: content.media[0].source, // Direct URL
-		created: content.media[0].created
-	} : undefined,
+	media: typeof content.media === 'object' && content.media.map(
+		(media) => deserializeMedia(media)
+	),
 	
 	profile
 })
@@ -69,17 +67,33 @@ const deserializeLike = (like) => ({
 
 const createContent = async (data) => {
 	if (!data.userId) throw new Error('Missing userId')
-	if (!data.body) throw new Error('Missing body')
 	
-	if (data.body.length > config.post.maxBodyLength || !validateText(data.body, 'text')) {
-		throw new Error(`Content body is too long, max characters is ${config.post.maxBodyLength}`)
+	if (typeof data.body === 'string' && data.body.length > 0) {
+		if (data.body.length > config.post.maxBodyLength) {
+			throw new Error(`Content body is too long, max characters is ${config.post.maxBodyLength}`)
+		}
+		
+		if (!validateText(data.body, 'text')) {
+			throw new Error('Content body contains invalid characters')
+		}
+	}
+	
+	if (data.media && data.media.length > config.post.maxMediaCount) {
+		throw new Error(
+			`Exceeded the maximum number of media items (${config.post.maxMediaCount})`
+		)
+	}
+	
+	if (!data.body && !data.media) {
+		throw new Error('Missing body or media')
 	}
 	
 	const contentId = new mongoose.Types.ObjectId()
 	const content = new Content({
 		contentId,
 		userId: data.userId,
-		body: data.body
+		body: data.body,
+		media: data.media
 	})
 	
 	try {
@@ -92,19 +106,24 @@ const createContent = async (data) => {
 }
 
 const createPost = async (userId, query) => {
-	const { body } = query
+	const { body, media } = query
 	
-	if (body.length > config.post.maxBodyLength || !validateText(body, 'text')) {
-		throw new Error(`Content body is too long, max characters is ${config.post.maxBodyLength}`)
+	if (!body && !media) {
+		throw new Error('Missing body or media')
 	}
 	
 	try {
 		const profile = await getProfileFromUserId(userId)
 		
+		const mediaIds = media ? media.map(
+			(mediaId) => new mongoose.Types.ObjectId(mediaId)
+		) : undefined
+		
 		return await mongoSession(async () => {
 			const content = await createContent({
 				userId,
-				body: query.body,
+				body: body && body.length > 0 ? body : undefined,
+				media: mediaIds,
 				profile
 			}, profile)
 			
@@ -165,7 +184,7 @@ const getContent = async (contentId, requesterUserId, fields) => {
 	if (!contentId) throw new Error('Missing contentId')
 	
 	const content = await Content.findOne({ _id: contentId })
-		.select(fields)
+		.populate('media')
 	
 	if (!content || content.hidden) throw new Error('Content not found')
 	

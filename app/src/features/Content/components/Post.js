@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
@@ -81,7 +81,12 @@ const Post = ({ data }) => {
 					)}>
 						<LinkInjector text={content?.body} />
 					</div>}
-					{content.media && <ContentMedia {...content.media} />}
+					{content.media && content.media.map(
+						(media) => <ContentMedia
+							key={`media-${media.mediaId}`}
+							{...media}
+						/>
+					)}
 				</div>
 				<ContentActions data={content} />
 			</div>
