@@ -1,13 +1,11 @@
-import React, { useCallback } from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-const ContentMedia = ({ type, source }) => {
-	// media: {
-	// 	type: 'image',
-	// 	source: 'https://via.placeholder.com/1500'
-	// }
-	
-	const renderMedia = useCallback(() => {
+import Video from './Video.js'
+import Modal from '../../../components/Modal.js'
+
+const ContentMedia = ({ source, type }) => {
+	const contentMedia = useMemo(() => {
 		switch(type) {
 			case 'album':
 				return <div className="album-wrap">
@@ -16,12 +14,20 @@ const ContentMedia = ({ type, source }) => {
 					}} />
 				</div>
 			case 'image':
-				return <img src={source} />
+				return <Modal type="image" image={source}>
+					<img src={source} />
+				</Modal>
+			case 'video':
+				return <Video
+					rawSource={source}
+				/>
 		}
-	}, [type])
+	}, [source, type])
 	
-	return <div className="media">
-		{renderMedia()}
+	return <div className="content-media post-container">
+		<div className={type}>
+			{contentMedia}
+		</div>
 	</div>
 }
 

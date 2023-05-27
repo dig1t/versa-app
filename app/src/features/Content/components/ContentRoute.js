@@ -141,7 +141,12 @@ const Content = () => {
 									<div className="text">
 										<LinkInjector text={contentData?.body} />
 									</div>
-									{contentData.media && <ContentMedia {...contentData.media} />}
+									{contentData.media && contentData.media.map(
+										(media) => <ContentMedia
+											key={`media-${media.mediaId}`}
+											{...media}
+										/>
+									)}
 								</div>
 								<ContentActions data={contentData} noRedirect={true} />
 							</div>

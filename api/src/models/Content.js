@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 
-import { mongoSession } from '../util/mongoHelpers.js'
+import config from '../constants/config.js'
 import Collaborator from './Collaborator.js'
 import Post from './Post.js'
 import Comment from './Comment.js'
@@ -28,10 +28,12 @@ const schema = new Schema({
 	},
 	private: Boolean,
 	
-	mediaId: {
-		type: Schema.Types.ObjectId,
-		ref: 'Media'
-	},
+	media: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Media'
+		}
+	],
 	
 	embedId: {
 		type: Schema.Types.ObjectId,
@@ -63,6 +65,10 @@ const schema = new Schema({
 		default: 0
 	}
 }, { _id: false })
+
+schema.path('media').validate(function(media) {
+	return media.length <= config.post.maxMediaCount
+}, `Exceeded the maximum number of media items (${config.post.maxMediaCount})`)
 
 schema.pre(
 	['deleteOne', 'deleteMany'],

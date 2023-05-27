@@ -3,6 +3,12 @@ main[page="content"] {
 		margin-bottom: 1rem;
 		border-bottom: 1px solid var(--divider-color);
 	}
+	
+	.content-media {
+		img {
+			max-height: 40rem;
+		}
+	}
 }
 
 .post {
@@ -79,27 +85,6 @@ main[page="content"] {
 						font-size: 1.4rem;
 					}
 				}
-				
-				.media {
-					margin-top: 1rem;
-					overflow: hidden;
-					
-					> * {
-						border-radius: $border-radius;
-					}
-					
-					> img {
-						max-width: 100%;
-						max-height: 24rem;
-						user-select: none;
-					}
-					
-					.album-wrap {
-						max-height: 24rem;
-						max-width: 100%;
-						aspect-ratio: .8;
-					}
-				}
 			}
 			
 			.actions {
@@ -149,6 +134,38 @@ main[page="content"] {
 				font-size: .8rem;
 			}
 		}
+	}
+}
+
+.content-media {
+	&.post-container {
+		margin-top: 1rem;
+		overflow: hidden;
+	}
+	
+	> * {
+		border-radius: $border-radius;
+	}
+	
+	.image {
+		img {
+			max-width: 100%;
+			max-height: 24rem;
+			border-radius: .25rem;
+			user-select: none;
+		}
+	}
+	
+	.video {
+		video {
+			max-height: 40vh;
+		}
+	}
+	
+	.album-wrap {
+		max-height: 24rem;
+		max-width: 100%;
+		aspect-ratio: .8;
 	}
 }
 
@@ -344,7 +361,7 @@ main[data-theme="dark"] .avatar {
 		flex-direction: column;
 		
 		.upload-preview {
-			background-color: var(--white);
+			background-color: var(--box-color);
 			width: 100%;
 			height: 0;
 			border-radius: .5rem;
@@ -401,9 +418,21 @@ main[data-theme="dark"] .avatar {
 			}
 			
 			> .icon {
+				height: 2rem;
 				position: absolute;
-				top: 0;
-				right: 0;
+				top: 1rem;
+				right: 1rem;
+				
+				.icon-wrap {
+					background-color: var(--box-color);
+					opacity: .8;
+					transition-duration: .02s;
+					
+					&:hover {
+						background-color: var(--primary-color);
+						opacity: 1;
+					}
+				}
 			}
 		}
 	}

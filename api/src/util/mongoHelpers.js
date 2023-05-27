@@ -22,7 +22,6 @@ export const ObjectIdToString = (input) => {
 	} else if (input === undefined || input === null) {
 		return
 	} else {
-		console.log(input, typeof(input))
 		throw new Error('mongoHelpers.ObjectIdToString(): Invalid input')
 	}
 }

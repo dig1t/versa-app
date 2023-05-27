@@ -8,7 +8,7 @@ import settings from './settingRoutes.js'
 import feed from './feedRoutes.js'
 import upload from './uploadRoutes.js'
 
-const useRoutes = (server) => {
+const apiRoutes = (server) => {
 	const router = new Router()
 	
 	router.get('/ping', (_req, res) => res.json({ pong: true }))
@@ -24,4 +24,4 @@ const useRoutes = (server) => {
 	return router
 }
 
-export default useRoutes
+export default apiRoutes

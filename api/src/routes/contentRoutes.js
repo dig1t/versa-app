@@ -50,7 +50,7 @@ export default (server) => {
 	
 	router.post(
 		'/post/new',
-		useFields({ fields: ['body'] }),
+		useFields({ allowObjects: true }),
 		server.oauth.authorize(),
 		contentController.postNewPost
 	)
