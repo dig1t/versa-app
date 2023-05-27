@@ -26,6 +26,10 @@ const schema = new Schema({
 		type: String,
 		required: true
 	},
+	ext: {
+		type: String,
+		maxlength: 16
+	},
 	cdn: {
 		type: Number,
 		required: true,

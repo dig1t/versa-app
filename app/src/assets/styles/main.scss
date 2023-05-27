@@ -258,8 +258,38 @@ main:not(.portal) {
 					}
 				}
 				
-				&.new-post .icon {
-					height: 1.8rem;
+				&.new-post {
+					color: var(--primary-color);
+					transition-duration: .2s;
+					
+					&:hover {
+						opacity: .6;
+					}
+					
+					.ui-action {
+						display: block;
+					}
+					
+					.icon {
+						height: 1.8rem;
+					}
+					
+					.wrap {
+						border-radius: 999rem;
+						cursor: pointer;
+						
+						.icon {
+							padding: .4rem;
+						}
+						
+						.new-post-border {
+							width: 100%;
+							height: 100%;
+							border-radius: 99rem;
+							overflow: hidden;
+							position: absolute;
+						}
+					}
 				}
 				
 				&.new-post, &.shortcut {
@@ -305,17 +335,6 @@ main:not(.portal) {
 						.ui-action {
 							display: block;
 						}
-					}
-				}
-				
-				&.new-post .wrap {
-					background-color: var(--primary-color);
-					border-radius: 999rem;
-					cursor: pointer;
-					
-					.icon {
-						color: #fff;
-						padding: .4rem;
 					}
 				}
 			}

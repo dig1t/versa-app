@@ -1,10 +1,8 @@
 import classNames from 'classnames'
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-import { getProfile } from '../store/actions/profileActions.js'
 import { defaultAssets } from '../../../constants/assets.js'
 import { Modal } from '../../../components/UI.js'
 import useProfile from '../hooks/useProfile.js'

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import api from '../../../util/api.js'
 import Icon from '../../../components/Icon.js'
+import { Tooltip } from '../../../components/UI.js'
 
 const MAX_FILE_SIZE_MB = 20
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']

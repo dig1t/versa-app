@@ -51,18 +51,24 @@ const getMediaTypeName = (typeId) => {
 
 const cdn = new CDN(config.cdn)
 
-const deserializeMedia = (media) => ({
-	mediaId: ObjectIdToString(media.mediaId),
-	type: getMediaTypeName(media.type),
-	userId: ObjectIdToString(media.userId),
-	mimeType: media.mime,
-	md5: media.md5Hash,
-	cdn: media.cdn,
-	isMediaNSFW: media.isMediaNSFW,
-	isMediaSensitive: media.isMediaSensitive,
-	isMediaViolent: media.isMediaViolent,
-	created: media.created
-})
+const deserializeMedia = (media) => {
+	const extension = media.ext || media.extension
+	
+	return {
+		mediaId: ObjectIdToString(media.mediaId),
+		type: getMediaTypeName(media.type),
+		userId: ObjectIdToString(media.userId),
+		mimeType: media.mime,
+		extension,
+		md5: media.md5Hash,
+		cdn: media.cdn,
+		isMediaNSFW: media.isMediaNSFW,
+		isMediaSensitive: media.isMediaSensitive,
+		isMediaViolent: media.isMediaViolent,
+		source: media.source || `https://cdn.versaapp.co/${media.mediaId}${extension && '.' + extension}`,
+		created: media.created
+	}
+}
 
 const getMedia = async (mediaId) => {
 	const media = await Media.findOne({ _id: mongoSanitize(mediaId) })
@@ -85,6 +91,7 @@ const createMedia = async (options) => {
 	const fileExtension = path.extname(options.metadata.filename)
 	
 	if (typeof fileExtension !== 'string') {
+		// TODO: not needed?
 		throw new Error('File does not have an extension')
 	}
 	
@@ -121,6 +128,7 @@ const createMedia = async (options) => {
 			userId: mongoSanitize(options.userId),
 			md5Hash: mongoSanitize(md5Hash),
 			mime: mongoSanitize(options.metadata.mimeType),
+			ext: fileExtension.charAt(0) === '.' ? fileExtension.slice(1) : fileExtension,
 			type: mediaType,
 			cdn: 0,
 			isMediaNSFW: options.isMediaNSFW || false,
@@ -161,5 +169,6 @@ export {
 	createMedia,
 	getMedia,
 	deleteMedia,
-	allowedMediaTypes
+	allowedMediaTypes,
+	deserializeMedia
 }
