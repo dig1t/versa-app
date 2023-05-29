@@ -18,7 +18,6 @@ $primary-color-name: 'blue';
 	--box-spacing: .6rem;
 	--box-corner: .4rem;
 	--max-box-size: 40rem;
-	--box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.1);
 }
 
 main[data-theme="light"] {
@@ -26,6 +25,7 @@ main[data-theme="light"] {
 	--bg-color-darker: #{color(blue-gray, 100)};
 	--box-color: #fff;
 	--box-color-secondary: #{color(blue-gray, 50)};
+	--box-shadow: 2px 2px 4px 1px rgb(0 0 0 / 5%);
 	--color-white: #fff;
 	--color-off-white: #f5f5f5;
 	--color-black: #000;
@@ -39,6 +39,7 @@ main[data-theme="dark"] {
 	--bg-color: var(--black-800);
 	--box-color: var(--black-800);
 	--box-color-secondary: #{color(black, 700)};
+	--box-shadow: 2px 2px 4px 1px rgb(255 255 255 / 5%);
 	--color-white: #000;
 	--color-off-white: #f5f5f5;
 	--color-black: #fff;
@@ -586,7 +587,7 @@ header {
 	&.dark .top-box {
 		color: #fff;
 		background-color: transparent;
-		box-shadow: 0 0 1px rgba(255, 255, 255, .2);
+		box-shadow: 0 0 1px rgb(255 255 255 / 20%);
 	}
 }
 

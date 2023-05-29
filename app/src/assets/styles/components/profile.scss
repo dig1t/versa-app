@@ -172,7 +172,7 @@
 				}
 				
 				/*&:hover {
-					background: rgba(0, 0, 0, .1);
+					background: (0 0 0 / 10%);
 				}*/
 			}
 		}
@@ -215,12 +215,6 @@
 					}
 				}
 			}
-		}
-		
-		.list {
-			display: flex;
-			flex-direction: column;
-			gap: .4rem;
 		}
 	}
 }

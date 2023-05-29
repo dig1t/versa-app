@@ -3,8 +3,8 @@
 }
 
 #ui-root {
-	--tooltip-color: rgba(0, 25, 50, .8);
-	--modal-bg-color: rgba(0, 25, 50, .6);
+	--tooltip-color: rgb(0 25 50 / 80%);
+	--modal-bg-color: rgb(0 25 50 / 60%);
 	
 	.background-close {
 		position: absolute;
@@ -213,7 +213,7 @@ $tooltip-padding: .4rem;
 }
 
 .drop-menu {
-	--menu-border-color: rgba(0, 0, 0, 0.08);
+	--menu-border-color: rgb(0 0 0 / 8%);
 	
 	width: 100%;
 	height: 100%;
@@ -269,7 +269,7 @@ $tooltip-padding: .4rem;
 	}
 	
 	@at-root main[data-theme="dark"] & {
-		--menu-border-color: rgba(255, 255, 255, 0.08);
+		--menu-border-color: rgb(255 255 255 / 8%);
 	}
 }
 
