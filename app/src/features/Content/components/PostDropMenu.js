@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
 
-import { ItemMenu, MenuDivider, MenuItem } from '../../../components/DropMenu.js'
+import DropMenu from '../../../components/DropMenu.js'
 import useClipboard from '../../Core/hooks/useClipboard.js'
 import { useShare } from '../../Core/hooks/useShare.js'
 import { deleteFeedPost } from '../store/actions/feedActions.js'
@@ -18,13 +18,13 @@ const PostDropMenu = ({ contentProfile, content, postId, contentId }) => {
 	const postUrl = `${window.location.origin}/@${contentProfile.username}/${content.contentId}`
 	const postType = postId !== undefined ? 'Post' : 'Content'
 	
-	return (<ItemMenu>
-		<MenuItem onClick={() => {
+	return (<DropMenu.ItemMenu>
+		<DropMenu.Item onClick={() => {
 			clipboardCopy(postUrl)
 			
 			// TODO: show toast "Copied link to clipboard"
-		}}>Copy Link</MenuItem>
-		<MenuItem onClick={async () => {
+		}}>Copy Link</DropMenu.Item>
+		<DropMenu.Item onClick={async () => {
 			try {
 				// eslint-disable-next-line no-undef
 				await shareUrl({
@@ -38,16 +38,16 @@ const PostDropMenu = ({ contentProfile, content, postId, contentId }) => {
 				console.error(err)
 				// TODO: show toast "Failed to share post"
 			}
-		}}>Share</MenuItem>
-		<MenuItem onClick={() => {
+		}}>Share</DropMenu.Item>
+		<DropMenu.Item onClick={() => {
 			// TODO: Show report modal, then when finished show toast "Post reported"
-		}}>Report</MenuItem>
+		}}>Report</DropMenu.Item>
 		{content.userId === userId && (<>
-			<MenuDivider />
-			{/*<MenuItem caution onClick={() => console.log('clicked')}>
+			<DropMenu.Divider />
+			{/*<DropMenu.Item caution onClick={() => console.log('clicked')}>
 				{content.private ? `Unprivate ${postType}` : `Private ${postType}`}
-			</MenuItem>*/}
-			<MenuItem caution onClick={() => {
+			</DropMenu.Item>*/}
+			<DropMenu.Item caution onClick={() => {
 				if (postId !== undefined) {
 					dispatch(deleteFeedPost(postId))
 				} else if (contentId !== undefined) {
@@ -55,9 +55,9 @@ const PostDropMenu = ({ contentProfile, content, postId, contentId }) => {
 				}
 			}}>
 				{`Delete ${postType}`}
-			</MenuItem>
+			</DropMenu.Item>
 		</>)}
-	</ItemMenu>)
+	</DropMenu.ItemMenu>)
 }
 
 export default PostDropMenu

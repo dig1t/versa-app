@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
@@ -62,7 +62,7 @@ const Post = ({ data }) => {
 						<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
 					</Link></span>
 					<div className="options">
-						<DropMenu
+						<DropMenu.Menu
 							menu={<PostDropMenu
 								contentProfile={contentProfile}
 								content={content}
@@ -71,7 +71,7 @@ const Post = ({ data }) => {
 							position="left"
 						>
 							<Icon name="ellipsis" />
-						</DropMenu>
+						</DropMenu.Menu>
 					</div>
 				</div>
 				<div className="content">

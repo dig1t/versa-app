@@ -152,10 +152,10 @@ DropMenu.propTypes = {
 	keepActive: PropTypes.bool,
 }
 
-export {
+export default {
+	Menu: DropMenu,
 	ItemMenu,
-	MenuLink,
-	MenuItem,
-	MenuDivider
+	Link: MenuLink,
+	Item: MenuItem,
+	Divider: MenuDivider
 }
-export default DropMenu
