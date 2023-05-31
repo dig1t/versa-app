@@ -1,10 +1,6 @@
 import {
 	S3Client,
-	//ListBucketsCommand,
-	//ListObjectsV2Command,
-	//GetObjectCommand,
-	DeleteObjectCommand,
-	//PutObjectCommand
+	DeleteObjectCommand
 } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import crypto from 'crypto'
@@ -108,22 +104,32 @@ class CDN {
 		}
 	}
 	
-	async deleteFile(fileName) {
+	async deleteFiles(files) {
+		if (typeof files === 'string') {
+			files = [files]
+		}
+		
 		const s3Bucket = `r2.shared-${this.zoneId}`
-		const s3Key = fileName
 		
 		const response = await this.s3Client.send(
 			new DeleteObjectCommand({
 				Bucket: s3Bucket,
-				Key: s3Key
+				Delete: {
+					Objects: files.map((file) => ({ Key: file }))
+				}
 			})
 		)
 		
 		if (!response.$metadata.httpStatusCode === 204) {
-			throw new Error(`Failed to delete file ${fileName}`)
+			console.log(response)
+			throw new Error(`Failed to delete file(s)`)
 		}
 		
 		return true
+	}
+	
+	async deleteFile(fileId) {
+		this.deleteFiles({ fileId })
 	}
 	
 	getFileUrl(fileName) {

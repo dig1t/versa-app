@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { Navigation } from './Navigation.js'
 import { useAuthenticated } from '../../Auth/context/Auth.js'
 
-const Layout = ({ children, page, disableNav, stickyNav, fullWidth }) => {
+const Layout = ({ children, page, disableNav, fullWidth }) => {
 	const { loggedIn } = useAuthenticated()
 	const appTheme = useSelector((state) => state.user.settings.appTheme)
 	
@@ -16,7 +16,6 @@ const Layout = ({ children, page, disableNav, stickyNav, fullWidth }) => {
 	>
 		{!disableNav && <Navigation
 			theme={appTheme}
-			sticky={stickyNav}
 			transparent={true}
 			page={page}
 		/>}

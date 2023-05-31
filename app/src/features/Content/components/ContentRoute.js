@@ -124,7 +124,7 @@ const Content = () => {
 										<Tooltip text={dateCreated}>{timeAgoCreated}</Tooltip>
 									</span>
 									<div className="options">
-										<DropMenu
+										<DropMenu.Menu
 											menu={<PostDropMenu
 												contentProfile={profile}
 												content={contentData}
@@ -134,7 +134,7 @@ const Content = () => {
 											sideOffset={60}
 										>
 											<Icon name="ellipsis" />
-										</DropMenu>
+										</DropMenu.Menu>
 									</div>
 								</div>
 								<div className="content">
