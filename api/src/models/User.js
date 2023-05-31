@@ -1,7 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcrypt'
 
-import { mongoSession } from '../util/mongoHelpers.js'
 import Profile from './Profile.js'
 import UserSession from './UserSession.js'
 

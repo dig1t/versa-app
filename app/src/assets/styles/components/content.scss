@@ -301,17 +301,17 @@ main[data-theme="dark"] .avatar {
 		}
 		
 		.activity-status {
-			width: 30%;
-			height: 30%;
-			border: 2px solid var(--avatar-white);
+			width: 35%;
+			height: 35%;
+			border: 3px solid var(--avatar-white);
 			border-radius: 100%;
 			position: absolute;
-			right: -.5%;
-			bottom: -.5%;
+			right: -.4%;
+			bottom: -.4%;
 			z-index: 2;
 			
 			&.online {
-				background-color: var(--green-600);
+				background-color: var(--green-400);
 			}
 			
 			&.offline {

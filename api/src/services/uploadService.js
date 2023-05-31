@@ -3,9 +3,9 @@ import path from 'path'
 
 import Media from '../models/Media.js'
 
-import { ObjectIdToString, mongoSanitize, mongoValidate } from '../util/mongoHelpers.js'
+import { ObjectIdToString, mongoSanitize, mongoSession, mongoValidate } from '../util/mongoHelpers.js'
 import validateText from '../util/validateText.js'
-import CDN from '../util/cdn.js'
+import CDN from '../util/CDN.js'
 import config from '../../config.js'
 
 const mediaTypes = {
@@ -150,16 +150,29 @@ const createMedia = async (options) => {
 }
 
 const deleteMedia = async (userId, mediaId) => {
-	const media = await getMedia(mediaId)
-	
-	if (media.userId !== userId) {
-		throw new Error('Not authorized to delete media')
-	}
-	
 	try {
-		await Media.deleteOne({ _id: media.mediaId })
-		
-		return { deleted: true }
+		return await mongoSession(async () => {
+			await Media.deleteOne({ _id: mediaId, userId })
+			await CDN.deleteFile({ mediaId })
+			
+			return { deleted: true }
+		})
+	} catch(error) {
+		throw new Error('Could not delete media')
+	}
+}
+
+const deleteMediaBulk = async (userId, mediaIdList) => {
+	try {
+		return await mongoSession(async () => {
+			await Media.deleteMany({
+				_id: { $in: mediaIdList },
+				userId
+			})
+			await CDN.deleteFiles(mediaIdList)
+			
+			return { deleted: true }
+		})
 	} catch(error) {
 		throw new Error('Could not delete media')
 	}
@@ -169,6 +182,7 @@ export {
 	createMedia,
 	getMedia,
 	deleteMedia,
+	deleteMediaBulk,
 	allowedMediaTypes,
 	deserializeMedia
 }

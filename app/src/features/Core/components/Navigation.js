@@ -7,7 +7,7 @@ import { isHydrated } from '../context/Hydration.js'
 import { defaultAssets } from '../../../constants/assets.js'
 import Avatar from '../../User/components/Avatar.js'
 import { Icon } from '../../../components/UI.js'
-import DropMenu, { ItemMenu, MenuLink, MenuDivider } from '../../../components/DropMenu.js'
+import DropMenu from '../../../components/DropMenu.js'
 import Modal from '../../../components/Modal.js'
 import PostEditor from '../../Content/components/PostEditor.js'
 import Logout from '../../Auth/components/Logout.js'
@@ -72,15 +72,15 @@ export const Navigation = () => {
 	const { loggedIn } = useAuthenticated()
 	const profile = useProfile(true)
 	
-	const Menu = <ItemMenu>
-		{profile && <MenuLink link={`/@${profile.username}`}>My Profile</MenuLink>}
-		<MenuDivider />
-		<MenuLink link="/settings">Settings</MenuLink>
+	const Menu = <DropMenu.ItemMenu>
+		{profile && <DropMenu.Link link={`/@${profile.username}`}>My Profile</DropMenu.Link>}
+		<DropMenu.Divider />
+		<DropMenu.Link link="/settings">Settings</DropMenu.Link>
 		
 		<li>
 			<Logout />
 		</li>
-	</ItemMenu>
+	</DropMenu.ItemMenu>
 	
 	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />
@@ -127,7 +127,7 @@ export const Navigation = () => {
 			
 			<ul className="shortcuts user-shortcuts">
 				<li className="shortcut avatar">
-					<DropMenu
+					<DropMenu.Menu
 						menu={Menu}
 						sideOffset={-20}
 						position='right'
@@ -136,7 +136,7 @@ export const Navigation = () => {
 							status="online"
 							userId={profile.userId}
 						/>}
-					</DropMenu>
+					</DropMenu.Menu>
 				</li>
 			</ul>
 		</div>
