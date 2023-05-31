@@ -9,6 +9,7 @@ import Content from '../models/Content.js'
 import { deserializeMedia } from './uploadService.js'
 import { canViewProfile, getProfileFromUserId } from './profileService.js'
 import { isMutualFollower } from './followService.js'
+import { deleteMediaBulk } from './uploadService.js'
 import Comment from '../models/Comment.js'
 import Like from '../models/Like.js'
 
@@ -160,10 +161,11 @@ const deletePost = async (data) => {
 	try {
 		if (post.type === POST_TYPES.CONTENT) {
 			// User owns content of the post
-			// Delete both the post and content
+			// Delete the post, content, and cdn files
 			
 			await mongoSession(async () => {
 				await Content.deleteOne({ _id: post.contentId })
+				await deleteMediaBulk(post.userId, post.content.media)
 			})
 		} else {
 			// Use was tagged as a collaborator or
