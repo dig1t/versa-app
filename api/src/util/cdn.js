@@ -7,7 +7,7 @@ import crypto from 'crypto'
 
 import validateText from './validateText.js'
 
-class CDN {
++
 	constructor(options) {
 		if (typeof options !== 'object') {
 			throw new Error('Options are required')
