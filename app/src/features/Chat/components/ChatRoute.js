@@ -17,5 +17,4 @@ const ChatRoute = () => {
 	</Layout>
 }
 
-
 export default ChatRoute
