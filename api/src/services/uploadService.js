@@ -37,6 +37,7 @@ const getMediaType = (fileType) => {
 			return config.typeId
 		}
 	}
+	
 	return null
 }
 
@@ -46,6 +47,7 @@ const getMediaTypeName = (typeId) => {
 			return mediaType
 		}
 	}
+	
 	return null
 }
 

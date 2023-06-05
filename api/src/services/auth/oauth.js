@@ -8,10 +8,11 @@ import oauth2Config from '../../constants/oauth2Config.js'
 import { authenticateUserCredentials, getUserFromUserId } from '../../services/userService.js'
 
 class OAuth2 {
-	constructor() {
-		this.appCreds = {
-			client_id: config.oauth_client_id,
-			client_secret: config.oauth_client_secret
+	constructor(credentials) {
+		this._credentials = credentials || config.oauth2Credentials
+		
+		if (!this._credentials.client_id || !this._credentials.client_secret) {
+			throw new Error('Missing OAuth2 Credentials, generate them with api/createClient.js')
 		}
 	}
 	
@@ -31,7 +32,14 @@ class OAuth2 {
 		
 		this.provider = new Provider(issuer, {
 			adapter: Adapter,
-			...oauth2Config
+			...oauth2Config,
+			clients: [
+				{
+					client_id: this._credentials.client_id,
+					client_secret: this._credentials.client_secret,
+					...oauth2Config.clients[0]
+				}
+			]
 		})
 		
 		return this.provider
@@ -86,8 +94,16 @@ class OAuth2 {
 		return new Adapter(name)
 	}
 	
-	async issueClientCredentials() {
+	generateMainAppCredentials() {
 		const credentials = this.generateClientCredentials()
+		
+		this._credentials = credentials
+		
+		return credentials
+	}
+	
+	async issueClientCredentials(predefinedCredentials) {
+		const credentials = predefinedCredentials || this.generateClientCredentials()
 		const provider = await this.getProvider()
 		
 		const client = await new provider.Client({
@@ -115,7 +131,7 @@ class OAuth2 {
 			const user = await authenticateUserCredentials(email, password)
 			
 			const grant = new provider.Grant({
-				clientId: this.appCreds.client_id,
+				clientId: config.oauth.client_id,
 				accountId: user.userId
 			})
 			
@@ -200,7 +216,7 @@ class OAuth2 {
 	async issueAccessToken(refreshTokenId, clientId) {
 		const provider = await this.getProvider()
 		const client = await provider.Client.find(
-			clientId || this.appCreds.client_id
+			clientId || config.oauth.client_id
 		)
 		const refreshToken = await this.getRefreshToken(refreshTokenId)
 		
@@ -246,7 +262,7 @@ class OAuth2 {
 	
 	async getAPIAccessToken(refreshTokenId) {
 		return await this.issueAccessToken(
-			refreshTokenId, this.appCreds.client_id
+			refreshTokenId, config.oauth.client_id
 		)
 	}
 	
@@ -330,6 +346,4 @@ class OAuth2 {
 	}
 }
 
-const oauth = new OAuth2()
-
-export default oauth
+export default OAuth2

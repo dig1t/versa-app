@@ -4,9 +4,6 @@ import jwks from '../../config/jwks.json' assert { type: 'json' };
 export default {
 	clients: [
 		{
-			client_id: config.oauth_client_id,
-			client_secret: config.oauth_client_secret,
-			
 			redirect_uris: [config._domain],
 			grant_types: ['authorization_code'],
 			scope: 'openid'
