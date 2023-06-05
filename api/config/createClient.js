@@ -3,8 +3,10 @@ import path from 'path'
 import jose from 'node-jose'
 import { fileURLToPath } from 'url'
 
-import oauth from '../src/services/auth/oauth.js'
-import db from '../src/services/db.js'
+import OAuth2 from '../src/services/auth/oauth.js'
+import db from '../src/util/db.js'
+
+const oauth = new OAuth2()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -41,8 +43,12 @@ db.connect()
 db.instance.once('open', async () => {
 	console.log('database connection success')
 	
-	const { client_id, client_secret } = await oauth.issueClientCredentials()
+	const { client_id, client_secret } = oauth.generateMainAppCredentials()
+	
+	await oauth.issueClientCredentials({ client_id, client_secret })
 	
 	console.log('client credentials issued, copy the following into .env')
 	console.log(`OAUTH_CLIENT_ID="${client_id}"\nOAUTH_CLIENT_SECRET="${client_secret}"`)
+	
+	process.exit(0)
 })
