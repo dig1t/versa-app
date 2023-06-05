@@ -1,19 +1,23 @@
 import http2 from 'node:http2'
-import { readFileSync } from 'fs'
 import path from 'node:path'
+import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
 
 import server from './server.js'
 import config from './config.js'
 import useClusters from './util/useClusters.js'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 const httpOptions = {
 	allowHTTP1: true
 }
-
+console.log(process.env.APP_ENV)
 useClusters(() => {
 	if (process.env.APP_ENV === 'development') {
-		console.log(`starting server at http://localhost:${config.devPort}`)
-		server.listen(config.devPort)
+		console.log(`starting server at http://localhost:${config.port}`)
+		server.listen(config.port)
 	} else {
 		const httpServerOptions = {
 			...httpOptions,

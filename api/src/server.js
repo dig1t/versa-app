@@ -11,12 +11,13 @@ import { APIError, errorMiddleware } from './util/apiError.js'
 
 import apiRoutes from './routes/index.js'
 import config from '../config.js'
-import oauth from './services/auth/oauth.js'
+import OAuth2 from './services/auth/oauth.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
+const oauth = new OAuth2()
 
 app.disable('etag')
 app.disable('x-powered-by')
