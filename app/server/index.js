@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename)
 const httpOptions = {
 	allowHTTP1: true
 }
-console.log(process.env.APP_ENV)
+
 useClusters(() => {
 	if (process.env.APP_ENV === 'development') {
 		console.log(`starting server at http://localhost:${config.port}`)
