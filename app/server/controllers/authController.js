@@ -103,6 +103,7 @@ export default {
 
 	getUser: async (req) => {
 		try {
+			console.log('get user')
 			if (!req.authenticated()) throw new Error('Not authenticated')
 			
 			const refreshToken = req.cookies?.[config.shortName.refreshToken]

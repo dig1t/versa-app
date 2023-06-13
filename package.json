@@ -13,7 +13,7 @@
     "build:server": "webpack --config webpack.server.config.cjs",
     "build": "yarn run build:client && yarn run build:server",
     "dev": "set NODE_ENV=development&& nodemon -w ./runner/index.js",
-    "start": "set NODE_ENV=production&& node dist/server.bundle.js",
+    "start": "set NODE_ENV=development&& node app/server/index.js",
     "test": "set NODE_ENV=development&& mocha --exit --recursive --require @swc/register",
     "lint": "eslint \"**/*.js\""
   },
