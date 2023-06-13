@@ -12,7 +12,7 @@ const router = Router()
 router.get(
 	'/manifest.json',
 	(_, res) => res.json(serverConfig.manifest)
-	)
+)
 
 router.get(
 	'/robots.txt',

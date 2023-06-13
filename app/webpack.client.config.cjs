@@ -10,7 +10,7 @@ const env = dotenv.config({
 	path: path.resolve(__dirname, '../.env')
 }).parsed
 
-const dev = env.NODE_ENV === 'development'
+const dev = process.env.NODE_ENV === 'development'
 
 const swcOptions = {
 	sync: true,
