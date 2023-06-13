@@ -6,6 +6,7 @@ import config from '../../../config.js'
 import Adapter from './adapter.js'
 import oauth2Config from '../../constants/oauth2Config.js'
 import { authenticateUserCredentials, getUserFromUserId } from '../../services/userService.js'
+import Logger from '../../util/logger.js'
 
 class OAuth2 {
 	constructor(credentials) {
@@ -131,7 +132,7 @@ class OAuth2 {
 			const user = await authenticateUserCredentials(email, password)
 			
 			const grant = new provider.Grant({
-				clientId: config.oauth.client_id,
+				clientId: config.oauth2Credentials.client_id,
 				accountId: user.userId
 			})
 			
@@ -215,9 +216,11 @@ class OAuth2 {
 	
 	async issueAccessToken(refreshTokenId, clientId) {
 		const provider = await this.getProvider()
+		
 		const client = await provider.Client.find(
-			clientId || config.oauth.client_id
+			clientId || config.oauth2Credentials.client_id
 		)
+		
 		const refreshToken = await this.getRefreshToken(refreshTokenId)
 		
 		if (!client || !refreshToken || this.isExpired(refreshToken.exp)) return
@@ -262,7 +265,7 @@ class OAuth2 {
 	
 	async getAPIAccessToken(refreshTokenId) {
 		return await this.issueAccessToken(
-			refreshTokenId, config.oauth.client_id
+			refreshTokenId, config.oauth2Credentials.client_id
 		)
 	}
 	
@@ -323,12 +326,11 @@ class OAuth2 {
 		}
 	}
 	
-	use() {
+	useRoutes() {
 		const router = new Router()
 		
 		router.get('/token', async (req, res) => {
 			const refreshToken = req.cookies?.[config.shortName.refreshToken]
-			
 			if (!refreshToken) return res.sendStatus(401)
 			
 			try {
@@ -338,6 +340,8 @@ class OAuth2 {
 					access_token: this.encodeToken(accessToken)
 				})
 			} catch(error) {
+				Logger('OAuth2 /token', error.message)
+				
 				res.sendStatus(500)
 			}
 		})

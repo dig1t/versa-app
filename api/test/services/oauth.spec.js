@@ -3,17 +3,18 @@ import chaiHttp from 'chai-http'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 
-import oauth from '../../src/services/auth/oauth.js'
+import OAuth2 from '../../src/services/auth/oauth.js'
 import mockUser from '../util/mockUser.js'
 import { MOCK_USER } from '../data.js'
 import config from '../../config.js'
 
 const server = express()
+const oauth = new OAuth2()
 
 server.use(express.json())
 server.use(cookieParser())
 server.use(oauth.inject(server))
-server.use('/oauth', oauth.use(server))
+server.use('/oauth', oauth.useRoutes())
 
 chai.use(chaiHttp)
 

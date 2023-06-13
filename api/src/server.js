@@ -31,6 +31,9 @@ app.use(oauth.inject(app))
 
 if (config.dev) {
 	app.use((req, res, next) => {
+		// Log all requests and their fields
+		console.log(req.url, req.fields, req.method)
+		
 		res.header('Access-Control-Allow-Origin', req.headers.origin)
 		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
 		next()
@@ -44,7 +47,7 @@ if (config.dev) {
 	
 	//res.header('Access-Control-Allow-Origin', config.domain)
 	
-	/* Setup helmet */
+	// Setup helmet
 	app.use(helmet.contentSecurityPolicy({
 		directives: {
 			defaultSrc: ["'self'"],
@@ -76,14 +79,8 @@ app.use((req, res, next) => {
 	next()
 })
 
-app.use('/oauth', oauth.use(app))
 app.use('/v1', apiRoutes(app))
-
-// Log all requests and their fields
-if (config.dev) app.use((req, res, next) => {
-	console.log(req.url, req.fields, req.method)
-	next()
-})
+app.use('/oauth', oauth.useRoutes())
 
 app.get('*', (req, res) => res.status(404).send())
 
