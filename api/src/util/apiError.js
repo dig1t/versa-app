@@ -13,7 +13,10 @@ class APIError extends Error {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorMiddleware = (error, req, res, next) => {
+	console.log('err', error.stack)
 	if (process.env.NODE_ENV !== 'production') {
+		console.log(error.stack)
+		console.log(typeof error === 'function' ? error() : error)
 		console.error((error.custom || false), error)
 	}
 	

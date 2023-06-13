@@ -15,7 +15,7 @@ const env = dotenv.config({
 	// eslint-disable-next-line no-undef
 	path: path.resolve(__dirname, '../../.env')
 }).parsed
-const dev = env.NODE_ENV
+const dev = process.env.NODE_ENV
 
 export default {
 	port: 8080,

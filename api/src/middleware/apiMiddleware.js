@@ -59,11 +59,10 @@ const apiMiddleware = () => (req, res, next) => {
 		
 		if (options.setStatus === true) res.status(status || 200)
 		if (options.setHeader) res.set('Content-Type', 'application/json')
-		
-		setTimeout(() => {
+		//setTimeout(() => {
 			res.write(JSON.stringify(draft))
 			res.end()
-		}, 1000)
+		//}, 1000)
 	}
 	
 	next()
