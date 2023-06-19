@@ -17,4 +17,3 @@ node_modules
 # Compiled
 dist
 app/public/assets/client
-app/public/assets/client/*
