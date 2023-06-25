@@ -1,16 +1,28 @@
+# Base Stage
 FROM node:18-slim AS base
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 COPY package*.json yarn.lock ./
 
+# Dependency Stage
 FROM base AS dependencies
-RUN yarn install
 
 FROM dependencies AS test
+RUN yarn install --production
 COPY . .
-RUN yarn run test
+CMD [ "yarn", "test" ]
 
-FROM node:18-slim AS release
-WORKDIR /usr/src/app
-COPY --from=dependencies /usr/src/app/node_modules ./node_modules
-COPY package*.json yarn.lock ./
-CMD [ "node", "dist/index.js" ]
+# Development Stage
+FROM base AS development
+RUN yarn install
+COPY . .
+EXPOSE 8080
+EXPOSE 8888
+CMD [ "yarn", "dev" ]
+
+# Release Stage
+FROM base AS release
+RUN yarn install --production
+COPY . .
+EXPOSE 80
+EXPOSE 443
+CMD [ "yarn", "serve" ]
