@@ -1,13 +1,18 @@
-version: "3"
+version: '3.8'
 services:
   app:
+    environment:
+      - NODE_ENV=development
     build:
       context: .
-      target: dependencies
+      target: development
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./:/usr/app
+      - /usr/app/node_modules
+    container_name: versa
     ports:
       - 8080:8080
       - 8888:8888
-    command: yarn dev
+    expose:
+      - 8080
+      - 8888
