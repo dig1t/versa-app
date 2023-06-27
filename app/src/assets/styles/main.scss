@@ -169,6 +169,7 @@ main:not(.portal) {
 		flex: 1;
 		
 		&.full-width {
+      padding: 0;
 			display: block;
 		}
 		
