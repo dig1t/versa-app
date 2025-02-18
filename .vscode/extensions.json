@@ -9,6 +9,7 @@
 		"usernamehw.errorlens",
 		"esbenp.prettier-vscode",
 		"gruntfuggly.todo-tree",
-		"ms-vsliveshare.vsliveshare"
+    "ms-vsliveshare.vsliveshare",
+    "editorconfig.editorconfig"
 	]
 }
