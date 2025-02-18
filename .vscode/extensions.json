@@ -3,13 +3,12 @@
 		"dbaeumer.vscode-eslint",
 		"formulahendry.auto-rename-tag",
 		"ecmel.vscode-html-css",
-		"wix.vscode-import-cost",
 		"vunguyentuan.vscode-css-variables",
 		"stylelint.vscode-stylelint",
 		"usernamehw.errorlens",
 		"esbenp.prettier-vscode",
 		"gruntfuggly.todo-tree",
-    "ms-vsliveshare.vsliveshare",
-    "editorconfig.editorconfig"
+		"editorconfig.editorconfig",
+		"rvest.vs-code-prettier-eslint"
 	]
 }
