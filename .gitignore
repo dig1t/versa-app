@@ -8,7 +8,6 @@ yarn-error.log*
 # config
 .env
 *.code-workspace
-!versa.code-workspace
 secure
 
 # dependency directories
