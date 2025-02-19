@@ -12,16 +12,16 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 	const inputRef = useRef(null)
 	const [valid, setValid] = useState(false)
 	const profile = useProfile(true)
-	
+
 	const handleSubmit = () => {
 		const body = inputRef.current.getValue()
-		
+
 		inputRef.current.setValue('')
-		
+
 		api.post(`/v1/content/${contentId}/comment`, { body })
 			.then((response) => {
 				if (!handleSuccess) return
-				
+
 				handleSuccess(response)
 			})
 			.catch((error) => {
@@ -30,7 +30,7 @@ const CommentEditor = ({ contentId, handleSuccess }) => {
 				console.log(error)
 			})
 	}
-	
+
 	return <div className="post-editor simple">
 		<label className="box">
 			<div className="post-header">

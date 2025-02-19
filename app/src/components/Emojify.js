@@ -12,21 +12,21 @@ const options = {
 
 const Emojify = ({ children }) => {
 	const childrenRefs = useRef([])
-	
+
 	useEffect(() => {
 		Object.values(childrenRefs.current).forEach(
 			(ref) => twemoji.parse(ref.current, options)
 		)
 	}, [])
-	
+
 	return <>
 		{Children.map(children, (child, index) => {
 			if (typeof child === 'string') {
 				return child
 			}
-			
+
 			childrenRefs.current[index] = childrenRefs.current[index] || useRef(null)
-			
+
 			return React.cloneElement(child, { ref: childrenRefs.current[index] })
 		})}
 	</>

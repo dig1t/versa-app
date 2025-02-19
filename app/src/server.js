@@ -13,9 +13,9 @@ const assets = {
 const ServerSideRender = (req, res) => {
 	process.env.NODE_ENV === 'development' && res.setHeader('Cache-Control', 'no-cache')
 	res.setHeader('Content-Type', 'text/html; charset=utf-8')
-	
+
 	let didError = false
-	
+
 	const { pipe } = renderToPipeableStream(
 		<React.StrictMode>
 			<StaticRouter location={req.url}>
@@ -33,9 +33,9 @@ const ServerSideRender = (req, res) => {
 			onShellError() {
 				// Something errored before we could complete the shell so we emit an alternative shell.
 				console.log('shell error')
-				
+
 				res.statusCode = 500
-				
+
 				res.write(`<!DOCTYPE html><p>Loading...</p><script>assetManifest=${JSON.stringify(assets)};</script><script src="${assets.bundle}"></script>`)
 				res.end()
 			},

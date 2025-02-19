@@ -16,11 +16,11 @@ export default (state = {
 		case CONTENT_ADD_ARRAY: {
 			const keys = Object.keys(action.payload)
 			const newContent = {}
-			
+
 			keys.map((contentId) => {
 				if (!state.contentList[contentId]) newContent[contentId] = action.payload[contentId]
 			})
-			
+
 			return {
 				...state,
 				contentList: {
@@ -29,10 +29,10 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case CONTENT_DELETE_SUCCESS: {
 			const contentId = action.payload.contentId
-			
+
 			return {
 				...state,
 				deletedContentIds: state.deletedContentIds.concat(contentId),
@@ -45,7 +45,7 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case CONTENT_FETCH_SUCCESS: {
 			return {
 				...state,
@@ -63,7 +63,7 @@ export default (state = {
 		}
 		case CONTENT_LIKE_UPDATE_SUCCESS: {
 			const content = state.contentList[action.payload.contentId]
-			
+
 			return {
 				...state,
 				contentList: {
@@ -80,9 +80,9 @@ export default (state = {
 		}
 		case CONTENT_STAT_UPDATE: {
 			const content = state.contentList[action.payload.contentId]
-			
+
 			if (!content) return state
-			
+
 			return {
 				...state,
 				contentList: {

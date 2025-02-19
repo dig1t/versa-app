@@ -36,7 +36,7 @@ const validateText = (text, validateFor) => {
 		}
 		default: { // Regex
 			const regex = validationMap.get(validateFor)
-			
+
 			return regex === undefined ? text : regex.test(text)
 		}
 	}

@@ -15,30 +15,30 @@ const AuthForm = ({
 	apiUrl
 }) => {
 	const hydrated = isHydrated()
-	
+
 	const navigate = useNavigate()
 	const [inputData, setFormData] = useState({})
 	const inputRefs = useRef({})
-	
+
 	const [saveReady, setSaveReady] = useState(false)
 	const [validInputs, setValidInputs] = useState({})
-	
+
 	const [canRedirect, setCanRedirect] = useState(false)
 	const [authMessage, setAuthMessage] = useState('')
-	
+
 	useEffect(() => {
 		let allInputsValid = true
-		
+
 		for (let val in validInputs) {
 			if (validInputs[val] !== true) {
 				allInputsValid = false
 				break
 			}
 		}
-		
+
 		setSaveReady(allInputsValid)
 	}, [validInputs, inputData])
-	
+
 	useEffect(() => {
 		setFormData(inputs.reduce((result, input) => {
 			return {
@@ -53,12 +53,12 @@ const AuthForm = ({
 			}
 		}, {}))
 	}, [])
-	
+
 	return <form onSubmit={(event) => {
 		event.preventDefault()
-		
+
 		if (!saveReady) return
-		
+
 		api.call({
 			method: 'post',
 			url: apiUrl,
@@ -69,19 +69,19 @@ const AuthForm = ({
 			.then((data) => {
 				if (!hydrated) return
 				if (handleResult) handleResult(true, data)
-				
+
 				setCanRedirect(true)
 			})
 			.catch((error) => {
 				if (hydrated) {
 					if (handleResult) handleResult(false)
-					
+
 					navigate(redirectUrl)
 					//setCanRedirect(false)
 				}
-				
+
 				setAuthMessage(error)
-				
+
 				// Clear the password field
 				setFormData((prevState) => ({
 					...prevState,
@@ -91,7 +91,7 @@ const AuthForm = ({
 	}}>
 		{canRedirect && redirect ? <Navigate to={redirectUrl} /> : null}
 		<div className="auth-error error">{authMessage}</div>
-		
+
 		{inputs.map((input) => <Input
 			{...input}
 			key={input.name}
@@ -109,7 +109,7 @@ const AuthForm = ({
 				[input.name]: value
 			}))}
 		/>)}
-		
+
 		<button
 			className="btn-full-width btn-round btn-primary"
 			type="submit"

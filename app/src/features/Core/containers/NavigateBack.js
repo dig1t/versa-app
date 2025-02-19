@@ -4,7 +4,7 @@ import { Icon } from '../../../components/UI.js'
 
 const NavigateBack = () => {
 	const navigate = useNavigate()
-	
+
 	return <div onClick={() => navigate(-1)}>
 		<Icon icon='back' />
 	</div>

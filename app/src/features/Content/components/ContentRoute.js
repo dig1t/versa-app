@@ -29,7 +29,7 @@ const Content = () => {
 		invalidContentIds: state.content.invalidContentIds,
 		deletedContentIds: state.content.deletedContentIds
 	}))
-	
+
 	const { loggedIn } = useAuthenticated()
 	const { contentId } = useParams()
 	const [contentData, setContentData] = useState(null)
@@ -38,36 +38,36 @@ const Content = () => {
 	const [redirect, setRedirect] = useState(null)
 	const [fetching, setFetching] = useState(false)
 	const [canComment, setCanComment] = useState(false)
-	
+
 	const {
 		data: commentData,
 		error: commentError,
 		loading: commentsLoading
 	} = api.get(`/v1/content/${contentId}/comments`, null, { useHook: true })
-	
+
 	useEffect(
 		() => setCanComment(
 			loggedIn === true && contentData !== null && !contentData.disabledComments
 		),
 		[loggedIn, contentData]
 	)
-	
+
 	useEffect(() => {
 		if (commentData === null) return
-		
+
 		setComments(commentData)
 	}, [commentData])
-	
+
 	useEffect(() => {
 		const invalidContentId = binarySearch(invalidContentIds, contentId) > -1
 		const deletedContentId = binarySearch(deletedContentIds, contentId) > -1
-		
+
 		if (invalidContentId || deletedContentId) return setRedirect('/error?e=no-content')
-		
+
 		if (
 			(contentData !== null && contentList[contentId] === contentData) || contentId === null
 		) return
-		
+
 		if (contentList[contentId]) {
 			if (contentList[contentId].deleted) {
 				return setRedirect('/error?e=no-content')
@@ -80,14 +80,14 @@ const Content = () => {
 			dispatch(getContent(contentId))
 		}
 	}, [contentList, invalidContentIds])
-	
+
 	const profile = useProfile(userId)
-	
+
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
 		if (contentData === null) return {}
-		
+
 		const dateInstance = new Date(contentData.created)
-		
+
 		return {
 			timeAgoCreated: formatDistanceToNowStrict(
 				dateInstance,
@@ -99,7 +99,7 @@ const Content = () => {
 			)
 		}
 	}, [contentData])
-	
+
 	return <Layout page="content">
 		{redirect && <Navigate to={redirect} />}
 		{contentData === null ? <Loading /> : <div className="wrap grid-g">

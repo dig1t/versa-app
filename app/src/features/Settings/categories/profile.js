@@ -41,10 +41,10 @@ const inputs = [
 const ProfileSettingPage = ({ data, handleSave, config }) => {
 	const [inputData, setFormData] = useState({})
 	const inputRefs = useRef({})
-	
+
 	const [saveReady, setSaveReady] = useState(false)
 	const [validInputs, setValidInputs] = useState({})
-	
+
 	const setRefValues = (values) => {
 		for (const inputName in inputRefs.current) {
 			if (values[inputName] && inputRefs.current[inputName]) {
@@ -52,32 +52,32 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 			}
 		}
 	}
-	
+
 	useEffect(() => {
 		setRefValues(data.profile)
 	}, [data])
-	
+
 	useEffect(() => {
 		let allInputsValid = true
-		
+
 		for (let val in validInputs) {
 			if (validInputs[val] !== true) {
 				allInputsValid = false
 				break
 			}
 		}
-		
+
 		let inputsChanged = false
-		
+
 		for (const inputName in inputRefs.current) {
 			if (inputsChanged) break
-			
+
 			inputsChanged = inputData[inputName] !== data.profile[inputName]
 		}
-		
+
 		setSaveReady(allInputsValid && inputsChanged)
 	}, [validInputs, inputData, data])
-	
+
 	return <div className="profile-settings">
 		<ProfileCard profile={{
 			...data.profile,
@@ -104,13 +104,13 @@ const ProfileSettingPage = ({ data, handleSave, config }) => {
 			ready={saveReady}
 			handleSave={() => {
 				let inputDataDraft = {}
-				
+
 				for (const inputName in inputData) {
 					if (inputData[inputName] === data.profile[inputName]) continue
-					
+
 					inputDataDraft['profile_' + inputName] = inputData[inputName]
 				}
-				
+
 				handleSave({
 					inputData: inputDataDraft,
 					settingConfig: config

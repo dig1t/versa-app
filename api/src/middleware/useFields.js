@@ -7,21 +7,21 @@ export default (_options) => (req, res, next) => {
 		...defaultOptions,
 		..._options
 	}
-	
+
 	if (!req._using) req._using = {}
-	
+
 	req._using.useFields = '1.0.2'
-	
+
 	const data = {
 		...req.body,
 		...req.query
 	}
-	
+
 	if (!data) return res.status(400).json({
 		success: false,
 		message: 'Missing fields'
 	})
-	
+
 	if (!options.allowObjects) {
 		for (let key in data) {
 			if (typeof data[key] === 'object') return res.status(400).json({
@@ -30,7 +30,7 @@ export default (_options) => (req, res, next) => {
 			})
 		}
 	}
-	
+
 	if (options.fields) {
 		for (let field in options.fields) {
 			if (data[options.fields[field]] === undefined)
@@ -40,7 +40,7 @@ export default (_options) => (req, res, next) => {
 				})
 		}
 	}
-	
+
 	if (options.params) {
 		for (let field in options.params) {
 			if (req.params[options.params[field]] === undefined)
@@ -50,8 +50,8 @@ export default (_options) => (req, res, next) => {
 				})
 		}
 	}
-	
+
 	req.fields = data
-	
+
 	next()
 }

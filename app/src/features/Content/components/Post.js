@@ -27,13 +27,13 @@ const Post = ({ data }) => {
 		profileList: state.profiles.profileList,
 		contentList: state.content.contentList
 	}))
-	
+
 	const content = contentList[data.contentId]
 	const contentProfile = content ? profileList[content.userId] : {}
-	
+
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
 		const dateInstance = new Date(data.created)
-		
+
 		return {
 			timeAgoCreated: formatDistanceToNowStrict(
 				dateInstance,
@@ -45,7 +45,7 @@ const Post = ({ data }) => {
 			)
 		}
 	}, [data.created])
-	
+
 	return <div className="post" data-postId={data.postId}>
 		<div className="container">
 			<div className="post-avatar">

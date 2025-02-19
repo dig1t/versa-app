@@ -71,17 +71,17 @@ export const Navigation = () => {
 	const hydrated = isHydrated()
 	const { loggedIn } = useAuthenticated()
 	const profile = useProfile(true)
-	
+
 	const Menu = <DropMenu.ItemMenu>
 		{profile && <DropMenu.Link link={`/@${profile.username}`}>My Profile</DropMenu.Link>}
 		<DropMenu.Divider />
 		<DropMenu.Link link="/settings">Settings</DropMenu.Link>
-		
+
 		<li>
 			<Logout />
 		</li>
 	</DropMenu.ItemMenu>
-	
+
 	return (loggedIn && hydrated) ? <nav>
 		<div className="placeholder" />
 		<div className="container">
@@ -94,20 +94,20 @@ export const Navigation = () => {
 						<Icon name="logo-letter" />
 					</Link>
 				</li>
-				
+
 				<li className="divider" />
-				
+
 				{appLinks.map((link) => <AppLink
 					icon={link[2]}
 					redirect={link[0]}
 					key={`nav-app-link-${link[1]}`}
 				/>)}
-				
+
 				<li className="divider" />
-				
+
 				<Shortcut icon="home" redirect="/home" />
 				<Shortcut icon="message" redirect="/chat" />
-				
+
 				<li className="btn new-post">
 					<Modal
 						component={<PostEditor />}
@@ -124,7 +124,7 @@ export const Navigation = () => {
 					</Modal>
 				</li>
 			</ul>
-			
+
 			<ul className="shortcuts user-shortcuts">
 				<li className="shortcut avatar">
 					<DropMenu.Menu

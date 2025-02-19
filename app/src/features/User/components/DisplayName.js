@@ -7,7 +7,7 @@ import { VerifiedBadge } from './VerifiedBadge.js'
 const DisplayName = ({ profile, username, linked, wrap }) => {
 	const WrapComponent = wrap ? 'div' : React.Fragment
 	const TextComponent = wrap ? 'div' : 'span'
-	
+
 	return profile && (<WrapComponent className={wrap && 'display-name-wrap'}>
 		<TextComponent className="display-name align-center-wrap">
 			{linked && <Link
@@ -16,11 +16,11 @@ const DisplayName = ({ profile, username, linked, wrap }) => {
 			>
 				{profile.name}
 			</Link>}
-			
+
 			{!linked && <span>
 				{profile.name}
 			</span>}
-			
+
 			<VerifiedBadge verificationLevel={profile.verificationLevel} />
 		</TextComponent>
 		{username && <TextComponent className="username">
@@ -30,7 +30,7 @@ const DisplayName = ({ profile, username, linked, wrap }) => {
 			>
 				{`@${profile.username}`}
 			</Link>}
-			
+
 			{!linked && <>{`@${profile.username}`}</>}
 		</TextComponent>}
 	</WrapComponent>)

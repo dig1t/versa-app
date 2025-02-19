@@ -27,7 +27,7 @@ const ActivityCircle = ({ type }) => <svg
 ActivityCircle.defaultProps = {
 	type: 'story'
 }
-	
+
 const RenderLink = ({ clickRedirect, profile, children }) => <>
 	{clickRedirect && profile && profile.username ? <Link to={`/@${profile.username}`}>
 		{children}
@@ -45,19 +45,19 @@ const Avatar = ({
 }) => {
 	const [avatarImg, setAvatarImg] = useState(avatar || defaultAssets.avatar)
 	const profile = useProfile(userId)
-	
+
 	useEffect(() => {
 		if (profile?.avatar && avatar === undefined) {
 			setAvatarImg(profile.avatar)
 		}
 	}, [profile])
-	
+
 	const ModalComponent = React.memo(({ children }) => {
 		return useModal ? <Modal type="image" image={avatarImg}>
 			{children}
 		</Modal> : <>{children}</>
 	}, [useModal])
-	
+
 	return <div
 		className={classNames(
 			'avatar', !hasStory && 'has-story'

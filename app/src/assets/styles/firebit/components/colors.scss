@@ -30,7 +30,7 @@ $baseColors: (
 	blue-gray: $blue-gray,
 	dark-gray: $dark-gray,
 	white: $white,
-	
+
 	// Colors
 	red: $red,
 	orange: $orange,
@@ -39,7 +39,7 @@ $baseColors: (
 	blue: $blue,
 	purple: $purple,
 	pink: $pink,
-	
+
 	// Neon Colors
 	neon-red: $neon-red,
 	neon-orange: $neon-orange,
@@ -54,18 +54,18 @@ $colors: ();
 
 @each $color, $hex in $baseColors {
 	$variance: 30;
-	
+
 	@for $i from 1 through 4 {
 		$percent: calc($variance - (($variance / 4) * ($i - 1)));
 		$lightShade: $i * 100;
 		$darkShade: calc((10 - $i) * 100);
-		
+
 		$colors: map-merge($colors, (
 			#{$color}-#{$lightShade}: lighten($hex, $percent),
 			#{$color}-#{$darkShade}: darken($hex, $percent)
 		));
 	}
-	
+
 	$colors: map-merge($colors, (
 		#{$color}-50: lighten($hex, 40),
 		#{$color}-#{500}: $hex,
@@ -85,7 +85,7 @@ $colors: ();
 	.bg-#{$color} {
 		background-color: $value;
 	}
-	
+
 	.text-#{$color} {
 		color: $value;
 	}

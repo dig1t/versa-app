@@ -14,15 +14,15 @@ const Settings = () => {
 	const { categoryParam } = useParams()
 	const navigate = useNavigate()
 	const profile = useProfile(true)
-	
+
 	const category = settingsPageConfig.find((cat) => cat.name === categoryParam) || initialCategory
-	
+
 	useEffect(() => {
 		if (!categoryParam) {
 			navigate(`/settings/${initialCategory.name}`)
 		}
 	}, [categoryParam])
-	
+
 	return <Layout page="settings">
 		{profile ? <div className="wrap grid">
 			<div className="settings-categories col-3 col-desktop-3">

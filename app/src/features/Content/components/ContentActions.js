@@ -14,7 +14,7 @@ const ContentActions = ({ data, noRedirect }) => {
 	const [redirect, setRedirect] = useState(null)
 	const profileList = useSelector((state) => state.profiles.profileList)
 	const contentProfile = profileList[data.userId]
-	
+
 	return <div className="actions">
 		{redirect && <Navigate to={redirect} />}
 		<div
@@ -25,9 +25,9 @@ const ContentActions = ({ data, noRedirect }) => {
 			)}
 			onClick={(input) => {
 				input.preventDefault()
-				
+
 				if (loggedIn !== true) return
-				
+
 				dispatch(
 					data.liked ? deleteLike(data.contentId) : addLike(data.contentId)
 				)
@@ -40,7 +40,7 @@ const ContentActions = ({ data, noRedirect }) => {
 			className="action comment align-center-wrap"
 			onClick={(input) => {
 				if (!contentProfile || noRedirect) return
-				
+
 				input.preventDefault()
 				setRedirect(`/@${contentProfile.username}/${data.contentId}`)
 			}}
@@ -55,9 +55,9 @@ const ContentActions = ({ data, noRedirect }) => {
 			)}
 			onClick={(input) => {
 				input.preventDefault()
-				
+
 				if (loggedIn !== true) return
-				
+
 				// TODO: implement reposts
 			}}
 		>

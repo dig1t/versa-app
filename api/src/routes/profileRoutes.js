@@ -6,7 +6,7 @@ import profileController from '../controllers/profileController.js'
 
 export default (server) => {
 	const router = new Router()
-	
+
 	router.get(
 		[
 			'/profile/:userId?',
@@ -15,13 +15,13 @@ export default (server) => {
 		server.oauth.authorize({ optional: true }),
 		profileController.getProfile
 	)
-	
+
 	router.get(
 		'/profile/:userId/feed',
 		useFields({ params: ['userId'] }),
 		server.oauth.authorize({ optional: true }),
 		profileController.getProfileFeed
 	)
-	
+
 	return router
 }

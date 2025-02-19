@@ -11,7 +11,7 @@ export const privateRoute = (req, res, next) => {
 	} else if (typeof req._using?.api === 'undefined') {
 		throw new Error('apiMiddleware: Middleware is required')
 	}
-	
+
 	req.authenticated() ? next() : req.apiResult(401)
 }
 
@@ -19,20 +19,20 @@ export const logout = async (req, res, next) => {
 	if (typeof req._using?.auth === 'undefined') {
 		throw new Error('authMiddleware: Middleware is required')
 	}
-	
+
 	await req.logoutUser()
-	
+
 	next()
 }
 
 export default () => (req, res, next) => {
 	if (!req._using) req._using = {}
-	
+
 	req._using.auth = '1.0.0'
-	
+
 	req.getAccessToken = async (refreshToken) => {
 		if (!refreshToken) throw new Error('authMiddleware.getAccessToken(): Missing refresh token')
-		
+
 		try {
 			const data = await api.get('/oauth/token', null, {
 				headers: {
@@ -40,17 +40,17 @@ export default () => (req, res, next) => {
 				},
 				customErrorHandler: true
 			})
-			
+
 			return data.access_token
 		} catch(error) {
 			throw new Error('Could not fetch access token')
 		}
 	}
-	
+
 	req.loginUser = (data) => new Promise((resolve, reject) => {
 		if (!data) throw new Error('Missing user data')
 		if (!data.auth.refreshTokenId) throw new Error('Missing internal data')
-		
+
 		req.login(data, (error) => {
 			// Set httpOnly RefreshToken cookie
 			res.cookie(
@@ -62,27 +62,27 @@ export default () => (req, res, next) => {
 					sameSite: 'strict'
 				}
 			)
-			
+
 			error ? reject(error) : resolve()
 		})
 	})
-	
+
 	req.authenticated = () => typeof req.user !== 'undefined'
-	
+
 	req.logoutUser = () => new Promise((resolve, reject) => {
 		req.authenticated() ? req.logout((error) => {
 			if (error) return reject(error)
-			
+
 			req.loggedUserOut = true
-			
+
 			res.clearCookie(config.shortName.session)
 			res.clearCookie(config.shortName.refreshToken)
-			
+
 			req.session.destroy()
-			
+
 			resolve()
 		}) : resolve()
 	})
-	
+
 	next()
 }

@@ -27,7 +27,7 @@ export const AccordionInput = ({ expanded, config, data, toggleAccordion, handle
 	const [saveReady, setSaveReady] = useState(false)
 	const [valid, setValid] = useState(false)
 	const [value, setValue] = useState()
-	
+
 	useEffect(() => {
 		if (data[config.name] !== undefined) {
 			inputRef.current.setValue(data[config.name])
@@ -35,24 +35,24 @@ export const AccordionInput = ({ expanded, config, data, toggleAccordion, handle
 			//inputRef.current.setValue(config.default)
 		}
 	}, [data, config])
-	
+
 	useEffect(() => {
 		let readyConditionCheck = typeof config.readyCondition === 'function' ?
 			config.readyCondition(value) :
 			true
-		
+
 		setSaveReady(
 			readyConditionCheck === true &&
 			valid == true &&
 			value !== data[config.name]
 		)
 	}, [value, valid])
-	
+
 	const handleSaveAction = () => {
 		if (saveReady !== true) return
-		
+
 		toggleAccordion()
-		
+
 		if (typeof config.handleSave === 'function') {
 			config.handleSave({ [config.name]: value }, config.onSave)
 		} else {
@@ -63,13 +63,13 @@ export const AccordionInput = ({ expanded, config, data, toggleAccordion, handle
 			})
 		}
 	}
-	
+
 	const isTextOption = config.inputOptions && (
 		config.inputOptions.type === 'text' ||
 		config.inputOptions.type === 'textarea' ||
 		config.inputOptions.type === undefined
 	)
-	
+
 	return <li className={classNames(
 		'accordion',
 		expanded && 'expanded'
@@ -121,20 +121,20 @@ AccordionInput.propTypes = {
 
 const Accordion = ({ data, handleSave, config }) => {
 	const [expanded, setExpanded] = useState([])
-	
+
 	const toggleAccordion = (index) => {
 		const newExpanded = [...expanded]
-		
+
 		newExpanded[index] = !newExpanded[index]
-		
+
 		setExpanded(newExpanded)
 	}
-	
+
 	// Clear expanded indexes once the page changes
 	useEffect(() => {
 		setExpanded([])
 	}, [config])
-	
+
 	return <ul className="accordion-list">
 		{config.settings.map((setting, index) => (
 			<AccordionInput

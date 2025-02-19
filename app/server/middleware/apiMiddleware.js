@@ -26,15 +26,15 @@ const statusMessage = {
 
 export default () => (req, res, next) => {
 	if (!req._using) req._using = {}
-	
+
 	req._using.api = '1.0.0'
-	
+
 	req.apiResult = (status, data) => {
 		const success = status == 200
 		const message = data?.message
-		
+
 		if (message) data.message = undefined
-		
+
 		res.status(status || 200).json({
 			success,
 			data: success ? data : undefined,
@@ -44,6 +44,6 @@ export default () => (req, res, next) => {
 			) : statusMessage[status] // if no message, give a status message
 		})
 	}
-	
+
 	next()
 }

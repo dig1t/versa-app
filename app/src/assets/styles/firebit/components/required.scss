@@ -2,7 +2,7 @@
 	@if map-has-key($breakpoints, $point) {
 		$point: map-get($breakpoints, $point);
 	}
-	
+
 	@media (#{$property}: #{$point}) { @content; }
 }
 
@@ -35,13 +35,13 @@ $type-scale-base: $base-font-size;
 	@if $steps == 0 {
 		@return $type-scale-base;
 	}
-	
+
 	$type-scale-result: $type-scale-base;
-	
+
 	@for $i from 1 through $steps {
 		$type-scale-result: $type-scale-result * $type-scale-ratio;
 	}
-	
+
 	@return calc(round($type-scale-result * 20) / 20); // round to the nearest hundredth
 }
 

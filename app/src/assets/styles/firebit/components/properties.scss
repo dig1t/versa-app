@@ -3,7 +3,7 @@
 		font-size: $font-size;
 		line-height: $font-size;
 	}
-	
+
 	.font-size-#{$tag} {
 		font-size: $font-size;
 		line-height: $font-size;
@@ -20,57 +20,57 @@
 	.#{$prefix}-#{$value} {
 		#{$property}: #{$value}#{'rem'};
 	}
-	
+
 	.#{$prefix}-#{$value}p {
 		#{$property}: #{$value}#{'%'};
 	}
-	
+
 	@if $prefix == 'w' or $prefix == 'h' {
 		.#{$prefix}-#{$value}v#{$prefix} {
 			#{$property}: #{$value}#{'v'}#{$prefix};
 		}
-		
+
 		.#{$prefix}-min-#{$value} {
 			min-#{$property}: #{$value}#{'rem'};
 		}
-		
+
 		.#{$prefix}-max-#{$value} {
 			max-#{$property}: #{$value}#{'rem'};
 		}
-		
+
 		.#{$prefix}-min-#{$value}p {
 			min-#{$property}: #{$value}#{'%'};
 		}
-		
+
 		.#{$prefix}-max-#{$value}p {
 			max-#{$property}: #{$value}#{'%'};
 		}
-		
+
 		.#{$prefix}-min-#{$value}v#{$prefix} {
 			min-#{$property}: #{$value}#{'v'}#{$prefix};
 		}
-		
+
 		.#{$prefix}-max-#{$value}v#{$prefix} {
 			max-#{$property}: #{$value}#{'v'}#{$prefix}
 		}
 	}
-	
+
 	@if $prefix == 'm' or $prefix == 'p' {
 		.#{$prefix}-x-#{$value} {
 			#{$property}-left: #{$value}#{'rem'};
 			#{$property}-right: #{$value}#{'rem'};
 		}
-		
+
 		.#{$prefix}-y-#{$value} {
 			#{$property}-top: #{$value}#{'rem'};
 			#{$property}-bottom: #{$value}#{'rem'};
 		}
-		
+
 		.#{$prefix}-x-#{$value}p {
 			#{$property}-left: #{$value}#{'%'};
 			#{$property}-right: #{$value}#{'%'};
 		}
-		
+
 		.#{$prefix}-y-#{$value}p {
 			#{$property}-top: #{$value}#{'%'};
 			#{$property}-bottom: #{$value}#{'%'};
@@ -83,14 +83,14 @@
 	@include _size-variation(height, 'h', $value);
 	@include _size-variation(margin, 'm', $value);
 	@include _size-variation(padding, 'p', $value);
-	
+
 	.font-size-#{$value} {
 		$font-size: #{calc($value / 10)}rem;
-		
+
 		font-size: $font-size;
 		line-height: $font-size;
 	}
-	
+
 	.br-#{$value}p {
 		border-radius: #{$value}#{'%'};
 	}
@@ -100,16 +100,16 @@
 	@for $value from 1 through 9 {
 		$weight: calc($value * 100);
 		$class: #{'&-weight-'}#{$weight};
-		
+
 		#{$class} {
 			font-weight: $weight;
 		}
 	}
-	
+
 	&-weight-normal {
 		font-weight: $font-regular;
 	}
-	
+
 	&-weight-bold {
 		font-weight: $font-bold;
 	}

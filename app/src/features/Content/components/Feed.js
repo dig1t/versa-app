@@ -9,13 +9,13 @@ import { getProfileFeed, getHomeFeed } from '../store/actions/feedActions.js'
 const Feed = ({ type, userId }) => {
 	const dispatch = useDispatch()
 	const feed = useSelector((state) => state.feed)
-	
+
 	const [fetching, setFetching] = useState(false)
-	
+
 	useEffect(() => {
 		if (!fetching) {
 			setFetching(true)
-			
+
 			switch(type) {
 				case 'home':
 					// TODO: GET HOME FEED
@@ -27,11 +27,11 @@ const Feed = ({ type, userId }) => {
 			}
 		}
 	}, [])
-	
+
 	useEffect(() => {
 		if (fetching) setFetching(false)
 	}, [feed.posts])
-	
+
 	return <div className="list">
 		{feed.posts.map((post) => <Post key={post.postId} data={post} />)}
 		{fetching && <Loading />}

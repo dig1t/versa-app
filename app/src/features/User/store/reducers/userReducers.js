@@ -14,16 +14,16 @@ const reducer = (state={
 		case FETCH_USERS: {
 			return {...state, fetching: true}
 		}
-		
+
 		case FETCH_USERS_SUCCESS: {
 			return {...state, fetching: false, fetched: true, users: action.payload}
 		}
-		
+
 		case FETCH_USERS_ERROR: {
 			return {...state, fetching: false, error: action.payload}
 		}
 	}
-	
+
 	return state // default
 }
 

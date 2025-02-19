@@ -39,7 +39,7 @@ const Home = () => <Layout page="home">
 		</div>
 		<div className="col-12 col-desktop-4">
 			<aside className="box">
-				
+
 			</aside>
 		</div>
 	</div>

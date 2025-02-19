@@ -2,21 +2,21 @@
 	> .wrap {
 		flex-wrap: nowrap;
 	}
-	
+
 	.heading {
 		font-weight: $font-black;
 		font-size: 1.6rem;
 	}
-	
+
 	.settings-categories {
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
-		
+
 		.cat-pills {
 			flex-direction: column;
 			gap: 0;
-			
+
 			@at-root main[data-theme="dark"] & {
 				.pill {
 					&:hover:not(.active) {
@@ -24,7 +24,7 @@
 					}
 				}
 			}
-			
+
 			.pill {
 				color: var(--text-color);
 				background-color: transparent;
@@ -33,11 +33,11 @@
 				font-size: 1rem;
 				font-weight: $font-bold;
 				letter-spacing: .01rem;
-				
+
 				&:hover:not(.active) {
 					background-color: var(--white-600);
 				}
-				
+
 				&.active {
 					background-color: var(--box-color-secondary);
 					border-left: .2rem solid var(--primary-color);
@@ -45,19 +45,19 @@
 			}
 		}
 	}
-	
+
 	.settings-page {
 		padding: 0 2rem;
-		
+
 		.container > .header {
 			padding-top: .3rem;
 			margin-bottom: 1.2rem;
-			
+
 			.title {
 				font-size: 1.4rem;
 				font-weight: $font-black;
 			}
-			
+
 			.description {
 				color: var(--blue-gray-500);
 				margin-top: .2rem;
@@ -65,89 +65,89 @@
 				letter-spacing: .01rem;
 			}
 		}
-		
+
 		.label-name, .input label > span {
 			font-weight: $font-bold;
 			font-size: 1rem;
 		}
-		
+
 		.profile-settings {
 			.input {
 				&:not(:first-child) {
 					margin-top: 1rem;
 				}
-				
+
 				.label > span {
 					margin-bottom: .6rem;
 				}
 			}
-			
+
 			.actions {
 				margin-top: 1rem;
 			}
 		}
-		
+
 		ul.accordion-list {
 			li:not(:first-child) {
 				border-top: 1px solid var(--divider-color);
 			}
-			
+
 			.accordion {
 				padding: .4rem 0;
 				overflow: hidden;
-				
+
 				& > * {
 					padding: 0 2rem;
 				}
-				
+
 				&.expanded .accordion-content {
 					height: auto;
 				}
-				
+
 				.accordion-top {
 					height: 2.4rem;
 					cursor: pointer;
 					display: flex;
 					justify-content: space-between;
 					font-size: 1rem;
-					
+
 					> span {
 						display: flex;
 						align-items: center;
 					}
-					
+
 					.label-preview {
 						color: var(--blue-gray-200);
 						margin-right: .4rem;
 						font-weight: $font-regular;
 						letter-spacing: -.01rem;
 					}
-					
+
 					.icon {
 						color: var(--blue-gray-600);
 						height: 1.4rem;
-						
+
 						svg {
 							transition-duration: .1s;
 						}
 					}
 				}
-				
+
 				.accordion-content {
 					height: 0;
 					overflow: hidden;
-					
+
 					.description {
 						color: var(--blue-gray-500);
 						padding-bottom: .2rem;
 						font-size: .8rem;
 						letter-spacing: .01rem;
 					}
-					
+
 					.inputs {
 						margin-top: .6rem;
 					}
-					
+
 					.actions {
 						margin: .6rem 0;
 					}

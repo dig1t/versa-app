@@ -8,14 +8,14 @@ import ProfileSettingPage from './categories/profile.js'
 	label: 'Category',
 	name: 'category',
 	description: 'Lorem ipsum dolor',
-	
+
 	// Require user to re-authenticate before allowing changes
 	requireAuthToSubmit: true,
-	
+
 	selector: ({ state, userId }) => ({
 		user: state.user
 	}),
-	
+
 	settings: [
 		{
 			name: 'email',
@@ -44,14 +44,14 @@ export default [
 		label: 'Account',
 		name: 'account',
 		description: 'Must authenticate to view account settings.',
-		
+
 		requireAuthToSubmit: true,
-		
+
 		selector: ({ state, userId }) => ({
 			email: state.user.email,
 			username: state.profiles.profileList[userId].username
 		}),
-		
+
 		settings: [
 			{
 				name: 'email',
@@ -107,11 +107,11 @@ export default [
 	{
 		label: 'Privacy',
 		name: 'privacy',
-		
+
 		selector: ({ state, userId }) => ({
 			private: state.profiles.profileList[userId].private
 		}),
-		
+
 		settings: [
 			{
 				name: 'profile_private',
@@ -138,11 +138,11 @@ export default [
 	{
 		label: 'Profile',
 		name: 'profile',
-		
+
 		selector: ({ state, userId }) => ({
 			profile: state.profiles.profileList[userId]
 		}),
-		
+
 		saveAction: ({ apiResult, userId }) => ({
 			type: PROFILE_UPDATE,
 			payload: {
@@ -150,7 +150,7 @@ export default [
 				userId
 			}
 		}),
-		
+
 		component: ProfileSettingPage
 	}
 ]

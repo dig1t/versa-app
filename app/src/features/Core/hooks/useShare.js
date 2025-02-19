@@ -6,7 +6,7 @@ const shareUrl = async (shareData) => {
 	} else if (!shareData.url) {
 		throw new Error('useShare - shareData must include a url property')
 	}
-	
+
 	// eslint-disable-next-line no-undef
 	await navigator.share({
 		title: shareData.title || 'Share Post',

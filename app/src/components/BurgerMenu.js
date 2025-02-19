@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const BurgerMenu = ({ open }) => {
 	const [menuOpen, setMenuOpen] = useState(open || false)
-	
+
 	return <div
 		className={[
 			'nav-toggle',

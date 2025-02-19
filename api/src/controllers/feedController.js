@@ -9,26 +9,26 @@ export default {
 	getHomeFeed: async (req) => {
 		// try {
 			const requesterUserId = req._oauth.user.userId
-			
+
 			const posts = await homeFeedPipeline({
 				userId: requesterUserId
 			})
-			
+
 			const profile = await getProfileFromUserId(requesterUserId)
-			
+
 			if (!profile) throw new Error('Could not find profile')
 			if (!posts) throw new Error('Could not get profile feed')
-			
+
 			const profileCache = [ profile ]
-			
+
 			for (const post of posts) {
 				try {
 					const profileFind = profileCache.find(
 						(data) => data.userId === post.userId
 					)
-					
+
 					post.content = await getContent(post.contentId, requesterUserId)
-					
+
 					if (!profileFind) {
 						profileCache.push(
 							// If the content's owner is the same as the poster,
@@ -36,12 +36,12 @@ export default {
 							post.content.userId === post.userId ? post.content.profile : await getProfileFromUserId(post.userId)
 						)
 					}
-					
+
 					if (post.content.userId !== post.userId) {
 						const contentProfileFind = profileCache.find(
 							(data) => data.userId === post.content.userId
 						)
-						
+
 						if (!contentProfileFind) profileCache.push(post.content.profile)
 					}
 				} catch(error) {
@@ -51,7 +51,7 @@ export default {
 					post.content = {}
 				}
 			}
-			
+
 			/*/
 			// Post
 			{
@@ -67,7 +67,7 @@ export default {
 					(data) => data.userId === ObjectIdToString(post.userId)
 				)
 			}))
-			
+
 			req.apiResult(200, feed)
 		// } catch(error) {
 		// 	req.apiResult(500, {

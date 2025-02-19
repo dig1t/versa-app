@@ -9,13 +9,13 @@ const expression = /(\s+)/
 
 const LinkInjector = ({ text }) => {
 	const [result, setResult] = useState([])
-	
+
 	const LinkComponent = ({ word, prefix }) => {
 		return (<Link to={`${prefix}${word.substr(1)}`}>
 			{word}
 		</Link>)
 	}
-	
+
 	const AnchorComponent = ({ word }) => {
 		return (<a
 			href={word}
@@ -26,10 +26,10 @@ const LinkInjector = ({ text }) => {
 			{word}
 		</a>)
 	}
-	
+
 	const WordComponent = ({ word }) => {
 		const lineBreaks = word.split('\n')
-		
+
 		return lineBreaks.map((wordChunk, breakIndex) => (<>
 			<Emojify>
 				<span>{wordChunk}</span>
@@ -37,23 +37,23 @@ const LinkInjector = ({ text }) => {
 			{breakIndex < lineBreaks.length - 1 && <br />}
 		</>))
 	}
-	
+
 	useEffect(() => {
 		let i = 0
 		let wordGroup = []
 		const compiled = []
-		
+
 		const processWordGroup = () => {
 			if (wordGroup.length <= 0) return
-			
+
 			compiled.push(<WordComponent word={wordGroup.join('')} />)
-			
+
 			wordGroup = []
 		}
-		
+
 		for (let word of text.split(expression)) {
 			const index = `li-${i++}`
-			
+
 			if (word.startsWith('@') && isAlphanumeric(word.substr(1))) {
 				processWordGroup(index)
 				compiled.push(<LinkComponent word={word} prefix="/@" />)
@@ -65,17 +65,17 @@ const LinkInjector = ({ text }) => {
 				compiled.push(<AnchorComponent word={word} />)
 			} else {
 				wordGroup.push(word)
-				
+
 				if (!text.match(expression)) {
 					compiled.push(<WordComponent word={wordGroup.join('')} />)
 				}
 			}
 		}
-		
+
 		processWordGroup()
 		setResult(compiled)
 	}, [])
-	
+
 	return <>{result}</>
 }
 

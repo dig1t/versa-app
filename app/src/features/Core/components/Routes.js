@@ -20,7 +20,7 @@ const AppRoutes = () => <Routes>
 		<Route path="/login" element={<Login />} />
 		<Route path="/signup" element={<Signup />} />
 	</Route>
-	
+
 	<Route element={<PrivateRoute requireAuth={true} redirectTo="/login" />}>
 		<Route path="/logout" element={<Logout />} />
 		<Route path="/settings" element={<Settings />} />
@@ -28,10 +28,10 @@ const AppRoutes = () => <Routes>
 		<Route path="/home" element={<Home />} />
 		<Route path="/chat" element={<Chat />} />
 	</Route>
-	
+
 	<Route path="/:username" element={<Profile />} />
 	<Route path="/:username/:contentId" element={<Content />} />
-	
+
 	<Route path="/error" element={<Error />} />
 	<Route path="*" element={<Error />} />
 </Routes>

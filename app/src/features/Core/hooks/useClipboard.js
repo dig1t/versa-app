@@ -10,11 +10,11 @@ const copyText = (text) => {
 
 const clipboardCopy = (text) => {
 	const hasClipboardApi = navigator.clipboard !== undefined
-	
+
 	if (!hasClipboardApi) {
 		return false
 	}
-	
+
 	return new Promise((resolve, reject) => {
 		navigator.permissions.query({ name: 'clipboard-write' })
 			.then((result) => {
@@ -33,11 +33,11 @@ const clipboardCopy = (text) => {
 
 const clipboardPaste = () => {
 	const hasClipboardApi = navigator.clipboard !== undefined
-	
+
 	if (!hasClipboardApi) {
 		return false
 	}
-	
+
 	return new Promise((resolve, reject) => {
 		navigator.permissions.query({ name: 'clipboard-read' })
 			.then((result) => {

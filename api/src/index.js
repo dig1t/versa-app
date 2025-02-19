@@ -9,7 +9,7 @@ useClusters(() => {
 		console.log('database connection success')
 		server.emit('ready')
 	})
-	
+
 	server.on('ready', () => {
 		console.log(`starting API at http://localhost:${config.apiPort}`)
 		server.listen(config.apiPort)

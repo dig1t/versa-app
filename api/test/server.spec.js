@@ -22,13 +22,13 @@ chai.use(chaiHttp)
 describe('api middleware', () => {
 	it('finds required fields', async () => {
 		const MOCK_USERID = 'fd9256899cf76129713f1e70'
-		
+
 		const request = await chai.request(server)
 			.get('/ping')
 			.send({
 				userId: MOCK_USERID
 			})
-		
+
 		assert.equal(request.status, 200)
 		assert.equal(request.body.success, true)
 		assert.equal(request.body.data.userId, MOCK_USERID)

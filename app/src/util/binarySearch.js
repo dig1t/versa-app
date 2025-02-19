@@ -1,10 +1,10 @@
 export const binarySearch = (array, value) => {
 	let min = 0
 	let max = array.length - 1
-	
+
 	while (min <= max) {
 		const mid = (min + max) >> 1
-		
+
 		if (array[mid] === value) {
 			return mid
 		} else if (array[mid] < value) {
@@ -13,17 +13,17 @@ export const binarySearch = (array, value) => {
 			max = mid -1
 		}
 	}
-	
+
 	return -1
 }
 
 export const binarySearchArrayChild = (array, key, value) => {
 	let min = 0
 	let max = array.length - 1
-	
+
 	while (min <= max) {
 		const mid = (min + max) >> 1
-		
+
 		if (array[mid][key] === value) {
 			return mid
 		} else if (array[mid].key < value) {
@@ -32,6 +32,6 @@ export const binarySearchArrayChild = (array, key, value) => {
 			max = mid -1
 		}
 	}
-	
+
 	return -1
 }

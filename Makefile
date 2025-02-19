@@ -9,6 +9,6 @@ run-image:
 
 dev-image:
 	docker run -it --rm --name versa -p 8080:8080
-	
+
 up-dev:
 	docker compose up --build

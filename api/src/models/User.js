@@ -55,10 +55,10 @@ schema.pre(
 	{ document: false, query: true },
 	async function(next) {
 		const userId = this._conditions._id
-		
+
 		await Profile.deleteOne({ userId })
 		await UserSession.deleteMany({ userId })
-		
+
 		next()
 	}
 )

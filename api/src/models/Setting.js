@@ -6,7 +6,7 @@ const schema = new Schema({
 		alias: 'userId',
 		ref: 'User'
 	},
-	
+
 	appTheme: {
 		/* {
 			0: 'light',

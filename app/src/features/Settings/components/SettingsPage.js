@@ -29,14 +29,14 @@ const SettingsPage = ({ config }) => {
 	const dispatch = useDispatch()
 	const { userId } = useAuthenticated()
 	const data = useSelector((state) => config.selector({ state, userId }))
-	
+
 	const handleSave = ({ inputData, settingConfig = config }) => {
 		if (!inputData) return
-		
+
 		return api.post(settingConfig.endpoint || `/v1/user/${userId}/settings`, inputData)
 			.then((apiResult) => {
 				console.log(`Saved ${settingConfig.name}`)
-				
+
 				if (settingConfig.saveAction) {
 					dispatch(settingConfig.saveAction({
 						updated: inputData,
@@ -51,22 +51,22 @@ const SettingsPage = ({ config }) => {
 				console.error(error)
 			})
 	}
-	
+
 	const Component = config.component
-	
+
 	return <div className="container">
 		<div className="header">
 			<div className="title">{config.label}</div>
 			<div className="description">{config.description}</div>
 		</div>
-		
+
 		{config.settings && <Accordion
 			key={config.name}
 			data={data}
 			handleSave={handleSave}
 			config={config}
 		/>}
-		
+
 		{config.component && <Component
 			key={config.name}
 			data={data}

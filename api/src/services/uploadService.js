@@ -37,7 +37,7 @@ const getMediaType = (fileType) => {
 			return config.typeId
 		}
 	}
-	
+
 	return null
 }
 
@@ -47,7 +47,7 @@ const getMediaTypeName = (typeId) => {
 			return mediaType
 		}
 	}
-	
+
 	return null
 }
 
@@ -55,7 +55,7 @@ const cdn = new CDN(config.cdn)
 
 const deserializeMedia = (media) => {
 	const extension = media.ext || media.extension
-	
+
 	return {
 		mediaId: ObjectIdToString(media.mediaId),
 		type: getMediaTypeName(media.type),
@@ -74,9 +74,9 @@ const deserializeMedia = (media) => {
 
 const getMedia = async (mediaId) => {
 	const media = await Media.findOne({ _id: mongoSanitize(mediaId) })
-	
+
 	if (!media) throw new Error('Media does not exist')
-	
+
 	return deserializeMedia(media)
 }
 
@@ -85,26 +85,26 @@ const createMedia = async (options) => {
 	if (options.userId === undefined) throw new Error('Missing userId')
 	if (options.fileStream === undefined) throw new Error('Missing file stream')
 	if (options.metadata === undefined) throw new Error('Missing file metadata')
-	
+
 	if (!mongoValidate(options.userId, 'id')) {
 		throw new Error(`Invalid userId`)
 	}
-	
+
 	const fileExtension = path.extname(options.metadata.filename)
-	
+
 	if (typeof fileExtension !== 'string') {
 		// TODO: not needed?
 		throw new Error('File does not have an extension')
 	}
-	
+
 	if (!validateText(options.metadata.mimeType, 'mime-type')) {
 		throw new Error('Mime type is not valid')
 	}
-	
+
 	const mediaType = getMediaType(options.metadata.mimeType)
-	
+
 	const mediaId = new mongoose.Types.ObjectId()
-	
+
 	try {
 		const promises = [
 			cdn.uploadFile({
@@ -117,14 +117,14 @@ const createMedia = async (options) => {
 			}),
 			cdn.getFileHash(options.fileStream)
 		]
-		
+
 		const res = await Promise.allSettled(promises)
-		
+
 		const { publicUrl, md5Hash } = res.reduce((result, promise) => ({
 			...result,
 			...promise.value
 		}), {})
-		
+
 		const media = new Media({
 			mediaId,
 			userId: mongoSanitize(options.userId),
@@ -137,9 +137,9 @@ const createMedia = async (options) => {
 			isMediaSensitive: options.isMediaSensitive || false,
 			isMediaViolent: options.isMediaViolent || false
 		})
-		
+
 		await media.save()
-		
+
 		return new Promise((resolve) => resolve({
 			...deserializeMedia(media),
 			publicUrl,
@@ -156,7 +156,7 @@ const deleteMedia = async (userId, mediaId) => {
 		return await mongoSession(async () => {
 			await Media.deleteOne({ _id: mediaId, userId })
 			await CDN.deleteFile({ mediaId })
-			
+
 			return { deleted: true }
 		})
 	} catch(error) {
@@ -172,7 +172,7 @@ const deleteMediaBulk = async (userId, mediaIdList) => {
 				userId
 			})
 			await CDN.deleteFiles(mediaIdList)
-			
+
 			return { deleted: true }
 		})
 	} catch(error) {

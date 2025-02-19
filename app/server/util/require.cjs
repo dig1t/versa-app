@@ -11,7 +11,7 @@ async function render(req, res) {
 				if (modulePath.startsWith('./src') || modulePath.startsWith('./server')) delete require.cache[modulePath]
 			}
 		}
-		
+
 		await require('../src/server.js')?.default(req, res)
 	} catch(error) {
 		console.error(error)

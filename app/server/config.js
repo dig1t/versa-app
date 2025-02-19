@@ -20,29 +20,29 @@ const dev = process.env.NODE_ENV
 export default {
 	port: 8080,
 	apiPort: 8888,
-	
+
 	appName: 'Versa',
 	appDescription: 'Universal Social Identity',
 	brandColor: '#4e85fb',
-	
+
 	// short names for token cookies
 	shortName: {
 		session: 'vsi',
 		refreshToken: 'vrt'
 	},
-	
+
 	expressSecret: env.EXPRESS_SESSION_SECRET,
 	sessionSecret: env.SESSION_STORE_SECRET,
-	
+
 	appDatabaseName: env.APP_DB_NAME,
-	
+
 	sessionDatabaseURI: env.SESSION_DB_URI,
-	
+
 	_domain: domain,
 	_apiDomain: apiDomain,
-	
+
 	domain: dev ? devDomain : domain,
 	apiDomain: dev ? devApiDomain : apiDomain,
-	
+
 	dev
 }

@@ -5,11 +5,11 @@
 	border: 0;
 	padding: 0;
 	font-family: inherit;
-	
+
 	&, &:before, &:after {
 		box-sizing: border-box;
 	}
-	
+
 	&:focus {
 		outline: none;
 	}
@@ -34,7 +34,7 @@ a, em, p, strong, u {
 a {
 	color: var(--blue-400);
 	text-decoration: none;
-	
+
 	&:hover {
 		text-decoration: underline;
 	}
@@ -67,7 +67,7 @@ select, input, textarea {
 	padding: 6px;
 	font-size: type-scale(0);
 	display: block;
-	
+
 	&:focus {
 		border-color: $black;
 	}
@@ -87,11 +87,11 @@ input {
 	&.ok {
 		border-color: var(--green);
 	}
-	
+
 	&.error {
 		border-color: var(--red);
 	}
-	
+
 	&[type="submit"] {
 		color: #fff;
 		background-color: var(--blue);
@@ -100,22 +100,22 @@ input {
 		padding: 6px 12px;
 		font-size: 18px;
 		cursor: pointer;
-		
+
 		&:hover {
 			background-color: var(--blue-700);
 		}
 	}
-	
+
 	&[type="checkbox"], &[type="radio"] {
 		width: 18px;
 		height: 18px;
 		position: relative;
 		cursor: pointer;
-		
+
 		&:focus {
 			box-shadow: none;
 		}
-		
+
 		/*&:before {
 			content: '';
 			background-color: inherit;
@@ -124,82 +124,82 @@ input {
 			position: absolute;
 		}*/
 	}
-	
+
 	&[type="checkbox"] {
 		&:before {
 			background-position: -304px 0;
 		}
-		
+
 		&:hover:before {
 			background-position: -304px -18px;
 		}
-		
+
 		&:checked:before {
 			background-position: -304px -36px;
 		}
-		
+
 		&[disabled] {
 			cursor: auto;
-			
+
 			&:before {
 				background-position: -304px -54px;
 			}
-			
+
 			&:checked:before {
 				background-position: -304px -72px;
 			}
-			
+
 			&.dark {
 				&:before {
 					background-position: -304px -90px;
 				}
-				
+
 				&:checked:before {
 					background-position: -304px -108px;
 				}
 			}
 		}
-		
+
 		&.dark:before {
 			background-position: -304px -126px;
 		}
 	}
-	
+
 	&[type="radio"] {
 		&:before {
 			background-position: -322px 0;
 		}
-		
+
 		&:hover:before {
 			background-position: -322px -18px;
 		}
-		
+
 		&:checked:before {
 			background-position: -322px -36px;
 		}
-		
+
 		&[disabled] {
 			cursor: auto;
-			
+
 			&:before {
 				background-position: -322px -54px;
 			}
-			
+
 			&:checked:before {
 				background-position: -322px -72px;
 			}
-			
+
 			.dark {
 				&:before {
 					background-position: -322px -90px;
 				}
-				
+
 				&:checked:before {
 					background-position: -322px -108px;
 				}
 			}
 		}
-		
+
 		&.dark:before {
 			background-position: -322px -126px;
 		}
@@ -208,12 +208,12 @@ input {
 
 label {
 	display: block;
-	
+
 	input[type="checkbox"], input[type="radio"] {
 		margin-right: 2px;
 		display: inline-block;
 	}
-	
+
 	span {
 		display: block;
 		//vertical-align: middle;
@@ -238,7 +238,7 @@ td, th {
 	padding: 8px 12px;
 	font-size: type-scale(0);
 	text-align: left;
-	
+
 	&:first-child {
 		padding-left: 0;
 	}

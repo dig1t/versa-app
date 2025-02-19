@@ -11,7 +11,7 @@ import feedReducers from '../../../Content/store/reducers/feedReducers.js'
 export default combineReducers({
 	fetchStatus,
 	fetchErrors,
-	
+
 	user: selfReducers,
 	users: userReducers,
 	profiles: profileReducers,

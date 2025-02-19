@@ -6,7 +6,7 @@ export const mochaHooks = {
 		await mockDatabase.startMockServer()
 		await db.connect(mockDatabase.getUri())
 	},
-	
+
 	afterAll: async () => {
 		await mockDatabase.dropCollections(db.instance)
 		await db.disconnect()

@@ -5,21 +5,21 @@ import classNames from 'classnames'
 const CatPills = ({ pills, handleSelection, defaultCategory, value, squared, autoSelect }) => {
 	const [activeCategory, setActiveCategory] = useState(null)
 	const [isMounted, setIsMounted] = useState(false)
-	
+
 	useEffect(() => {
 		if (pills.find((category) => category.name === defaultCategory)) {
 			setActiveCategory(defaultCategory)
 		}
 	}, [defaultCategory])
-	
+
 	useEffect(() => {
 		const categorySearch = pills.find((category) => category.name === activeCategory)
-		
+
 		if (categorySearch && (autoSelect || isMounted)) {
 			handleSelection(categorySearch)
 		}
 	}, [activeCategory, autoSelect, isMounted])
-	
+
 	useEffect(() => {
 		if (!isMounted) {
 			setIsMounted(true)
@@ -27,7 +27,7 @@ const CatPills = ({ pills, handleSelection, defaultCategory, value, squared, aut
 			setActiveCategory(value)
 		}
 	}, [value])
-	
+
 	return <div className={classNames(
 		'cat-pills'
 	)}>

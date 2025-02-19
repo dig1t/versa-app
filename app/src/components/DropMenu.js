@@ -42,23 +42,23 @@ const MenuDivider = () => <li className="divider" />
 const Menu = (props, ref) => {
 	const menuElement = useRef()
 	const [pos, setPos] = useState({ x: 0, y: 0 })
-	
+
 	useEffect(() => {
 		if (!menuElement.current || !props.parentRef.current) return
-		
+
 		const parentRect = props.parentRef.current.getBoundingClientRect()
-		
+
 		const width = menuElement.current.offsetWidth
 		const height = menuElement.current.offsetHeight
-		
+
 		let x = parentRect.left + (parentRect.width / 2) - (width / 2) + props.sideOffset
 		let y = parentRect.top - height - props.offset
-		
+
 		if (props.position === 'bottom' || (!props.position && y < 0)) {
 			y = parentRect.top + parentRect.height + props.offset
 			x = (parentRect.left + (parentRect.width / 2)) - (width / 2) - props.sideOffset
 		}
-		
+
 		if (props.position === 'left' || (!props.position && (
 			// eslint-disable-next-line no-undef
 			x > window.innerWidth || menuElement.current.offsetWidth + x > window.innerWidth
@@ -66,7 +66,7 @@ const Menu = (props, ref) => {
 			x = parentRect.left - width - props.offset
 			y = parentRect.top - (height / 2) + (parentRect.height / 2) - props.sideOffset
 		}
-		
+
 		if (props.position === 'right' || (!props.position && (
 			// eslint-disable-next-line no-undef
 			x < 0 || menuElement.current.offsetWidth + x > window.innerWidth
@@ -74,10 +74,10 @@ const Menu = (props, ref) => {
 			x = parentRect.left + parentRect.width + props.offset
 			y = parentRect.top - (height / 2) + (parentRect.height / 2) + props.sideOffset
 		}
-		
+
 		setPos({ x, y })
 	}, [props, menuElement, ref])
-	
+
 	return <Portal active={props.open}>
 		{props.open && <div className={classNames('drop-menu')}>
 			<div
@@ -115,10 +115,10 @@ const DropMenu = (props) => {
 	if (props.inlineTrigger === false && typeof props.open !== Boolean) {
 		throw new Error('TooltipWrap - Custom triggers must include an "open" prop')
 	}
-	
+
 	const [open, setOpen] = useState(false)
 	const ref = useRef()
-	
+
 	return <>
 		<span
 			className={classNames(
@@ -134,7 +134,7 @@ const DropMenu = (props) => {
 			toggleMenu={(input) => {
 				input.preventDefault()
 				input.stopPropagation()
-				
+
 				setOpen(!open)
 			}}
 			open={open}

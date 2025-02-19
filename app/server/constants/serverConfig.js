@@ -2,7 +2,7 @@ import config from '../config.js'
 
 export default {
 	maxTokenAge: 24 * 60 * 60 * 365 * 1000, // 1 year
-	
+
 	manifest: {
 		name: config.appName,
 		short_name: config.appName,

@@ -10,9 +10,9 @@ import upload from './uploadRoutes.js'
 
 const apiRoutes = (server) => {
 	const router = new Router()
-	
+
 	router.get('/ping', (_req, res) => res.json({ pong: true }))
-	
+
 	router.use(users(server))
 	router.use(profiles(server))
 	router.use(content(server))
@@ -20,7 +20,7 @@ const apiRoutes = (server) => {
 	router.use(settings(server))
 	router.use(feed(server))
 	router.use(upload(server))
-	
+
 	return router
 }
 

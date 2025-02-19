@@ -11,10 +11,10 @@ import useProfile from '../../User/hooks/useProfile.js'
 
 const Comment = ({ data }) => {
 	const profile = useProfile(data.userId)
-	
+
 	const { timeAgoCreated, dateCreated } = useMemo(() => {
 		const dateInstance = new Date(data.created)
-		
+
 		return {
 			timeAgoCreated: formatDistanceToNowStrict(
 				dateInstance,
@@ -26,7 +26,7 @@ const Comment = ({ data }) => {
 			)
 		}
 	}, [data.created])
-	
+
 	return profile && (<div className="post comment">
 		<div className="container">
 			<div className="post-avatar">

@@ -7,7 +7,7 @@ import Icon from './Icon.js'
 
 const Modal = (props) => {
 	const { open, type, toggleModal } = props
-	
+
 	const modalComponent = useMemo(() => {
 		switch(props.type) {
 			case 'image': {
@@ -18,7 +18,7 @@ const Modal = (props) => {
 				return props.component
 		}
 	}, [props])
-	
+
 	return <Portal active={props.open}>
 		{open && <div
 			className={classNames('modal', `modal-${type}`)}
@@ -55,16 +55,16 @@ const ModalWrap = (props) => {
 	if (props.inlineTrigger === false && typeof props.open !== Boolean) {
 		throw new Error('ModalWrap - Custom triggers must include an "open" prop')
 	}
-	
+
 	const [open, setOpen] = useState(false)
-	
+
 	return props.inlineTrigger ? <>
 		<Modal
 			{...props}
 			toggleModal={(input) => {
 				input.preventDefault()
 				input.stopPropagation()
-				
+
 				setOpen(!open)
 			}}
 			open={open}

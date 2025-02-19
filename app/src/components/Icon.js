@@ -19,9 +19,9 @@ const Icon = ({
 	...props
 }) => {
 	const [SvgModule, setSvgModule] = useState({})
-	
+
 	const iconName = iconAlias[name] || name
-	
+
 	useEffect(() => {
 		async function loadSvg() {
 			const _svgImport = await new Promise((resolve, reject) => {
@@ -36,12 +36,12 @@ const Icon = ({
 				Element: _svgImport
 			})
 		}
-		
+
 		loadSvg()
 	}, [name])
-	
+
 	const Wrap = wrap === true ? IconWrap : React.Fragment
-	
+
 	return !hidden && SvgModule.Element && <i
 		className={classNames(
 			'icon',

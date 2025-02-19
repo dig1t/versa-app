@@ -11,16 +11,16 @@ main .content > section.landing {
 
 .landing {
 	padding: 0 !important;
-	
+
 	img {
 		width: 100%;
 	}
-	
+
 	// TODO: Remove after introducing themes
 	.box {
 		background-color: transparent;
 	}
-	
+
 	.hero, .auth {
 		background: linear-gradient(
 			rgb(255 255 255 / .1) 0%,
@@ -29,32 +29,32 @@ main .content > section.landing {
 		url(/assets/i/noise.png),
 		url(/assets/i/landing/landing-bkg.png) 50% 33%/cover;
 	}
-	
+
 	.hero {
 		color: #fff;
 		height: 100vh;
-		
+
 		.box {
 			max-width: 860px;
 			margin: auto;
-			
+
 			> * {
 				flex: 1;
 				margin: 0 2rem;
 				position: relative;
-				
+
 				> *:not(:first-child) {
 					margin-top: 1rem;
 				}
 			}
 		}
-		
+
 		.icon-logo {
 			height: 4rem;
 			position: absolute;
 			top: -4rem;
 		}
-		
+
 		p {
 			padding-bottom: 2rem;
 			font-size: 2rem;
@@ -62,7 +62,7 @@ main .content > section.landing {
 			text-align: right;
 			line-height: 2rem;
 			display: flex;
-			
+
 			&:before {
 				content: '';
 				border-bottom: .2rem solid #fff;
@@ -72,7 +72,7 @@ main .content > section.landing {
 				flex: 1;
 			}
 		}
-		
+
 		.cta {
 			&-primary {
 				color: inherit;
@@ -86,14 +86,14 @@ main .content > section.landing {
 				line-height: 1.4rem;
 				display: block;
 				transition-duration: .14s;
-				
+
 				&:hover {
 					background-color: var(--blue-900);
 					box-shadow: 0 0 1rem rgb(0 0 0 / .6);
 					text-decoration: none;
 				}
 			}
-			
+
 			&-secondary {
 				color: inherit;
 				margin-bottom: 4rem;
@@ -104,33 +104,33 @@ main .content > section.landing {
 			}
 		}
 	}
-	
+
 	.auth {
 		color: var(--blue-gray-900);
 		height: 100vh;
-		
+
 		.auth-error {
 			color: var(--red);
 			font-size: .8rem;
 		}
-		
+
 		.form-wrap {
 			max-width: 420px;
 			width: 100%;
 			background-color: #fff;
 			border-radius: 1.6rem;
 			padding: 12rem 4rem;
-			
+
 			.heading {
 				margin-bottom: 3rem;
 				font-weight: $font-black;
 			}
 		}
-		
+
 		.form-wrap > *:not(:first-child), form > *:not(:first-child) {
 			margin-top: 1rem;
 		}
-		
+
 		.secondary-auth {
 			font-size: .8rem;
 			text-align: center;

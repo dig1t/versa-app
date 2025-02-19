@@ -24,7 +24,7 @@ export default (state = {
 				posts: []
 			}
 		}
-		
+
 		case FEED_POST_DELETE_SUCCESS: {
 			// find post index from postId
 			// remove post from posts array
@@ -33,7 +33,7 @@ export default (state = {
 				posts: state.posts.filter((post) => post.postId !== action.payload.postId)
 			}
 		}
-		
+
 		case FEED_FETCH_SUCCESS:
 		case PROFILE_FEED_FETCH_SUCCESS: {
 			return {
@@ -41,23 +41,23 @@ export default (state = {
 				posts: action.payload
 			}
 		}
-		
+
 		case FEED_ADD_ARRAY: {
 			const posts = state.posts
-			
+
 			return {
 				...state,
 				posts: action.payload.concat(posts)
 			}
 		}
-		
+
 		case FEED_NEW_PAGE: {
 			return {
 				...state,
 				posts: state.posts.concat(action.payload)
 			}
 		}
-		
+
 		default: {
 			return state
 		}

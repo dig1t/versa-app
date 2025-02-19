@@ -18,19 +18,19 @@ const formatFiles = (files) => files.map(file => file.media)
 const FilePreview = ({ fileData, onRemove }) => {
 	const [rawImage, setRawImage] = useState(null)
 	const [fileType, setFileType] = useState('unknown')
-	
+
 	const handleRemove = () => onRemove(fileData.fileId)
-	
+
 	const loadImagePreview = (file) => {
 		const reader = new FileReader()
-		
+
 		reader.onload = (event) => {
 			setRawImage(event.target.result)
 		}
-		
+
 		reader.readAsDataURL(file)
 	}
-	
+
 	useEffect(() => {
 		if (ALLOWED_IMAGE_TYPES.includes(fileData.file.type)) {
 			loadImagePreview(fileData.file)
@@ -43,7 +43,7 @@ const FilePreview = ({ fileData, onRemove }) => {
 			setFileType('unknown')
 		}
 	}, [fileData])
-	
+
 	const renderPreview = useCallback(() => {
 		switch(fileType) {
 			case 'image': {
@@ -67,7 +67,7 @@ const FilePreview = ({ fileData, onRemove }) => {
 			}
 		}
 	}, [fileData, fileType, handleRemove, rawImage])
-	
+
 	return (
 		<div className={classNames(
 			'upload-preview',
@@ -105,46 +105,46 @@ const FileUploader = forwardRef(({
 }, ref) => {
 	const [files, setFiles] = useState([])
 	const inputRef = useRef(null)
-	
+
 	const validate = () => {
 		// Set ready to true if all files are ready or there are no files
 		const isReady = files.every(file => file.ready === true) || files.length === 0
-		
+
 		handleReadyStateChange(isReady)
 	}
-	
+
 	const handleRemove = (fileId) => {
 		// Abort any ongoing requests for removed files
 		const ongoingRequest = files.find(file => file.fileId === fileId)?.abortController
-		
+
 		ongoingRequest?.abort()
-		
+
 		setFiles((prevFiles) => prevFiles.filter((file) => file.fileId !== fileId))
 	}
-	
+
 	useImperativeHandle(ref, () => ({
 		removeFileId: (fileId) => handleRemove(fileId)
 	}))
-	
+
 	useEffect(() => {
 		handleChange(files)
 		validate()
 	}, [files])
-	
+
 	// Abort any ongoing requests when the component unmounts
 	useEffect(() => {
 		return () => files.map((fileData) => {
 			fileData.abortController.abort()
 		})
 	}, [])
-	
+
 	const useFileUpload = (file) => {
 		const fileId = uuidv4()
 		const data = new FormData()
 		const abortController = new AbortController()
-		
+
 		data.append('file', file)
-		
+
 		const request = api.post('/v1/media/upload', data, {
 			signal: abortController.signal,
 			headers: {
@@ -155,7 +155,7 @@ const FileUploader = forwardRef(({
 				const progress = Math.round(
 					(progressEvent.loaded / progressEvent.total) * 100
 				)
-				
+
 				setFiles((prevState) => prevState.map(file => {
 					if (file.fileId === fileId) {
 						return {
@@ -163,7 +163,7 @@ const FileUploader = forwardRef(({
 							progress
 						}
 					}
-					
+
 					return file
 				}))
 			}
@@ -180,7 +180,7 @@ const FileUploader = forwardRef(({
 			})
 			.catch((error) => {
 				console.error(error)
-				
+
 				setFiles((prevState) => prevState.map(fileData => {
 					return fileData.fileId !== fileId ? fileData : {
 						...fileData,
@@ -188,7 +188,7 @@ const FileUploader = forwardRef(({
 					}
 				}))
 			})
-		
+
 		setFiles((prevFiles) => {
 			const fileData = {
 				fileId,
@@ -199,38 +199,38 @@ const FileUploader = forwardRef(({
 				progress: 0
 			}
 			const updatedFilesList = [...prevFiles, fileData]
-			
+
 			if (updatedFilesList.length === 0) {
 				inputRef.current.value = ''
 			}
-			
+
 			return updatedFilesList
 		})
 	}
-	
+
 	const handleFileChange = (newFiles) => {
 		Array.from(newFiles).filter((file) => {
 			const isUnderLimit = file.size / 1024 / 1024 <= MAX_FILE_SIZE_MB
 			const isAllowedMime = acceptedTypes.includes(file.type)
-			
+
 			const isSelected = files.find(
 				(selectedFile) => {
 					return selectedFile.file.name === file.name
 				}
 			) !== undefined
-			
+
 			if (!isAllowedMime) {
 				// TODO: Switch to a toast notification
 				console.log(`File ${file.name} is not allowed`)
 				return false
 			}
-			
+
 			if (!isUnderLimit) {
 				// TODO: Switch to a toast notification
 				console.log(`File ${file.name} is too big. Max file size: ${MAX_FILE_SIZE_MB}mb`)
 				return false
 			}
-			
+
 			if (!isSelected) {
 				useFileUpload(file)
 			}

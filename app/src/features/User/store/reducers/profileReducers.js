@@ -21,17 +21,17 @@ export default (state = {
 			const keys = Object.keys(action.payload)
 			const newProfiles = {}
 			const newUsernames = {}
-			
+
 			keys.map((userId) => {
 				if (!state.profileList[userId]) newProfiles[userId] = action.payload[userId]
 			})
-			
+
 			keys.map((userId) => {
 				const username = action.payload[userId].username
-				
+
 				if (!newUsernames[username]) newUsernames[username] = userId
 			})
-			
+
 			return {
 				...state,
 				profileList: {
@@ -44,10 +44,10 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case PROFILE_UPDATE: {
 			const profile = state.profileList[action.payload.userId]
-			
+
 			return profile ? {
 				...state,
 				profileList: {
@@ -63,12 +63,12 @@ export default (state = {
 				}
 			} : state
 		}
-		
+
 		case PROFILE_CONNECTION_REQUEST: {
 			const profile = state.profileList[action.payload.userId]
-			
+
 			if (!profile) return state
-			
+
 			return {
 				...state,
 				profileList: {
@@ -80,18 +80,18 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case PROFILE_CONNECTION_SUCCESS: {
 			const profileFetch = state.profileList[action.payload.userId]
-			
+
 			if (!profileFetch) return state
-			
+
 			const {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				fetchingConnection,
 				...profile
 			} = profileFetch
-			
+
 			return {
 				...state,
 				profileList: {
@@ -103,16 +103,16 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case PROFILE_CONNECTION_FAILURE: {
 			if (!state.profileList[action.payload.userId]) return state
-			
+
 			const {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				fetchingConnection,
 				...profile
 			} = state.profileList[action.payload.userId]
-			
+
 			return {
 				...state,
 				profileList: {
@@ -121,7 +121,7 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case PROFILE_FETCH_SUCCESS: {
 			return {
 				...state,
@@ -135,17 +135,17 @@ export default (state = {
 				}
 			}
 		}
-		
+
 		case PROFILE_FETCH_FAILURE: {
 			return {
 				...state,
 				invalidUsernames: state.invalidUsernames.concat(action.payload)
 			}
 		}
-		
+
 		case PROFILE_FOLLOW_UPDATE: {
 			const profile = state.profileList[action.payload.userId]
-			
+
 			return profile ? {
 				...state,
 				profileList: {
@@ -163,7 +163,7 @@ export default (state = {
 				}
 			} : state
 		}
-		
+
 		default: {
 			return state
 		}

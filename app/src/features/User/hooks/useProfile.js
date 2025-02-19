@@ -7,22 +7,22 @@ import { getProfile, getProfileConnection } from '../store/actions/profileAction
 const useProfile = (query) => {
 	const dispatch = useDispatch()
 	const { loggedIn, userId } = useAuthenticated()
-	
+
 	const profileList = useSelector((state) => state.profiles.profileList)
-	
+
 	const [fetching, setFetching] = useState(false)
 	const [profile, setProfile] = useState(null)
-	
+
 	const fetchingUserId = typeof query === 'string' ? query : undefined
-	
+
 	useEffect(() => {
 		if (profile) return
-		
+
 		const profileFetch = profileList[fetchingUserId || userId]
-		
+
 		if (profileFetch) {
 			setProfile(profileFetch)
-			
+
 			// Retrieve all profile data if only a summarized profile was fetched
 			if (!profileFetch.connection && profileFetch.userId !== userId && loggedIn) dispatch(
 				getProfileConnection(profileFetch.userId)
@@ -32,7 +32,7 @@ const useProfile = (query) => {
 			dispatch(getProfile(fetchingUserId))
 		}
 	}, [fetchingUserId, loggedIn, profileList, fetching])
-	
+
 	return profile
 }
 

@@ -11,15 +11,15 @@ const homeFeedPipeline = async (_options) => {
 		page: 1,
 		..._options
 	}
-	
+
 	if (!options.userId) throw new Error('homeFeedPipeline: Missing userId')
-	
+
 	return await Follower.aggregate([
 		// Get all users that are being followed by the requester
 		{ '$match': {
 			followerUserId: new mongoose.Types.ObjectId(options.userId)
 		} },
-		
+
 		{ $lookup: {
 			from: Post.collection.name,
 			let: { followed_user_id: '$userId' },
@@ -29,28 +29,28 @@ const homeFeedPipeline = async (_options) => {
 						$eq: ['$userId', '$$followed_user_id']
 					}
 				} },
-				
+
 				{ $sort: {
 					created: -1
 				} },
-				
+
 				{ $limit: postLimitPerUser }
 			],
 			as: 'userPosts'
 		} },
-		
+
 		{ $unwind: '$userPosts' },
-		
+
 		{ $replaceRoot: {
 			newRoot: '$userPosts'
 		} },
-		
+
 		{ $sort: {
 			created: -1
 		} },
-		
+
 		{ $skip: feedLimit * (options.page - 1) },
-		
+
 		{ $limit: feedLimit }
 	])
 }

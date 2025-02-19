@@ -33,22 +33,22 @@ const JWKS_PATH = path.resolve(__dirname, './jwks.json')
 // Check if jwks.json exists
 if (!fs.existsSync(JWKS_PATH)) {
 	console.log('jwks.json not found, creating...')
-	
+
 	await makeKeys()
-	
+
 	console.log(`wrote jwks.json to ${JWKS_PATH}`)
 }
 
 db.connect()
 db.instance.once('open', async () => {
 	console.log('database connection success')
-	
+
 	const { client_id, client_secret } = oauth.generateMainAppCredentials()
-	
+
 	await oauth.issueClientCredentials({ client_id, client_secret })
-	
+
 	console.log('client credentials issued, copy the following into .env')
 	console.log(`OAUTH_CLIENT_ID="${client_id}"\nOAUTH_CLIENT_SECRET="${client_secret}"`)
-	
+
 	process.exit(0)
 })

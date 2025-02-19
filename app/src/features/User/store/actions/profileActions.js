@@ -16,13 +16,13 @@ export const addProfile = (data) => (dispatch) => dispatch({
 
 export const getProfile = (userId) => (dispatch, getState) => {
 	const { profiles } = getState()
-	
+
 	//if (profiles.requestingUserIds[userId]) return // TODO: IMPLEMENT
-	
+
 	if (profiles.profileList[userId]) return
-	
+
 	dispatch({ type: PROFILE_FETCH_REQUEST })
-	
+
 	api.get(`/v1/profile/${userId}`)
 		.then((data) => dispatch({
 			type: PROFILE_FETCH_SUCCESS,
@@ -36,13 +36,13 @@ export const getProfile = (userId) => (dispatch, getState) => {
 
 export const getProfileFromUsername = (username) => (dispatch, getState) => {
 	const { profiles } = getState()
-	
+
 	//if (profiles.requestingUsernames[username]) return // TODO: IMPLEMENT
-	
+
 	if (profiles.idsByUsername[username]) return
-	
+
 	dispatch({ type: PROFILE_FETCH_REQUEST })
-	
+
 	api.get(`/v1/profile/username/${username}`)
 		.then((data) => dispatch({
 			type: PROFILE_FETCH_SUCCESS,
@@ -56,22 +56,22 @@ export const getProfileFromUsername = (username) => (dispatch, getState) => {
 
 export const getProfileConnection = (userId) => (dispatch, getState) => {
 	const { user, profiles } = getState()
-	
+
 	if (user.authenticated !== true) return
-	
+
 	const profile = profiles.profileList[userId]
-	
+
 	if (!profile) return dispatch(getProfile(userId))
-	
+
 	if (profile.fetchingConnection)	return
-	
+
 	if (!profile.connection) {
 		dispatch({
 			type: PROFILE_CONNECTION_REQUEST,
 			payload: { userId }
 		})
 	}
-	
+
 	api.get('/v1/follow/connection', { userId })
 		.then((data) => dispatch({
 			type: PROFILE_CONNECTION_SUCCESS,

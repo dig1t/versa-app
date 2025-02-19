@@ -15,7 +15,7 @@ const schema = new Schema({
 		ref: 'User',
 		required: true
 	},
-	
+
 	body: {
 		type: String,
 		maxlength: 50
@@ -27,14 +27,14 @@ const schema = new Schema({
 		required: true
 	},
 	private: Boolean,
-	
+
 	media: [
 		{
 			type: Schema.Types.ObjectId,
 			ref: 'Media'
 		}
 	],
-	
+
 	embedId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Post'
@@ -46,12 +46,12 @@ const schema = new Schema({
 			1: 'content' // ex: quoting a post
 		} */
 	},
-	
+
 	collaborators: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Collaborator'
 	}],
-	
+
 	likes: {
 		type: Number,
 		default: 0
@@ -75,11 +75,11 @@ schema.pre(
 	{ document: false, query: true },
 	async function(next) {
 		const contentId = this._conditions._id
-		
+
 		await Collaborator.deleteMany({ contentId })
 		await Post.deleteMany({ contentId })
 		await Comment.deleteMany({ contentId })
-		
+
 		next()
 	}
 )

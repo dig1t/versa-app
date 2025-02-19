@@ -5,11 +5,11 @@
 		flex-wrap: nowrap;
 		gap: var(--box-spacing);
 	}
-	
+
 	.stories {
 		height: 5rem;
 		padding: 1rem;
-		
+
 		ul {
 			height: 100%;
 			display: flex;
@@ -17,7 +17,7 @@
 			flex-wrap: nowrap;
 			gap: 1rem;
 		}
-		
+
 		li.story {
 			aspect-ratio: 1;
 		}

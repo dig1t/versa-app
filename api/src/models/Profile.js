@@ -13,7 +13,7 @@ const schema = new Schema({
 		alias: 'userId',
 		ref: 'User'
 	},
-	
+
 	username: {
 		type: String,
 		maxlength: 24
@@ -23,10 +23,10 @@ const schema = new Schema({
 		required: true,
 		maxlength: 24
 	},
-	
+
 	avatar: String,
 	bannerPhoto: String,
-	
+
 	verificationLevel: { // TODO: REPLACE WITH PROFILE BADGES
 		type: Number,
 		min: 0,
@@ -34,7 +34,7 @@ const schema = new Schema({
 		maxlength: 1,
 		default: 0
 	},
-	
+
 	bio: {
 		type: String,
 		maxlength: 50
@@ -47,12 +47,12 @@ const schema = new Schema({
 		type: Number,
 		maxlength: 15
 	},
-	
+
 	lastActive: {
 		type: Date,
 		default: Date.now()
 	},
-	
+
 	followers: {
 		type: Number,
 		default: 0
@@ -61,7 +61,7 @@ const schema = new Schema({
 		type: Number,
 		default: 0
 	},
-	
+
 	created: {
 		type: Date,
 		default: Date.now
@@ -70,7 +70,7 @@ const schema = new Schema({
 
 schema.pre('save', function(next) {
 	this.username = this._id
-	
+
 	next()
 })
 
@@ -79,12 +79,12 @@ schema.pre(
 	{ document: false, query: true },
 	async function(next) {
 		const userId = this._conditions._id
-		
+
 		await Content.deleteMany({ userId })
 		await Comment.deleteMany({ userId })
 		await Post.deleteMany({ userId })
 		await Follower.deleteMany({ userId })
-		
+
 		next()
 	}
 )

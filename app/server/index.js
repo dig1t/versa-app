@@ -24,7 +24,7 @@ useClusters(() => {
 			key: readFileSync(path.resolve(__dirname, process.env.APP_SSL_KEY)),
 			cert: readFileSync(path.resolve(__dirname, process.env.APP_SSL_CERT))
 		}
-		
+
 		// Redirect HTTP traffic to HTTPS
 		const httpServer = http2.createServer((req, res) => {
 			res.writeHead(
@@ -33,15 +33,15 @@ useClusters(() => {
 			)
 			res.end()
 		})
-		
+
 		const httpsServer = http2.createSecureServer(httpServerOptions, server)
-		
+
 		server.on('ready', () => {
 			console.log(`starting server at ${config.domain}`)
 			httpServer.listen(80)
 			httpsServer.listen(443)
 		})
 	}
-	
+
 	server.on('error', (error) => console.error(error))
 })

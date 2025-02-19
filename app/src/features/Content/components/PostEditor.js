@@ -12,7 +12,7 @@ import useProfile from '../../User/hooks/useProfile.js'
 
 const PostEditor = () => {
 	const dispatch = useDispatch()
-	
+
 	const inputRef = useRef(null)
 	const uploaderRef = useRef(null)
 	const [textValid, setTextValid] = useState(false)
@@ -20,17 +20,17 @@ const PostEditor = () => {
 	const [filesReady, setFilesReady] = useState(true)
 	const [uploadReady, setUploadReady] = useState(false)
 	const profile = useProfile(true)
-	
+
 	useEffect(() => setUploadReady(
 		(filesReady && textValid) ||
 		(inputRef.current.getValue().length === 0 && filesReady && files.length > 0)
 	), [filesReady, textValid])
-	
+
 	const handleSubmit = () => {
 		if (!uploadReady) return
-		
+
 		const body = inputRef.current.getValue()
-		
+
 		inputRef.current.setValue('')
 		console.log(files.map((file) => file.media.mediaId))
 		api.post('/v1/post/new', {
@@ -44,7 +44,7 @@ const PostEditor = () => {
 				console.warn('Error posting comment')
 			})
 	}
-	
+
 	return <div className="post-editor">
 		<label className="box">
 			<div className="post-header">

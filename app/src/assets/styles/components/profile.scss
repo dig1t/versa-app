@@ -4,7 +4,7 @@
 		height: 0;
 		padding-bottom: calc(9 / 21) * 100%; // 21:9 ratio
 		position: relative;
-		
+
 		.img {
 			background-image: url(/assets/temp/banner.gif); //placeholder
 			background-size: cover;
@@ -16,54 +16,54 @@
 			left: 0;
 		}
 	}
-	
+
 	.details {
 		position: relative;
-		
+
 		button.cta {
 			position: absolute;
 			top: 0;
 			right: 0;
 		}
-		
+
 		.container {
 			display: flex;
 			flex-direction: column;
 			gap: .25rem;
-			
+
 			> *:not(button) {
 				overflow-wrap: anywhere;
 			}
 		}
-		
+
 		.username {
 			margin-bottom: .5rem;
 			font-size: 1rem;
 			line-height: 1rem;
 		}
-		
+
 		.bio {
 			line-height: 1.2rem;
-			
+
 			&:not(:last-child) {
 				margin-bottom: .2rem;
 			}
 		}
-		
+
 		.website {
 			font-weight: $font-bold;
 		}
 	}
-	
+
 	.community-stats {
 		.value {
 			font-weight: $font-bold;
 		}
-		
+
 		.label {
 			color: var(--text-color-secondary);
 			letter-spacing: .03rem;
-			
+
 			@at-root main[data-theme="dark"] & {
 				color: var(--blue-gray-400);
 			}
@@ -73,46 +73,46 @@
 
 .profile-card {
 	$avatarSize: 6.75rem;
-	
+
 	width: 17.5rem;
 	background-color: var(--box-color);
 	border-radius: .5rem;
 	box-shadow: var(--box-shadow);
 	overflow: hidden;
-	
+
 	@at-root main[data-theme="dark"] & {
 		background-color: var(--box-color-secondary);
 	}
-	
+
 	.details {
 		$box-margin: 1rem;
 		margin: $box-margin;
 		padding-top: calc(calc($avatarSize / 2) - $box-margin);
-		
+
 		.avatar-container {
 			width: $avatarSize;
 			margin-top: -$avatarSize;
 		}
-		
+
 		.container {
 			margin-top: .5rem;
-			
+
 			.display-name {
 				font-size: 1.5rem;
 			}
-			
+
 			.bio, .website {
 				font-size: .875rem;
 			}
 		}
-		
+
 		.community-stats {
 			margin-top: .75rem;
 			font-size: .875rem;
 			display: flex;
 			flex-direction: column;
 			gap: .1rem;
-			
+
 			.value {
 				margin-right: .25rem;
 			}
@@ -122,70 +122,70 @@
 
 .profile {
 	$avatarSize: 9rem;
-	
+
 	.info {
 		.details {
 			$box-margin: 1.5rem;
 			margin: $box-margin;
 			padding-top: calc(calc($avatarSize / 2) - $box-margin);
-			
+
 			.avatar-container {
 				width: $avatarSize;
 				margin-top: -$avatarSize;
 			}
-			
+
 			.container {
 				margin-top: .5rem;
 				gap: .5rem;
-				
+
 				.display-name {
 					.icon-verified {
 						font-size: 1.25rem;
 					}
 				}
-				
+
 				.bio, .website {
 					font-size: 1rem;
 					line-height: 1rem;
 				}
 			}
 		}
-		
+
 		.community-stats {
 			padding: .4rem;
 			padding-top: 0;
-			
+
 			.stat {
 				border-radius: .4rem;
 				padding: .4rem;
 				text-align: center;
 				cursor: pointer;
 				//transition-duration: .1s;
-				
+
 				.value {
 					margin-bottom: .04rem;
 					font-size: 1rem;
 				}
-				
+
 				.label {
 					font-size: .8rem;
 				}
-				
+
 				/*&:hover {
 					background: (0 0 0 / 10%);
 				}*/
 			}
 		}
 	}
-	
+
 	.feed {
 		.cat-pills {
 			$pill-height: .2rem;
-			
+
 			padding: .4rem;
 			padding-bottom: $pill-height;
 			gap: .2rem;
-			
+
 			.pill {
 				color: var(--text-color-secondary);
 				background-color: transparent;
@@ -194,15 +194,15 @@
 				font-size: 1rem;
 				flex: 1;
 				position: relative;
-				
+
 				&:not(.active):hover {
 					background-color: var(--box-color-secondary);
 				}
-				
+
 				&.active {
 					color: var(--text-color);
 					font-weight: $font-bold;
-					
+
 					&:after {
 						content: '';
 						width: 100%;

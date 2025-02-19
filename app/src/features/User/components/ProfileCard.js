@@ -11,7 +11,7 @@ const ProfileCard = ({ profile, showCTA }) => {
 	const canMessage = connection.isMutualFollower &&
 		!connection.isSelf &&
 		!connection.blocked
-	
+
 	return profile && (<div className="profile-card">
 		<div className="clearfix">
 			<div className="banner">

@@ -23,7 +23,7 @@ const ContentMedia = ({ source, type }) => {
 				/>
 		}
 	}, [source, type])
-	
+
 	return <div className="content-media post-container">
 		<div className={type}>
 			{contentMedia}

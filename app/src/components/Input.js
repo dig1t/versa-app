@@ -47,7 +47,7 @@ const TextAreaInput = forwardRef((props, ref) => {
 		//onInput={props.handleChange}
 		onChange={(event) => {
 			props.handleChange(event)
-			
+
 			event.target.height = 'auto'
 			event.target.height = `${event.target.scrollHeight}px`
 		}}
@@ -156,32 +156,32 @@ const Input = forwardRef((props, ref) => {
 			}
 		}
 	}
-	
+
 	const [errorText, setErrorText] = useState(null)
 	const [value, setValue] = useState(getDefaultValue)
 	const [isValid, setIsValid] = useState(true)
 	const [initialInteraction, setInitialInteraction] = useState(false)
 	const [focused, setFocused] = useState(props.autoFocus)
 	const inputRef = useRef()
-	
+
 	useImperativeHandle(ref, () => ({
 		setValue: (newValue, validate) => {
 			switch(props.type) {
 				case 'checkboxes': {
 					if (typeof newValue !== 'object') newValue = getDefaultValue()
-					
+
 					break
 				}
 				default: {
 					inputRef.current.value = newValue
 				}
 			}
-			
+
 			setValue(newValue)
-			
+
 			if (validate === true) validate()
 		},
-		
+
 		getValue: () => {
 			switch(props.type) {
 				case 'checkboxes': {
@@ -193,29 +193,29 @@ const Input = forwardRef((props, ref) => {
 			}
 		}
 	}))
-	
+
 	useEffect(() => {
 		if (props.handleValueChange !== undefined) {
 			props.handleValueChange(value)
 		}
-		
+
 		validate(value)
 	}, [value])
-	
+
 	useEffect(() => {
 		props.handleValidity(isValid)
 	}, [isValid])
-	
+
 	useEffect(() => {
 		const newValue = props.value || getDefaultValue()
-		
+
 		switch(props.type) {
 			case 'checkboxes': {
 				if (haveSameKeys(
 					newValue,
 					optionsToObject(props.options.checkboxes)
 				)) return
-				
+
 				if (typeof newValuee !== 'object') {
 					setValue(
 						props.options.default || optionsToObject(props.options.checkboxes)
@@ -223,7 +223,7 @@ const Input = forwardRef((props, ref) => {
 				} else {
 					setValue(newValue)
 				}
-				
+
 				break
 			}
 			case 'select': {
@@ -232,59 +232,59 @@ const Input = forwardRef((props, ref) => {
 				} else {
 					inputRef.current.value = newValue
 				}
-				
+
 				break
 			}
 			default: {
 				if (typeof newValue !== 'string') return
-				
+
 				inputRef.current.value = newValue
 			}
 		}
-		
+
 		//validate(newValue)
 	}, [props.value])
-	
+
 	useEffect(() => {
 		if (typeof props.handleValidity !== 'undefined' && props.optional) {
 			// Validate optional inputs
 			props.handleValidity(true)
 		}
-		
+
 		setValue(getDefaultValue)
 	}, [])
-	
+
 	const validate = useCallback((newValue) => {
 		if (typeof newValue === 'undefined') newValue = inputRef.current?.value
-		
+
 		let validity = true
-		
+
 		switch(props.type) {
 			case 'select': {
 				newValue.map((newOption) => {
 					const optionExists = props.options.find((option) => option[1] === newOption)
-					
+
 					// Make sure user didn't manually change the value
 					if (!optionExists) {
 						validity = false
 					}
 				})
-				
+
 				break
 			}
 			case 'selectButtons': {
 				const optionExists = props.options.find((option) => option[1] === newValue)
-				
+
 				// Make sure user didn't manually change the value
 				if (!optionExists) {
 					validity = false
 				}
-				
+
 				break
 			}
 			case 'checkboxes': {
 				// TODO
-				
+
 				break
 			}
 			default: {
@@ -296,43 +296,43 @@ const Input = forwardRef((props, ref) => {
 				)) {
 					if (newValue.length > 0) {
 						validity = validateText(newValue, props.validateFor)
-						
+
 						if (validity === false) setErrorText(
 							`${props.label || props.validateFor} is not a valid ${props.validateFor}`
 						)
 					}
 				} else {
 					validity = false
-					
+
 					if (newValue.length !== 0 && newValue.length <= (props.minLength - 1 || 0)) setErrorText(
 						`${props.validateFor} is too short (${props.minLength} characters)`
 					)
-					
+
 					if (newValue.length === 0) setErrorText(`Missing ${props.label || props.validateFor}`)
-					
+
 					if (props.maxLength && newValue.length >= (props.maxLength + 1 || 0)) setErrorText(
 						`${props.validateFor} is too long (${props.maxLength} characters)`
 					)
 				}
 			}
 		}
-		
+
 		if (validity) setErrorText(null)
-		
+
 		setIsValid(validity)
 	}, [value, props.value, props.type])
-	
+
 	const handleChange = () => {
 		setValue(inputRef.current.value)
 		//validate(inputRef.current.value)
 	}
-	
+
 	// TODO: Swap this with handleChange?
 	const handleKeyDown = () => {
 		setValue(inputRef.current.value)
 		//validate(inputRef.current.value)
 	}
-	
+
 	const attributes = useMemo(() => ({
 		...props.attributes,
 		placeholder: !props.inlineLabel ? props.placeholder : null,
@@ -344,11 +344,11 @@ const Input = forwardRef((props, ref) => {
 		disabled: props.disabled,
 		'aria-required': (props.optional && true) || false
 	}), [props])
-	
+
 	const wrapInput = props.type === 'selectButtons' ? true : (props.label || props.wrap)
 	const InputComponent = componentMap[props.type] || componentMap.text
 	const WrapComponent = wrapInput ? LabelComponent : React.Fragment
-	
+
 	return <div className={classNames(
 		'input', 'input-' + props.type,
 		initialInteraction === true && isValid === false && props.showStatusColors && 'error',
@@ -373,7 +373,7 @@ const Input = forwardRef((props, ref) => {
 				setInitialInteraction={setInitialInteraction}
 			/>
 		</WrapComponent>
-		
+
 		{props.displayError && initialInteraction === true && errorText && <div className="error-text">
 			{errorText}
 		</div>}

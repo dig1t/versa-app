@@ -13,7 +13,7 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	display: block;
-	
+
 	&.img-fill {
 		background-size: cover;
 	}
@@ -46,7 +46,7 @@
 
 .clearfix {
 	zoom: 1;
-	
+
 	&:before, &:after {
 		content: '';
 		display: table;
@@ -78,7 +78,7 @@
 
 a.unstyled-link {
 	color: inherit;
-	
+
 	&:hover {
 		text-decoration: none;
 	}

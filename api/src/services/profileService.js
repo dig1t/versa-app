@@ -27,15 +27,15 @@ const deserializeProfile = (profile) => ({
 
 const _getProfile = async (match) => {
 	const profile = await Profile.findOne(match)
-	
+
 	if (!profile) throw new Error('Profile does not exist')
-	
+
 	return deserializeProfile(profile)
 }
 
 const getProfileFromUserId = async (userId) => {
 	if (!mongoValidate(userId, 'id')) throw new Error('profiles.getProfileFromUserId(): Invalid type of id')
-	
+
 	return await _getProfile(
 		{ _id: mongoSanitize(userId) }
 	)
@@ -43,7 +43,7 @@ const getProfileFromUserId = async (userId) => {
 
 const getProfileFromUsername = async (username) => {
 	if (!validateText(username, 'username')) throw new Error('profiles.getProfileFromUsername(): Invalid type of username')
-	
+
 	return await _getProfile(
 		{ username: mongoSanitize(username) }
 	)
@@ -51,51 +51,51 @@ const getProfileFromUsername = async (username) => {
 
 const canViewProfile = async (userId, requesterUserId) => {
 	if (!userId) throw new Error('Missing userId')
-	
+
 	const profile = await getProfileFromUserId(userId)
-	
+
 	if (!profile.private) return true
-	
+
 	// Profile is private and request is from an unauthenticated user
 	if (typeof userId !== 'string') return false
-	
+
 	return isFollowing(userId, requesterUserId)
 }
 
 const isProfilePrivate = async (userId) => {
 	const profile = await Profile.findOne({ _id: mongoSanitize(userId) })
 		.select('private')
-	
+
 	if (!profile) throw new Error('Profile does not exist')
-	
+
 	// Model by default does not have this setting set
 	return profile.private || false
 }
 
 const getProfilePosts = async (userId, requesterUserId) => {
 	const profile = await getProfileFromUserId(userId)
-	
+
 	if (!profile) throw new Error('Could not find user')
-	
+
 	const posts = await Post.aggregate(
 		await profileFeedPipeline({
 			userId: profile.userId,
 			requesterUserId
 		})
 	)
-	
+
 	if (!posts) throw new Error('Could not get profile feed')
-	
+
 	const profileCache = [ profile ]
-	
+
 	for (const post of posts) {
 		try {
 			const profileFind = profileCache.find(
 				(data) => data.userId === post.userId
 			)
-			
+
 			post.content = await getContent(post.contentId, requesterUserId)
-			
+
 			if (!profileFind) {
 				profileCache.push(
 					// If the content's owner is the same as the poster,
@@ -103,12 +103,12 @@ const getProfilePosts = async (userId, requesterUserId) => {
 					post.content.userId === post.userId ? post.content.profile : await getProfileFromUserId(post.userId)
 				)
 			}
-			
+
 			if (post.content.userId !== post.userId) {
 				const contentProfileFind = profileCache.find(
 					(data) => data.userId === post.content.userId
 				)
-				
+
 				if (!contentProfileFind) profileCache.push(post.content.profile)
 			}
 		} catch(error) {
@@ -118,7 +118,7 @@ const getProfilePosts = async (userId, requesterUserId) => {
 			post.content = {}
 		}
 	}
-	
+
 	/*
 	// Post
 	{

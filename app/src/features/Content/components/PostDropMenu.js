@@ -13,15 +13,15 @@ const PostDropMenu = ({ contentProfile, content, postId, contentId }) => {
 	const dispatch = useDispatch()
 	const shareUrl = useShare()
 	const { clipboardCopy } = useClipboard()
-	
+
 	// eslint-disable-next-line no-undef
 	const postUrl = `${window.location.origin}/@${contentProfile.username}/${content.contentId}`
 	const postType = postId !== undefined ? 'Post' : 'Content'
-	
+
 	return (<DropMenu.ItemMenu>
 		<DropMenu.Item onClick={() => {
 			clipboardCopy(postUrl)
-			
+
 			// TODO: show toast "Copied link to clipboard"
 		}}>Copy Link</DropMenu.Item>
 		<DropMenu.Item onClick={async () => {
@@ -32,7 +32,7 @@ const PostDropMenu = ({ contentProfile, content, postId, contentId }) => {
 					text: content.text,
 					url: postUrl
 				})
-				
+
 				// TODO: show toast "Post shared"
 			} catch (err) {
 				console.error(err)

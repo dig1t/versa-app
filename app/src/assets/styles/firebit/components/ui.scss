@@ -5,7 +5,7 @@
 #ui-root {
 	--tooltip-color: rgb(0 25 50 / 80%);
 	--modal-bg-color: rgb(0 25 50 / 60%);
-	
+
 	.background-close {
 		position: absolute;
 		top: 0;
@@ -23,26 +23,26 @@
 	border: 1px solid $light-gray;
 	border-radius: 4px;
 	position: absolute;
-	
+
 	.head h4 {
 		border-bottom: 1px solid $light-gray;
 		padding: 8px 12px;
 	}
-	
+
 	li {
 		padding: 10px 12px;
 		font-size: 1.3em;
 		cursor: pointer;
-		
+
 		b {
 			font-weight: $font-semibold;
 		}
-		
+
 		&.selected, &:hover {
 			background-color: #f5f5f5;
 		}
 	}
-	
+
 	&--show {
 		position: relative;
 	}
@@ -57,13 +57,13 @@ $tooltip-padding: .4rem;
 	text-align: center;
 	position: fixed;
 	z-index: 999999999;
-	
+
 	span {
 		color: #fff;
 		font-size: .8rem;
 		font-weight: 500;
 	}
-	
+
 	.nub:after {
 		border: solid transparent;
 		content: '';
@@ -71,7 +71,7 @@ $tooltip-padding: .4rem;
 		width: 0;
 		position: absolute;
 	}
-	
+
 	&.top .nub:after {
 		bottom: 100%;
 		left: 50%;
@@ -79,7 +79,7 @@ $tooltip-padding: .4rem;
 		border-bottom-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
-	
+
 	&.bottom .nub:after {
 		top: 100%;
 		left: 50%;
@@ -87,7 +87,7 @@ $tooltip-padding: .4rem;
 		border-top-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
-	
+
 	&.left .nub:after {
 		right: 100%;
 		top: 50%;
@@ -95,7 +95,7 @@ $tooltip-padding: .4rem;
 		border-right-color: var(--tooltip-color);
 		border-width: $tooltip-padding;
 	}
-	
+
 	&.right .nub:after {
 		left: 100%;
 		top: 50%;
@@ -114,7 +114,7 @@ $tooltip-padding: .4rem;
 	position: fixed;
 	top: 0;
 	z-index: 999999999;
-	
+
 	button.close {
 		color: color(white);
 		background-color: transparent;
@@ -128,35 +128,35 @@ $tooltip-padding: .4rem;
 		justify-content: center;
 		align-items: center;
 		transition-duration: .2s;
-		
+
 		.icon {
 			height: 1.5rem;
 			transition-duration: .2s;
 		}
-		
+
 		&:hover {
 			border-color: var(--primary-color);
-			
+
 			.icon {
 				color: var(--primary-color);
 			}
 		}
 	}
-	
+
 	.center-wrap {
 		padding: .8rem;
 	}
-	
+
 	.container {
 		max-width: 500px;
 		position: relative;
 	}
-	
+
 	.main {
 		background-color: color(white);
 		overflow: hidden;
 		box-shadow: var(--box-shadow);
-		
+
 		.header {
 			background-color: color(white);
 			border-bottom: 1px solid var(--divider-color);
@@ -165,16 +165,16 @@ $tooltip-padding: .4rem;
 			font-weight: $font-semibold;
 			text-shadow: 0 1px 0 color(white);
 		}
-		
+
 		.content {
 			background-color: #f7f7f7;
-			
+
 			.alert {
 				font-size: 14px;
 				margin-bottom: 8px;
 				text-align: center;
 			}
-			
+
 			.submit {
 				margin: 0 auto;
 				padding: 4px 32px;
@@ -184,15 +184,15 @@ $tooltip-padding: .4rem;
 			}
 		}
 	}
-	
+
 	&.alert {
 		padding: 8px;
 	}
-	
+
 	&-image {
 		.footer {
 			margin: 14px 18px;
-			
+
 			.heading {
 				color: var(--primary-color);
 				margin-bottom: 2px;
@@ -200,12 +200,12 @@ $tooltip-padding: .4rem;
 				letter-spacing: .04em;
 			}
 		}
-		
+
 		img {
 			width: 100%;
 			max-height: 80vh;
 		}
-		
+
 		.main {
 			border-radius: .25rem;
 		}
@@ -214,7 +214,7 @@ $tooltip-padding: .4rem;
 
 .drop-menu {
 	--menu-border-color: rgb(0 0 0 / 8%);
-	
+
 	width: 100%;
 	height: 100%;
 	display: table;
@@ -222,11 +222,11 @@ $tooltip-padding: .4rem;
 	position: fixed;
 	top: 0;
 	z-index: 999999999;
-	
+
 	&-trigger {
 		cursor: pointer;
 	}
-	
+
 	.menu-container {
 		color: var(--color-black);
 		background-color: var(--box-color);
@@ -237,14 +237,14 @@ $tooltip-padding: .4rem;
 		position: fixed;
 		overflow: hidden;
 	}
-	
+
 	li {
 		&.divider {
 			background-color: var(--menu-border-color);
 			height: 1px;
 			margin: 0 auto;
 		}
-		
+
 		&.menu-btn, a {
 			padding: 0.6rem 0.8rem;
 			font-size: .9rem;
@@ -252,22 +252,22 @@ $tooltip-padding: .4rem;
 			display: block;
 			transition-duration: .1s;
 			cursor: pointer;
-			
+
 			&.caution {
 				color: var(--red-600);
 			}
-			
+
 			&:hover {
 				background-color: var(--box-color-secondary);
 				text-decoration: none;
 			}
 		}
-		
+
 		a {
 			color: inherit;
 		}
 	}
-	
+
 	@at-root main[data-theme="dark"] & {
 		--menu-border-color: rgb(255 255 255 / 8%);
 	}
@@ -275,54 +275,54 @@ $tooltip-padding: .4rem;
 
 .carousel {
 	//overflow: hidden;
-	
+
 	ul.slides {
 		overflow: hidden;
 		position: relative;
-		
+
 		> li {
 			display: none;
 			transition: .6s ease-in-out left;
 			position: relative;
-			
+
 			&.previous, &.next {
 				width: 100%;
 				position: absolute;
 				top: 0;
 				display: block;
 			}
-			
+
 			&.previous {
 				left: -100%;
 			}
-			
+
 			&.next {
 				left: 100%;
 			}
-			
+
 			&.left, &.right, &.active {
 				left: 0;
 			}
-			
+
 			&.active {
 				display: block;
-				
+
 				&.left {
 					left: -100%;
 				}
-				
+
 				&.right {
 					left: 100%;
 				}
 			}
-			
+
 			img {
 				width: 100%;
 				user-select: none;
 			}
 		}
 	}
-	
+
 	.controls {
 		button {
 			color: $light-gray;
@@ -332,11 +332,11 @@ $tooltip-padding: .4rem;
 			border: 1px solid $light-gray;
 			padding: 0;
 			font-size: 1.8em;
-			
+
 			&:first-child {
 				margin-right: 10px;
 			}
-			
+
 			&:hover {
 				color: $primary-color;
 				border-color: $primary-color;
@@ -356,32 +356,32 @@ $tooltip-padding: .4rem;
 .scroll {
 	$scrollbar-width: 8px;
 	$margin: 8px;
-	
+
 	$native-scrollbar-width: 12px;
-	
+
 	&-container {
 		overflow: hidden;
 		display: flex;
 	}
-	
+
 	&__view {
 		width: calc(100% + #{$native-scrollbar-width});
 		overflow: scroll;
 		margin-right: -$native-scrollbar-width;
 	}
-	
+
 	&__track {
 		width: $scrollbar-width + ($margin * 2);
 		position: absolute;
 		top: $margin;
 		bottom: $margin;
 		right: 0;
-		
+
 		&:hover .scroll__slider {
 			opacity: .8;
 		}
 	}
-	
+
 	&__slider {
 		background-color: black;
 		height: 100%; // 10% + 25px main element padding - half size of scrollbar
@@ -411,35 +411,35 @@ svg {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-content: center;
-	
+
 	// DEBUG
 	/*background-color: red;
 	opacity: .5;
-	
+
 	svg {
 		background-color: blue;
 		opacity: .5;
 	}*/
-	
+
 	&-full-width {
 		width: 100%;
 	}
-	
+
 	&-full-height {
 		height: 100%;
 	}
-	
+
 	&-logo {
 		color: #e6e6e6;
 		aspect-ratio: calc(165 / 50);
 	}
-	
+
 	&-wrap {
 		background-color: var(--color-white);
 		height: inherit;
 		border-radius: 99rem;
 		padding: 10%;
-		
+
 		svg {
 			height: 100%;
 		}
@@ -452,20 +452,20 @@ svg {
 	display: flex;
 	gap: .125rem;
 	overflow-wrap: anywhere;
-	
+
 	.icon-verified {
 		height: 1rem;
 	}
-	
+
 	&-wrap {
 		display: flex;
 		flex-direction: column;
 		gap: .1rem;
-		
+
 		.username {
 			color: var(--text-color-secondary);
 			overflow-wrap: anywhere;
-			
+
 			@at-root main[data-theme="dark"] & {
 				color: var(--blue-gray-400);
 			}
@@ -485,7 +485,7 @@ svg {
 	height: 100%;
 	padding: 2rem;
 	opacity: 1;
-	
+
 	svg {
 		width: 3rem;
 	}

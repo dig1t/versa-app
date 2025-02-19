@@ -6,7 +6,7 @@ import ChatNavigator from './ChatNavigator.js'
 
 const ChatRoute = () => {
 	const profile = useProfile(true)
-	
+
 	return <Layout page="chat" fullWidth>
 		<div className="wrap grid-g">
 			<div className="col-12 col-desktop-8">

@@ -36,16 +36,16 @@ app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Methods', 'GET, POST')
 	res.header('Access-Control-Allow-Credentials', 'true')
 	res.header('Access-Control-Max-Age', 86400)
-	
+
 	// Handle Google Chrome preflight requests
 	if (req.method === 'OPTIONS') return res.sendStatus(200)
-	
+
 	req.on('aborted', () => {
 		next(new APIError('Request aborted by the client', 400, {
 			requestAborted: true
 		}))
 	})
-	
+
 	next()
 })
 
@@ -58,7 +58,7 @@ if (config.dev) {
 } else {
 	app.use(rateLimiterMiddleware)
 	//res.header('Access-Control-Allow-Origin', config.domain)
-	
+
 	/* Setup helmet */
 	app.use(helmet.contentSecurityPolicy({
 		directives: {
@@ -70,7 +70,7 @@ if (config.dev) {
 	app.use(helmet.referrerPolicy({ policy: 'no-referrer' }))
 	app.use(helmet.frameguard({ action: 'deny' }))
 	app.use(helmet({ noCache: config.dev }))
-	
+
 	app.set('trust proxy', 1) // trust first proxy
 }
 

@@ -15,15 +15,15 @@ export const AuthProvider = ({ children }) => {
 		userId: state.user.userId,
 		accessToken: state.user.accessToken
 	}))
-	
+
 	useEffect(() => {
 		const credentials = userId !== null && accessToken !== null
-		
+
 		if ((credentials && authenticated) || authenticated === false) {
 			setLoggedIn(authenticated)
 		}
 	}, [userId, accessToken, authenticated])
-	
+
 	return <AuthContext.Provider value={{ loggedIn, userId }}>
 		{ children }
 	</AuthContext.Provider>

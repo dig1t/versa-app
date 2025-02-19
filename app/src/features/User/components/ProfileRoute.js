@@ -40,7 +40,7 @@ const Profile = () => {
 		idsByUsername: state.profiles.idsByUsername,
 		invalidUsernames: state.profiles.invalidUsernames
 	}))
-	
+
 	const navigate = useNavigate()
 	const { loggedIn } = useAuthenticated()
 	const { username } = useParams()
@@ -48,28 +48,28 @@ const Profile = () => {
 	const [usernameQuery, setUsernameQuery] = useState(null)
 	const [redirect, setRedirect] = useState(null)
 	const [fetching, setFetching] = useState(false)
-	
+
 	useEffect(() => {
 		const param = /@(\w+)/.exec(username)
 		const usernameExec = param && param[1]
-		
+
 		usernameExec ? setUsernameQuery(usernameExec) : setRedirect('/error')
 	}, [])
-	
+
 	useEffect(() => {
 		const invalidProfile = binarySearch(invalidUsernames, usernameQuery) > -1
-		
+
 		if (invalidProfile) return setRedirect('/error?e=no-user')
-		
+
 		const userId = idsByUsername[usernameQuery]
-		
+
 		if (
 			(profileData !== null && profileList[userId] === profileData) || usernameQuery === null
 		) return
-		
+
 		if (userId) {
 			setProfileData(profileList[userId])
-			
+
 			if (!profileList[userId].connection && loggedIn) dispatch(
 				getProfileConnection(userId)
 			)
@@ -78,7 +78,7 @@ const Profile = () => {
 			dispatch(getProfileFromUsername(usernameQuery))
 		}
 	}, [usernameQuery, profileList, invalidUsernames, profileData])
-	
+
 	return <Layout page="profile">
 		{redirect && <Navigate to={redirect} />}
 		{profileData === null ? <Loading /> : <div className="wrap grid-g">

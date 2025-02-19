@@ -32,22 +32,22 @@ const defaultOptions = {
 
 const apiMiddleware = () => (req, res, next) => {
 	if (!req._using) req._using = {}
-	
+
 	req._using.api = '1.0.0'
-	
+
 	req.apiResult = (status, data, _options) => {
 		const options = {
 			...defaultOptions,
 			..._options
 		}
-		
+
 		if (!options.forceSend && res.headersSent) return
-		
+
 		const success = status == 200
 		const message = data?.message
-		
+
 		if (message) data.message = undefined
-		
+
 		const draft = {
 			success,
 			data: success ? data : undefined,
@@ -56,7 +56,7 @@ const apiMiddleware = () => (req, res, next) => {
 				(typeof(message) === 'string') ? message : message.toString()
 			) : statusMessage[status] // if no message, give a status message
 		}
-		
+
 		if (options.setStatus === true) res.status(status || 200)
 		if (options.setHeader) res.set('Content-Type', 'application/json')
 		//setTimeout(() => {
@@ -64,7 +64,7 @@ const apiMiddleware = () => (req, res, next) => {
 			res.end()
 		//}, 1000)
 	}
-	
+
 	next()
 }
 

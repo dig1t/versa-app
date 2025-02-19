@@ -38,7 +38,7 @@ const inputs = [
 
 const Signup = () => {
 	const dispatch = useDispatch()
-	
+
 	const handleResult = (success, data) => {
 		if (success) {
 			dispatch(setAuthenticatedUser(data))
@@ -48,7 +48,7 @@ const Signup = () => {
 			dispatch(userLogout())
 		}
 	}
-	
+
 	return <Layout page="landing" disableNav={true} fullWidth={true}>
 		<section className="auth">
 			<div className="box center-wrap">

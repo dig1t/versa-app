@@ -28,34 +28,34 @@ const swcOptions = {
 
 module.exports = {
 	mode: dev ? 'development' : 'production',
-	
+
 	target: 'web',
-	
+
 	cache: dev,
-	
+
 	devtool: dev && 'inline-source-map',
-	
+
 	watchOptions: {
 		ignored: [
 			path.resolve(__dirname, 'node_modules'),
 			path.resolve(__dirname, 'dist')
 		]
 	},
-	
+
 	entry: {
 		main: [
 			dev && 'webpack-hot-middleware/client?path=/__hot-reload&timeout=20000&reload=true',
 			path.resolve(__dirname, 'src', 'client.js')
 		].filter(Boolean)
 	},
-	
+
 	output: {
 		path: path.join(__dirname, './public/assets/client'),
 		filename: 'bundle.js',
 		publicPath: '/assets/client',
 		clean: true
 	},
-	
+
 	module: {
 		rules: [
 			{
@@ -104,7 +104,7 @@ module.exports = {
 			}
 		]
 	},
-	
+
 	plugins: [
 		new MiniCssExtractPlugin({
 			filename: 'styles.css',

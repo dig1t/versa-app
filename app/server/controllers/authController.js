@@ -25,7 +25,7 @@ passport.deserializeUser(async (user, done) => {
 		const userData = await api.get(`/v1/user/${user.userId}`, {
 			sessionId: user.sessionId
 		})
-		
+
 		done(null, {
 			userId: user.userId,
 			email: userData.email,
@@ -35,7 +35,7 @@ passport.deserializeUser(async (user, done) => {
 		})
 	} catch(error) {
 		if (config.dev) console.error(error)
-		
+
 		done(error, {})
 	}
 })
@@ -58,7 +58,7 @@ export default {
 	postLogout: async (req) => {
 		try {
 			await req.logoutUser()
-			
+
 			req.apiResult(200)
 		} catch(error) {
 			req.apiResult(500)
@@ -68,7 +68,7 @@ export default {
 	postLogin: (req, res) => passport.authenticate('local', async (_, data) => {
 		try {
 			await req.loginUser(data)
-			
+
 			req.apiResult(200, {
 				user: deserializeAuthorizedUser(data.user),
 				access_token: await req.getAccessToken(data.auth.refreshTokenId)
@@ -83,12 +83,12 @@ export default {
 		if (req.authenticated()) return req.apiResult(400, {
 			message: 'Already logged in'
 		})
-		
+
 		try {
 			const data = await api.post('/v1/user/new', req.body)
-			
+
 			await req.loginUser(data)
-			
+
 			req.apiResult(200, {
 				access_token: await req.getAccessToken(data.auth.refreshTokenId),
 				user: deserializeAuthorizedUser(data.user),
@@ -105,11 +105,11 @@ export default {
 		try {
 			console.log('get user')
 			if (!req.authenticated()) throw new Error('Not authenticated')
-			
+
 			const refreshToken = req.cookies?.[config.shortName.refreshToken]
-			
+
 			if (!refreshToken) throw new Error('Missing refresh token')
-			
+
 			req.apiResult(200, {
 				user: deserializeAuthorizedUser(req.user),
 				access_token: await req.getAccessToken(refreshToken)

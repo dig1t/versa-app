@@ -10,16 +10,16 @@ export default {
 			console.error(error)
 		}
 	},
-	
+
 	getUri: () => mongoServer.getUri(),
-	
+
 	stop: async () => {
 		await mongoServer.stop()
 	},
-	
+
 	dropCollections: async (connection) => {
 		const collections = await connection.db.collections()
-		
+
 		for (let collection of collections) {
 			await collection.deleteMany()
 		}

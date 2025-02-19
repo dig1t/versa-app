@@ -20,7 +20,7 @@ const schema = new Schema({
 		default: Date.now,
 		required: true
 	},
-	
+
 	type: {
 		type: Number,
 		maxlength: 1,

@@ -11,14 +11,14 @@ import classNames from 'classnames'
 class Carousel extends React.Component {
 	constructor(props) {
 		super(props)
-		
+
 		this.state = {
 			slides: {},
 			slideIndex: 0,
 			moving: false,
 			isMounted: false
 		}
-		
+
 		this.props.data.map((slideData, i) => {
 			this.state.slides[i] = {
 				left: false,
@@ -29,46 +29,46 @@ class Carousel extends React.Component {
 			}
 		})
 	}
-	
+
 	componentDidMount() {
 		this.setState({isMounted: true})
-		
+
 		// Server will keep the interval going on forever
 		if (typeof window !== 'undefined' && this.props.auto) this.autoSlide = setInterval(() => {
 			this.slide('right')
 		}, this.props.interval)
-		
+
 		if (!this.props.data) {
 			throw new Error('[Carousel] data not found')
 		}
 	}
-	
+
 	componentWillUnmount() {
 		this.setState({isMounted: false})
 		if (this.autoSlide) clearInterval(this.autoSlide)
 	}
-	
+
 	toggleClassState(i, key) {
 		this.setState((state) => (state.slides[i][key] = !state.slides[i][key], state))
 	}
-	
+
 	move(newIndex, direction) {
 		if (this.state.moving || !this.state.isMounted) return
-		
+
 		const oldIndex = this.state.slideIndex // save old index before changing state
-		
+
 		this.setState({ moving: true, slideIndex: newIndex })
-		
+
 		if (direction === 'left') {
 			// WHERE SLIDE IS GOING TO CHANGE TO
-			
+
 			this.toggleClassState(oldIndex, 'right')
 			this.toggleClassState(newIndex, 'previous')
-			
+
 			setTimeout(() => {
 				this.state.isMounted && this.toggleClassState(newIndex, 'right')
 			}, 1)
-			
+
 			setTimeout(() => {
 				if (this.state.isMounted) {
 					this.toggleClassState(oldIndex, 'active')
@@ -76,18 +76,18 @@ class Carousel extends React.Component {
 					this.toggleClassState(newIndex, 'active')
 					this.toggleClassState(newIndex, 'previous')
 					this.toggleClassState(newIndex, 'right')
-					
+
 					this.setState({ moving: false })
 				}
 			}, 800)
 		} else if (direction === 'right') {
 			this.toggleClassState(oldIndex, 'left')
 			this.toggleClassState(newIndex, 'next')
-			
+
 			setTimeout(() => {
 				this.state.isMounted && this.toggleClassState(newIndex, 'left')
 			}, 1)
-			
+
 			setTimeout(() => {
 				if (this.state.isMounted) {
 					this.toggleClassState(oldIndex, 'active')
@@ -95,16 +95,16 @@ class Carousel extends React.Component {
 					this.toggleClassState(newIndex, 'active')
 					this.toggleClassState(newIndex, 'next')
 					this.toggleClassState(newIndex, 'left')
-					
+
 					this.setState({ moving: false })
 				}
 			}, 800)
 		}
 	}
-	
+
 	slide(direction) {
 		if (this.state.moving || !this.state.isMounted) return
-		
+
 		if (typeof direction === 'number') { // custom index move
 			if (direction <= this.props.data.length) {
 				this.move(direction, direction > this.state.slideIndex ? 'right' : 'left')
@@ -123,15 +123,15 @@ class Carousel extends React.Component {
 			this.move(this.state.slideIndex + 1 >= this.props.data.length ? 0 : this.state.slideIndex + 1, 'right')
 		}
 	}
-	
+
 	render() {
 		const carouselClassName = classNames('carousel', this.props.className)
-		
+
 		return <div className={carouselClassName}>
 			<ul className="slides">{Object.keys(this.state.slides).map((slide, i) => {
 				const className = classNames(this.state.slides[slide])
 				let component = this.props.data[slide]
-				
+
 				return <li key={i} className={className}>
 					{typeof component === 'string' ? <img src={component}/> : component}
 				</li>
