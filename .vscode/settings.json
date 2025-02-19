@@ -48,5 +48,6 @@
     "[ ]",
     "[x]",
     "TODO-APP"
-  ]
+  ],
+  "makefile.configureOnOpen": false
 }
