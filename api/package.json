@@ -48,7 +48,7 @@
     "npm-check-updates": "^16.10.12",
     "oidc-provider": "^8.2.2",
     "swc-loader": "^0.2.3",
-    "validator": "^13.9.0",
+    "validator": "^13.15.20",
     "webpack": "^5.86.0",
     "webpack-node-externals": "^3.0.0"
   },
